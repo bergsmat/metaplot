@@ -4,12 +4,14 @@
 \alias{label.folded}
 \title{Extract Label for Folded}
 \usage{
-\method{label}{folded}(x, var)
+\method{label}{folded}(x, var, ...)
 }
 \arguments{
 \item{x}{folded}
 
 \item{var}{length-one character}
+
+\item{...}{ignored arguments}
 }
 \value{
 length-one character, possibly NA

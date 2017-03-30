@@ -4,12 +4,14 @@
 \alias{guide.folded}
 \title{Extract Guide for Folded}
 \usage{
-\method{guide}{folded}(x, var)
+\method{guide}{folded}(x, var, ...)
 }
 \arguments{
 \item{x}{folded}
 
 \item{var}{length-one character}
+
+\item{...}{ignored arguments}
 }
 \value{
 length-one character, possibly NA

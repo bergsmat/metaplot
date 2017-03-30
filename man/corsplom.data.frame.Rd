@@ -25,6 +25,8 @@ Creates a scatterplot matrix with correlations in lower panel, by default.}
 \item{diag.panel}{passed to splom}
 
 \item{split}{break diagonal names on white space}
+
+\item{...}{passed arguments}
 }
 \description{
 Scatterplot Matrix with Correlations for data.frame, Standard Evaluation

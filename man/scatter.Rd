@@ -6,9 +6,12 @@
 \usage{
 scatter(x, ...)
 }
+\arguments{
+\item{x}{object}
+
+\item{...}{passed arguments}
+}
 \description{
 Scatterplot.
- @param x object
- @param ... passed arguments
- @export
 }
+\keyword{internal}

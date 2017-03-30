@@ -1,3 +1,8 @@
+globalVariables('groups_')
+globalVariables('META')
+globalVariables('VARIABLE')
+globalVariables('VALUE')
+
 #' Dens Generic
 #'
 #' Generic function for dens().
@@ -58,13 +63,14 @@ dens.folded <- function(
   dens(d, var = var, xref = xref, log = log, xlab=xlab, ...)
 }
 
-#'  Scatterplot
+#' Scatterplot
 #'
-#'  Scatterplot.
-#'  @param x object
-#'  @param ... passed arguments
-#'  @export
+#' Scatterplot.
 #'
+#' @param x object
+#' @param ... passed arguments
+#' @export
+#' @keywords internal
 scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot for Data Frame
@@ -77,6 +83,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param ... passed arguments
 #' @param ylog log transform y axis (guessed if missing)
 #' @param xlog log transform x axis (guessed if missing)
+#' @param yref reference line from y axis
+#' @param xref reference line from x axis
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param cols suggested columns for auto.key
@@ -189,7 +197,9 @@ scatter.data.frame <- function(
 #' @param groups optional grouping item
 #' @param ... passed arguments
 #' @param ylog log transform y axis (guessed if missing)
-#' @param x log log transform x axis (guessed if missing)
+#' @param xlog log transform x axis (guessed if missing)
+#' @param yref reference line from y axis
+#' @param xref reference line from x axis
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param cols suggested columns for auto.key
@@ -356,6 +366,10 @@ metaplot_ <- function(x, ...)UseMethod('metaplot_')
 #' @param var character: names of items to plot
 #' @param ... passed arguments
 #' @import lazyeval
+#' @importFrom graphics boxplot
+#' @importFrom stats as.formula cor density loess.smooth median
+#' @importFrom dplyr filter
+#' @import fold
 #' @export
 metaplot_.folded = function(x, var, ...){
   x %<>% data.frame(stringsAsFactors = FALSE) # faster than grouped_df
@@ -393,12 +407,14 @@ continuous <- function(x,...)UseMethod('continuous')
 #' @param x folded
 #' @param var length-one character
 #' @param ... passed arguments
+#' @import dplyr
+#' @import magrittr
 #' @export
 #' @keywords internal
 continuous <- function(x,var, ...){
   stopifnot(length(var) == 1)
   is.number <- function(x)sum(is.defined(x)) == sum(is.defined(as.numeric(x)))
-  val <- x %>% filter(META %>% is.na) %>% filter(VARIABLE == var) %$% VALUE
+  val <- x %>% dplyr::filter(META %>% is.na) %>% dplyr::filter(VARIABLE == var) %$% VALUE
   if(length(val) ==0)stop('no values found for ',var)
   guide_var <- guide(x,var)
   enc <- if(length(guide_var)) encoded(guide_var) else FALSE
@@ -406,6 +422,7 @@ continuous <- function(x,var, ...){
   cont
 }
 
+is.defined <- function(x)!is.na(x)
 
 #' Extract Guide
 #'
@@ -420,9 +437,10 @@ guide <- function(x,...)UseMethod('guide')
 #' Extracts guide for class folded, given a variable.
 #' @param x folded
 #' @param var length-one character
+#' @param ... ignored arguments
 #' @return length-one character, possibly NA
 #' @export
-guide.folded <- function(x,var){
+guide.folded <- function(x,var,...){
   stopifnot(length(var) == 1)
   y <- x[is.defined(x$META) & x$META =='GUIDE' & x$VARIABLE == var,'VALUE']
   y <- unique(y) #
@@ -444,9 +462,10 @@ label <- function(x,...)UseMethod('label')
 #' Extracts label for class folded, given a variable.
 #' @param x folded
 #' @param var length-one character
+#' @param ... ignored arguments
 #' @return length-one character, possibly NA
 #' @export
-label.folded <- function(x,var){
+label.folded <- function(x,var, ...){
   stopifnot(length(var) == 1)
   y <- x[is.defined(x$META) & x$META =='LABEL' & x$VARIABLE == var,'VALUE']
   y <- unique(y)
@@ -688,6 +707,7 @@ corsplom_ <- function(x,...)UseMethod('corsplom_')
 #' @param varname.cex passed to splom
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
+#' @param ... passed arguments
 corsplom.data.frame <- function(
   x,
   upper.panel = u.p,
@@ -722,7 +742,7 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 #' @param x folded
 #' @param ... unnamed arguments indicating variables to plot, and named arguments passed to corsplom()
 #' @export
-#' @seealso corsplom_.data.frame
+#' @seealso corsplom.data.frame
 #' @import lattice
 corsplom_.folded <- function(x, ...){
   var <- dots_capture(...)
@@ -752,7 +772,7 @@ corsplom_.folded <- function(x, ...){
 #' @param x folded
 #' @param ... passed arguments
 #' @export
-#' @seealso \code{\link{corsplom_.folded}} \code{\link{corsplom_.data.frame}}
+#' @seealso \code{\link{corsplom_.folded}} \code{\link{corsplom.data.frame}}
 #' @import lattice
 corsplom.folded <- function(x, ...){
   args <- dots_capture(...)

@@ -22,6 +22,12 @@
 
 \item{ylog}{log transform y axis (guessed if missing)}
 
+\item{xlog}{log transform x axis (guessed if missing)}
+
+\item{yref}{reference line from y axis}
+
+\item{xref}{reference line from x axis}
+
 \item{ysmooth}{supply loess smooth of y on x}
 
 \item{xsmooth}{supply loess smmoth of x on y}
@@ -35,8 +41,6 @@
 \item{main}{print Pearson correlation coefficient as title}
 
 \item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
-
-\item{x}{log log transform x axis (guessed if missing)}
 }
 \description{
 Scatterplot for class 'folded'.

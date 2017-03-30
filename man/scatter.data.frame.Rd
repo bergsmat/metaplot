@@ -24,6 +24,10 @@
 
 \item{xlog}{log transform x axis (guessed if missing)}
 
+\item{yref}{reference line from y axis}
+
+\item{xref}{reference line from x axis}
+
 \item{ysmooth}{supply loess smooth of y on x}
 
 \item{xsmooth}{supply loess smmoth of x on y}

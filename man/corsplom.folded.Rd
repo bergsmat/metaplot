@@ -17,5 +17,5 @@ Scatterplot Matrix with Correlations for Folded, Non Standard Evaluation
 Creates a scatterplot matrix with correlations for class 'folded'. Categoricals in \code{var} are currently ignored.
 }
 \seealso{
-\code{\link{corsplom_.folded}} \code{\link{corsplom_.data.frame}}
+\code{\link{corsplom_.folded}} \code{\link{corsplom.data.frame}}
 }
