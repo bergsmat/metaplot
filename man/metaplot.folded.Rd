@@ -14,6 +14,59 @@
 \description{
 Plots a folded object.
 }
+\examples{
+# load some packages
+library(spec)
+library(csv)
+library(magrittr)
+library(tidyr)
+library(dplyr)
+library(fold)
+
+# find paths to example data and specification
+x <- system.file(package='metaplot','extdata','drug1001.csv')
+spec <- system.file(package='metaplot','extdata','drug1001.spec')
+
+# verify agreement at file level
+x \%matches\% spec
+
+# read and verify in memory
+x \%<>\% as.csv
+spec \%<>\% as.spec
+x \%matches\% spec
+
+# manually convert specifaction to folded format
+spec \%<>\% select(VARIABLE = column,LABEL = label,GUIDE = guide) \%>\%
+gather(META,VALUE,LABEL,GUIDE) \%>\% data.frame \%>\% as.folded
+
+# capture the most interesting parts of x
+x \%<>\% filter(VISIBLE == 1) \%>\% filter(EVID == 0)
+
+# identify keys
+attr(x, 'groups') <- c('ID','TIME')
+
+# fold x
+x \%<>\% fold
+
+# combine with metadata
+x \%<>\% bind_rows(spec)
+x \%<>\% sort
+
+# Now we have a plotting dataset with embedded metadata.
+# We call metaplot with various numbers of continuous and
+# categorical arguments, given as unquoted values from the
+#  VARIABLE column.
+
+x \%>\% metaplot(AGE) # one continuous
+x \%>\% metaplot(PRED,DV) # two continuous
+x \%>\% metaplot(AGE,SEX) # continuous and categorical
+x \%>\% metaplot(SEX,AGE) # categorical and continuous
+x \%>\% metaplot(PRED,DV,SEX) # two continous and categorical
+x \%>\% metaplot(ETA1,ETA2,ETA3) # three or more continuous
+x \%>\% metaplot(CWRES,TAD) # metadata
+x \%>\% filter(META \%>\% is.na) \%>\% metaplot(CWRES,TAD) # no metadata
+
+}
 \seealso{
 \code{\link{metaplot_.folded}}
 }

@@ -10,6 +10,7 @@ globalVariables('VALUE')
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 dens <- function(x,...)UseMethod('dens')
 
 #' Plot Density for Data Frame
@@ -20,8 +21,9 @@ dens <- function(x,...)UseMethod('dens')
 #' @param ref optional numeric
 #' @param log logical; use log scale?
 #' @param ... passed arguments
+#' @family univariate plots
+#' @family standard evaluations
 #' @export
-
 dens.data.frame<- function(
   x,
   var,
@@ -49,8 +51,9 @@ dens.data.frame<- function(
 #' @param xref optional numeric
 #' @param log logical; use log scale?
 #' @param ... passed arguments
+#' @family univariate plots
+#' @family standard evaluations
 #' @export
-
 dens.folded <- function(
   x,
   var,
@@ -70,6 +73,7 @@ dens.folded <- function(
 #' @param x object
 #' @param ... passed arguments
 #' @export
+#' @family generic functions
 #' @keywords internal
 scatter <- function(x,...)UseMethod('scatter')
 
@@ -95,6 +99,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @export
 #' @import lattice
+#' @family bivariate plots
+#' @family standard evaluations
 scatter.data.frame <- function(
   x,
   .y,
@@ -188,6 +194,7 @@ scatter.data.frame <- function(
     ...
   )
 }
+
 #' Scatterplot for Folded
 #'
 #' Scatterplot for class 'folded'.
@@ -210,6 +217,8 @@ scatter.data.frame <- function(
 #' @export
 #' @import encode
 #' @import lattice
+#' @family bivariate plots
+#' @family standard evaluations
 scatter.folded <- function(
   x,
   .y,
@@ -268,15 +277,17 @@ scatter.folded <- function(
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 axislabel <- function(x,...)UseMethod('axislabel')
 
 #' Axis Label for Folded
 #'
-#' Axis label for folded object.
+#' Axis label for folded.
 #' @param x folded
 #' @param var item of interest
 #' @param log whether this is for a log scale
 #' @param ... passed arguments
+#' @keywords internal
 #' @export
 #' @import magrittr
 #' @return character
@@ -285,15 +296,22 @@ axislabel.folded <- function(x, var, log = FALSE, ...){
   lab <- unique(x$VALUE[x$META =='LABEL'])
   guide <- unique(x$VALUE[x$META =='GUIDE'])
   res <- var
-  if(length(lab) == 1 & lab %>% is.defined)res <- lab
-  if(length(guide) == 1 & !encoded(guide) & guide %>% is.defined){
-    guide <- paste0('(',guide,')')
-    res <- paste(res,guide)
+  if(length(lab) == 1){
+    if(lab %>% is.defined){
+      res <- lab
+    }
+  }
+  if(length(guide) == 1){
+    if(!encoded(guide)){
+      if(guide %>% is.defined){
+        guide <- paste0('(',guide,')')
+        res <- paste(res,guide)
+      }
+    }
   }
   if(log) res <- paste0(res,'\n(log)')
   res
 }
-
 
 #' Metaplot Generic
 #'
@@ -302,16 +320,96 @@ axislabel.folded <- function(x, var, log = FALSE, ...){
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
+#' @name metaplot-generic
 metaplot <- function(x,...)UseMethod('metaplot')
 
-#' Metaplot Method for Folded
+#' Create Metaplot from Folded
 #'
-#' Plots a folded object.
+#' Creates a plot from folded, using metadata as available.
+#'
+#' Metaplot creates univariate, bivariate, or multivariate plots depending on the
+#'  number and type of items represented by \code{...}.
+#'
+#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+#'
+#' Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
+#'
+#' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
+#'
+#' A third anonymous argument is unexpected if a preceding argument is categorical.
+#'
+#' A third, categorical argument following two continuous arguments is treated as a grouping variable.
+#'
+#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
+#'
+#' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
+
 #' @param x folded
 #' @param ... unquoted anonymous arguments are passed as character: var to metaplot_().
 #' @import lazyeval
-#' @seealso \code{\link{metaplot_.folded}}
+#' @family metaplots
+#' @family univariate plots
+#' @family bivariate plots
+#' @family multivariate plots
+#' @family nonstandard evaluations
+#' @name metaplot
 #' @export
+#' @examples
+#' # load some packages
+#' library(spec)
+#' library(csv)
+#' library(magrittr)
+#' library(tidyr)
+#' library(dplyr)
+#' library(fold)
+#'
+#' # find paths to example data and specification
+#' x <- system.file(package='metaplot','extdata','drug1001.csv')
+#' spec <- system.file(package='metaplot','extdata','drug1001.spec')
+#'
+#'# verify agreement at file level
+#' x %matches% spec
+#'
+#'# read and verify in memory
+#' x %<>% as.csv
+#' spec %<>% as.spec
+#' x %matches% spec
+#'
+#' # manually convert specifaction to folded format
+#' spec %<>% select(VARIABLE = column,LABEL = label,GUIDE = guide) %>%
+#' gather(META,VALUE,LABEL,GUIDE) %>% data.frame %>% as.folded
+#'
+#' # capture the most interesting parts of x
+#' x %<>% filter(VISIBLE == 1) %>% filter(EVID == 0)
+#'
+#' # identify keys
+#' attr(x, 'groups') <- c('ID','TIME')
+#'
+#' # fold x
+#' x %<>% fold
+#'
+#' # combine with metadata
+#' x %<>% bind_rows(spec)
+#' x %<>% sort
+#'
+#' # Now we have a plotting dataset with embedded metadata.
+#' # We call metaplot with various numbers of continuous and
+#' # categorical arguments, given as unquoted values from the
+#'#  VARIABLE column.
+#'
+#' x %>% metaplot(AGE) # one continuous
+#' x %>% metaplot(PRED,DV) # two continuous
+#' x %>% metaplot(AGE,SEX) # continuous and categorical
+#' x %>% metaplot(SEX,AGE) # categorical and continuous
+#' x %>% metaplot(PRED,DV,SEX) # two continous and categorical
+#' x %>% metaplot(ETA1,ETA2,ETA3) # three or more continuous
+#' x %>% metaplot(CWRES,TAD) # metadata
+#' x %>% filter(META %>% is.na) %>% metaplot(CWRES,TAD) # no metadata
+#' x %>% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # log-log
+#' x %>% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
+#' x %>% metaplot(ETA1, SEX, ref = 0)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
 metaplot.folded <- function(x,...){
   args <- dots_capture(...)
   args <- lapply(args,f_rhs)
@@ -332,25 +430,26 @@ metaplot.folded <- function(x,...){
 
 #' Metaplot Generic, Standard Evaluation
 #'
-#' Generic metaplot function using standard evaluation.
+#' Metaplot generic using standard evaluation.
 #' @param x object
 #' @param var character: quoted names of variables to plot
 #' @param ... other arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 metaplot_ <- function(x, ...)UseMethod('metaplot_')
 
-#' Metaplot Method for Folded
+#' Create Metaplot from Folded, Standard Evaluation
 #'
-#' Metaplot method for folded.
+#' Creates metaplot from folded using standard evaluation.
 #'
 #' Try calling \code{\link{metaplot}} to create var from unquoted, anonymous arguments.
 #'
 #' What happens next depends on the number and type of items represented by var.
 #'
-#' A single argument representing a continuous variable is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
 #'
-#' Two arguments of type continuous, categorical or categorical, continuous are forwarded to \code{link{boxplot.folded}} to give a boxplot (vertical or horizontal, respectively).
+#' Two arguments of type continuous, categorical or categorical, continuous are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, respectively).
 #'
 #' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
 #'
@@ -371,6 +470,11 @@ metaplot_ <- function(x, ...)UseMethod('metaplot_')
 #' @importFrom dplyr filter
 #' @import fold
 #' @export
+#' @family metaplots
+#' @family univariate plots
+#' @family bivariate plots
+#' @family multivariate plots
+#' @family standard evaluations
 metaplot_.folded = function(x, var, ...){
   x %<>% data.frame(stringsAsFactors = FALSE) # faster than grouped_df
   class(x) <- c('folded','data.frame')
@@ -399,6 +503,7 @@ metaplot_.folded = function(x, var, ...){
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 continuous <- function(x,...)UseMethod('continuous')
 
 #' Check if Folded is Continuous
@@ -411,7 +516,7 @@ continuous <- function(x,...)UseMethod('continuous')
 #' @import magrittr
 #' @export
 #' @keywords internal
-continuous <- function(x,var, ...){
+continuous.folded <- function(x,var, ...){
   stopifnot(length(var) == 1)
   is.number <- function(x)sum(is.defined(x)) == sum(is.defined(as.numeric(x)))
   val <- x %>% dplyr::filter(META %>% is.na) %>% dplyr::filter(VARIABLE == var) %$% VALUE
@@ -422,14 +527,14 @@ continuous <- function(x,var, ...){
   cont
 }
 
-is.defined <- function(x)!is.na(x)
-
 #' Extract Guide
 #'
 #' Extracts guide.
 #' @param x object
 #' @param ... passed arguments
 #' @export
+#' @keywords internal
+#' @family generic functions
 guide <- function(x,...)UseMethod('guide')
 
 #' Extract Guide for Folded
@@ -440,6 +545,7 @@ guide <- function(x,...)UseMethod('guide')
 #' @param ... ignored arguments
 #' @return length-one character, possibly NA
 #' @export
+#' @keywords internal
 guide.folded <- function(x,var,...){
   stopifnot(length(var) == 1)
   y <- x[is.defined(x$META) & x$META =='GUIDE' & x$VARIABLE == var,'VALUE']
@@ -455,6 +561,8 @@ guide.folded <- function(x,var,...){
 #' @param x object
 #' @param ... passed arguments
 #' @export
+#' @keywords internal
+#' @family generic functions
 label <- function(x,...)UseMethod('label')
 
 #' Extract Label for Folded
@@ -465,6 +573,7 @@ label <- function(x,...)UseMethod('label')
 #' @param ... ignored arguments
 #' @return length-one character, possibly NA
 #' @export
+#' @keywords internal
 label.folded <- function(x,var, ...){
   stopifnot(length(var) == 1)
   y <- x[is.defined(x$META) & x$META =='LABEL' & x$VARIABLE == var,'VALUE']
@@ -473,10 +582,6 @@ label.folded <- function(x,var, ...){
   if(length(y) == 0) y <- NA_character_
   y
 }
-
-
-parens <- function (x, ...)paste0("(", x, ")")
-
 
 #' Boxplot for Data Frame
 #'
@@ -492,6 +597,8 @@ parens <- function (x, ...)paste0("(", x, ")")
 #' @param guide optional encoding for categories see \code{encode::encode}
 #' @param ... passed arguments
 #' @export
+#' @family bivariate functions
+#' @family standard evaluations
 boxplot.data.frame <- function(
   x,
   .y,
@@ -555,6 +662,7 @@ boxplot.data.frame <- function(
     ...
   )
 }
+
 #' Boxplot for Folded
 #'
 #' Boxplot for folded object.
@@ -569,6 +677,8 @@ boxplot.data.frame <- function(
 #' @param ... passed arguments
 #' @import encode
 #' @export
+#' @family bivariate functions
+#' @family standard evaluations
 boxplot.folded <- function(
   x,
   .y,
@@ -617,7 +727,9 @@ boxplot.folded <- function(
 #' @param col point color
 #' @param loess loess color
 #' @param ... passed arguments
+#' @keywords internal
 #' @export
+#' @family panel functions
 u.p = function(x,y,col = 'black', loess = 'red',...){
   panel.xyplot(x,y,col = col, ...)
   panel.loess(x,y,col = loess)
@@ -629,7 +741,9 @@ u.p = function(x,y,col = 'black', loess = 'red',...){
 #' @param x x values
 #' @param y y values
 #' @param ... passed arguments
+#' @keywords internal
 #' @export
+#' @family panel functions
 l.p = function(x, y, ...) {
   x1 <- range(x,na.rm = T)
   y1 <- range(y,na.rm = T)
@@ -644,7 +758,9 @@ l.p = function(x, y, ...) {
 #' @param x numeric
 #' @param denscale inflation factor for height of density smooth
 #' @param ... passed arguments
+#' @keywords internal
 #' @export
+#' @family panel functions
 my.diag.panel <- function(x, denscale = 0.2,...){
   d <- density(x)
   lim <- current.panel.limits()$x
@@ -677,27 +793,28 @@ my.diag.panel <- function(x, denscale = 0.2,...){
   diag.panel.splom(...)
 }
 
-#' Scatterplot Matrix with Correlations, Generic.
+#' Correlated Splom
 #'
 #' Generic function for scatterplot matrix with correlations.
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 corsplom <- function(x,...)UseMethod('corsplom')
 
-#' Scatterplot Matrix with Correlations, Generic for Standard Evaluation
+#' Correlated Splom, Standard Evaluation
 #'
-#' Generic function for scatterplot matrix with correlations.
+#' Generic function for scatterplot matrix with correlations, standard evaluation.
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
+#' @family generic functions
 corsplom_ <- function(x,...)UseMethod('corsplom_')
 
-
-#' Scatterplot Matrix with Correlations for data.frame, Standard Evaluation
-
+#' Correlated Splom for Data.frame, Standard Evaluation
+#'
 #' Creates a scatterplot matrix with correlations in lower panel, by default.
 #' @param x data.frame
 #' @param upper.panel passed to splom
@@ -708,13 +825,16 @@ corsplom_ <- function(x,...)UseMethod('corsplom_')
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
 #' @param ... passed arguments
+#' @export
+#' @family multivariate plots
+#' @family standard evaluations
 corsplom.data.frame <- function(
   x,
   upper.panel = u.p,
   lower.panel= l.p,
   pscales= 0,
   xlab = '',
-  varname.cex = 0.5,
+  varname.cex = 1,
   diag.panel = my.diag.panel,
   split = TRUE,
   ...
@@ -732,18 +852,15 @@ corsplom.data.frame <- function(
 )
 }
 
-
-fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
-
-
-#' Scatterplot Matrix with Correlations for Folded, Standard Evaluation
-
-#' Creates a scatterplot matrix with correlations for class 'folded'. Categoricals in \code{var} are currently ignored.
+#' Correlated Splom for Folded, Standard Evaluation
+#'
+#' Creates a scatterplot matrix with correlations for folded.
+#' Categoricals in 'var' are currently ignored.
 #' @param x folded
 #' @param ... unnamed arguments indicating variables to plot, and named arguments passed to corsplom()
-#' @export
-#' @seealso corsplom.data.frame
 #' @import lattice
+#' @export
+#' @family multivariate plots
 corsplom_.folded <- function(x, ...){
   var <- dots_capture(...)
   var <- lapply(var, f_rhs)
@@ -766,7 +883,7 @@ corsplom_.folded <- function(x, ...){
   do.call(corsplom,out)
 }
 
-#' Scatterplot Matrix with Correlations for Folded, Non Standard Evaluation
+#' Correlated Splom for Folded, Nonstandard Evaluation
 
 #' Creates a scatterplot matrix with correlations for class 'folded'. Categoricals in \code{var} are currently ignored.
 #' @param x folded
@@ -817,6 +934,7 @@ corsplom.folded <- function(x, ...){
 #' @param x object
 #' @param ... passed arguments
 #' @export
+#' @keywords internal
 indiplot <- function(x,...)UseMethod('indiplot')
 
 #' Make Individual Plots from Numeric
@@ -842,93 +960,7 @@ indiplot.character <- function(x, ...)indiplot(fold(x),...)
 #' @param filepath path for pdf output (or NULL)
 #' @export
 
-# indiplot.folded <- function(
-#   x,
-#   filepath = file.path(getOption('project'),x,paste0(x,'-ind.pdf')),
-#   cols,
-#   ...
-# ){
-#   # x %<>% as.pharmval already meta
-#   x %<>% filter(VARIABLE %in% cols) #c('UPA','PRED','IPRE','TAD'))  #### PROJECT SPECIFIC
-#   x %<>% unfold
-#   x %>% head %>% data.frame
-#
-#   ## NEEDS ABSTRACTION
-#   x %<>% filter(is.defined(IPRE) & is.defined(TAD) & is.defined(UPA))
-#   x %<>% select(
-#     USUBJID,DATETIME,UPA,OBS_GUIDE = UPA_GUIDE,
-#     OBS_LABEL = UPA_LABEL,IPRE,TAD,TAD_GUIDE,TAD_LABEL
-#   )
-#   x %<>% gather(GROUP,OBS,UPA,IPRE)
-#
-#   lapply(x,function(col)sum(is.na(col)))
-#   x %>% filter(is.na(OBS)) %>% head %>% data.frame
-#   x %>% filter(USUBJID == '3083-101-002.101001001') %>% data.frame
-#   x %<>% mutate(GROUP = factor(GROUP,levels = c('UPA','IPRE'),labels = c('observation','individual prediction')))
-#   if(length(filepath))pdf(filepath)
-#   x %>%
-#     xyplot(
-#       data = .,
-#       OBS ~ TAD|USUBJID,
-#       layout = c(1,1),
-#       scales = list(
-#         relation = 'free',
-#         y = list(
-#           log = T,equispaced.log = FALSE
-#         )),
-#       aspect = 1,
-#       auto.key = T,
-#       xlab = paste(x$TAD_LABEL,parens(x$TAD_GUIDE))[[1]],
-#       ylab = paste(x$OBS_LABEL,parens(x$OBS_GUIDE))[[1]],
-#       groups = GROUP,
-#       as.table = T,
-#       panel = panel.superpose,
-#       panel.groups = function(group.number,type,x,y,...){
-#         type <- 'p'
-#         if(group.number == 2) type <- 'l'
-#         d <- data.frame(x = x,y = y)
-#         d <- d[d$x %>% is.defined & d$y %>% is.defined,]
-#         d$lag <- lag(x)
-#         d$node <- with(d, is.na(lag) | x < lag)
-#         d$interval <- cumsum(d$node)
-#         for(i in unique(d$interval))panel.xyplot(
-#           type = type,
-#           x = d$x[d$interval ==i],
-#           y = d$y[d$interval ==i],
-#           ...
-#         )
-#       }
-#     ) %>% print
-#   if(length(filepath))dev.off()
-#   if(length(filepath))filepath else invisible(NULL)
-# }
-#
-# diagnostics <- function(
-#   x,
-#   filepath = file.path(getOption('project'),x,paste0(x,'.pdf')),
-#   cov = character(0),
-#   ...
-# ){
-#   filepath
-#   if(length(filepath))pdf(filepath)
-#   x %<>% fold
-#   eta <- unique(x$VARIABLE[x$VARIABLE %contains% '^ETA'])
-#   x %>% plot('UPA','PRED',iso = T,ysmooth = T) %>% print
-#   x %>% plot('UPA','IPRE',iso = T,ysmooth = T)%>% print
-#   x %>% plot('CWRESI','TIME',yref = 0,ysmooth = T)%>% print
-#   x %>% plot('CIWRESI','TIME',yref = 0,ysmooth = T)%>% print
-#   x %>% plot('CWRESI','PRED',yref = 0,ysmooth = T)%>% print
-#   x %>% plot('CIWRESI','IPRE',yref = 0,ysmooth = T)%>% print
-#   x %>% plot('CIWRESI','TAD',yref = 0,ysmooth = T)%>% print
-#   for(i in eta)x %>% plot(i,xref = 0) %>% print
-#   for(i in eta){
-#     for(j in cov){
-#       x %>% plot(i,j,yref = 0,ysmooth = T,bref = 0) %>% print
-#     }
-#   }
-#   x %>% indiplot(filepath = NULL)
-#   if(length(filepath))dev.off()
-#   if(length(filepath))filepath else invisible(NULL)
-# }
-
+is.defined <- function(x)!is.na(x)
+parens <- function (x, ...)paste0("(", x, ")")
+fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 
