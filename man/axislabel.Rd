@@ -14,4 +14,11 @@ axislabel(x, ...)
 \description{
 Generic axis label.
 }
+\seealso{
+Other generic functions: \code{\link{continuous}},
+  \code{\link{corsplom}}, \code{\link{dens}},
+  \code{\link{guide}}, \code{\link{label}},
+  \code{\link{metaplot_}}, \code{\link{metaplot}},
+  \code{\link{scatter}}
+}
 \keyword{internal}

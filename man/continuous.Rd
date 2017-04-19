@@ -2,27 +2,23 @@
 % Please edit documentation in R/metaplot.R
 \name{continuous}
 \alias{continuous}
-\alias{continuous}
 \title{Check if Something is Continuous}
 \usage{
-continuous(x, var, ...)
-
-continuous(x, var, ...)
+continuous(x, ...)
 }
 \arguments{
 \item{x}{object}
-
-\item{var}{length-one character}
-
-\item{...}{passed arguments}
-
-\item{x}{folded}
 
 \item{...}{passed arguments}
 }
 \description{
 Checks if something is continuous.
-
-Checks if folded is continuous with respect to \code{var}
+}
+\seealso{
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{corsplom}}, \code{\link{dens}},
+  \code{\link{guide}}, \code{\link{label}},
+  \code{\link{metaplot_}}, \code{\link{metaplot}},
+  \code{\link{scatter}}
 }
 \keyword{internal}

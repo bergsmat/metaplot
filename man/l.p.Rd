@@ -16,3 +16,8 @@ l.p(x, y, ...)
 \description{
 Lower panel function for corsplom(). Plots Pearson correlation coefficient.
 }
+\seealso{
+Other panel functions: \code{\link{my.diag.panel}},
+  \code{\link{u.p}}
+}
+\keyword{internal}

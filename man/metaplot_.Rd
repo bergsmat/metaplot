@@ -2,7 +2,7 @@
 % Please edit documentation in R/metaplot.R
 \name{metaplot_}
 \alias{metaplot_}
-\title{Metaplot Generic, Standard Evaluation}
+\title{Metaplot, Standard Evaluation}
 \usage{
 metaplot_(x, ...)
 }
@@ -14,6 +14,13 @@ metaplot_(x, ...)
 \item{var}{character: quoted names of variables to plot}
 }
 \description{
-Generic metaplot function using standard evaluation.
+Creates a metaplot using standard evaluation.
+}
+\seealso{
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{continuous}}, \code{\link{corsplom}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot}},
+  \code{\link{scatter}}
 }
 \keyword{internal}

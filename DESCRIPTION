@@ -1,13 +1,13 @@
 Package: metaplot
 Type: Package
-Title: Formalized Plots For Self-Describing Data
-Version: 0.1.1
+Title: Formalized Plots for Self-Describing Data
+Version: 0.1.2
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Creates fully-annotated plots with minimum guidance.
  Since the data is self-describing, less effort is needed for
- creating the plot. Generally expects data of class 'folded' 
- (use fold::fold() ).If attributes 'GUIDE' and 'LABEL' are present, 
+ creating the plot. Generally expects data of class folded
+ (see fold package). If attributes GUIDE and LABEL are present, 
  they will be used to create formal axis labels. Several aesthetics 
  are supported, such as reference lines, unity lines, smooths, and 
  log transformations.
@@ -22,7 +22,7 @@ Suggests:
  spec,
  tidyr,
  csv
-depends:
+Depends:
   R (>= 2.10)
 License: GPL-3
 Encoding: UTF-8

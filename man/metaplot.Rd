@@ -2,16 +2,121 @@
 % Please edit documentation in R/metaplot.R
 \name{metaplot}
 \alias{metaplot}
-\title{Metaplot Generic}
+\alias{metaplot.folded}
+\alias{metaplot_.folded}
+\title{Metaplot}
 \usage{
 metaplot(x, ...)
+
+\method{metaplot}{folded}(x, ...)
+
+\method{metaplot_}{folded}(x, var, ...)
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{passed arguments}
+
+\item{var}{character: names of items to plot}
 }
 \description{
-Generic function for metaplot.
+Creates a metaplot.
+
+Creates a plot from folded, using metadata as available.
+
+Creates metaplot from folded using standard evaluation.
 }
-\keyword{internal}
+\details{
+Metaplot creates univariate, bivariate, or multivariate plots depending on the
+ number and type of items represented by \code{...}.
+
+A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+
+Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
+
+Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
+
+A third anonymous argument is unexpected if a preceding argument is categorical.
+
+A third, categorical argument following two continuous arguments is treated as a grouping variable.
+
+If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
+
+Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
+}
+\section{Methods (by class)}{
+\itemize{
+\item \code{folded}: folded method
+
+\item \code{folded}: folded method for metaplot using standard evaluation
+}}
+
+\examples{
+# load some packages
+library(spec)
+library(csv)
+library(magrittr)
+library(tidyr)
+library(dplyr)
+library(fold)
+
+# find paths to example data and specification
+x <- system.file(package='metaplot','extdata','drug1001.csv')
+spec <- system.file(package='metaplot','extdata','drug1001.spec')
+
+# verify agreement at file level
+x \%matches\% spec
+
+# read and verify in memory
+x \%<>\% as.csv
+spec \%<>\% as.spec
+x \%matches\% spec
+
+# convert specifaction to folded format
+spec \%<>\%  as.folded
+
+# capture the most interesting parts of x
+x \%<>\% filter(VISIBLE == 1) \%>\% filter(EVID == 0)
+
+# identify keys
+attr(x, 'groups') <- c('ID','TIME')
+
+# fold x
+x \%<>\% fold
+
+# combine with metadata
+x \%<>\% bind_rows(spec)
+x \%<>\% sort
+
+# Now we have a plotting dataset with embedded metadata.
+# We call metaplot with various numbers of continuous and
+# categorical arguments, given as unquoted values from the
+#  VARIABLE column.
+
+x \%>\% metaplot(AGE) # one continuous
+x \%>\% metaplot(PRED,DV) # two continuous
+x \%>\% metaplot(AGE,SEX) # continuous and categorical
+x \%>\% metaplot(SEX,AGE) # categorical and continuous
+x \%>\% metaplot(PRED,DV,SEX) # two continous and categorical
+x \%>\% metaplot(ETA1,ETA2,ETA3) # three or more continuous
+x \%>\% metaplot(CWRES,TAD) # metadata
+x \%>\% filter(META \%>\% is.na) \%>\% metaplot(CWRES,TAD) # no metadata
+x \%>\% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # log-log
+x \%>\% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
+x \%>\% metaplot(ETA1, SEX, ref = 0)
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
+}
+\seealso{
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{continuous}}, \code{\link{corsplom}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot_}},
+  \code{\link{scatter}}
+
+Other univariate plots: \code{\link{dens}}
+
+Other bivariate plots: \code{\link{boxplot}},
+  \code{\link{scatter}}
+
+Other multivariate plots: \code{\link{corsplom}}
+}

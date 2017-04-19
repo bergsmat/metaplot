@@ -19,3 +19,4 @@ length-one character, possibly NA
 \description{
 Extracts guide for class folded, given a variable.
 }
+\keyword{internal}

@@ -19,5 +19,6 @@
 character
 }
 \description{
-Axis label for folded object.
+Axis label for folded.
 }
+\keyword{internal}

@@ -2,16 +2,47 @@
 % Please edit documentation in R/metaplot.R
 \name{dens}
 \alias{dens}
-\title{Dens Generic}
+\alias{dens.data.frame}
+\alias{dens.folded}
+\title{Density}
 \usage{
 dens(x, ...)
+
+\method{dens}{data.frame}(x, var, ref = NULL, log = FALSE, ...)
+
+\method{dens}{folded}(x, var, ref = NULL, log = FALSE, ...)
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{passed arguments}
+
+\item{var}{item to plot}
+
+\item{ref}{optional numeric}
+
+\item{log}{whether to use log scale}
 }
 \description{
-Generic function for dens().
+Creates a density metaplot.
+
+Plot density for object of class 'data.frame'.
+
+Plot density for object of class 'folded'.
 }
-\keyword{internal}
+\section{Methods (by class)}{
+\itemize{
+\item \code{data.frame}: data.frame method
+
+\item \code{folded}: folded method
+}}
+
+\seealso{
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{continuous}}, \code{\link{corsplom}},
+  \code{\link{guide}}, \code{\link{label}},
+  \code{\link{metaplot_}}, \code{\link{metaplot}},
+  \code{\link{scatter}}
+
+Other univariate plots: \code{\link{metaplot}}
+}

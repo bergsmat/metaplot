@@ -3,26 +3,175 @@ globalVariables('META')
 globalVariables('VARIABLE')
 globalVariables('VALUE')
 
-#' Dens Generic
+#' Metaplot
 #'
-#' Generic function for dens().
+#' Creates a metaplot.
 #' @param x object
 #' @param ... passed arguments
 #' @export
+#' @family generic functions
+metaplot <- function(x,...)UseMethod('metaplot')
+
+#' Create Metaplot from Folded
+#'
+#' Creates a plot from folded, using metadata as available.
+#'
+#' Metaplot creates univariate, bivariate, or multivariate plots depending on the
+#'  number and type of items represented by \code{...}.
+#'
+#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+#'
+#' Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
+#'
+#' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
+#'
+#' A third anonymous argument is unexpected if a preceding argument is categorical.
+#'
+#' A third, categorical argument following two continuous arguments is treated as a grouping variable.
+#'
+#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
+#'
+#' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
+
+#' @import lazyeval
+#' @family metaplots
+#' @family univariate plots
+#' @family bivariate plots
+#' @family multivariate plots
+#' @describeIn metaplot folded method
+#' @export
+#' @examples
+#' # load some packages
+#' library(spec)
+#' library(csv)
+#' library(magrittr)
+#' library(tidyr)
+#' library(dplyr)
+#' library(fold)
+#'
+#' # find paths to example data and specification
+#' x <- system.file(package='metaplot','extdata','drug1001.csv')
+#' spec <- system.file(package='metaplot','extdata','drug1001.spec')
+#'
+#'# verify agreement at file level
+#' x %matches% spec
+#'
+#'# read and verify in memory
+#' x %<>% as.csv
+#' spec %<>% as.spec
+#' x %matches% spec
+#'
+#' # convert specifaction to folded format
+#' spec %<>%  as.folded
+#'
+#' # capture the most interesting parts of x
+#' x %<>% filter(VISIBLE == 1) %>% filter(EVID == 0)
+#'
+#' # identify keys
+#' attr(x, 'groups') <- c('ID','TIME')
+#'
+#' # fold x
+#' x %<>% fold
+#'
+#' # combine with metadata
+#' x %<>% bind_rows(spec)
+#' x %<>% sort
+#'
+#' # Now we have a plotting dataset with embedded metadata.
+#' # We call metaplot with various numbers of continuous and
+#' # categorical arguments, given as unquoted values from the
+#'#  VARIABLE column.
+#'
+#' x %>% metaplot(AGE) # one continuous
+#' x %>% metaplot(PRED,DV) # two continuous
+#' x %>% metaplot(AGE,SEX) # continuous and categorical
+#' x %>% metaplot(SEX,AGE) # categorical and continuous
+#' x %>% metaplot(PRED,DV,SEX) # two continous and categorical
+#' x %>% metaplot(ETA1,ETA2,ETA3) # three or more continuous
+#' x %>% metaplot(CWRES,TAD) # metadata
+#' x %>% filter(META %>% is.na) %>% metaplot(CWRES,TAD) # no metadata
+#' x %>% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # log-log
+#' x %>% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
+#' x %>% metaplot(ETA1, SEX, ref = 0)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
+metaplot.folded <- function(x,...){
+  args <- dots_capture(...)
+  args <- lapply(args,f_rhs)
+  var <- args[names(args) == '']
+  other <- args[names(args) != '']
+  var <- sapply(var, as.character)
+  do.call(
+    metaplot_,
+    c(
+      list(
+        x = x,
+        var = var
+      ),
+      other
+    )
+  )
+}
+
+#' Metaplot, Standard Evaluation
+#'
+#' Creates a metaplot using standard evaluation.
+#' @param x object
+#' @param var character: quoted names of variables to plot
+#' @param ... other arguments
+#' @export
 #' @keywords internal
+#' @family generic functions
+metaplot_ <- function(x, ...)UseMethod('metaplot_')
+
+#' Create Metaplot from Folded, Standard Evaluation
+#'
+#' Creates metaplot from folded using standard evaluation.
+#' @param var character: names of items to plot
+#' @import lazyeval
+#' @importFrom graphics boxplot
+#' @importFrom stats as.formula cor density loess.smooth median
+#' @importFrom dplyr filter
+#' @import fold
+#' @export
+#' @describeIn metaplot folded method for metaplot using standard evaluation
+metaplot_.folded = function(x, var, ...){
+  x %<>% data.frame(stringsAsFactors = FALSE) # faster than grouped_df
+  class(x) <- c('folded','data.frame')
+  cont <- sapply(var,function(nm)continuous(x,nm))
+  len <- length(var)
+  args <- c(
+    list(x = x),
+    as.list(var),
+    list(...)
+  )
+  if(!any(cont))stop('metaplot requires at least one continuous variable')
+  if(len == 1) return(do.call(dens, args))
+  if(sum(cont) > 2) return(do.call(corsplom,args))
+  # now have at least two var but no more than two continuous
+  if(!cont[[1]] && !cont[[2]]) stop('metaplot requires at least one continuous variable')
+  if( cont[[1]] &&  cont[[2]]) return(do.call(scatter,args))
+  if(!cont[[1]] &&  cont[[2]]) return(do.call(boxplot,args))
+  if( cont[[1]] && !cont[[2]]) return(do.call(boxplot,args))
+
+}
+
+#' Density
+#'
+#' Creates a density metaplot.
+#' @param x object
+#' @param ... passed arguments
+#' @export
 #' @family generic functions
 dens <- function(x,...)UseMethod('dens')
 
 #' Plot Density for Data Frame
 #'
 #' Plot density for object of class 'data.frame'.
-#' @param x folded
 #' @param var item to plot
 #' @param ref optional numeric
-#' @param log logical; use log scale?
-#' @param ... passed arguments
+#' @param log whether to use log scale
 #' @family univariate plots
-#' @family standard evaluations
+#' @describeIn dens data.frame method
 #' @export
 dens.data.frame<- function(
   x,
@@ -46,24 +195,18 @@ dens.data.frame<- function(
 }#' Plot Density for Folded
 #'
 #' Plot density for object of class 'folded'.
-#' @param x folded
-#' @param var item to plot
-#' @param xref optional numeric
-#' @param log logical; use log scale?
-#' @param ... passed arguments
-#' @family univariate plots
-#' @family standard evaluations
+#' @describeIn dens folded method
 #' @export
 dens.folded <- function(
   x,
   var,
-  xref = NULL,
+  ref = NULL,
   log = FALSE,
   ...
 ){
   d <- unfold_(x,var=var)
   xlab = axislabel(x,var,log=log)
-  dens(d, var = var, xref = xref, log = log, xlab=xlab, ...)
+  dens(d, var = var, ref = ref, log = log, xlab=xlab, ...)
 }
 
 #' Scatterplot
@@ -74,17 +217,14 @@ dens.folded <- function(
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
-#' @keywords internal
 scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot for Data Frame
 #'
 #' Scatterplot for class 'data.frame'.
-#' @param x data.frame
 #' @param .y y axis item
 #' @param .x x axis item
 #' @param groups optional grouping item
-#' @param ... passed arguments
 #' @param ylog log transform y axis (guessed if missing)
 #' @param xlog log transform x axis (guessed if missing)
 #' @param yref reference line from y axis
@@ -100,7 +240,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @export
 #' @import lattice
 #' @family bivariate plots
-#' @family standard evaluations
+#' @describeIn scatter data.frame method
 scatter.data.frame <- function(
   x,
   .y,
@@ -198,27 +338,11 @@ scatter.data.frame <- function(
 #' Scatterplot for Folded
 #'
 #' Scatterplot for class 'folded'.
-#' @param x folded
-#' @param .y y axis item
-#' @param .x x axis item
-#' @param groups optional grouping item
-#' @param ... passed arguments
-#' @param ylog log transform y axis (guessed if missing)
-#' @param xlog log transform x axis (guessed if missing)
-#' @param yref reference line from y axis
-#' @param xref reference line from x axis
-#' @param ysmooth supply loess smooth of y on x
-#' @param xsmooth supply loess smmoth of x on y
-#' @param cols suggested columns for auto.key
-#' @param density plot point density instead of points
-#' @param iso use isometric axes with line of unity
-#' @param main print Pearson correlation coefficient as title
-#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @export
 #' @import encode
 #' @import lattice
 #' @family bivariate plots
-#' @family standard evaluations
+#' @describeIn scatter folded method
 scatter.folded <- function(
   x,
   .y,
@@ -270,6 +394,216 @@ scatter.folded <- function(
   )
 }
 
+#' Boxplots
+#'
+#' @name boxplot
+NULL
+
+#' Boxplot for Data Frame
+#'
+#' Boxplot for data.frame.
+#' @param x data.frame
+#' @param .y y axis item
+#' @param .x x axis item
+#' @param log whether to log transform continuous variable
+#' @param horizontal whether box/whisker axis should be horizontal
+#' @param main whether to include title indicating x and y items
+#' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
+#' @param ref optional reference line on continuous axis
+#' @param guide optional encoding for categories see \code{encode::encode}
+#' @param ... passed arguments
+#' @export
+#' @family bivariate functions
+#' @rdname boxplot
+boxplot.data.frame <- function(
+  x,
+  .y,
+  .x,
+  log,
+  horizontal = TRUE,
+  main = TRUE,
+  crit = 1.3,
+  ref = NULL,
+  guide = NA_character_,
+  ...
+){
+  stopifnot(
+    length(.x) == 1,
+    length(.y) == 1
+  )
+  y <- x # %>% unfold(c(.y,.x))
+  stopifnot(all(c(.x,.y) %in% names(y)))
+  names(y)[names(y) ==.y] <- 'y_'
+  names(y)[names(y) ==.x] <- 'x_'
+  formula <- 'y_ ~ x_'
+  formula <- as.formula(formula)
+  con <- if(horizontal) 'x_' else 'y_'
+  cat <- if(horizontal) 'y_' else 'x_'
+  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
+  if(any(y[[con]] <= 0,na.rm = T)) log <- FALSE
+  #ylab <- axislabel(x,.y, log = FALSE )
+  #xlab <- axislabel(x,.x, log = log )
+  if(encoded(guide)){
+    y[[cat]] <- decode(y[[cat]],encoding = guide)
+    y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
+  }
+  # if(is.null(ref)) if(ymeta$TYPEC %in% c('IIV','RESIDUAL') ) ref <- 0
+  scales <- list(
+    tck = c(1,0),
+    x = list(log = log,equispaced.log = FALSE)
+  )
+  mn <- paste(sep = ' ~ ',.y,.x)
+  bwplot(
+    formula,
+    data = y,
+    aspect = 1,
+    horizontal = horizontal,
+    main = if(main) list(
+      mn,
+      cex = 1,
+      fontface = 1
+    ) else NULL,
+    par.settings = standard.theme('pdf',color = FALSE),
+    scales = scales,
+    panel = function(...){
+      panel.bwplot(...)
+      if(length(ref)){
+        if(horizontal) {
+          panel.abline(v = ref)
+        }else{
+          panel.abline(h = ref)
+        }
+      }
+    },
+    ...
+  )
+}
+
+#' Boxplot for Folded
+#'
+#' Boxplot for folded.
+#' @import encode
+#' @export
+#' @family bivariate plots
+#' @rdname boxplot
+boxplot.folded <- function(
+  x,
+  .y,
+  .x,
+  log,
+  horizontal,
+  main = TRUE,
+  crit = 1.3,
+  ref = NULL,
+  ...
+){
+  stopifnot(
+    length(.x) == 1,
+    length(.y) == 1
+  )
+  y <- x %>% unfold_(var=c(.y,.x))
+  stopifnot(all(c(.x,.y) %in% names(y)))
+  if(missing(horizontal)) horizontal <- continuous(x, .x)
+  con <- if(horizontal) .x else .y
+  cat <- if(horizontal) .y else .x
+  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
+  ylab <- axislabel(x,.y, log = if(horizontal) FALSE else log )
+  xlab <- axislabel(x,.x, log = if(horizontal) log else FALSE )
+  guide <- guide(x,cat)
+  boxplot(
+    y,
+    .y = .y,
+    .x = .x,
+    log = log,
+    main = main,
+    crit = crit,
+    ref = ref,
+    ylab = ylab,
+    xlab = xlab,
+    guide = guide,
+    horizontal = horizontal,
+    ...
+  )
+}
+
+#' Correlated Splom
+#'
+#' Scatterplot matrix with correlations.
+#' @param x object
+#' @param ... passed arguments
+#' @export
+#' @family generic functions
+corsplom <- function(x,...)UseMethod('corsplom')
+
+#' Correlated Splom for Data.frame
+#'
+#' Creates a scatterplot matrix with correlations in lower panel, by default.
+#' @param upper.panel passed to splom
+#' @param lower.panel passed to splom
+#' @param pscales passed to splom
+#' @param xlab passed to splom
+#' @param varname.cex passed to splom
+#' @param diag.panel passed to splom
+#' @param split break diagonal names on white space
+#' @export
+#' @family multivariate plots
+#' @describeIn corsplom data.frame method
+corsplom.data.frame <- function(
+  x,
+  upper.panel = u.p,
+  lower.panel= l.p,
+  pscales= 0,
+  xlab = '',
+  varname.cex = 1,
+  diag.panel = my.diag.panel,
+  split = TRUE,
+  ...
+){
+  if(split) names(x) <- fracture(names(x))
+  splom(
+  x,
+  upper.panel = upper.panel,
+  lower.panel = lower.panel,
+  pscales = pscales,
+  xlab = xlab,
+  varname.cex = varname.cex,
+  diag.panel = diag.panel,
+  ...
+)
+}
+
+#' Correlated Splom for Folded
+#'
+#' Creates a scatterplot matrix with correlations for folded.
+#' Categoricals in \dots are currently ignored. dots (\dots) are
+#' names of items in VARIABLE to be plotted, or named arguments
+#' to be passed to data.frame method.
+#' @import lattice
+#' @export
+#' @family multivariate plots
+#' @describeIn corsplom folded method
+corsplom.folded <- function(x, ...){
+  var <- dots_capture(...)
+  var <- lapply(var, f_rhs)
+  item <- var[names(var) == '']
+  item <- sapply(item,as.character)
+  named <- var[names(var) != '']
+  x %<>% filter(VARIABLE %in% item)
+  cont <- sapply(item,function(nm)continuous(x,nm))
+  item <- item[cont] # ignoring categoricals
+  meta <- x %>% filter(!is.na(META))
+  data <- x %>% filter(is.na(META))
+  data %<>% unfold_(var = item, ...)
+  data %<>% ungroup %>% select_(.dots = item) # ungroup should not be necessary
+  for(nm in names(data)){
+    y <- label(meta,nm)
+    if(!is.na(y))names(data)[names(data) == nm] <- y
+  }
+  this <- list(x=data)
+  out <- c(this,named)
+  do.call(corsplom,out)
+}
+
 #' Generic Axis Label
 #'
 #' Generic axis label.
@@ -311,189 +645,6 @@ axislabel.folded <- function(x, var, log = FALSE, ...){
   }
   if(log) res <- paste0(res,'\n(log)')
   res
-}
-
-#' Metaplot Generic
-#'
-#' Generic function for metaplot.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-#' @name metaplot-generic
-metaplot <- function(x,...)UseMethod('metaplot')
-
-#' Create Metaplot from Folded
-#'
-#' Creates a plot from folded, using metadata as available.
-#'
-#' Metaplot creates univariate, bivariate, or multivariate plots depending on the
-#'  number and type of items represented by \code{...}.
-#'
-#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
-#'
-#' Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
-#'
-#' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
-#'
-#' A third anonymous argument is unexpected if a preceding argument is categorical.
-#'
-#' A third, categorical argument following two continuous arguments is treated as a grouping variable.
-#'
-#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
-#'
-#' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
-
-#' @param x folded
-#' @param ... unquoted anonymous arguments are passed as character: var to metaplot_().
-#' @import lazyeval
-#' @family metaplots
-#' @family univariate plots
-#' @family bivariate plots
-#' @family multivariate plots
-#' @family nonstandard evaluations
-#' @name metaplot
-#' @export
-#' @examples
-#' # load some packages
-#' library(spec)
-#' library(csv)
-#' library(magrittr)
-#' library(tidyr)
-#' library(dplyr)
-#' library(fold)
-#'
-#' # find paths to example data and specification
-#' x <- system.file(package='metaplot','extdata','drug1001.csv')
-#' spec <- system.file(package='metaplot','extdata','drug1001.spec')
-#'
-#'# verify agreement at file level
-#' x %matches% spec
-#'
-#'# read and verify in memory
-#' x %<>% as.csv
-#' spec %<>% as.spec
-#' x %matches% spec
-#'
-#' # manually convert specifaction to folded format
-#' spec %<>% select(VARIABLE = column,LABEL = label,GUIDE = guide) %>%
-#' gather(META,VALUE,LABEL,GUIDE) %>% data.frame %>% as.folded
-#'
-#' # capture the most interesting parts of x
-#' x %<>% filter(VISIBLE == 1) %>% filter(EVID == 0)
-#'
-#' # identify keys
-#' attr(x, 'groups') <- c('ID','TIME')
-#'
-#' # fold x
-#' x %<>% fold
-#'
-#' # combine with metadata
-#' x %<>% bind_rows(spec)
-#' x %<>% sort
-#'
-#' # Now we have a plotting dataset with embedded metadata.
-#' # We call metaplot with various numbers of continuous and
-#' # categorical arguments, given as unquoted values from the
-#'#  VARIABLE column.
-#'
-#' x %>% metaplot(AGE) # one continuous
-#' x %>% metaplot(PRED,DV) # two continuous
-#' x %>% metaplot(AGE,SEX) # continuous and categorical
-#' x %>% metaplot(SEX,AGE) # categorical and continuous
-#' x %>% metaplot(PRED,DV,SEX) # two continous and categorical
-#' x %>% metaplot(ETA1,ETA2,ETA3) # three or more continuous
-#' x %>% metaplot(CWRES,TAD) # metadata
-#' x %>% filter(META %>% is.na) %>% metaplot(CWRES,TAD) # no metadata
-#' x %>% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # log-log
-#' x %>% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
-#' x %>% metaplot(ETA1, SEX, ref = 0)
-#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
-metaplot.folded <- function(x,...){
-  args <- dots_capture(...)
-  args <- lapply(args,f_rhs)
-  var <- args[names(args) == '']
-  other <- args[names(args) != '']
-  var <- sapply(var, as.character)
-  do.call(
-    metaplot_,
-    c(
-      list(
-        x = x,
-        var = var
-      ),
-      other
-    )
-  )
-}
-
-#' Metaplot Generic, Standard Evaluation
-#'
-#' Metaplot generic using standard evaluation.
-#' @param x object
-#' @param var character: quoted names of variables to plot
-#' @param ... other arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-metaplot_ <- function(x, ...)UseMethod('metaplot_')
-
-#' Create Metaplot from Folded, Standard Evaluation
-#'
-#' Creates metaplot from folded using standard evaluation.
-#'
-#' Try calling \code{\link{metaplot}} to create var from unquoted, anonymous arguments.
-#'
-#' What happens next depends on the number and type of items represented by var.
-#'
-#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
-#'
-#' Two arguments of type continuous, categorical or categorical, continuous are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, respectively).
-#'
-#' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
-#'
-#' A third anonymous argument is unexpected if a preceding argument is categorical.
-#'
-#' A third, categorical argument following two continuous arguments is treated as a grouping variable.
-#'
-#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
-#'
-#' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
-#'
-#' @param x folded
-#' @param var character: names of items to plot
-#' @param ... passed arguments
-#' @import lazyeval
-#' @importFrom graphics boxplot
-#' @importFrom stats as.formula cor density loess.smooth median
-#' @importFrom dplyr filter
-#' @import fold
-#' @export
-#' @family metaplots
-#' @family univariate plots
-#' @family bivariate plots
-#' @family multivariate plots
-#' @family standard evaluations
-metaplot_.folded = function(x, var, ...){
-  x %<>% data.frame(stringsAsFactors = FALSE) # faster than grouped_df
-  class(x) <- c('folded','data.frame')
-  cont <- sapply(var,function(nm)continuous(x,nm))
-  len <- length(var)
-  args <- c(
-    list(x = x),
-    as.list(var),
-    list(...)
-  )
-  if(!any(cont))stop('metaplot requires at least one continuous variable')
-  if(len == 1) return(do.call(dens, args))
-  if(sum(cont) > 2) return(do.call(corsplom_,args))
-  # now have at least two var but no more than two continuous
-  if(!cont[[1]] && !cont[[2]]) stop('metaplot requires at least one continuous variable')
-  if( cont[[1]] &&  cont[[2]]) return(do.call(scatter,args))
-  if(!cont[[1]] &&  cont[[2]]) return(do.call(boxplot,args))
-  if( cont[[1]] && !cont[[2]]) return(do.call(boxplot,args))
-
 }
 
 #' Check if Something is Continuous
@@ -583,142 +734,6 @@ label.folded <- function(x,var, ...){
   y
 }
 
-#' Boxplot for Data Frame
-#'
-#' Boxplot for data.frame.
-#' @param x data.frame
-#' @param .y y axis item
-#' @param .x x axis item
-#' @param log whether to log transform continuous variable
-#' @param horizontal whether box/whisker axis should be horizontal
-#' @param main whether to include title indicating x and y items
-#' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
-#' @param ref optional reference line on continuous axis
-#' @param guide optional encoding for categories see \code{encode::encode}
-#' @param ... passed arguments
-#' @export
-#' @family bivariate functions
-#' @family standard evaluations
-boxplot.data.frame <- function(
-  x,
-  .y,
-  .x,
-  log,
-  horizontal = TRUE,
-  main = TRUE,
-  crit = 1.3,
-  ref = NULL,
-  guide = NA_character_,
-  ...
-){
-  stopifnot(
-    length(.x) == 1,
-    length(.y) == 1
-  )
-  y <- x # %>% unfold(c(.y,.x))
-  stopifnot(all(c(.x,.y) %in% names(y)))
-  names(y)[names(y) ==.y] <- 'y_'
-  names(y)[names(y) ==.x] <- 'x_'
-  formula <- 'y_ ~ x_'
-  formula <- as.formula(formula)
-  con <- if(horizontal) 'x_' else 'y_'
-  cat <- if(horizontal) 'y_' else 'x_'
-  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
-  if(any(y[[con]] <= 0,na.rm = T)) log <- FALSE
-  #ylab <- axislabel(x,.y, log = FALSE )
-  #xlab <- axislabel(x,.x, log = log )
-  if(encoded(guide)){
-    y[[cat]] <- decode(y[[cat]],encoding = guide)
-    y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
-  }
-  # if(is.null(ref)) if(ymeta$TYPEC %in% c('IIV','RESIDUAL') ) ref <- 0
-  scales <- list(
-    tck = c(1,0),
-    x = list(log = log,equispaced.log = FALSE)
-  )
-  mn <- paste(sep = ' ~ ',.y,.x)
-  bwplot(
-    formula,
-    data = y,
-    aspect = 1,
-    horizontal = horizontal,
-    main = if(main) list(
-      mn,
-      cex = 1,
-      fontface = 1
-    ) else NULL,
-    par.settings = standard.theme('pdf',color = FALSE),
-    scales = scales,
-    panel = function(...){
-      panel.bwplot(...)
-      if(length(ref)){
-        if(horizontal) {
-          panel.abline(v = ref)
-        }else{
-          panel.abline(h = ref)
-        }
-      }
-    },
-    ...
-  )
-}
-
-#' Boxplot for Folded
-#'
-#' Boxplot for folded object.
-#' @param x folded
-#' @param .y y axis item
-#' @param .x x axis item
-#' @param log whether to log transform continuous variable
-#' @param horizontal if missing, will be set to TRUE if .x is continuous
-#' @param main whether to include title indicating x and y items.
-#' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
-#' @param ref optional reference line on continuous axis
-#' @param ... passed arguments
-#' @import encode
-#' @export
-#' @family bivariate functions
-#' @family standard evaluations
-boxplot.folded <- function(
-  x,
-  .y,
-  .x,
-  log,
-  horizontal,
-  main = TRUE,
-  crit = 1.3,
-  ref = NULL,
-  ...
-){
-  stopifnot(
-    length(.x) == 1,
-    length(.y) == 1
-  )
-  y <- x %>% unfold_(var=c(.y,.x))
-  stopifnot(all(c(.x,.y) %in% names(y)))
-  if(missing(horizontal)) horizontal <- continuous(x, .x)
-  con <- if(horizontal) .x else .y
-  cat <- if(horizontal) .y else .x
-  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
-  ylab <- axislabel(x,.y, log = if(horizontal) FALSE else log )
-  xlab <- axislabel(x,.x, log = if(horizontal) log else FALSE )
-  guide <- guide(x,cat)
-  boxplot(
-    y,
-    .y = .y,
-    .x = .x,
-    log = log,
-    main = main,
-    crit = crit,
-    ref = ref,
-    ylab = ylab,
-    xlab = xlab,
-    guide = guide,
-    horizontal = horizontal,
-    ...
-  )
-}
-
 #' Upper Panel Function
 #'
 #' Upper panel function for corsplom(). Plots data with loess smooth.
@@ -792,173 +807,6 @@ my.diag.panel <- function(x, denscale = 0.2,...){
   lsegments(y0 = hi,y1 = hi - len * denscale,x0 = 0,x1 = 0,col = 'darkgray',alpha = 0.5)
   diag.panel.splom(...)
 }
-
-#' Correlated Splom
-#'
-#' Generic function for scatterplot matrix with correlations.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-corsplom <- function(x,...)UseMethod('corsplom')
-
-#' Correlated Splom, Standard Evaluation
-#'
-#' Generic function for scatterplot matrix with correlations, standard evaluation.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-corsplom_ <- function(x,...)UseMethod('corsplom_')
-
-#' Correlated Splom for Data.frame, Standard Evaluation
-#'
-#' Creates a scatterplot matrix with correlations in lower panel, by default.
-#' @param x data.frame
-#' @param upper.panel passed to splom
-#' @param lower.panel passed to splom
-#' @param pscales passed to splom
-#' @param xlab passed to splom
-#' @param varname.cex passed to splom
-#' @param diag.panel passed to splom
-#' @param split break diagonal names on white space
-#' @param ... passed arguments
-#' @export
-#' @family multivariate plots
-#' @family standard evaluations
-corsplom.data.frame <- function(
-  x,
-  upper.panel = u.p,
-  lower.panel= l.p,
-  pscales= 0,
-  xlab = '',
-  varname.cex = 1,
-  diag.panel = my.diag.panel,
-  split = TRUE,
-  ...
-){
-  if(split) names(x) <- fracture(names(x))
-  splom(
-  x,
-  upper.panel = upper.panel,
-  lower.panel = lower.panel,
-  pscales = pscales,
-  xlab = xlab,
-  varname.cex = varname.cex,
-  diag.panel = diag.panel,
-  ...
-)
-}
-
-#' Correlated Splom for Folded, Standard Evaluation
-#'
-#' Creates a scatterplot matrix with correlations for folded.
-#' Categoricals in 'var' are currently ignored.
-#' @param x folded
-#' @param ... unnamed arguments indicating variables to plot, and named arguments passed to corsplom()
-#' @import lattice
-#' @export
-#' @family multivariate plots
-corsplom_.folded <- function(x, ...){
-  var <- dots_capture(...)
-  var <- lapply(var, f_rhs)
-  anonymous <- var[names(var) == '']
-  anonymous <- sapply(anonymous,as.character)
-  named <- var[names(var) != '']
-  x %<>% filter(VARIABLE %in% anonymous)
-  cont <- sapply(anonymous,function(nm)continuous(x,nm))
-  anonymous <- anonymous[cont]
-  meta <- x %>% filter(!is.na(META))
-  data <- x %>% filter(is.na(META))
-  data %<>% unfold_(var = anonymous, ...)
-  data %<>% ungroup %>% select_(.dots=anonymous)
-  for(nm in names(data)){
-    y <- label(meta,nm)
-    if(!is.na(y))names(data)[names(data) == nm] <- y
-  }
-  this <- list(x=data)
-  out <- c(this,named)
-  do.call(corsplom,out)
-}
-
-#' Correlated Splom for Folded, Nonstandard Evaluation
-
-#' Creates a scatterplot matrix with correlations for class 'folded'. Categoricals in \code{var} are currently ignored.
-#' @param x folded
-#' @param ... passed arguments
-#' @export
-#' @seealso \code{\link{corsplom_.folded}} \code{\link{corsplom.data.frame}}
-#' @import lattice
-corsplom.folded <- function(x, ...){
-  args <- dots_capture(...)
-  args <- lapply(args, f_rhs)
-  var <- args[names(args) == '']
-  other <- args[names(args) != '']
-  var <- sapply(var,as.character)
-  do.call(
-    corsplom_.folded,
-    c(
-      list(
-        x = x,
-        var = var
-      ),
-      list(...)
-    )
-  )
-}
-
-# indplot <- function(x,...)UseMethod('indplot')
-# indplot.meta <- function(x,  ..., by = 'USUBJID'){
-#   # currently cannot support second-level metadata
-#   terms <- list(...) %>% unlist
-#   .x <- rev(terms)[[1]]
-#   .y <- terms %>% setdiff(.x)
-#   key <- names(x) %>% setdiff(c('VARIABLE','META','VALUE'))
-#   x %<>% filter(!(VARIABLE %in% META)) # hack
-#   y <- x %>% unfold
-#   y %<>% gather_(value_col = .y[[1]],key_col = 'MOMENT',gather_cols = .y)
-#   y %<>% fold(group_by = c(key,'MOMENT'))
-#   y$by <- y[[by]]
-#   for(i in unique(y[[by]])){
-#     z <- y %>% filter((META %>% is.defined) | (by == i))
-#     z$by <- NULL
-#     z %>% plot(.y[[1]],.x,...,groups = 'MOMENT')
-#   }
-# }
-
-#' Make Individual Plots
-#'
-#' Makes individual plots
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-indiplot <- function(x,...)UseMethod('indiplot')
-
-#' Make Individual Plots from Numeric
-#'
-#' Makes individual plots from numeric
-#' @inheritParams indiplot
-#' @export
-indiplot.numeric <- function(x,...)indiplot(as.character(x),...)
-
-
-#' Make Individual Plots from Character
-#'
-#' Makes individual plots from character by coercing to 'folded' (i.e. calling fold() ).
-#' @inheritParams indiplot
-#' @export
-indiplot.character <- function(x, ...)indiplot(fold(x),...)
-
-#' Make Individual Plots from Folded
-#'
-#' Makes individual plots from folded
-#' @param x folded
-#' @param cols character: up to 4 columns, x first
-#' @param filepath path for pdf output (or NULL)
-#' @export
 
 is.defined <- function(x)!is.na(x)
 parens <- function (x, ...)paste0("(", x, ")")

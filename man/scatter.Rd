@@ -2,16 +2,81 @@
 % Please edit documentation in R/metaplot.R
 \name{scatter}
 \alias{scatter}
+\alias{scatter.data.frame}
+\alias{scatter.folded}
 \title{Scatterplot}
 \usage{
 scatter(x, ...)
+
+\method{scatter}{data.frame}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
+  xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
+  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
+  main = TRUE, group_codes = NULL, crit = 1.3)
+
+\method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
+  xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
+  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
+  main = TRUE, crit = 1.3)
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{passed arguments}
+
+\item{.y}{y axis item}
+
+\item{.x}{x axis item}
+
+\item{groups}{optional grouping item}
+
+\item{ylog}{log transform y axis (guessed if missing)}
+
+\item{xlog}{log transform x axis (guessed if missing)}
+
+\item{yref}{reference line from y axis}
+
+\item{xref}{reference line from x axis}
+
+\item{ysmooth}{supply loess smooth of y on x}
+
+\item{xsmooth}{supply loess smmoth of x on y}
+
+\item{cols}{suggested columns for auto.key}
+
+\item{density}{plot point density instead of points}
+
+\item{iso}{use isometric axes with line of unity}
+
+\item{main}{print Pearson correlation coefficient as title}
+
+\item{group_codes}{append these to group values for display purposes}
+
+\item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
 }
 \description{
 Scatterplot.
+
+Scatterplot for class 'data.frame'.
+
+Scatterplot for class 'folded'.
 }
-\keyword{internal}
+\section{Methods (by class)}{
+\itemize{
+\item \code{data.frame}: data.frame method
+
+\item \code{folded}: folded method
+}}
+
+\seealso{
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{continuous}}, \code{\link{corsplom}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot_}},
+  \code{\link{metaplot}}
+
+Other bivariate plots: \code{\link{boxplot}},
+  \code{\link{metaplot}}
+
+Other bivariate plots: \code{\link{boxplot}},
+  \code{\link{metaplot}}
+}
