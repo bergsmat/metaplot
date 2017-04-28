@@ -28,9 +28,9 @@ metaplot(x, ...)
 \description{
 Creates a metaplot.
 
-Creates a metaplot from grouped_df.  Folds x and calls the method for folded.
+Creates a metaplot from grouped_df.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 
-Creates a metaplot from data.frame.  Folds x and calls the method for folded.
+Creates a metaplot from data.frame.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 
 Creates a plot from folded, using metadata as available.
 

@@ -14,7 +14,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 
 #' Create Metaplot from Grouped_df
 #'
-#' Creates a metaplot from grouped_df.  Folds x and calls the method for folded.
+#' Creates a metaplot from grouped_df.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 #'
 #' @family metaplots
 #' @family univariate plots
@@ -23,13 +23,13 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' @describeIn metaplot grouped_df method
 #' @export
 metaplot.grouped_df <- function(x,...){
-  y <- fold(x,...)
+  y <- fold(x)
   metaplot(y,...)
 }
 
 #' Create Metaplot from Data.frame.
 #'
-#' Creates a metaplot from data.frame.  Folds x and calls the method for folded.
+#' Creates a metaplot from data.frame.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 #'
 #' @family metaplots
 #' @family univariate plots
@@ -38,7 +38,7 @@ metaplot.grouped_df <- function(x,...){
 #' @describeIn metaplot grouped_df method
 #' @export
 metaplot.data.frame <- function(x,...){
-  y <- fold(x,...)
+  y <- fold(x)
   metaplot(y,...)
 }
 
@@ -399,6 +399,7 @@ scatter.folded <- function(
   y <- x %>% unfold_(var = c(.y,.x,groups))
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
   gc <- if(length(groups)) guide(x,groups) else NULL
+  if(all(is.na(gc))) gc <- NULL
   ylab <- axislabel(x,.y,ylog)
   xlab <- axislabel(x,.x,xlog)
   scatter(
