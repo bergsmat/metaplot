@@ -1,7 +1,7 @@
 Package: metaplot
 Type: Package
 Title: Formalized Plots for Self-Describing Data
-Version: 0.1.2
+Version: 0.1.3
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Creates fully-annotated plots with minimum guidance.

@@ -12,6 +12,36 @@ globalVariables('VALUE')
 #' @family generic functions
 metaplot <- function(x,...)UseMethod('metaplot')
 
+#' Create Metaplot from Grouped_df
+#'
+#' Creates a metaplot from grouped_df.  Folds x and calls the method for folded.
+#'
+#' @family metaplots
+#' @family univariate plots
+#' @family bivariate plots
+#' @family multivariate plots
+#' @describeIn metaplot grouped_df method
+#' @export
+metaplot.grouped_df <- function(x,...){
+  y <- fold(x,...)
+  metaplot(y,...)
+}
+
+#' Create Metaplot from Data.frame.
+#'
+#' Creates a metaplot from data.frame.  Folds x and calls the method for folded.
+#'
+#' @family metaplots
+#' @family univariate plots
+#' @family bivariate plots
+#' @family multivariate plots
+#' @describeIn metaplot grouped_df method
+#' @export
+metaplot.data.frame <- function(x,...){
+  y <- fold(x,...)
+  metaplot(y,...)
+}
+
 #' Create Metaplot from Folded
 #'
 #' Creates a plot from folded, using metadata as available.

@@ -2,11 +2,17 @@
 % Please edit documentation in R/metaplot.R
 \name{metaplot}
 \alias{metaplot}
+\alias{metaplot.grouped_df}
+\alias{metaplot.data.frame}
 \alias{metaplot.folded}
 \alias{metaplot_.folded}
 \title{Metaplot}
 \usage{
 metaplot(x, ...)
+
+\method{metaplot}{grouped_df}(x, ...)
+
+\method{metaplot}{data.frame}(x, ...)
 
 \method{metaplot}{folded}(x, ...)
 
@@ -21,6 +27,10 @@ metaplot(x, ...)
 }
 \description{
 Creates a metaplot.
+
+Creates a metaplot from grouped_df.  Folds x and calls the method for folded.
+
+Creates a metaplot from data.frame.  Folds x and calls the method for folded.
 
 Creates a plot from folded, using metadata as available.
 
@@ -46,6 +56,10 @@ Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 }
 \section{Methods (by class)}{
 \itemize{
+\item \code{grouped_df}: grouped_df method
+
+\item \code{data.frame}: grouped_df method
+
 \item \code{folded}: folded method
 
 \item \code{folded}: folded method for metaplot using standard evaluation
@@ -112,6 +126,20 @@ Other generic functions: \code{\link{axislabel}},
   \code{\link{dens}}, \code{\link{guide}},
   \code{\link{label}}, \code{\link{metaplot_}},
   \code{\link{scatter}}
+
+Other univariate plots: \code{\link{dens}}
+
+Other bivariate plots: \code{\link{boxplot}},
+  \code{\link{scatter}}
+
+Other multivariate plots: \code{\link{corsplom}}
+
+Other univariate plots: \code{\link{dens}}
+
+Other bivariate plots: \code{\link{boxplot}},
+  \code{\link{scatter}}
+
+Other multivariate plots: \code{\link{corsplom}}
 
 Other univariate plots: \code{\link{dens}}
 
