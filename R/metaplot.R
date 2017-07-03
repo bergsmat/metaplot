@@ -399,7 +399,7 @@ scatter.folded <- function(
   y <- x %>% unfold_(var = c(.y,.x,groups))
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
   gc <- if(length(groups)) guide(x,groups) else NULL
-  if(all(is.na(gc))) gc <- NULL
+  if(!is.null(gc))if(all(is.na(gc))) gc <- NULL
   ylab <- axislabel(x,.y,ylog)
   xlab <- axislabel(x,.x,xlog)
   scatter(
