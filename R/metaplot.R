@@ -35,7 +35,7 @@ metaplot.grouped_df <- function(x,...){
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots
-#' @describeIn metaplot grouped_df method
+#' @describeIn metaplot data.frame method
 #' @export
 metaplot.data.frame <- function(x,...){
   y <- fold(x)
@@ -69,6 +69,11 @@ metaplot.data.frame <- function(x,...){
 #' @family bivariate plots
 #' @family multivariate plots
 #' @describeIn metaplot folded method
+#' @import lazyeval
+#' @importFrom graphics boxplot
+#' @importFrom stats as.formula cor density loess.smooth median
+#' @importFrom dplyr filter
+#' @import fold
 #' @export
 #' @examples
 #' # load some packages
@@ -125,54 +130,33 @@ metaplot.data.frame <- function(x,...){
 #' x %>% metaplot(ETA1, SEX, ref = 0)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
 metaplot.folded <- function(x,...){
-  args <- dots_capture(...)
+  args <- quos(...)
   args <- lapply(args,f_rhs)
   var <- args[names(args) == '']
   other <- args[names(args) != '']
   var <- sapply(var, as.character)
-  do.call(
-    metaplot_,
-    c(
-      list(
-        x = x,
-        var = var
-      ),
-      other
-    )
-  )
+{#   do.call(
+#     metaplot_folded,
+#     c(
+#       list(
+#         x = x,
+#         var = var
+#       ),
+#       other
+#     )
+#   )
+# }
+
+# metaplot_folded = function(x, var, ...){
 }
-
-#' Metaplot, Standard Evaluation
-#'
-#' Creates a metaplot using standard evaluation.
-#' @param x object
-#' @param var character: quoted names of variables to plot
-#' @param ... other arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-metaplot_ <- function(x, ...)UseMethod('metaplot_')
-
-#' Create Metaplot from Folded, Standard Evaluation
-#'
-#' Creates metaplot from folded using standard evaluation.
-#' @param var character: names of items to plot
-#' @import lazyeval
-#' @importFrom graphics boxplot
-#' @importFrom stats as.formula cor density loess.smooth median
-#' @importFrom dplyr filter
-#' @import fold
-#' @export
-#' @describeIn metaplot folded method for metaplot using standard evaluation
-metaplot_.folded = function(x, var, ...){
-  x %<>% data.frame(stringsAsFactors = FALSE) # faster than grouped_df
+  x <- data.frame(x, stringsAsFactors = FALSE) # faster than grouped_df
   class(x) <- c('folded','data.frame')
   cont <- sapply(var,function(nm)continuous(x,nm))
   len <- length(var)
   args <- c(
     list(x = x),
-    as.list(var),
-    list(...)
+    var,
+    other
   )
   if(!any(cont))stop('metaplot requires at least one continuous variable')
   if(len == 1) return(do.call(dens, args))
@@ -182,7 +166,6 @@ metaplot_.folded = function(x, var, ...){
   if( cont[[1]] &&  cont[[2]]) return(do.call(scatter,args))
   if(!cont[[1]] &&  cont[[2]]) return(do.call(boxplot,args))
   if( cont[[1]] && !cont[[2]]) return(do.call(boxplot,args))
-
 }
 
 #' Density
@@ -226,6 +209,7 @@ dens.data.frame<- function(
 #'
 #' Plot density for object of class 'folded'.
 #' @describeIn dens folded method
+#' @importFrom rlang UQS
 #' @export
 dens.folded <- function(
   x,
@@ -234,7 +218,7 @@ dens.folded <- function(
   log = FALSE,
   ...
 ){
-  d <- unfold_(x,var=var)
+  d <- unfold(x,UQS(var))
   xlab = axislabel(x,var,log=log)
   dens(d, var = var, ref = ref, log = log, xlab=xlab, ...)
 }
@@ -264,7 +248,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param cols suggested columns for auto.key
 #' @param density plot point density instead of points
 #' @param iso use isometric axes with line of unity
-#' @param main print Pearson correlation coefficient as title
+#' @param main default title
+#' @param corr print Pearson correlation coefficient after title
 #' @param group_codes append these to group values for display purposes
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @export
@@ -286,14 +271,16 @@ scatter.data.frame <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = TRUE,
+  main = NULL,
+  corr = FALSE,
   group_codes = NULL,
   crit = 1.3
 ){
   stopifnot(
     length(.x) == 1,
     length(.y) == 1,
-    length(groups) <= 1
+    length(groups) <= 1,
+    is.logical(corr)
   )
   y <- x # %>% unfold(c(.y,.x,groups))
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
@@ -333,6 +320,8 @@ scatter.data.frame <- function(
   mn <- paste(sep = ' ~ ',.y,.x)
   if(length(groups)) mn <- paste(mn,'by',groups)
   mn <- paste(mn,cor)
+  if (!is.null(main)) mn <- paste(main, mn, sep = '\n')
+  if(corr) main <- mn # which incorporates passed main if any
   metapanel <- function(x, y,...){
       if( length(groups))panel.superpose(x = x, y = y, ...)
       if(!length(groups)){
@@ -354,7 +343,7 @@ scatter.data.frame <- function(
     auto.key = auto.key,
     aspect = 1,
     scales = scales,
-    main = if(main) list(
+    main = if(!is.null(main)) list(
       mn,
       cex = 1,
       fontface = 1
@@ -388,7 +377,6 @@ scatter.folded <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = TRUE,
   crit = 1.3
 ){
   stopifnot(
@@ -396,7 +384,7 @@ scatter.folded <- function(
     length(.y) == 1,
     length(groups) <= 1
   )
-  y <- x %>% unfold_(var = c(.y,.x,groups))
+  y <- x %>% unfold(UQS(c(.y,.x,groups)))
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
   gc <- if(length(groups)) guide(x,groups) else NULL
   if(!is.null(gc))if(all(is.na(gc))) gc <- NULL
@@ -416,7 +404,6 @@ scatter.folded <- function(
     cols = cols,
     density = density,
     iso = iso,
-    main = main,
     crit = crit,
     group_codes = gc,
     ylab = ylab,
@@ -532,7 +519,7 @@ boxplot.folded <- function(
     length(.x) == 1,
     length(.y) == 1
   )
-  y <- x %>% unfold_(var=c(.y,.x))
+  y <- x %>% unfold(UQS(c(.y,.x)))
   stopifnot(all(c(.x,.y) %in% names(y)))
   if(missing(horizontal)) horizontal <- continuous(x, .x)
   con <- if(horizontal) .x else .y
@@ -614,7 +601,7 @@ corsplom.data.frame <- function(
 #' @family multivariate plots
 #' @describeIn corsplom folded method
 corsplom.folded <- function(x, ...){
-  var <- dots_capture(...)
+  var <- quos(...)
   var <- lapply(var, f_rhs)
   item <- var[names(var) == '']
   item <- sapply(item,as.character)
@@ -624,8 +611,8 @@ corsplom.folded <- function(x, ...){
   item <- item[cont] # ignoring categoricals
   meta <- x %>% filter(!is.na(META))
   data <- x %>% filter(is.na(META))
-  data %<>% unfold_(var = item, ...)
-  data %<>% ungroup %>% select_(.dots = item) # ungroup should not be necessary
+  data %<>% unfold(UQS(item))
+  data %<>% ungroup %>% select(UQS(item)) # ungroup should not be necessary
   for(nm in names(data)){
     y <- label(meta,nm)
     if(!is.na(y))names(data)[names(data) == nm] <- y

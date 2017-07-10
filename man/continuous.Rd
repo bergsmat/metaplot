@@ -18,7 +18,6 @@ Checks if something is continuous.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{corsplom}}, \code{\link{dens}},
   \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot_}}, \code{\link{metaplot}},
-  \code{\link{scatter}}
+  \code{\link{metaplot}}, \code{\link{scatter}}
 }
 \keyword{internal}

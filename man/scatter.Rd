@@ -11,12 +11,11 @@ scatter(x, ...)
 \method{scatter}{data.frame}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = TRUE, group_codes = NULL, crit = 1.3)
+  main = NULL, corr = FALSE, group_codes = NULL, crit = 1.3)
 
 \method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
-  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = TRUE, crit = 1.3)
+  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE, crit = 1.3)
 }
 \arguments{
 \item{x}{object}
@@ -47,7 +46,9 @@ scatter(x, ...)
 
 \item{iso}{use isometric axes with line of unity}
 
-\item{main}{print Pearson correlation coefficient as title}
+\item{main}{default title}
+
+\item{corr}{print Pearson correlation coefficient after title}
 
 \item{group_codes}{append these to group values for display purposes}
 
@@ -71,8 +72,7 @@ Scatterplot for class 'folded'.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{dens}}, \code{\link{guide}},
-  \code{\link{label}}, \code{\link{metaplot_}},
-  \code{\link{metaplot}}
+  \code{\link{label}}, \code{\link{metaplot}}
 
 Other bivariate plots: \code{\link{boxplot}},
   \code{\link{metaplot}}
