@@ -135,20 +135,7 @@ metaplot.folded <- function(x,...){
   var <- args[names(args) == '']
   other <- args[names(args) != '']
   var <- sapply(var, as.character)
-{#   do.call(
-#     metaplot_folded,
-#     c(
-#       list(
-#         x = x,
-#         var = var
-#       ),
-#       other
-#     )
-#   )
-# }
-
-# metaplot_folded = function(x, var, ...){
-}
+  x <- x[!is.na(x$VARIABLE),] # table-level metadata is unused
   x <- data.frame(x, stringsAsFactors = FALSE) # faster than grouped_df
   class(x) <- c('folded','data.frame')
   cont <- sapply(var,function(nm)continuous(x,nm))
@@ -688,8 +675,12 @@ continuous <- function(x,...)UseMethod('continuous')
 continuous.folded <- function(x,var, ...){
   stopifnot(length(var) == 1)
   is.number <- function(x)sum(is.defined(x)) == sum(is.defined(as.numeric(x)))
-  val <- x %>% dplyr::filter(META %>% is.na) %>% dplyr::filter(VARIABLE == var) %$% VALUE
-  if(length(val) ==0)stop('no values found for ',var)
+  val <- if(var %in% names(x)){
+    x[[var]]
+  } else{
+    x %>% dplyr::filter(META %>% is.na) %>% dplyr::filter(VARIABLE == var) %$% VALUE
+  }
+  if(length(val) == 0)stop('no values found for ',var)
   guide_var <- guide(x,var)
   enc <- if(length(guide_var)) encoded(guide_var) else FALSE
   cont <- val %>% is.number && !enc
