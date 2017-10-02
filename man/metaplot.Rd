@@ -37,13 +37,13 @@ A single argument representing a continuous variable (numeric, not having encode
 
 Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
 
-Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
+Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.
 
 A third anonymous argument is unexpected if a preceding argument is categorical.
 
 A third, categorical argument following two continuous arguments is treated as a grouping variable.
 
-If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
+If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  If one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).
 
 Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 }
@@ -57,6 +57,7 @@ Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 }}
 
 \examples{
+\donttest{
 # load some packages
 library(spec)
 library(csv)
@@ -77,6 +78,8 @@ x \%<>\% as.csv
 spec \%<>\% as.spec
 x \%matches\% spec
 
+#
+
 # convert specifaction to folded format
 spec \%<>\%  as.folded
 
@@ -92,12 +95,18 @@ x \%<>\% fold
 # combine with metadata
 x \%<>\% bind_rows(spec)
 x \%<>\% sort
+# x \%>\% as.csv('drug1001.fld')
 
 # Now we have a plotting dataset with embedded metadata.
 # We call metaplot with various numbers of continuous and
 # categorical arguments, given as unquoted values from the
-#  VARIABLE column.
+# VARIABLE column.
+}
 
+# You can also start the examples right here.
+library(magrittr)
+library(fold)
+x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
 x \%>\% metaplot(AGE) # one continuous
 x \%>\% metaplot(PRED,DV) # two continuous
 x \%>\% metaplot(AGE,SEX) # continuous and categorical
@@ -110,6 +119,18 @@ x \%>\% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # 
 x \%>\% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
 x \%>\% metaplot(ETA1, SEX, ref = 0)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
+
+# Below, x is TAD,
+# plot is conditioned by ID
+# ID is categorical (encoded)
+
+x \%>\% metaplot(
+  DV, PRED, IPRE, TAD, ID,
+  color = 'black',
+  points = c(TRUE, FALSE, FALSE),
+  line   = c('none','dashed','solid')
+)
+
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},

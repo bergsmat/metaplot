@@ -2,6 +2,8 @@ globalVariables('groups_')
 globalVariables('META')
 globalVariables('VARIABLE')
 globalVariables('VALUE')
+globalVariables('collapse')
+globalVariables('panel_')
 
 #' Metaplot
 #'
@@ -53,13 +55,13 @@ metaplot.data.frame <- function(x,...){
 #'
 #' Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
 #'
-#' Two arguments representing continuous variables give a scatterplot by means of \code{\link{scatter.folded}}.
+#' Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.
 #'
 #' A third anonymous argument is unexpected if a preceding argument is categorical.
 #'
 #' A third, categorical argument following two continuous arguments is treated as a grouping variable.
 #'
-#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  Additional categoricals will be ignored.
+#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  If one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).
 #'
 #' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 
@@ -76,6 +78,7 @@ metaplot.data.frame <- function(x,...){
 #' @import fold
 #' @export
 #' @examples
+#' \donttest{
 #' # load some packages
 #' library(spec)
 #' library(csv)
@@ -96,6 +99,8 @@ metaplot.data.frame <- function(x,...){
 #' spec %<>% as.spec
 #' x %matches% spec
 #'
+#' #
+#'
 #' # convert specifaction to folded format
 #' spec %<>%  as.folded
 #'
@@ -111,12 +116,18 @@ metaplot.data.frame <- function(x,...){
 #' # combine with metadata
 #' x %<>% bind_rows(spec)
 #' x %<>% sort
+#' # x %>% as.csv('drug1001.fld')
 #'
 #' # Now we have a plotting dataset with embedded metadata.
 #' # We call metaplot with various numbers of continuous and
 #' # categorical arguments, given as unquoted values from the
-#'#  VARIABLE column.
+#' # VARIABLE column.
+#' }
 #'
+#' # You can also start the examples right here.
+#' library(magrittr)
+#' library(fold)
+#' x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
 #' x %>% metaplot(AGE) # one continuous
 #' x %>% metaplot(PRED,DV) # two continuous
 #' x %>% metaplot(AGE,SEX) # continuous and categorical
@@ -129,7 +140,19 @@ metaplot.data.frame <- function(x,...){
 #' x %>% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
 #' x %>% metaplot(ETA1, SEX, ref = 0)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
-metaplot.folded <- function(x,...){
+#'
+#' # Below, x is TAD,
+#' # plot is conditioned by ID
+#' # ID is categorical (encoded)
+#'
+#' x %>% metaplot(
+#'   DV, PRED, IPRE, TAD, ID,
+#'   color = 'black',
+#'   points = c(TRUE, FALSE, FALSE),
+#'   line   = c('none','dashed','solid')
+#' )
+#'
+metaplot.folded <- function(x, ...){
   args <- quos(...)
   args <- lapply(args,f_rhs)
   var <- args[names(args) == '']
@@ -139,6 +162,7 @@ metaplot.folded <- function(x,...){
   x <- data.frame(x, stringsAsFactors = FALSE) # faster than grouped_df
   class(x) <- c('folded','data.frame')
   cont <- sapply(var,function(nm)continuous(x,nm))
+  cat <-  !cont
   len <- length(var)
   args <- c(
     list(x = x),
@@ -147,7 +171,8 @@ metaplot.folded <- function(x,...){
   )
   if(!any(cont))stop('metaplot requires at least one continuous variable')
   if(len == 1) return(do.call(dens, args))
-  if(sum(cont) > 2) return(do.call(corsplom,args))
+  if(sum(cont) > 2 & sum(cat) == 0) return(do.call(corsplom,args))
+  if(sum(cont) > 2) return(do.call('overlay',args)) # quoted to disambiguate function and argument
   # now have at least two var but no more than two continuous
   if(!cont[[1]] && !cont[[2]]) stop('metaplot requires at least one continuous variable')
   if( cont[[1]] &&  cont[[2]]) return(do.call(scatter,args))
@@ -457,6 +482,10 @@ boxplot.data.frame <- function(
     tck = c(1,0),
     x = list(log = log,equispaced.log = FALSE)
   )
+  if(!horizontal)scales <- list(
+    tck = c(1,0),
+    y = list(log = log,equispaced.log = FALSE)
+  )
   mn <- paste(sep = ' ~ ',.y,.x)
   bwplot(
     formula,
@@ -611,12 +640,13 @@ corsplom.folded <- function(x, ...){
 
 #' Generic Axis Label
 #'
-#' Generic axis label.
+#' Generic axis label, with method for 'folded'.
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
 #' @family generic functions
+#' @seealso \code{\link{axislabel.folded}}
 axislabel <- function(x,...)UseMethod('axislabel')
 
 #' Axis Label for Folded
