@@ -39,4 +39,7 @@ Creates an overlay plot for class 'data.frame'. Continuous items are plotted vs 
 }
 \seealso{
 \code{\link{overlay.folded}}
+
+Other multivariate plots: \code{\link{corsplom}},
+  \code{\link{metaplot}}, \code{\link{overlay.folded}}
 }

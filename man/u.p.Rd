@@ -22,6 +22,6 @@ Upper panel function for corsplom(). Plots data with loess smooth.
 }
 \seealso{
 Other panel functions: \code{\link{l.p}},
-  \code{\link{my.diag.panel}}
+  \code{\link{metapanel}}, \code{\link{my.diag.panel}}
 }
 \keyword{internal}

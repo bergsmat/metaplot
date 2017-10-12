@@ -1,11 +1,11 @@
 #' Arrange Multiple Plots in a Grid
 #'
-#' Arranges mutiple plots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns. By default, objects must inherit class 'trellis' or 'ggplot'.
+#' Arranges mutiple trellis plots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
+#'
 #' @export
 #' @param ... trellis objects
 #' @param nrow number of rows of plots
 #' @param ncol number of columns of plots
-#' @param class if not NULL, require all \dots to inherit from one of these classes (character)
 #' @examples
 #' library(lattice)
 #' a <- xyplot(
@@ -25,12 +25,12 @@
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 4)
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 2)
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 4, nrow = 3)
-multiplot <- function(..., nrow = NULL, ncol = NULL, class = c('trellis','ggplot')){
+multiplot <- function(..., nrow = NULL, ncol = NULL){
   x <- list(...)
   len <- length(x)
   nms <- seq_along(x)
   class <- unique(sapply(x,class))
-  if(!is.null(class))stopifnot(all(sapply(x,inherits,class)))
+  if(!is.null(class))stopifnot(all(sapply(x,inherits,'trellis')))
   root <- sqrt(len)
   if(!is.null(nrow)){
     if(is.null(ncol)) {
@@ -50,9 +50,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL, class = c('trellis','ggplot
   )
   stopifnot(nrow(y) >= len)
   y <- y[nms,]
-  printOne <- function(z,x,y,nx,ny,more){
-    print(z,split=c(x,y,nx,ny),more = more)
-  }
+  printOne <- function(z,x,y,nx,ny,more)print(z,split=c(x,y,nx,ny),more = more)
   for(i in nms)printOne(
     z = x[[i]],
     x = y[i,'run'],

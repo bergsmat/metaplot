@@ -11,11 +11,15 @@ scatter(x, ...)
 \method{scatter}{data.frame}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = NULL, corr = FALSE, group_codes = NULL, crit = 1.3)
+  main = NULL, corr = FALSE, group_codes = NULL, crit = 1.3,
+  na.rm = TRUE, fit = conf, conf = FALSE, loc = 0, msg = "metastats",
+  panel = metapanel)
 
 \method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
-  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE, crit = 1.3)
+  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
+  main = NULL, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
+  conf = FALSE, loc = 0, msg = "metastats", panel = metapanel)
 }
 \arguments{
 \item{x}{object}
@@ -53,11 +57,23 @@ scatter(x, ...)
 \item{group_codes}{append these to group values for display purposes}
 
 \item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
+
+\item{na.rm}{whether to remove data points with one or more missing coordinates}
+
+\item{fit}{draw a linear fit of y ~ x}
+
+\item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval}
+
+\item{loc}{where to print statistics on a panel}
+
+\item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
+
+\item{panel}{name or definition of panel function}
 }
 \description{
 Scatterplot.
 
-Scatterplot for class 'data.frame'.
+Scatterplot for class 'data.frame'. Extra arguments passed to \code{\link{region}}.
 
 Scatterplot for class 'folded'.
 }
@@ -69,10 +85,13 @@ Scatterplot for class 'folded'.
 }}
 
 \seealso{
+\code{\link{metapanel}}
+
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{dens}}, \code{\link{guide}},
-  \code{\link{label}}, \code{\link{metaplot}}
+  \code{\link{label}}, \code{\link{metaplot}},
+  \code{\link{overlay}}
 
 Other bivariate plots: \code{\link{boxplot}},
   \code{\link{metaplot}}

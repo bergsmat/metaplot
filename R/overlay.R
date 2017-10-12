@@ -4,6 +4,7 @@
 #' @export
 #' @param x object
 #' @param ... passed arguments
+#' @family generic functions
 #' @seealso \code{\link{overlay.folded}}
 #' @seealso \code{\link{overlay.data.frame}}
 overlay <- function(x,...)UseMethod('overlay')
@@ -25,6 +26,7 @@ overlay <- function(x,...)UseMethod('overlay')
 #' @param xlog whether to log-transform x axis data
 #' @import ggplot2
 #' @return a list of ggplot, possibly length one
+#' @family multivariate plots
 #' @seealso \code{\link{overlay.data.frame}}
 overlay.folded <- function(
   x,
@@ -55,11 +57,20 @@ overlay.folded <- function(
     ylab <- paste(ylab, collapse = '\n')
   }
   if(is.null(xlab)) xlab <- axislabel(x,var = abscissa)
-  data <- x %>% filter(is.na(META))
+  data <- x #%>% filter(is.na(META))
   data %<>% unfold(UQS(item))
   data %<>% ungroup %>% select(item) # ungroup should not be necessary
-  for(i in item)if(!continuous(x,i))data[[i]] <- factor(data[[i]])
-
+  for(i in item)if(!continuous(x,i)){
+    g <- guide(x,i)
+    if(encoded(g)){
+      codes <- codes(g)
+      decodes <- decodes(g)
+      if(all(is.na(decodes))) g <- encode(codes,codes)
+      data[[i]] <- decode(data[[i]], encoding = g)
+    } else{
+      data[[i]] <- factor(data[[i]], levels = unique(data[[i]]))
+    }
+  }
   this <- list(x=data)
   addl <- list(
     ncol = ncol,
@@ -92,6 +103,7 @@ overlay.folded <- function(
 #' @param xlog whether to log-transform x axis data
 #' @param ... currently passed to \code{\link[ggplot2]{facet_wrap}} or \code{\link[ggplot2]{facet_grid}}
 #' @return a ggplot, or list of ggplot as required to support panel_by
+#' @family multivariate plots
 #' @seealso \code{\link{overlay.folded}}
 overlay.data.frame <- function(
   x,
@@ -119,12 +131,13 @@ overlay.data.frame <- function(
   if(ylog) for(o in ordinate) x[o] <- log(x[o])
   x$panel_ <- ''
   if(sum(cat) == 1) x$panel_ <- x[,cat]
-  if(sum(cat) > 1)  x$panel_ <- do.call(paste,c(x[cat & cumsum(cat) <= 2],list(sep = '@')))
+  #if(sum(cat) > 1)  x$panel_ <- do.call(paste,c(x[cat & cumsum(cat) <= 2],list(sep = '@')))
   panel <- unique(x$panel_)
   dex <- seq_along(panel)
   count = nrow * ncol # for facet_wrap
+  # everybody in one plot for 0-way or 2-way facetting
+  if(sum(cat) != 1) count <- length(panel)
   num_plots <- ceiling(length(panel) / count)
-  if(length(cat) != 1) num_plots <- 1 # only 1 plot for 2-way or 0-way facetting
   out <- list()
   for(i in seq_len(num_plots)){
     max_this <- i * count
@@ -145,7 +158,7 @@ overlay.data.frame <- function(
     }
     facet <- names(cat)[cat & cumsum(cat) <=2]
     if(sum(cat) == 1) plt <- plt + facet_wrap(facet, ncol = ncol, nrow = nrow,...)
-    if(sum(cat)  > 1) plt <- plt + facet_grid(facet, ...)
+    if(sum(cat)  > 1) plt <- plt + facet_grid(paste(facet,collapse='~'), ...)
     plt <- plt  +  ylab(ylab) + xlab(xlab)
     out[[i]] <- plt
   }

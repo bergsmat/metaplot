@@ -18,6 +18,7 @@ Extracts guide.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{dens}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
+  \code{\link{metaplot}}, \code{\link{overlay}},
+  \code{\link{scatter}}
 }
 \keyword{internal}

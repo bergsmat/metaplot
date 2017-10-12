@@ -4,7 +4,7 @@
 \alias{multiplot}
 \title{Arrange Multiple Plots in a Grid}
 \usage{
-multiplot(..., nrow = NULL, ncol = NULL, class = c("trellis", "ggplot"))
+multiplot(..., nrow = NULL, ncol = NULL)
 }
 \arguments{
 \item{...}{trellis objects}
@@ -12,11 +12,9 @@ multiplot(..., nrow = NULL, ncol = NULL, class = c("trellis", "ggplot"))
 \item{nrow}{number of rows of plots}
 
 \item{ncol}{number of columns of plots}
-
-\item{class}{if not NULL, require all \dots to inherit from one of these classes (character)}
 }
 \description{
-Arranges mutiple plots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns. By default, objects must inherit class 'trellis' or 'ggplot'.
+Arranges mutiple trellis plots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
 }
 \examples{
 library(lattice)

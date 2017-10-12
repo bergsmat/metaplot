@@ -18,4 +18,10 @@ Creates an Overlay Plot. Generic, with methods for classes 'folded' and 'data.fr
 \code{\link{overlay.folded}}
 
 \code{\link{overlay.data.frame}}
+
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{continuous}}, \code{\link{corsplom}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot}},
+  \code{\link{scatter}}
 }

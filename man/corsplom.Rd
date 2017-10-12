@@ -54,9 +54,14 @@ to be passed to data.frame method.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{dens}},
   \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
+  \code{\link{metaplot}}, \code{\link{overlay}},
+  \code{\link{scatter}}
 
-Other multivariate plots: \code{\link{metaplot}}
+Other multivariate plots: \code{\link{metaplot}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
 
-Other multivariate plots: \code{\link{metaplot}}
+Other multivariate plots: \code{\link{metaplot}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
 }

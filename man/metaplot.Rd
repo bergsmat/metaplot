@@ -31,19 +31,27 @@ Creates a plot from folded, using metadata as available.
 }
 \details{
 Metaplot creates univariate, bivariate, or multivariate plots depending on the
- number and type of items represented by \code{...}.
+ number and type of items represented by the anonymous arguments.
 
-A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+\itemize{
+\item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens.folded}} to give a density plot.}
 
-Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
+\item{CAT:}{ A single categorical argument is unexpected.}
 
-Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.
+\item{CON, CAT:}{ Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).}
 
-A third anonymous argument is unexpected if a preceding argument is categorical.
+\item{CON, CON:}{ Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.}
 
-A third, categorical argument following two continuous arguments is treated as a grouping variable.
+\item{CAT, CAT:}{ Two anonymous categorical arguments are unexpected.}
 
-If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  If one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).
+\item{CON, CAT, ARG:}{ A third anonymous argument is unexpected if a preceding argument is categorical.}
+
+\item{CON, CON, CAT:}{ A third, categorical argument following two continuous arguments is treated as a grouping variable.}
+
+\item{CON, CON, CON:}{ If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}. However....}
+
+\item{CON, CON, CON, CAT (,CAT):}{ For three or more continuous arguments, if one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).}
+}
 
 Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 }
@@ -119,6 +127,19 @@ x \%>\% metaplot(PRED,DV, xlog = TRUE, ylog = TRUE, iso=TRUE, xsmooth = TRUE) # 
 x \%>\% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
 x \%>\% metaplot(ETA1, SEX, ref = 0)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE)
+\dontrun{
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, fit = TRUE)
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE)
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = 9)
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7))
+
+# FED ~ WEIGHT would normally invoke a boxplot.
+# Here we force FED to be treated as numeric to illustrate logistic regression.
+x \%>\% scatter('FED', 'WEIGHT', conf = TRUE)
+x \%>\%
+filter(is.na(META) | !(VARIABLE == 'FED' & META =='GUIDE')) \%>\%
+metaplot(FED, WEIGHT, conf = TRUE)
 
 # Below, x is TAD,
 # plot is conditioned by ID
@@ -128,34 +149,50 @@ x \%>\% metaplot(
   DV, PRED, IPRE, TAD, ID,
   color = 'black',
   points = c(TRUE, FALSE, FALSE),
-  line   = c('none','dashed','solid')
-)
+  line   = c('none','dashed','solid'),
+  ylab = 'plasma drug concentration (ng/mL)'
+) \%>\% `[[`(1)
 
+x \%>\% metaplot(DV, PRED, TIME, SEX, FED)
+}
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{dens}}, \code{\link{guide}},
-  \code{\link{label}}, \code{\link{scatter}}
+  \code{\link{label}}, \code{\link{overlay}},
+  \code{\link{scatter}}
+
+Other metaplots: \code{\link{metapanel}}
 
 Other univariate plots: \code{\link{dens}}
 
 Other bivariate plots: \code{\link{boxplot}},
   \code{\link{scatter}}
 
-Other multivariate plots: \code{\link{corsplom}}
+Other multivariate plots: \code{\link{corsplom}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
+
+Other metaplots: \code{\link{metapanel}}
 
 Other univariate plots: \code{\link{dens}}
 
 Other bivariate plots: \code{\link{boxplot}},
   \code{\link{scatter}}
 
-Other multivariate plots: \code{\link{corsplom}}
+Other multivariate plots: \code{\link{corsplom}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
+
+Other metaplots: \code{\link{metapanel}}
 
 Other univariate plots: \code{\link{dens}}
 
 Other bivariate plots: \code{\link{boxplot}},
   \code{\link{scatter}}
 
-Other multivariate plots: \code{\link{corsplom}}
+Other multivariate plots: \code{\link{corsplom}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
 }

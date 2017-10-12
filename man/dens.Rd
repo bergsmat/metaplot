@@ -41,7 +41,8 @@ Plot density for object of class 'folded'.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
+  \code{\link{metaplot}}, \code{\link{overlay}},
+  \code{\link{scatter}}
 
 Other univariate plots: \code{\link{metaplot}}
 }

@@ -17,6 +17,9 @@ my.diag.panel(x, denscale = 0.2, ...)
 Diagonal panel function for corsplom(). Plots a density smooth against the corresponding axis from within the diagonal panel.  Plots a grey pin at each axis zero.
 }
 \seealso{
-Other panel functions: \code{\link{l.p}}, \code{\link{u.p}}
+\code{\link{corsplom}}
+
+Other panel functions: \code{\link{l.p}},
+  \code{\link{metapanel}}, \code{\link{u.p}}
 }
 \keyword{internal}

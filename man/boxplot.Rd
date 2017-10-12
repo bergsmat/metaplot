@@ -7,10 +7,11 @@
 \title{Boxplots}
 \usage{
 \method{boxplot}{data.frame}(x, .y, .x, log, horizontal = TRUE, main = TRUE,
-  crit = 1.3, ref = NULL, guide = NA_character_, ...)
+  crit = 1.3, ref = NULL, guide = NA_character_, nobs = FALSE,
+  na.rm = TRUE, ...)
 
 \method{boxplot}{folded}(x, .y, .x, log, horizontal, main = TRUE,
-  crit = 1.3, ref = NULL, ...)
+  crit = 1.3, ref = NULL, na.rm = TRUE, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -30,6 +31,10 @@
 \item{ref}{optional reference line on continuous axis}
 
 \item{guide}{optional encoding for categories see \code{encode::encode}}
+
+\item{nobs}{whether to include the number of observations under the category label}
+
+\item{na.rm}{whether to remove data points with one or more missing coordinates}
 
 \item{...}{passed arguments}
 }

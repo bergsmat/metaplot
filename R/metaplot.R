@@ -49,19 +49,27 @@ metaplot.data.frame <- function(x,...){
 #' Creates a plot from folded, using metadata as available.
 #'
 #' Metaplot creates univariate, bivariate, or multivariate plots depending on the
-#'  number and type of items represented by \code{...}.
+#'  number and type of items represented by the anonymous arguments.
 #'
-#' A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.  Same for a single categorical, but this is unexpected.
+#'\itemize{
+#' \item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens.folded}} to give a density plot.}
 #'
-#' Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).
+#' \item{CAT:}{ A single categorical argument is unexpected.}
 #'
-#' Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.
+#' \item{CON, CAT:}{ Two arguments, types continuous and categorical, are forwarded to \code{\link{boxplot.folded}} to give a boxplot (vertical or horizontal, depending on order).}
 #'
-#' A third anonymous argument is unexpected if a preceding argument is categorical.
+#' \item{CON, CON:}{ Two arguments representing continuous variables give a scatterplot (first vs. second) by means of \code{\link{scatter.folded}}.}
 #'
-#' A third, categorical argument following two continuous arguments is treated as a grouping variable.
+#'\item{CAT, CAT:}{ Two anonymous categorical arguments are unexpected.}
 #'
-#' If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}.  If one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).
+#'\item{CON, CAT, ARG:}{ A third anonymous argument is unexpected if a preceding argument is categorical.}
+#'
+#' \item{CON, CON, CAT:}{ A third, categorical argument following two continuous arguments is treated as a grouping variable.}
+#'
+#' \item{CON, CON, CON:}{ If there are three or more continuous arguments, a scatterplot matrix is created by means of \code{\link{corsplom.folded}}. However....}
+#'
+#' \item{CON, CON, CON, CAT (,CAT):}{ For three or more continuous arguments, if one or more categorical arguments are present, an overlay plot will be created by means of \code{\link{overlay.folded}}: other continuous items will be plotted vs. the last continuous item; up to two categorical items will be used as conditioning variables (facets).}
+#'}
 #'
 #' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 
@@ -140,6 +148,19 @@ metaplot.data.frame <- function(x,...){
 #' x %>% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
 #' x %>% metaplot(ETA1, SEX, ref = 0)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE)
+#' \dontrun{
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, fit = TRUE)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = 9)
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7))
+#'
+#' # FED ~ WEIGHT would normally invoke a boxplot.
+#' # Here we force FED to be treated as numeric to illustrate logistic regression.
+#' x %>% scatter('FED', 'WEIGHT', conf = TRUE)
+#' x %>%
+#' filter(is.na(META) | !(VARIABLE == 'FED' & META =='GUIDE')) %>%
+#' metaplot(FED, WEIGHT, conf = TRUE)
 #'
 #' # Below, x is TAD,
 #' # plot is conditioned by ID
@@ -149,9 +170,12 @@ metaplot.data.frame <- function(x,...){
 #'   DV, PRED, IPRE, TAD, ID,
 #'   color = 'black',
 #'   points = c(TRUE, FALSE, FALSE),
-#'   line   = c('none','dashed','solid')
-#' )
+#'   line   = c('none','dashed','solid'),
+#'   ylab = 'plasma drug concentration (ng/mL)'
+#' ) %>% `[[`(1)
 #'
+#'x %>% metaplot(DV, PRED, TIME, SEX, FED)
+#'}
 metaplot.folded <- function(x, ...){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -159,7 +183,7 @@ metaplot.folded <- function(x, ...){
   other <- args[names(args) != '']
   var <- sapply(var, as.character)
   x <- x[!is.na(x$VARIABLE),] # table-level metadata is unused
-  x <- data.frame(x, stringsAsFactors = FALSE) # faster than grouped_df
+  x <- data.frame(x, stringsAsFactors = FALSE, fix.empty.names=FALSE, check.names=FALSE) # faster than grouped_df
   class(x) <- c('folded','data.frame')
   cont <- sapply(var,function(nm)continuous(x,nm))
   cat <-  !cont
@@ -174,6 +198,7 @@ metaplot.folded <- function(x, ...){
   if(sum(cont) > 2 & sum(cat) == 0) return(do.call(corsplom,args))
   if(sum(cont) > 2) return(do.call('overlay',args)) # quoted to disambiguate function and argument
   # now have at least two var but no more than two continuous
+  if(len >= 3 & any(cat[1:2])) stop('metaplot does not support a third variable following a categorical variable')
   if(!cont[[1]] && !cont[[2]]) stop('metaplot requires at least one continuous variable')
   if( cont[[1]] &&  cont[[2]]) return(do.call(scatter,args))
   if(!cont[[1]] &&  cont[[2]]) return(do.call(boxplot,args))
@@ -247,7 +272,7 @@ scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot for Data Frame
 #'
-#' Scatterplot for class 'data.frame'.
+#' Scatterplot for class 'data.frame'. Extra arguments passed to \code{\link{region}}.
 #' @param .y y axis item
 #' @param .x x axis item
 #' @param groups optional grouping item
@@ -264,6 +289,13 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param corr print Pearson correlation coefficient after title
 #' @param group_codes append these to group values for display purposes
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
+#' @param na.rm whether to remove data points with one or more missing coordinates
+#' @param fit draw a linear fit of y ~ x
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param loc where to print statistics on a panel
+#' @param panel name or definition of panel function
+#' @seealso \code{\link{metapanel}}
 #' @export
 #' @import lattice
 #' @family bivariate plots
@@ -286,7 +318,13 @@ scatter.data.frame <- function(
   main = NULL,
   corr = FALSE,
   group_codes = NULL,
-  crit = 1.3
+  crit = 1.3,
+  na.rm = TRUE,
+  fit = conf,
+  conf = FALSE,
+  loc = 0,
+  msg = 'metastats',
+  panel = metapanel
 ){
   stopifnot(
     length(.x) == 1,
@@ -298,6 +336,10 @@ scatter.data.frame <- function(
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
   names(y)[names(y) ==.y] <- 'y_'
   names(y)[names(y) ==.x] <- 'x_'
+  if(na.rm){
+    bad <- is.na(y$y_) | is.na(y$x_)
+    y <- y[!bad,,drop = FALSE]
+  }
   if(length(groups)){
     names(y)[names(y) == groups] <- 'groups_'
     gc <- group_codes
@@ -333,21 +375,9 @@ scatter.data.frame <- function(
   if(length(groups)) mn <- paste(mn,'by',groups)
   mn <- paste(mn,cor)
   if (!is.null(main)) mn <- paste(main, mn, sep = '\n')
-  if(corr) main <- mn # which incorporates passed main if any
-  metapanel <- function(x, y,...){
-      if( length(groups))panel.superpose(x = x, y = y, ...)
-      if(!length(groups)){
-        if( density)panel.smoothScatter(x,y,...)
-        if(!density)panel.xyplot(x,y,...)
-      }
-      foo <- loess.smooth(x,y)
-      bar <- loess.smooth(y,x)
-      if(ysmooth)try(panel.xyplot(foo$x,foo$y,col = 'black',lty = 'dashed',type = 'l'))
-      if(xsmooth)try(panel.xyplot(bar$y,bar$x,col = 'black',lty = 'dashed',type = 'l'))
-      if(length(yref))panel.abline(h = yref)
-      if(length(xref))panel.abline(v = xref)
-      if(iso)panel.abline(0,1)
-    }
+  # if(corr) main <- mn # which incorporates passed main if any
+  if(!is.null(main)) mn <- list(mn, cex = 1, fontface = 1)
+  if(!is.null(main)) main <- mn
   xyplot(
     formula,
     data = y,
@@ -355,15 +385,91 @@ scatter.data.frame <- function(
     auto.key = auto.key,
     aspect = 1,
     scales = scales,
-    main = if(!is.null(main)) list(
-      mn,
-      cex = 1,
-      fontface = 1
-    ) else NULL,
     prepanel = prepanel,
-    panel = metapanel,
+    yref = yref,
+    xref = xref,
+    ysmooth = ysmooth,
+    xsmooth = xsmooth,
+    density = density,
+    iso = iso,
+    main = main,
+    fit = fit,
+    conf = conf,
+    loc = loc,
+    msg = msg,
+    panel = panel,
     ...
   )
+}
+
+#' Panel Function for Metaplot Scatterplot
+#'
+#' Panel function for metaplot::scatterplot.data.frame.
+#'
+#' @export
+#' @param x x values
+#' @param y y values
+#' @param groups optional grouping item
+#' @param yref reference line from y axis
+#' @param xref reference line from x axis
+#' @param ysmooth supply loess smooth of y on x
+#' @param xsmooth supply loess smmoth of x on y
+#' @param density plot point density instead of points
+#' @param iso use isometric axes with line of unity
+#' @param fit draw a linear fit of y ~ x
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param loc where to print statistics on a panel
+#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param ... passed to panel.superpose, panel.smoothScatter, panel.xyplot, panel.polygon, region, panel.text
+#' @family panel functions
+#' @family metaplots
+#' @seealso \code{\link{metastats}}
+#' @seealso \code{\link{scatter.data.frame}}
+#'
+metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = FALSE, xsmooth = FALSE, density = FALSE, iso = FALSE, fit = conf, conf = FALSE, loc = 0, msg = 'metastats', ...)
+{
+  if( length(groups))panel.superpose(x = x, y = y, groups = groups, ...)
+  if(!length(groups)){
+    if( density)panel.smoothScatter(x,y,...)
+    if(!density)panel.xyplot(x,y,...)
+  }
+  foo <- suppressWarnings(loess.smooth(x,y))
+  bar <- suppressWarnings(loess.smooth(y,x))
+  if(ysmooth)try(panel.xyplot(foo$x,foo$y,col = 'black',lty = 'dashed',type = 'l'))
+  if(xsmooth)try(panel.xyplot(bar$y,bar$x,col = 'black',lty = 'dashed',type = 'l'))
+  f <- data.frame()
+  if(fit || conf) f <- region(x, y, conf = conf, ...)
+# if(fit) try(panel.xyplot(x=x, y= y, col='black', type='r', ...))
+  if(fit) try(panel.xyplot(x=f$x, y=f$y, col='black', type='l', ...))
+  if(conf)try(panel.polygon(x = c(f$x, rev(f$x)),y = c(f$lo, rev(f$hi)),col='grey', border = FALSE, alpha=0.2, ...))
+  if(sum(loc))panel = panel.text(x = xpos(loc), y = ypos(loc), label = match.fun(msg)(x = x, y = y, ...))
+  if(length(yref))panel.abline(h = yref)
+  if(length(xref))panel.abline(v = xref)
+  if(iso)panel.abline(0,1)
+}
+
+xpos <- function(loc){
+  stopifnot(length(loc) %in% 1:2)
+  if(length(loc) == 1) stopifnot(loc == as.integer(loc), loc < 10)
+  l <- rep(c(.2,.5,.8),3)
+  x <- if(length(loc) == 1) l[[loc]] else loc[[1]]
+  stopifnot(x <= 1, x >= 0)
+  lo <- current.panel.limits()$xlim[[1]]
+  hi <- current.panel.limits()$xlim[[2]]
+  xpos <- lo + x * (hi - lo)
+  xpos
+}
+
+ypos <- function(loc){
+  stopifnot(length(loc) %in% 1:2)
+  if(length(loc) == 1) stopifnot(loc == as.integer(loc), loc < 10)
+  l <- rep(c(.8,.5,.2),each = 3)
+  y <- if(length(loc) == 1) l[[loc]] else loc[[2]]
+  stopifnot(y <= 1, y >= 0)
+  lo <- current.panel.limits()$ylim[[1]]
+  hi <- current.panel.limits()$ylim[[2]]
+  ypos <- lo + y * (hi - lo)
+  ypos
 }
 
 #' Scatterplot for Folded
@@ -389,7 +495,16 @@ scatter.folded <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  crit = 1.3
+  main = NULL,
+  corr = FALSE,
+  # group_codes = NULL,
+  crit = 1.3,
+  na.rm = TRUE,
+  fit = conf,
+  conf = FALSE,
+  loc = 0,
+  msg = 'metastats',
+  panel = metapanel
 ){
   stopifnot(
     length(.x) == 1,
@@ -406,6 +521,8 @@ scatter.folded <- function(
     y,
     .y = .y,
     .x = .x,
+    ylab = ylab,
+    xlab = xlab,
     groups = groups,
     ylog = ylog,
     xlog = xlog,
@@ -416,10 +533,16 @@ scatter.folded <- function(
     cols = cols,
     density = density,
     iso = iso,
-    crit = crit,
+    main = main,
+    corr = corr,
     group_codes = gc,
-    ylab = ylab,
-    xlab = xlab,
+    crit = crit,
+    na.rm = na.rm,
+    fit = fit,
+    conf = conf,
+    loc = loc,
+    msg = msg,
+    panel = panel,
     ...
   )
 }
@@ -441,6 +564,8 @@ NULL
 #' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
 #' @param ref optional reference line on continuous axis
 #' @param guide optional encoding for categories see \code{encode::encode}
+#' @param nobs whether to include the number of observations under the category label
+#' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param ... passed arguments
 #' @export
 #' @family bivariate functions
@@ -455,6 +580,8 @@ boxplot.data.frame <- function(
   crit = 1.3,
   ref = NULL,
   guide = NA_character_,
+  nobs = FALSE,
+  na.rm = TRUE,
   ...
 ){
   stopifnot(
@@ -465,6 +592,10 @@ boxplot.data.frame <- function(
   stopifnot(all(c(.x,.y) %in% names(y)))
   names(y)[names(y) ==.y] <- 'y_'
   names(y)[names(y) ==.x] <- 'x_'
+  if(na.rm){
+    bad <- is.na(y$y_) | is.na(y$x_)
+    y <- y[!bad,,drop = FALSE]
+  }
   formula <- 'y_ ~ x_'
   formula <- as.formula(formula)
   con <- if(horizontal) 'x_' else 'y_'
@@ -477,6 +608,13 @@ boxplot.data.frame <- function(
     y[[cat]] <- decode(y[[cat]],encoding = guide)
     y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
   }
+  if(!is.factor(y[[cat]])) y[[cat]] <- factor(y[[cat]],levels = unique(y[[cat]]))
+  if(nobs){
+    lev <- levels(y[[cat]])
+    num <- sapply(lev,function(l)sum(na.rm = TRUE, y[[cat]] == l))
+    levels(y[[cat]]) <- paste(lev,num,sep = '\n')
+  }
+
   # if(is.null(ref)) if(ymeta$TYPEC %in% c('IIV','RESIDUAL') ) ref <- 0
   scales <- list(
     tck = c(1,0),
@@ -529,6 +667,7 @@ boxplot.folded <- function(
   main = TRUE,
   crit = 1.3,
   ref = NULL,
+  na.rm = TRUE,
   ...
 ){
   stopifnot(
@@ -541,6 +680,7 @@ boxplot.folded <- function(
   con <- if(horizontal) .x else .y
   cat <- if(horizontal) .y else .x
   if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
+  if(any(y[[con]] <= 0,na.rm = T)) log <- FALSE
   ylab <- axislabel(x,.y, log = if(horizontal) FALSE else log )
   xlab <- axislabel(x,.x, log = if(horizontal) log else FALSE )
   guide <- guide(x,cat)
@@ -556,6 +696,7 @@ boxplot.folded <- function(
     xlab = xlab,
     guide = guide,
     horizontal = horizontal,
+    na.rm = na.rm,
     ...
   )
 }
@@ -815,6 +956,7 @@ l.p = function(x, y, ...) {
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @seealso \code{\link{corsplom}}
 my.diag.panel <- function(x, denscale = 0.2,...){
   d <- density(x)
   lim <- current.panel.limits()$x
@@ -850,4 +992,88 @@ my.diag.panel <- function(x, denscale = 0.2,...){
 is.defined <- function(x)!is.na(x)
 parens <- function (x, ...)paste0("(", x, ")")
 fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
+
+#' Execute Linear Model
+#'
+#' Executes a linear model, automatically choosing binomial family as necessary.
+#' @param x x values
+#' @param y y values
+#' @param family gaussian by default, or binomial for all y either zero or 1
+#' @param ... passed to \code{\link[stats]{glm}}
+#' @return glm
+#' @family regression functions
+model <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', ...){
+  d <- data.frame(x=x,y=y)
+  d <- d[order(d$x),]
+  m <- glm(y~x,data=d,family=family,...)
+  m
+}
+
+#' Calculate a Confidence Region
+#'
+#' Calculates a confidence region. \code{se.fit} from \code{\link[stats]{predict.glm}} is multiplied by \code{z} and added or subtracted from fits to give \code{hi} and \code{lo} columns in return value.  \code{z} is normal quantile for the one-tailed probablitity corresponding to \code{conf}, e.g. ~ 1.96 for \code{conf = 0.95}. If non-missing \code{y} is only 0 or 1, the model family is binomial and resulting confidence intervals are back-transformed using \code{\link[stats]{plogis}}.
+#' @param x x values
+#' @param y y values
+#' @param family gaussian by default, or binomial for all y either zero or 1
+#' @param length.out number of prediction points
+#' @param conf width of confidence interval; logical TRUE defaults to 0.95
+#' @importFrom stats qnorm predict glm plogis
+#' @param ... passed to \code{\link{model}}
+#' @return data.frame with x, y, hi, lo at 1000 points
+#' @family regression functions
+#' @seealso \url{https://stackoverflow.com/questions/14423325/confidence-intervals-for-predictions-from-logistic-regression}
+#' @seealso \url{http://www.rnr.lsu.edu/bret/BretWebSiteDocs/GLMCI.pdf}
+#' @seealso \url{https://stat.ethz.ch/pipermail/r-help/2010-September/254465.html}
+#' @seealso \url{http://r.789695.n4.nabble.com/Confidence-Intervals-for-logistic-regression-td2315932.html}
+region <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', length.out = 1000, conf = 0.95, ...){
+  if(is.logical(conf)){
+    if(conf){
+      conf <- 0.95
+    } else{
+      conf <- 0
+    }
+  }
+  stopifnot(length(conf) == 1, is.numeric(conf), conf < 1, conf >= 0)
+  tail <- 1 - conf  # e.g. 0.95 -> 0.05
+  upper <- tail/2   # e.g. 0.025
+  prob <- 1 - upper # e.g. 0.975
+  z <- qnorm(prob)  # e.g. 1.96
+  m <- model(x = x, y = y, family = family, ...)
+  j <- seq(from=min(x),to=max(x),length.out=1000)
+  f <- predict(m, se.fit=TRUE, newdata=data.frame(x=j),type='link')
+  f <- data.frame(x=j,y=f$fit, se = f$se.fit)
+  f$lo <- f$y - z * f$se
+  f$hi <- f$y + z * f$se
+  if(family=='binomial'){ # back-transform
+    f <- within(f, y  <- plogis(y ))
+    f <- within(f, lo <- plogis(lo))
+    f <- within(f, hi <- plogis(hi))
+  }
+  f
+}
+
+#' Format GLM Statistics
+#'
+#' Formats GLM statistics.
+#' @export
+#' @param x x values
+#' @param y y values
+#' @param family regression family
+#' @param ... other arguments
+#' @importFrom stats coef glm plogis qnorm predict
+#' @return character
+#' @family regression functions
+#' @seealso \code{\link{metapanel}}
+#'
+metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', ...){
+  n <- paste('n =', length(x))
+  m <- model(x, y, family, ...)
+  p <- coef(summary(m))[,4]['x'] %>% signif(3)
+  p <- paste('p =', p)
+  r <- cor(x,y) %>% signif(3)
+  r <- paste('r =',r)
+  t <- paste(n,p,if(family=='gaussian') r else NULL,sep='\n')
+  t
+}
+
 
