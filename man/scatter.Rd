@@ -11,14 +11,14 @@ scatter(x, ...)
 \method{scatter}{data.frame}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = NULL, corr = FALSE, group_codes = NULL, crit = 1.3,
+  main = TRUE, corr = FALSE, group_codes = NULL, crit = 1.3,
   na.rm = TRUE, fit = conf, conf = FALSE, loc = 0, msg = "metastats",
   panel = metapanel)
 
 \method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = NULL, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
+  main = TRUE, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
   conf = FALSE, loc = 0, msg = "metastats", panel = metapanel)
 }
 \arguments{
@@ -50,9 +50,9 @@ scatter(x, ...)
 
 \item{iso}{use isometric axes with line of unity}
 
-\item{main}{default title}
+\item{main}{logical: whether to construct a default title; or a substitute title or NULL}
 
-\item{corr}{print Pearson correlation coefficient after title}
+\item{corr}{append Pearson correlation coefficient to default title (only if main is \code{TRUE})}
 
 \item{group_codes}{append these to group values for display purposes}
 

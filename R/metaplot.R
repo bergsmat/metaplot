@@ -285,8 +285,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param cols suggested columns for auto.key
 #' @param density plot point density instead of points
 #' @param iso use isometric axes with line of unity
-#' @param main default title
-#' @param corr print Pearson correlation coefficient after title
+#' @param main logical: whether to construct a default title; or a substitute title or NULL
+#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
 #' @param group_codes append these to group values for display purposes
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
@@ -315,7 +315,7 @@ scatter.data.frame <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = NULL,
+  main = TRUE,
   corr = FALSE,
   group_codes = NULL,
   crit = 1.3,
@@ -373,11 +373,15 @@ scatter.data.frame <- function(
   cor <- parens(cor)
   mn <- paste(sep = ' ~ ',.y,.x)
   if(length(groups)) mn <- paste(mn,'by',groups)
-  mn <- paste(mn,cor)
-  if (!is.null(main)) mn <- paste(main, mn, sep = '\n')
-  # if(corr) main <- mn # which incorporates passed main if any
-  if(!is.null(main)) mn <- list(mn, cex = 1, fontface = 1)
-  if(!is.null(main)) main <- mn
+  if(corr) mn <- paste(mn, cor)
+  mn <- list(mn, cex = 1, fontface = 1)
+  if(is.logical(main)){
+    if(main){
+      main <- mn
+    }else{
+      main = NULL
+    }
+  }
   xyplot(
     formula,
     data = y,
@@ -495,7 +499,7 @@ scatter.folded <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = NULL,
+  main = TRUE,
   corr = FALSE,
   # group_codes = NULL,
   crit = 1.3,
@@ -560,7 +564,7 @@ NULL
 #' @param .x x axis item
 #' @param log whether to log transform continuous variable
 #' @param horizontal whether box/whisker axis should be horizontal
-#' @param main whether to include title indicating x and y items
+#' @param main logical:whether to include title indicating x and y items; or a substitute title or NULL
 #' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
 #' @param ref optional reference line on continuous axis
 #' @param guide optional encoding for categories see \code{encode::encode}
@@ -625,16 +629,20 @@ boxplot.data.frame <- function(
     y = list(log = log,equispaced.log = FALSE)
   )
   mn <- paste(sep = ' ~ ',.y,.x)
+  mn <- list(mn, cex = 1, fontface = 1)
+  if(is.logical(main)){
+    if(main){
+      main <- mn
+    } else{
+      main <- NULL
+    }
+  }
   bwplot(
     formula,
     data = y,
     aspect = 1,
     horizontal = horizontal,
-    main = if(main) list(
-      mn,
-      cex = 1,
-      fontface = 1
-    ) else NULL,
+    main = main,
     par.settings = standard.theme('pdf',color = FALSE),
     scales = scales,
     panel = function(...){
@@ -1005,7 +1013,7 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 model <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', ...){
   d <- data.frame(x=x,y=y)
   d <- d[order(d$x),]
-  m <- glm(y~x,data=d,family=family,...)
+  m <- glm(y~x,data=d,family=family) # elipses passed to glm.control, which chokes on unknown arguments, so not passing here.
   m
 }
 

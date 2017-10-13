@@ -24,7 +24,7 @@
 
 \item{horizontal}{whether box/whisker axis should be horizontal}
 
-\item{main}{whether to include title indicating x and y items}
+\item{main}{logical:whether to include title indicating x and y items; or a substitute title or NULL}
 
 \item{crit}{if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value}
 
