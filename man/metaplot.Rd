@@ -65,7 +65,31 @@ Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 }}
 
 \examples{
-\donttest{
+# quick example
+
+library(magrittr)
+library(fold)
+x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
+x \%>\% metaplot(
+ DV, IPRE, SEX,
+ ylog = TRUE,
+ xlog = TRUE,
+ grid = TRUE, # passed to xyplot
+ iso = TRUE,
+ ysmooth = TRUE,
+ xsmooth = TRUE,
+ yref = 0.5,
+ xref = 0.5,
+ main = TRUE,
+ corr = TRUE,
+ fit = TRUE,
+ conf = 1 - 1e-14,
+ loc = 6
+)
+
+# extended examples
+
+\dontrun{
 # load some packages
 library(spec)
 library(csv)
@@ -85,8 +109,6 @@ x \%matches\% spec
 x \%<>\% as.csv
 spec \%<>\% as.spec
 x \%matches\% spec
-
-#
 
 # convert specifaction to folded format
 spec \%<>\%  as.folded
@@ -109,17 +131,12 @@ x \%<>\% sort
 # We call metaplot with various numbers of continuous and
 # categorical arguments, given as unquoted values from the
 # VARIABLE column.
-}
 
-# You can also start the examples right here.
-library(magrittr)
-library(fold)
-x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
 x \%>\% metaplot(AGE) # one continuous
 x \%>\% metaplot(PRED,DV) # two continuous
 x \%>\% metaplot(AGE,SEX) # continuous and categorical
-x \%>\% metaplot(SEX,AGE) # categorical and continuous
-x \%>\% metaplot(PRED,DV,SEX) # two continous and categorical
+x \%>\% metaplot(SEX,AGE, main = TRUE) # categorical and continuous
+x \%>\% metaplot(PRED,DV,SEX, main = TRUE) # two continous and categorical
 x \%>\% metaplot(ETA1,ETA2,ETA3) # three or more continuous
 x \%>\% metaplot(CWRES,TAD) # metadata
 x \%>\% filter(META \%>\% is.na) \%>\% metaplot(CWRES,TAD) # no metadata
@@ -128,15 +145,16 @@ x \%>\% metaplot(CWRES, TAD, yref = 0, ysmooth = TRUE)
 x \%>\% metaplot(ETA1, SEX, ref = 0)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE)
-\dontrun{
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, fit = TRUE)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE)
 x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = 9)
-x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7))
+x \%>\% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7),
+main = TRUE, corr = TRUE)
 
 # FED ~ WEIGHT would normally invoke a boxplot.
 # Here we force FED to be treated as numeric to illustrate logistic regression.
 x \%>\% scatter('FED', 'WEIGHT', conf = TRUE)
+# Alternatively:
 x \%>\%
 filter(is.na(META) | !(VARIABLE == 'FED' & META =='GUIDE')) \%>\%
 metaplot(FED, WEIGHT, conf = TRUE)
@@ -153,7 +171,9 @@ x \%>\% metaplot(
   ylab = 'plasma drug concentration (ng/mL)'
 ) \%>\% `[[`(1)
 
-x \%>\% metaplot(DV, PRED, TIME, SEX, FED)
+2-way facetting
+x \%>\% metaplot(DV, PRED, TIME, SEX, FED,
+line = 'none', color = c('blue','magenta'))
 }
 }
 \seealso{

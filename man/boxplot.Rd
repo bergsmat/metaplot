@@ -6,11 +6,11 @@
 \alias{boxplot.folded}
 \title{Boxplots}
 \usage{
-\method{boxplot}{data.frame}(x, .y, .x, log, horizontal = TRUE, main = TRUE,
-  crit = 1.3, ref = NULL, guide = NA_character_, nobs = FALSE,
-  na.rm = TRUE, ...)
+\method{boxplot}{data.frame}(x, .y, .x, log, horizontal = TRUE,
+  main = FALSE, crit = 1.3, ref = NULL, guide = NA_character_,
+  nobs = FALSE, na.rm = TRUE, ...)
 
-\method{boxplot}{folded}(x, .y, .x, log, horizontal, main = TRUE,
+\method{boxplot}{folded}(x, .y, .x, log, horizontal, main = FALSE,
   crit = 1.3, ref = NULL, na.rm = TRUE, ...)
 }
 \arguments{

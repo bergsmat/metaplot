@@ -11,14 +11,14 @@ scatter(x, ...)
 \method{scatter}{data.frame}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = TRUE, corr = FALSE, group_codes = NULL, crit = 1.3,
+  main = FALSE, corr = FALSE, group_codes = NULL, crit = 1.3,
   na.rm = TRUE, fit = conf, conf = FALSE, loc = 0, msg = "metastats",
   panel = metapanel)
 
 \method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
   xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = TRUE, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
+  main = FALSE, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
   conf = FALSE, loc = 0, msg = "metastats", panel = metapanel)
 }
 \arguments{
@@ -46,7 +46,7 @@ scatter(x, ...)
 
 \item{cols}{suggested columns for auto.key}
 
-\item{density}{plot point density instead of points}
+\item{density}{plot point density instead of points (ignored if \code{groups} is supplied)}
 
 \item{iso}{use isometric axes with line of unity}
 

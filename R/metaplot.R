@@ -86,7 +86,32 @@ metaplot.data.frame <- function(x,...){
 #' @import fold
 #' @export
 #' @examples
-#' \donttest{
+#' # quick example
+#'
+#'library(magrittr)
+#' library(fold)
+#' x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
+
+#'x %>% metaplot(
+#'  DV, IPRE, SEX,
+#'  ylog = TRUE,
+#'  xlog = TRUE,
+#'  grid = TRUE, # passed to xyplot
+#'  iso = TRUE,
+#'  ysmooth = TRUE,
+#'  xsmooth = TRUE,
+#'  yref = 0.5,
+#'  xref = 0.5,
+#'  main = TRUE,
+#'  corr = TRUE,
+#'  fit = TRUE,
+#'  conf = 1 - 1e-14,
+#'  loc = 6
+#')
+#'
+#' # extended examples
+#'
+#' \dontrun{
 #' # load some packages
 #' library(spec)
 #' library(csv)
@@ -106,8 +131,6 @@ metaplot.data.frame <- function(x,...){
 #' x %<>% as.csv
 #' spec %<>% as.spec
 #' x %matches% spec
-#'
-#' #
 #'
 #' # convert specifaction to folded format
 #' spec %<>%  as.folded
@@ -130,17 +153,12 @@ metaplot.data.frame <- function(x,...){
 #' # We call metaplot with various numbers of continuous and
 #' # categorical arguments, given as unquoted values from the
 #' # VARIABLE column.
-#' }
 #'
-#' # You can also start the examples right here.
-#' library(magrittr)
-#' library(fold)
-#' x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
 #' x %>% metaplot(AGE) # one continuous
 #' x %>% metaplot(PRED,DV) # two continuous
 #' x %>% metaplot(AGE,SEX) # continuous and categorical
-#' x %>% metaplot(SEX,AGE) # categorical and continuous
-#' x %>% metaplot(PRED,DV,SEX) # two continous and categorical
+#' x %>% metaplot(SEX,AGE, main = TRUE) # categorical and continuous
+#' x %>% metaplot(PRED,DV,SEX, main = TRUE) # two continous and categorical
 #' x %>% metaplot(ETA1,ETA2,ETA3) # three or more continuous
 #' x %>% metaplot(CWRES,TAD) # metadata
 #' x %>% filter(META %>% is.na) %>% metaplot(CWRES,TAD) # no metadata
@@ -149,15 +167,16 @@ metaplot.data.frame <- function(x,...){
 #' x %>% metaplot(ETA1, SEX, ref = 0)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, xsmooth = TRUE)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE)
-#' \dontrun{
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, fit = TRUE)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE)
 #' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = 9)
-#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7))
+#' x %>% metaplot(AGE,WEIGHT, ysmooth = TRUE, conf = TRUE, loc = c(.2,.7),
+#' main = TRUE, corr = TRUE)
 #'
 #' # FED ~ WEIGHT would normally invoke a boxplot.
 #' # Here we force FED to be treated as numeric to illustrate logistic regression.
 #' x %>% scatter('FED', 'WEIGHT', conf = TRUE)
+#' # Alternatively:
 #' x %>%
 #' filter(is.na(META) | !(VARIABLE == 'FED' & META =='GUIDE')) %>%
 #' metaplot(FED, WEIGHT, conf = TRUE)
@@ -174,8 +193,11 @@ metaplot.data.frame <- function(x,...){
 #'   ylab = 'plasma drug concentration (ng/mL)'
 #' ) %>% `[[`(1)
 #'
-#'x %>% metaplot(DV, PRED, TIME, SEX, FED)
+#' 2-way facetting
+#'x %>% metaplot(DV, PRED, TIME, SEX, FED,
+#'line = 'none', color = c('blue','magenta'))
 #'}
+
 metaplot.folded <- function(x, ...){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -283,7 +305,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param cols suggested columns for auto.key
-#' @param density plot point density instead of points
+#' @param density plot point density instead of points (ignored if \code{groups} is supplied)
 #' @param iso use isometric axes with line of unity
 #' @param main logical: whether to construct a default title; or a substitute title or NULL
 #' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
@@ -315,7 +337,7 @@ scatter.data.frame <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = TRUE,
+  main = FALSE,
   corr = FALSE,
   group_codes = NULL,
   crit = 1.3,
@@ -357,6 +379,8 @@ scatter.data.frame <- function(
   auto.key <- if(length(groups)) list(columns = cols) else FALSE
   if(ylog %>% is.null) ylog <- all(na.rm = T,y$y_ > 0) && mean(y$y_,na.rm = T)/median(y$y_,na.rm = T) > crit
   if(xlog %>% is.null) xlog <- all(na.rm = T, y$x_ > 0) && mean(y$x_,na.rm = T)/median(y$x_,na.rm = T) > crit
+  if(length(yref) & ylog) yref <- log(yref)
+  if(length(xref) & xlog) xref <- log(xref)
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
   scales = list(y = yscale,x = xscale,tck = c(1,0))
@@ -499,7 +523,7 @@ scatter.folded <- function(
   cols = 3,
   density = FALSE,
   iso = FALSE,
-  main = TRUE,
+  main = FALSE,
   corr = FALSE,
   # group_codes = NULL,
   crit = 1.3,
@@ -580,7 +604,7 @@ boxplot.data.frame <- function(
   .x,
   log,
   horizontal = TRUE,
-  main = TRUE,
+  main = FALSE,
   crit = 1.3,
   ref = NULL,
   guide = NA_character_,
@@ -672,7 +696,7 @@ boxplot.folded <- function(
   .x,
   log,
   horizontal,
-  main = TRUE,
+  main = FALSE,
   crit = 1.3,
   ref = NULL,
   na.rm = TRUE,
