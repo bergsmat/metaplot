@@ -11,7 +11,7 @@ tuck <- function(x,...)UseMethod('tuck')
 
 #' Capture Scalar Column Metadata as Column Attributes
 #'
-#' Captures scalar column metadata (row values) as column attributes.  Excises rows with non-missing values of \code{meta}, converting column values to column attributes. Afterward, column classes are re-optimized (as if read by \code{\link[base]{read.table}). It is an error if \code{meta} is not in \code{names(x)}.
+#' Captures scalar column metadata (row values) as column attributes.  Excises rows with non-missing values of \code{meta}, converting column values to column attributes. Afterward, column classes are re-optimized (as read by \code{\link[base]{read.table}). It is an error if \code{meta} is not in \code{names(x)}.
 #' @param x data.frame
 #' @param meta column in x giving names of attributes
 #' @param as.is passed to \code{\link[base]{read.table}}
@@ -23,9 +23,23 @@ tuck <- function(x,...)UseMethod('tuck')
 #' @value data.frame
 #' @example
 #' foo <- data.frame(head(Theoph))
-#' attr(foo$Subject, 'label') <-  'subjid'
+#' attr(foo$Subject, 'label') <-  'subject identifier'
+#' attr(foo$Wt, 'label') <-  'weight'
+#' attr(foo$Dose, 'label') <-  'dose'
+#' attr(foo$Time, 'label') <-  'time'
+#' attr(foo$conc, 'label') <-  'concentration'
+#' attr(foo$Subject, 'guide') <-  '////'
+#' attr(foo$Wt, 'guide') <-  'kg'
+#' attr(foo$Dose, 'guide') <-  'mg/kg'
+#' attr(foo$Time, 'guide') <-  'h'
+#' attr(foo$conc, 'guide') <-  'mg/L'
+#' untuck(foo, pos = 1)
+#' untuck(foo, pos = 2)
+#' untuck(foo, pos = 3)
+#' untuck(foo, pos = 4)
 #' bar <- untuck(foo)
 #' tuck(bar)
+#' attributes(tuck(bar)$Subject)
 tuck.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ...){
   stopifnot(meta %in% names(x))
   i <- x[[meta]]
@@ -50,7 +64,6 @@ tuck.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ..
   }
   x
 }
-
 
 #' Untuck Something
 #'
@@ -109,5 +122,58 @@ untuck.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L,
   if(position %in% c(1,4)) x <- x[,union(meta, names(y))] #  meta col first
   x
 }
+
+#' Normalize a Folded Data Frame
+#'
+#' Convert folded data.frame to conventional format with column attributes. Scalar metadata is converted to column attributes. Other metadata left unfolded.
+#' @export
+#' @family tuck
+#' @value data.frame
+#' @seealso \code{\link[fold]{fold.data.frame}}
+#' @param x folded
+#' @param tolower whether to coerce attribute names to lower case
+#' @param ... other arguments
+#' @param meta
+#' @examples
+#' library(fold)
+#' data(eventsf)
+#' head(tuck(eventsf))
+#' attributes(tuck(eventsf)$BLQ)
+#'
+tuck.folded <- function(x, tolower = TRUE, ...){
+  y <- unfold(x)
+  for (col in names(y)){
+    if(grepl('_',col)){
+      target <- sub('_.*','',col)
+      attrib <- sub('[^_]+_','',col)
+      if(tolower) attrib <- tolower(attrib)
+      if(target %in% names(y)){
+        val <- unique(y[[col]])
+        spar <- unique(y[,c(target,col)])
+        spar <- spar[order(spar[[target]]),]
+        spar[[target]] <- paste(spar[[target]]) # guarranteed nonmissing
+        if(length(val) == 1){
+          attr(y[[target]], attrib) <- val
+        } else {
+          if(length(spar[[target]]) == length(unique(spar[[target]]))){
+            attr(y[[target]], attrib) <- encode(spar[[target]], labels = spar[[col]])
+          }
+        }
+        y[[col]] <- NULL
+      }
+
+    }
+  }
+  y
+}
+
+
+
+
+
+
+
+
+
 
 
