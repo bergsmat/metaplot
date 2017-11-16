@@ -18,6 +18,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
 #' @export
+#' @importFrom rlang UQS
 #' @family multivariate plots
 #' @describeIn corsplom data.frame method
 corsplom.data.frame <- function(

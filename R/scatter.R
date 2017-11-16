@@ -8,46 +8,62 @@
 #' @family generic functions
 scatter <- function(x,...)UseMethod('scatter')
 
-#' Scatterplot for Data Frame
+#' Scatterplot Function for Data Frame
 #'
-#' Scatterplot for class 'data.frame'. Extra arguments passed to \code{\link{region}}.
-#' @param .y y axis item
-#' @param .x x axis item
+#' Scatterplot function for class 'data.frame'. Uses standard evaluation.
+#' @param x data.frame
+#' @param var character vector of variables to plot (expecting length: 2)
 #' @param groups optional grouping item
-#' @param ylog log transform y axis (guessed if missing)
-#' @param xlog log transform x axis (guessed if missing)
+#' @param ylog log transform y axis (guessed if NULL)
+#' @param xlog log transform x axis (guessed if NULL)
 #' @param yref reference line from y axis
 #' @param xref reference line from x axis
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
+#' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
+#' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
 #' @param cols suggested columns for auto.key
 #' @param density plot point density instead of points (ignored if \code{groups} is supplied)
 #' @param iso use isometric axes with line of unity
 #' @param main logical: whether to construct a default title; or a substitute title or NULL
 #' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
-#' @param group_codes append these to group values for display purposes
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param fit draw a linear fit of y ~ x
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param loc where to print statistics on a panel
+#' @param aspectpassed to \code{\link[lattice]{xyplot}}
+#' @param auto.key passed to \code{\link[lattice]{xyplot}}
 #' @param panel name or definition of panel function
+#' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{metapanel}}
 #' @export
 #' @import lattice
 #' @family bivariate plots
-#' @describeIn scatter data.frame method
-scatter.data.frame <- function(
+#' @family scatter
+#' @examples
+#' attr(Theoph$conc,'label') <- 'theophylline concentration'
+#' attr(Theoph$conc,'guide') <- 'mg/L'
+#' attr(Theoph$Time,'label') <- 'time'
+#' attr(Theoph$Time,'guide') <- 'h'
+#' attr(Theoph$Subject,'guide') <- '////'
+#' scatter_data_frame(Theoph, c('conc','Time'))
+#' scatter_data_frame(Theoph, c('conc','Time'), 'Subject')
+#' scatter_data_frame(Theoph %>% filter(conc > 0), c('conc','Time'), 'Subject',ylog = TRUE, yref = 5)
+#' scatter_data_frame(Theoph, c('conc','Time'), 'Subject',ysmooth = TRUE)
+#' scatter_data_frame(Theoph, c('conc','Time'),main = TRUE, corr = TRUE)
+#' scatter_data_frame(Theoph, c('conc','Time'),conf = TRUE, loc = 3, yref = 6)
+scatter_data_frame <- function(
   x,
-  .y,
-  .x,
+  var,
   groups = NULL,
-  ...,
-  ylog = FALSE,
-  xlog = FALSE,
+  ylog = NULL,
+  xlog = NULL,
   yref = NULL,
   xref = NULL,
+  ylab = NULL,
+  xlab = NULL,
   ysmooth = FALSE,
   xsmooth = FALSE,
   cols = 3,
@@ -55,51 +71,61 @@ scatter.data.frame <- function(
   iso = FALSE,
   main = FALSE,
   corr = FALSE,
-  group_codes = NULL,
   crit = 1.3,
   na.rm = TRUE,
   fit = conf,
   conf = FALSE,
   loc = 0,
+  aspect = 1,
+  auto.key = list(columns = cols),
   msg = 'metastats',
-  panel = metapanel
+  panel = metapanel,
+  ...
 ){
-  stopifnot(
-    length(.x) == 1,
-    length(.y) == 1,
-    length(groups) <= 1,
-    is.logical(corr)
-  )
-  y <- x # %>% unfold(c(.y,.x,groups))
+  stopifnot(inherits(x, 'data.frame'))
+  stopifnot(is.logical(corr))
+  stopifnot(length(groups) <= 1)
+  stopifnot(is.character(var))
+  if(length(var) < 2) stop('need two items to make scatterplot')
+  if(length(var) > 2) warning('only using first two of supplied items')
+  .y <- var[[1]]
+  .x <- var[[2]]
+  y <- x
   stopifnot(all(c(.x,.y,groups) %in% names(y)))
-  names(y)[names(y) ==.y] <- 'y_'
-  names(y)[names(y) ==.x] <- 'x_'
-  if(na.rm){
-    bad <- is.na(y$y_) | is.na(y$x_)
-    y <- y[!bad,,drop = FALSE]
+  if(na.rm) y %<>% filter(is.defined(!!.y) & is.defined(!!.x)) # preserves attributes
+  formula <- as.formula(paste(sep = '~',.y, .x))
+  default_log <- function(x,crit){
+    x <- x[!is.na(x)]
+    all(x > 0) && (mean(x)/median(x) > crit)
   }
-  if(length(groups)){
-    names(y)[names(y) == groups] <- 'groups_'
-    gc <- group_codes
-    if(length(gc) == 1){
-      if(encoded(gc)){
-        y$groups_ <- decode(y$groups_,gc)
-      }else{
-        y$groups_[is.defined(y$groups_)] <- paste(y$groups_[is.defined(y$groups_)],gc)
-      }
-    }
-    cols = min(cols,length(unique(y$groups_[is.defined(y$groups_)])))
+  if(ylog %>% is.null) ylog <- default_log(y[[.y]], crit)
+  if(xlog %>% is.null) xlog <- default_log(y[[.x]], crit)
+  if(ylog)if(any(y[[.y]] <= 0, na.rm = TRUE)){
+    warning(.y, ' must be positive for log scale')
+    ylog <- FALSE
   }
-  formula <- 'y_ ~ x_'
-  formula <- as.formula(formula)
-  auto.key <- if(length(groups)) list(columns = cols) else FALSE
-  if(ylog %>% is.null) ylog <- all(na.rm = T,y$y_ > 0) && mean(y$y_,na.rm = T)/median(y$y_,na.rm = T) > crit
-  if(xlog %>% is.null) xlog <- all(na.rm = T, y$x_ > 0) && mean(y$x_,na.rm = T)/median(y$x_,na.rm = T) > crit
-  if(length(yref) & ylog) yref <- log(yref)
-  if(length(xref) & xlog) xref <- log(xref)
+  if(xlog)if(any(y[[.x]] <= 0, na.rm = TRUE)){
+    warning(.x, ' must be positive for log scale')
+    ylog <- FALSE
+  }
+  if(length(yref) & ylog) yref <- log10(yref)
+  if(length(xref) & xlog) xref <- log10(xref)
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
   scales = list(y = yscale,x = xscale,tck = c(1,0))
+  if(is.null(ylab))ylab <- axislabel(y,var = .y, log = ylog)
+  if(is.null(xlab))xlab <- axislabel(y,var = .x, log = xlog)
+
+  if(!is.null(groups)){
+    guide <- attr(y[[groups]], 'guide')
+    if(encoded(guide)){
+      decoded <- decode(y[[groups]], encoding = guide)
+      if(!any(is.na(decoded))) y[[groups]] <- decoded
+      if(all(is.na(decoded))) y[[groups]] <- decode(y[[groups]]) # values represent themselves as factor
+      # mixed NA and decodable: do nothing
+    }
+  }
+
   prepanel = if(iso) function(x,y,...){
     lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
     list(
@@ -107,7 +133,11 @@ scatter.data.frame <- function(
       ylim = lim
     )
   } else NULL
-  cor <- cor(use = 'pair',if(ylog) log(y$y_) else y$y_, if(xlog) log(y$x_) else y$x_)
+  cor <- cor(
+    use = 'pair',
+    if(ylog) log(y[[.y]]) else y[[.y]],
+    if(xlog) log(y[[.x]]) else y[[.x]]
+  )
   cor <- signif(cor,2)
   cor <- paste('R =',cor)
   cor <- parens(cor)
@@ -119,21 +149,24 @@ scatter.data.frame <- function(
     if(main){
       main <- mn
     }else{
-      main = NULL
+      main <- NULL
     }
   }
+  if(!is.null(groups)) groups <- as.formula(paste('~',groups))
   xyplot(
     formula,
     data = y,
-    groups = if(length(groups)) groups_ else NULL,
+    groups = groups,
     auto.key = auto.key,
-    aspect = 1,
+    aspect = aspect,
     scales = scales,
     prepanel = prepanel,
     yref = yref,
     xref = xref,
     ysmooth = ysmooth,
     xsmooth = xsmooth,
+    ylab = ylab,
+    xlab = xlab,
     density = density,
     iso = iso,
     main = main,
@@ -172,19 +205,30 @@ scatter.data.frame <- function(
 #'
 metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = FALSE, xsmooth = FALSE, density = FALSE, iso = FALSE, fit = conf, conf = FALSE, loc = 0, msg = 'metastats', ...)
 {
-  if( length(groups))panel.superpose(x = x, y = y, groups = groups, ...)
+
+  if( length(groups))panel.superpose(
+    x = x,
+    y = y,
+    groups = groups,
+    panel.groups = function(x,y,lty,type,...){
+      panel.xyplot(x,y,...)
+      foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
+      bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
+      if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',...))
+      if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = 'dashed',type = 'l',...))
+    },
+    ...
+  )
   if(!length(groups)){
     if( density)panel.smoothScatter(x,y,...)
     if(!density)panel.xyplot(x,y,...)
+    foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
+    bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
+    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,col = 'black',lty = 'dashed',type = 'l'))
+    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,col = 'black',lty = 'dashed',type = 'l'))
   }
-  foo <- try(suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
-  bar <- try(suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-
-  if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,col = 'black',lty = 'dashed',type = 'l'))
-  if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,col = 'black',lty = 'dashed',type = 'l'))
   f <- data.frame()
   if(fit || conf) f <- region(x, y, conf = conf, ...)
-  # if(fit) try(panel.xyplot(x=x, y= y, col='black', type='r', ...))
   if(fit) try(panel.xyplot(x=f$x, y=f$y, col='black', type='l', ...))
   if(conf)try(panel.polygon(x = c(f$x, rev(f$x)),y = c(f$lo, rev(f$hi)),col='grey', border = FALSE, alpha=0.2, ...))
   if(sum(loc))panel = panel.text(x = xpos(loc), y = ypos(loc), label = match.fun(msg)(x = x, y = y, ...))
@@ -223,6 +267,7 @@ ypos <- function(loc){
 #' @export
 #' @import encode
 #' @import lattice
+#' @importFrom rlang UQS
 #' @family bivariate plots
 #' @describeIn scatter folded method
 scatter.folded <- function(

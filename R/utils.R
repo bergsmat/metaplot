@@ -42,6 +42,37 @@ axislabel.folded <- function(x, var, log = FALSE, ...){
   res
 }
 
+#' Axis Label for Data Frame
+#'
+#' Axis label for data.frame.
+#' @param x folded
+#' @param var item of interest
+#' @param log whether this is for a log scale
+#' @param ... passed arguments
+#' @keywords internal
+#' @export
+#' @import magrittr
+#' @return character
+axislabel.data.frame <- function(x, var, log = FALSE, ...){
+  #x <- x[x$VARIABLE == var & is.defined(x$META),,drop = FALSE]
+  #lab <- unique(x$VALUE[x$META =='LABEL'])
+  #guide <- unique(x$VALUE[x$META =='GUIDE'])
+  lab <- attr(x[[var]], 'label')
+  guide <- attr(x[[var]], 'guide')
+  res <- var
+  if(length(lab) == 1)
+    if(is.defined(lab))
+      res <- lab
+  if(length(guide) == 1)
+    if(!encoded(guide))
+      if(is.defined(guide)){
+        guide <- paste0('(',guide,')')
+        res <- paste(res,guide)
+      }
+  if(log) res <- paste0(res,'\n(log)')
+  res
+}
+
 #' Check if Something is Continuous
 #'
 #' Checks if something is continuous.
@@ -51,6 +82,29 @@ axislabel.folded <- function(x, var, log = FALSE, ...){
 #' @keywords internal
 #' @family generic functions
 continuous <- function(x,...)UseMethod('continuous')
+
+#' Check if Something is Continuous by Default
+#'
+#' Checks if something is continuous using default method.
+#' @param x vector
+#' @param ... passed arguments
+#' @export
+#' @keywords internal
+continuous.default <- function(x, ...)is.numeric(x)
+
+#' Check if Data Frame is Continuous by Item
+#'
+#' Checks if data.frame is continuous with respect to the column name(s).
+#' @param x data.frame
+#' @param col a column
+#' @param ... passed arguments
+#' @export
+#' @keywords internal
+continuous.data.frame <- function(x, col = names(x), ...){
+  stopifnot(is.character(col))
+  stopifnot(all(col %in% names(x)))
+  sapply(col,function(c)is.numeric(x[[c]]))
+}
 
 #' Check if Folded is Continuous
 #'

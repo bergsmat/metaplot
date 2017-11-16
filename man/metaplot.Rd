@@ -34,7 +34,7 @@ Metaplot creates univariate, bivariate, or multivariate plots depending on the
  number and type of items represented by the anonymous arguments.
 
 \itemize{
-\item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens.folded}} to give a density plot.}
+\item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.}
 
 \item{CAT:}{ A single categorical argument is unexpected.}
 
@@ -185,21 +185,11 @@ Other generic functions: \code{\link{axislabel}},
 
 Other metaplots: \code{\link{metapanel}}
 
-Other univariate plots: \code{\link{dens}}
+Other univariate plots: \code{\link{dens.data.frame}},
+  \code{\link{dens.folded}}, \code{\link{dens_data_frame}}
 
-Other bivariate plots: \code{\link{boxplot}},
-  \code{\link{scatter}}
-
-Other multivariate plots: \code{\link{corsplom}},
-  \code{\link{overlay.data.frame}},
-  \code{\link{overlay.folded}}
-
-Other metaplots: \code{\link{metapanel}}
-
-Other univariate plots: \code{\link{dens}}
-
-Other bivariate plots: \code{\link{boxplot}},
-  \code{\link{scatter}}
+Other bivariate plots: \code{\link{boxplot.folded}},
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
 Other multivariate plots: \code{\link{corsplom}},
   \code{\link{overlay.data.frame}},
@@ -207,10 +197,23 @@ Other multivariate plots: \code{\link{corsplom}},
 
 Other metaplots: \code{\link{metapanel}}
 
-Other univariate plots: \code{\link{dens}}
+Other univariate plots: \code{\link{dens.data.frame}},
+  \code{\link{dens.folded}}, \code{\link{dens_data_frame}}
 
-Other bivariate plots: \code{\link{boxplot}},
-  \code{\link{scatter}}
+Other bivariate plots: \code{\link{boxplot.folded}},
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
+
+Other multivariate plots: \code{\link{corsplom}},
+  \code{\link{overlay.data.frame}},
+  \code{\link{overlay.folded}}
+
+Other metaplots: \code{\link{metapanel}}
+
+Other univariate plots: \code{\link{dens.data.frame}},
+  \code{\link{dens.folded}}, \code{\link{dens_data_frame}}
+
+Other bivariate plots: \code{\link{boxplot.folded}},
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
 Other multivariate plots: \code{\link{corsplom}},
   \code{\link{overlay.data.frame}},

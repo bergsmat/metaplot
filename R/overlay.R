@@ -25,6 +25,7 @@ overlay <- function(x,...)UseMethod('overlay')
 #' @param ylog whether to log-transform y axis data
 #' @param xlog whether to log-transform x axis data
 #' @import ggplot2
+#' @importFrom rlang UQS
 #' @return a list of ggplot, possibly length one
 #' @family multivariate plots
 #' @seealso \code{\link{overlay.data.frame}}

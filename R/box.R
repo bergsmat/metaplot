@@ -3,58 +3,81 @@
 #' @name boxplot
 NULL
 
-#' Boxplot for Data Frame
+#' Boxplot Function for Data Frame
 #'
-#' Boxplot for data.frame.
+#' Boxplot for data.frame. Uses standard evaluation.
 #' @param x data.frame
-#' @param .y y axis item
-#' @param .x x axis item
-#' @param log whether to log transform continuous variable
-#' @param horizontal whether box/whisker axis should be horizontal
-#' @param main logical:whether to include title indicating x and y items; or a substitute title or NULL
-#' @param crit if log is missing, log transform if mean/median ratio for non-missing x  is greater than this value
+#' @param var character vector of variables to plot (expecting length: 2)
+#' @param log whether to log transform continuous variable (auto-selected if NULL)
+#' @param horizontal whether box/whisker axis should be horizontal (continuous x, categorical y); defaults TRUE if (var[[2]] is continuous
+#' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
+#' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
 #' @param ref optional reference line on continuous axis
-#' @param guide optional encoding for categories see \code{encode::encode}
 #' @param nobs whether to include the number of observations under the category label
 #' @param na.rm whether to remove data points with one or more missing coordinates
+#' @param ylab passed to \code{\link[lattice]{bwplot}}
+#' @param xlab passed to \code{\link[lattice]{bwplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}}
 #' @param ... passed arguments
 #' @export
 #' @family bivariate functions
-#' @rdname boxplot
-boxplot.data.frame <- function(
+#' @examples
+#' library(magrittr)
+#' library(dplyr)
+#' boxplot_data_frame(Theoph,'Subject','conc')
+#' boxplot_data_frame(Theoph %>% filter(conc > 0),
+#' 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
+boxplot_data_frame <- function(
   x,
-  .y,
-  .x,
-  log,
-  horizontal = TRUE,
+  var,
+  log = FALSE,
+  horizontal = NULL,
   main = FALSE,
   crit = 1.3,
   ref = NULL,
-  guide = NA_character_,
   nobs = FALSE,
   na.rm = TRUE,
+  xlab = NULL,
+  ylab = NULL,
+  aspect = 1,
   ...
 ){
-  stopifnot(
-    length(.x) == 1,
-    length(.y) == 1
-  )
-  y <- x # %>% unfold(c(.y,.x))
-  stopifnot(all(c(.x,.y) %in% names(y)))
-  names(y)[names(y) ==.y] <- 'y_'
-  names(y)[names(y) ==.x] <- 'x_'
-  if(na.rm){
-    bad <- is.na(y$y_) | is.na(y$x_)
-    y <- y[!bad,,drop = FALSE]
+  stopifnot(inherits(x, 'data.frame'))
+  stopifnot(is.character(var))
+  y <- x
+  if(length(var) < 2) stop('need two items to make boxplot')
+  if(length(var) > 2) warning('only using first two of supplied items')
+  .y <- var[[1]]
+  .x <- var[[2]]
+  if(is.null(horizontal)) horizontal <- continuous(x, .x)
+  cat <- if(horizontal) .y else .x
+  con <- if(horizontal) .x else .y
+  stopifnot(all(c(cat,con) %in% names(y)))
+  if(na.rm) y %<>% filter(is.defined(!!cat) & is.defined(!!con)) # preserves attributes
+  formula <- as.formula(paste(sep = ' ~ ', .y, .x))
+  if(!continuous(y[[con]]))stop(con, ' must be continuous')
+  if(is.null(log)){
+    if(any(y[[con]] <= 0, na.rm = TRUE)){
+      log <- FALSE
+    } else{
+      log <- mean(y[[con]],na.rm = TRUE)/median(y[[con]],na.rm = TRUE) > crit
+    }
   }
-  formula <- 'y_ ~ x_'
-  formula <- as.formula(formula)
-  con <- if(horizontal) 'x_' else 'y_'
-  cat <- if(horizontal) 'y_' else 'x_'
-  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
-  if(any(y[[con]] <= 0,na.rm = T)) log <- FALSE
-  #ylab <- axislabel(x,.y, log = FALSE )
-  #xlab <- axislabel(x,.x, log = log )
+  if(log)if(any(y[[con]] <= 0, na.rm = TRUE)){
+    warning(con, ' must be positive for log scale')
+    log <- FALSE
+  }
+  if(log){
+    ref <- ref[ref > 0]
+    ref <- log10(ref)
+    if(!length(ref)) ref <- NULL
+  }
+  catlab <- axislabel(y,var = cat, log = log)
+  conlab <- axislabel(y,var = con, log = log)
+  if(is.null(ylab)) ylab <- if(horizontal) catlab else conlab
+  if(is.null(xlab)) xlab <- if(horizontal) conlab else catlab
+
+  guide <- attr(y[[cat]], 'guide')
   if(encoded(guide)){
     y[[cat]] <- decode(y[[cat]],encoding = guide)
     y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
@@ -65,8 +88,6 @@ boxplot.data.frame <- function(
     num <- sapply(lev,function(l)sum(na.rm = TRUE, y[[cat]] == l))
     levels(y[[cat]]) <- paste(lev,num,sep = '\n')
   }
-
-  # if(is.null(ref)) if(ymeta$TYPEC %in% c('IIV','RESIDUAL') ) ref <- 0
   scales <- list(
     tck = c(1,0),
     x = list(log = log,equispaced.log = FALSE)
@@ -84,15 +105,7 @@ boxplot.data.frame <- function(
       main <- NULL
     }
   }
-  bwplot(
-    formula,
-    data = y,
-    aspect = 1,
-    horizontal = horizontal,
-    main = main,
-    par.settings = standard.theme('pdf',color = FALSE),
-    scales = scales,
-    panel = function(...){
+  mypanel <- function(...){
       panel.bwplot(...)
       if(length(ref)){
         if(horizontal) {
@@ -101,57 +114,97 @@ boxplot.data.frame <- function(
           panel.abline(h = ref)
         }
       }
-    },
+    }
+  bwplot(
+    formula,
+    data = y,
+    aspect = aspect,
+    horizontal = horizontal,
+    main = main,
+    par.settings = standard.theme('pdf',color = FALSE),
+    scales = scales,
+    ylab = ylab,
+    xlab = xlab,
+    panel = mypanel,
     ...
   )
 }
 
-#' Boxplot for Folded
+#' Boxplot Method for Data Frame
 #'
-#' Boxplot for folded.
-#' @import encode
+#' Boxplot for data.frame.  Uses nonstandard evaluation.
+#' @param x data.frame
+#' @param ... unquoted names of two items to plot (y , x)
+#' @param log whether to log transform continuous variable (auto-selected if NULL)
+#' @param horizontal whether box/whisker axis should be horizontal (continuous x, categorical y)
+#' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
+#' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
+#' @param ref optional reference line on continuous axis
+#' @param nobs whether to include the number of observations under the category label
+#' @param na.rm whether to remove data points with one or more missing coordinates
+#' @param ylab passed to \code{\link[lattice]{bwplot}}
+#' @param xlab passed to \code{\link[lattice]{bwplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}}
+#' @param fun function that does the actual plotting
 #' @export
-#' @family bivariate plots
-#' @rdname boxplot
-boxplot.folded <- function(
+#' @importFrom rlang f_rhs
+#' @family bivariate functions
+#' @family boxplot
+#' @examples
+#' boxplot(Theoph,'Subject','conc')
+#' boxplot(Theoph,Subject,conc)
+#' boxplot(Theoph,conc,Subject)
+boxplot.data.frame <- function(
   x,
-  .y,
-  .x,
-  log,
-  horizontal,
+  ...,
+  log = FALSE,
+  horizontal = NULL,
   main = FALSE,
   crit = 1.3,
   ref = NULL,
+  nobs = FALSE,
   na.rm = TRUE,
-  ...
+  xlab = NULL,
+  ylab = NULL,
+  aspect = 1,
+  fun = getOption('metaplot_box','boxplot_data_frame')
 ){
-  stopifnot(
-    length(.x) == 1,
-    length(.y) == 1
-  )
-  y <- x %>% unfold(UQS(c(.y,.x)))
-  stopifnot(all(c(.x,.y) %in% names(y)))
-  if(missing(horizontal)) horizontal <- continuous(x, .x)
-  con <- if(horizontal) .x else .y
-  cat <- if(horizontal) .y else .x
-  if(missing(log)) log <- mean(y[[con]],na.rm = T)/median(y[[con]],na.rm = T) > crit
-  if(any(y[[con]] <= 0,na.rm = T)) log <- FALSE
-  ylab <- axislabel(x,.y, log = if(horizontal) FALSE else log )
-  xlab <- axislabel(x,.x, log = if(horizontal) log else FALSE )
-  guide <- guide(x,cat)
-  boxplot(
-    y,
-    .y = .y,
-    .x = .x,
+  args <- quos(...)
+  args <- lapply(args,f_rhs)
+  var <- args[names(args) == '']
+  other <- args[names(args) != '']
+  var <- sapply(var, as.character)
+  if(length(var) < 2) stop('boxplot requires two items to plot')
+  if(length(var) > 2)warning('only retaining the first two items')
+  var <- var[1:2] # take first two
+  main <- list(x = x, var = var)
+  formal <- list(
     log = log,
+    horizontal = horizontal,
     main = main,
     crit = crit,
     ref = ref,
-    ylab = ylab,
-    xlab = xlab,
-    guide = guide,
-    horizontal = horizontal,
+    nobs =nobs,
     na.rm = na.rm,
-    ...
+    xlab = xlab,
+    ylab = ylab,
+    aspect = aspect
   )
+  args <- c(main, formal, other)
+  do.call(fun, args)
 }
+
+#' Boxplot Method for Folded
+#'
+#' Boxplot for folded. Converts to data.frame with defined column attributes and calls data.frame method.
+#' @param x folded
+#' @param ... passed to \code{\link{boxplot.data.frame}}
+#' @export
+#' @family bivariate plots
+#' @family boxplot
+#' @examples
+#' library(fold)
+#' data(eventsf)
+#' boxplot(eventsf, SEX, WT, ref = 68)
+boxplot.folded <- function(x, ...)boxplot(hide(x),...)
+

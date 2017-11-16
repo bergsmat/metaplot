@@ -1,13 +1,13 @@
-#' Density
+#' Density Plot
 #'
-#' Creates a density metaplot.
+#' Creates a density plot.
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
 dens <- function(x,...)UseMethod('dens')
 
-#' Plot Density for Data Frame, Standard Evaluation
+#' Density Function for Data Frame
 #'
 #' Plot density for object of class 'data.frame' using standard evaluation.
 #' @param x data.frame
@@ -18,8 +18,8 @@ dens <- function(x,...)UseMethod('dens')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
+#' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
-#' @describeIn dens data.frame method
 #' @importFrom rlang get_expr quo
 #' @import lattice
 #' @export
@@ -49,7 +49,10 @@ dens_data_frame<- function(
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(var) == 1)
   stopifnot(is.character(var))
-  if(log)if(any(x[[var]] <= 0, na.rm = TRUE))stop('cannot take log of negative values')
+  if(log)if(any(x[[var]] <= 0, na.rm = TRUE)){
+    warning('cannot take log of negative values')
+    log <- FALSE
+  }
   if(is.null(scales)) scales <- list(tck = c(1,0),x = list(log = log,equispaced.log = FALSE))
   if(is.null(panel)) panel <- function(ref = NULL, ...){
     panel.densityplot(...)
@@ -62,9 +65,9 @@ dens_data_frame<- function(
   if(is.null(xlab)) xlab <- default_xlab
   densityplot(x[[var]], xlab = xlab, ref = ref, log = log, aspect = aspect, scales = scales, panel = panel, ...)
 }
-#' Plot Density for Data Frame, Nonstandard Evaluation
+#' Dens Method for Data Frame
 #'
-#' Plot density for object of class 'data.frame'.
+#' Plot density for object of class 'data.frame'. Uses nonstandard evaluation.
 #' @param x data.frame
 #' @param ... item to plot, given as unquoted column name
 #' @param xlab x axis label
@@ -73,8 +76,8 @@ dens_data_frame<- function(
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
+#' @param fun function that does the actual plotting
 #' @family univariate plots
-#' @describeIn dens data.frame method
 #' @importFrom rlang get_expr quo
 #' @import lattice
 #' @export
@@ -90,7 +93,8 @@ dens.data.frame<- function(
   log = FALSE,
   aspect = 1,
   scales = NULL,
-  panel = NULL
+  panel = NULL,
+  fun = getOption('metaplot_dens','dens_data_frame')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -103,7 +107,20 @@ dens.data.frame<- function(
   main <- list(x = x, var = var)
   formal <- list(xlab = xlab, ref = ref, aspect = aspect, scales = scales, panel = panel)
   args <- c(main, formal, other)
-  do.call(dens_data_frame, args)
+  do.call(fun, args)
 }
 
+#' Dens Method for Folded
+#'
+#' Dens method for folded. Converts to data.frame with defined column attributes and calls data.frame method.
+#' @param x folded
+#' @param ... passed to \code{\link{boxplot.data.frame}}
+#' @export
+#' @family univariate plots
+#' @family dens
+#' @examples
+#' library(fold)
+#' data(eventsf)
+#' boxplot(eventsf, conc)
+dens.folded <- function(x, ...)dens(hide(x),...)
 

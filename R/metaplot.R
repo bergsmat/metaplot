@@ -52,7 +52,7 @@ metaplot.data.frame <- function(x,...){
 #'  number and type of items represented by the anonymous arguments.
 #'
 #'\itemize{
-#' \item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens.folded}} to give a density plot.}
+#' \item{CON:}{ A single argument representing a continuous variable (numeric, not having encoded GUIDE) is forwarded to \code{\link{dens}} to give a density plot.}
 #'
 #' \item{CAT:}{ A single categorical argument is unexpected.}
 #'
@@ -73,13 +73,11 @@ metaplot.data.frame <- function(x,...){
 #'
 #' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 
-#' @import lazyeval
 #' @family metaplots
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots
 #' @describeIn metaplot folded method
-#' @import lazyeval
 #' @importFrom graphics boxplot
 #' @importFrom stats as.formula cor density loess.smooth median
 #' @importFrom dplyr filter
