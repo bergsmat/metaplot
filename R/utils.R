@@ -73,64 +73,6 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
   res
 }
 
-#' Check if Something is Continuous
-#'
-#' Checks if something is continuous.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-continuous <- function(x,...)UseMethod('continuous')
-
-#' Check if Something is Continuous by Default
-#'
-#' Checks if something is continuous using default method.
-#' @param x vector
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-continuous.default <- function(x, ...)is.numeric(x)
-
-#' Check if Data Frame is Continuous by Item
-#'
-#' Checks if data.frame is continuous with respect to the column name(s).
-#' @param x data.frame
-#' @param col a column
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-continuous.data.frame <- function(x, col = names(x), ...){
-  stopifnot(is.character(col))
-  stopifnot(all(col %in% names(x)))
-  sapply(col,function(c)is.numeric(x[[c]]))
-}
-
-#' Check if Folded is Continuous
-#'
-#' Checks if folded is continuous with respect to \code{var}
-#' @param x folded
-#' @param var length-one character
-#' @param ... passed arguments
-#' @import dplyr
-#' @import magrittr
-#' @export
-#' @keywords internal
-continuous.folded <- function(x,var, ...){
-  stopifnot(length(var) == 1)
-  is.number <- function(x)sum(is.defined(x)) == sum(is.defined(as.numeric(x)))
-  val <- if(var %in% names(x)){
-    x[[var]]
-  } else{
-    x %>% dplyr::filter(META %>% is.na) %>% dplyr::filter(VARIABLE == var) %$% VALUE
-  }
-  if(length(val) == 0)stop('no values found for ',var)
-  guide_var <- guide(x,var)
-  enc <- if(length(guide_var)) encoded(guide_var) else FALSE
-  cont <- val %>% is.number && !enc
-  cont
-}
-
 #' Extract Guide
 #'
 #' Extracts guide.
