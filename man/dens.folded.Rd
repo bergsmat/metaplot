@@ -17,11 +17,14 @@ Dens method for folded. Converts to data.frame with defined column attributes an
 \examples{
 library(fold)
 data(eventsf)
-boxplot(eventsf, conc)
+dens(eventsf, DV)
 }
 \seealso{
 Other univariate plots: \code{\link{dens.data.frame}},
-  \code{\link{dens_data_frame}}, \code{\link{metaplot}}
+  \code{\link{dens_data_frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot.folded}},
+  \code{\link{metaplot.grouped_df}}
 
 Other dens: \code{\link{dens.data.frame}},
   \code{\link{dens_data_frame}}

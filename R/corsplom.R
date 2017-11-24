@@ -5,11 +5,14 @@
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
+#' @family corsplom
 corsplom <- function(x,...)UseMethod('corsplom')
 
-#' Correlated Splom for Data.frame
+#' Correlated Scatterplot Matrix Function for Data Frame
 #'
 #' Creates a scatterplot matrix with correlations in lower panel, by default.
+#' @param x data.frame
+#' @param var variables to plot
 #' @param upper.panel passed to splom
 #' @param lower.panel passed to splom
 #' @param pscales passed to splom
@@ -17,12 +20,14 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param varname.cex passed to splom
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
+#' @param ... extra arguments passed to \code{\link[lattice]{splom}}
 #' @export
 #' @importFrom rlang UQS
 #' @family multivariate plots
-#' @describeIn corsplom data.frame method
-corsplom.data.frame <- function(
+#' @family corsplom
+corsplom_data_frame <- function(
   x,
+  var = names(x),
   upper.panel = u.p,
   lower.panel= l.p,
   pscales= 0,
@@ -32,6 +37,9 @@ corsplom.data.frame <- function(
   split = TRUE,
   ...
 ){
+  stopifnot(inherits(x, 'data.frame'))
+  labels <- sapply(x,attr,'label')
+  if(all(is.defined(labels))) names(x) <- labels
   if(split) names(x) <- fracture(names(x))
   splom(
     x,
@@ -44,6 +52,51 @@ corsplom.data.frame <- function(
     ...
   )
 }
+#' Correlated Scatterplot Matrix Method for Data Frame
+#'
+#' Creates a scatterplot matrix using nonstandard evaluation.
+#' @param x data.frame
+#' @param ... variables to plot as unquoted character strings
+#' @param upper.panel passed to splom
+#' @param lower.panel passed to splom
+#' @param pscales passed to splom
+#' @param xlab passed to splom
+#' @param varname.cex passed to splom
+#' @param diag.panel passed to splom
+#' @param split break diagonal names on white space
+#' @param fun function to do the actual plotting
+#' @export
+#' @importFrom rlang UQS
+#' @family multivariate plots
+#' @family corsplom
+corsplom.data.frame <- function(
+  x,
+  ...,
+  upper.panel = u.p,
+  lower.panel= l.p,
+  pscales= 0,
+  xlab = '',
+  varname.cex = 1,
+  diag.panel = my.diag.panel,
+  split = TRUE,
+  fun = getOption('metaplot_corsplom','corsplom_data_frame')
+){
+  args <- quos(...)
+  args <- lapply(args,f_rhs)
+  vars <- args[names(args) == '']
+  other <- args[names(args) != '']
+  vars <- sapply(vars, as.character)
+  prime <- list(x = x, vars = vars)
+  formal <- list(
+   upper.panel = upper.panel,
+   lower.panel = lower.panel,
+   xlab = '',
+   varname.cex = varname.cex,
+   split = split
+  )
+  args <- c(prime, formal, other)
+  do.call(fun, args)
+}
 
 #' Correlated Splom for Folded
 #'
@@ -54,7 +107,9 @@ corsplom.data.frame <- function(
 #' @import lattice
 #' @export
 #' @family multivariate plots
-#' @describeIn corsplom folded method
+#' @family corsplom
+#' @param x folded
+#' @param ... unquoted names of variables to plot, or other named arguments
 corsplom.folded <- function(x, ...){
   var <- quos(...)
   var <- lapply(var, f_rhs)

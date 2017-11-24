@@ -35,7 +35,10 @@ dens(Theoph, Wt, grid = TRUE )
 }
 \seealso{
 Other univariate plots: \code{\link{dens.folded}},
-  \code{\link{dens_data_frame}}, \code{\link{metaplot}}
+  \code{\link{dens_data_frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot.folded}},
+  \code{\link{metaplot.grouped_df}}
 
 Other dens: \code{\link{dens.folded}},
   \code{\link{dens_data_frame}}

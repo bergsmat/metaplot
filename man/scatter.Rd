@@ -2,16 +2,9 @@
 % Please edit documentation in R/scatter.R
 \name{scatter}
 \alias{scatter}
-\alias{scatter.folded}
 \title{Scatterplot}
 \usage{
 scatter(x, ...)
-
-\method{scatter}{folded}(x, .y, .x, groups = NULL, ..., ylog = FALSE,
-  xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
-  xsmooth = FALSE, cols = 3, density = FALSE, iso = FALSE,
-  main = FALSE, corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf,
-  conf = FALSE, loc = 0, msg = "metastats", panel = metapanel)
 }
 \arguments{
 \item{x}{object}
@@ -20,21 +13,11 @@ scatter(x, ...)
 }
 \description{
 Scatterplot.
-
-Scatterplot for class 'folded'.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{folded}: folded method
-}}
-
 \seealso{
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{corsplom}},
   \code{\link{dens}}, \code{\link{guide}},
   \code{\link{label}}, \code{\link{metaplot}},
   \code{\link{overlay}}
-
-Other bivariate plots: \code{\link{boxplot.folded}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
 }

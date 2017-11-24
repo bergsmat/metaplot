@@ -25,7 +25,6 @@ dens <- function(x,...)UseMethod('dens')
 #' @export
 #' @family dens
 #' @examples
-#' #dens(Theoph, Wt, grid = T )
 #' dens_data_frame(Theoph, 'Wt', grid = TRUE)
 dens_data_frame<- function(
   x,
@@ -38,14 +37,6 @@ dens_data_frame<- function(
   panel = NULL,
   ...
 ){
-  #var <- quo(var)
-  # args <- lapply(args,f_rhs)
-  # var <- args[names(args) == '']
-  # other <- args[names(args) != '']
-  # var <- sapply(var, as.character)
-  # if(length(var) < 1) stop('dens() requires an item to plot')
-  # if(length(var) > 1)warning('only retaining the first item')
-  # var <- var[[1]] # take first/only list member (quosure)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(var) == 1)
   stopifnot(is.character(var))
@@ -58,7 +49,6 @@ dens_data_frame<- function(
     panel.densityplot(...)
     if(length(ref))panel.abline(v = ref)
   }
-  #if(is.null(xlab)) xlab <- as.character(f_rhs(var))
   default_xlab <- var
   xvarlab <- attr(x[[var]],'label')
   if(!is.null(xvarlab)) default_xlab <- xvarlab
@@ -104,9 +94,9 @@ dens.data.frame<- function(
   if(length(var) < 1) stop('dens() requires an item to plot')
   if(length(var) > 1)warning('only retaining the first item')
   var <- var[[1]] # take first (perh. only)
-  main <- list(x = x, var = var)
+  prime <- list(x = x, var = var)
   formal <- list(xlab = xlab, ref = ref, aspect = aspect, scales = scales, panel = panel)
-  args <- c(main, formal, other)
+  args <- c(prime, formal, other)
   do.call(fun, args)
 }
 
@@ -121,6 +111,6 @@ dens.data.frame<- function(
 #' @examples
 #' library(fold)
 #' data(eventsf)
-#' boxplot(eventsf, conc)
+#' dens(eventsf, DV)
 dens.folded <- function(x, ...)dens(hide(x),...)
 

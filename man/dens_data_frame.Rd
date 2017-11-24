@@ -30,12 +30,14 @@ dens_data_frame(x, var, xlab = NULL, ref = NULL, log = FALSE,
 Plot density for object of class 'data.frame' using standard evaluation.
 }
 \examples{
-#dens(Theoph, Wt, grid = T )
 dens_data_frame(Theoph, 'Wt', grid = TRUE)
 }
 \seealso{
 Other univariate plots: \code{\link{dens.data.frame}},
-  \code{\link{dens.folded}}, \code{\link{metaplot}}
+  \code{\link{dens.folded}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot.folded}},
+  \code{\link{metaplot.grouped_df}}
 
 Other dens: \code{\link{dens.data.frame}},
   \code{\link{dens.folded}}

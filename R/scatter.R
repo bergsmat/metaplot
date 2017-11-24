@@ -1,3 +1,6 @@
+globalVariables('metaplot_groups')
+globalVariables('metaplot_values')
+
 #' Scatterplot
 #'
 #' Scatterplot.
@@ -11,9 +14,13 @@ scatter <- function(x,...)UseMethod('scatter')
 #' Scatterplot Function for Data Frame
 #'
 #' Scatterplot function for class 'data.frame'. Uses standard evaluation.
+#'
+#'
 #' @param x data.frame
-#' @param var character vector of variables to plot (expecting length: 2)
-#' @param groups optional grouping item
+#' @param yvar character: y variable(s)
+#' @param xvar character: x variable
+#' @param groups optional grouping item; ignored if more than one \code{yvar}
+#' @param facets character: up to two grouping items
 #' @param ylog log transform y axis (guessed if NULL)
 #' @param xlog log transform x axis (guessed if NULL)
 #' @param yref reference line from y axis
@@ -33,16 +40,20 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param loc where to print statistics on a panel
-#' @param aspectpassed to \code{\link[lattice]{xyplot}}
+#' @param aspect tpassed to \code{\link[lattice]{xyplot}}
 #' @param auto.key passed to \code{\link[lattice]{xyplot}}
+#' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param panel name or definition of panel function
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{metapanel}}
 #' @export
 #' @import lattice
+#' @importFrom tidyr gather
 #' @family bivariate plots
 #' @family scatter
 #' @examples
+#' library(magrittr)
+#' library(dplyr)
 #' attr(Theoph$conc,'label') <- 'theophylline concentration'
 #' attr(Theoph$conc,'guide') <- 'mg/L'
 #' attr(Theoph$Time,'label') <- 'time'
@@ -50,14 +61,17 @@ scatter <- function(x,...)UseMethod('scatter')
 #' attr(Theoph$Subject,'guide') <- '////'
 #' scatter_data_frame(Theoph, c('conc','Time'))
 #' scatter_data_frame(Theoph, c('conc','Time'), 'Subject')
+#' scatter_data_frame(Theoph, c('conc','Time'), facets = 'Subject')
 #' scatter_data_frame(Theoph %>% filter(conc > 0), c('conc','Time'), 'Subject',ylog = TRUE, yref = 5)
 #' scatter_data_frame(Theoph, c('conc','Time'), 'Subject',ysmooth = TRUE)
 #' scatter_data_frame(Theoph, c('conc','Time'),main = TRUE, corr = TRUE)
 #' scatter_data_frame(Theoph, c('conc','Time'),conf = TRUE, loc = 3, yref = 6)
 scatter_data_frame <- function(
   x,
-  var,
+  yvar,
+  xvar,
   groups = NULL,
+  facets = NULL,
   ylog = NULL,
   xlog = NULL,
   yref = NULL,
@@ -66,7 +80,7 @@ scatter_data_frame <- function(
   xlab = NULL,
   ysmooth = FALSE,
   xsmooth = FALSE,
-  cols = 3,
+  cols = if(length(yvar) > 1) 1 else 3,
   density = FALSE,
   iso = FALSE,
   main = FALSE,
@@ -78,6 +92,7 @@ scatter_data_frame <- function(
   loc = 0,
   aspect = 1,
   auto.key = list(columns = cols),
+  as.table = TRUE,
   msg = 'metastats',
   panel = metapanel,
   ...
@@ -85,47 +100,77 @@ scatter_data_frame <- function(
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(is.logical(corr))
   stopifnot(length(groups) <= 1)
-  stopifnot(is.character(var))
-  if(length(var) < 2) stop('need two items to make scatterplot')
-  if(length(var) > 2) warning('only using first two of supplied items')
-  .y <- var[[1]]
-  .x <- var[[2]]
+  stopifnot(is.character(yvar))
+  stopifnot(is.character(xvar))
+  stopifnot(length(xvar) == 1)
+  if(!is.null(facets))stopifnot(is.character(facets))
+  # if(length(var) < 2) stop('need two items to make scatterplot')
+  # if(length(var) > 2) warning('only using first two of supplied var items')
   y <- x
-  stopifnot(all(c(.x,.y,groups) %in% names(y)))
-  if(na.rm) y %<>% filter(is.defined(!!.y) & is.defined(!!.x)) # preserves attributes
-  formula <- as.formula(paste(sep = '~',.y, .x))
+  stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
+  if(length(yvar) > 1){
+    if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
+      stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
+    y %<>% gather(metaplot_groups, metaplot_values, !!!yvar)
+    groups <- 'metaplot_groups'
+    labs <- sapply(yvar, function(col){
+      a <- attr(x[[col]], 'label')
+      if(is.null(a)) a <- ''
+      a
+    })
+    if(!any(labs == '')){
+      attr(y[['metaplot_groups']],'guide') <- encode(yvar,labs)
+    } else {
+      attr(y[['metaplot_groups']],'guide') <- encode(yvar)
+    }
+    gui <- sapply(yvar, function(col){
+      a <- attr(x[[col]], 'guide')
+      if(is.null(a)) a <- ''
+      a
+    })
+    gui <- unique(gui)
+    if(length(gui) == 1) attr(y$metaplot_values, 'guide') <- gui
+    yvar <- 'metaplot_values'
+  }
+  if(na.rm) y %<>% filter(is.defined(!!yvar) & is.defined(!!xvar)) # preserves attributes
+  ff <- character(0)
+  if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
+  if(!is.null(facets))ff <- paste0('|',ff)
+  formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
   default_log <- function(x,crit){
     x <- x[!is.na(x)]
     all(x > 0) && (mean(x)/median(x) > crit)
   }
-  if(ylog %>% is.null) ylog <- default_log(y[[.y]], crit)
-  if(xlog %>% is.null) xlog <- default_log(y[[.x]], crit)
-  if(ylog)if(any(y[[.y]] <= 0, na.rm = TRUE)){
-    warning(.y, ' must be positive for log scale')
+  if(ylog %>% is.null) ylog <- default_log(y[[yvar]], crit)
+  if(xlog %>% is.null) xlog <- default_log(y[[xvar]], crit)
+  if(ylog)if(any(y[[yvar]] <= 0, na.rm = TRUE)){
+    warning(yvar, ' must be positive for log scale')
     ylog <- FALSE
   }
-  if(xlog)if(any(y[[.x]] <= 0, na.rm = TRUE)){
-    warning(.x, ' must be positive for log scale')
+  if(xlog)if(any(y[[xvar]] <= 0, na.rm = TRUE)){
+    warning(xvar, ' must be positive for log scale')
     ylog <- FALSE
   }
-  if(length(yref) & ylog) yref <- log10(yref)
-  if(length(xref) & xlog) xref <- log10(xref)
+  if(length(yref) & ylog & !(any(yref <= 0))) yref <- log10(yref)
+  if(length(xref) & xlog & !(any(xref <= 0))) xref <- log10(xref)
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
-  scales = list(y = yscale,x = xscale,tck = c(1,0))
-  if(is.null(ylab))ylab <- axislabel(y,var = .y, log = ylog)
-  if(is.null(xlab))xlab <- axislabel(y,var = .x, log = xlog)
-
-  if(!is.null(groups)){
-    guide <- attr(y[[groups]], 'guide')
-    if(encoded(guide)){
-      decoded <- decode(y[[groups]], encoding = guide)
-      if(!any(is.na(decoded))) y[[groups]] <- decoded
-      if(all(is.na(decoded))) y[[groups]] <- decode(y[[groups]]) # values represent themselves as factor
-      # mixed NA and decodable: do nothing
-    }
+  scales = list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
+  if(is.null(ylab))ylab <- axislabel(y,var = yvar, log = ylog)
+  ylab <- sub('metaplot_values','',ylab)
+  if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
+  ifcoded <- function(x, var){
+    guide <- attr(x[[var]],'guide')
+    if(!encoded(guide)) return(x[[var]])
+    decoded <- decode(x[[var]], encoding = guide)
+    if(!any(is.na(decoded))) return(decoded)
+    if(all(is.na(decoded)))return(decode(x[[var]]))
+    x[[var]]
   }
-
+  if(!is.null(groups))y[[groups]] <- ifcoded(y, groups)
+  if(!is.null(facets)){
+    for (i in length(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+  }
   prepanel = if(iso) function(x,y,...){
     lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
     list(
@@ -135,13 +180,13 @@ scatter_data_frame <- function(
   } else NULL
   cor <- cor(
     use = 'pair',
-    if(ylog) log(y[[.y]]) else y[[.y]],
-    if(xlog) log(y[[.x]]) else y[[.x]]
+    if(ylog) log(y[[yvar]]) else y[[yvar]],
+    if(xlog) log(y[[xvar]]) else y[[xvar]]
   )
   cor <- signif(cor,2)
   cor <- paste('R =',cor)
   cor <- parens(cor)
-  mn <- paste(sep = ' ~ ',.y,.x)
+  mn <- paste(sep = ' ~ ',yvar,xvar)
   if(length(groups)) mn <- paste(mn,'by',groups)
   if(corr) mn <- paste(mn, cor)
   mn <- list(mn, cex = 1, fontface = 1)
@@ -158,6 +203,7 @@ scatter_data_frame <- function(
     data = y,
     groups = groups,
     auto.key = auto.key,
+    as.table = as.table,
     aspect = aspect,
     scales = scales,
     prepanel = prepanel,
@@ -178,6 +224,129 @@ scatter_data_frame <- function(
     ...
   )
 }
+
+#' Scatterplot Method for Data Frame
+#'
+#' Scatterplot method for class 'data.frame'. Uses nonstandard evaluation. By default, passes arguments to \code{\link{scatter_data_frame}}.
+#' @param x data.frame
+#' @param ... unquoted names for variables: y, x, groups (may be missing) and conditioning variables (facets)
+#' @param ylog log transform y axis (guessed if NULL)
+#' @param xlog log transform x axis (guessed if NULL)
+#' @param yref reference line from y axis
+#' @param xref reference line from x axis
+#' @param ysmooth supply loess smooth of y on x
+#' @param xsmooth supply loess smmoth of x on y
+#' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
+#' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
+#' @param cols suggested columns for auto.key
+#' @param density plot point density instead of points (ignored if \code{groups} is supplied)
+#' @param iso use isometric axes with line of unity
+#' @param main logical: whether to construct a default title; or a substitute title or NULL
+#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
+#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
+#' @param na.rm whether to remove data points with one or more missing coordinates
+#' @param fit draw a linear fit of y ~ x
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param loc where to print statistics on a panel
+#' @param aspect passed to \code{\link[lattice]{xyplot}}
+#' @param auto.key passed to \code{\link[lattice]{xyplot}}
+#' @param as.table passed to \code{\link[lattice]{xyplot}}
+#' @param panel name or definition of panel function
+#' @param fun function to draw the plot
+#' @seealso \code{\link{scatter_data_frame}}
+#' @export
+#' @import lattice
+#' @importFrom rlang f_rhs
+#' @family bivariate plots
+#' @family scatter
+#' @examples
+#' library(magrittr)
+#' library(dplyr)
+#' attr(Theoph$conc,'label') <- 'theophylline concentration'
+#' attr(Theoph$conc,'guide') <- 'mg/L'
+#' attr(Theoph$Time,'label') <- 'time'
+#' attr(Theoph$Time,'guide') <- 'h'
+#' attr(Theoph$Subject,'guide') <- '////'
+#' scatter(Theoph,conc, Time)
+#' scatter(Theoph, conc, Time, Subject) # Subject as groups
+#' scatter(Theoph, conc, Time, , Subject) # Subject as facet
+#' scatter(Theoph %>% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 5)
+#' scatter(Theoph, conc, Time, Subject,ysmooth = TRUE)
+#' scatter(Theoph, conc, Time, main = TRUE, corr = TRUE)
+#' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
+scatter.data.frame <- function(
+  x,
+  ...,
+  ylog = NULL,
+  xlog = NULL,
+  yref = NULL,
+  xref = NULL,
+  ylab = NULL,
+  xlab = NULL,
+  ysmooth = FALSE,
+  xsmooth = FALSE,
+  density = FALSE,
+  iso = FALSE,
+  main = FALSE,
+  corr = FALSE,
+  na.rm = TRUE,
+  conf = FALSE,
+  fit = conf,
+  loc = 0,
+  aspect = 1,
+  cols = 3,
+  crit = 1.3,
+  auto.key = list(columns = cols),
+  as.table = TRUE,
+  msg = 'metastats',
+  panel = metapanel,
+  fun = getOption('metaplot_scatter','scatter_data_frame')
+){
+  args <- quos(...)
+  args <- lapply(args,f_rhs)
+  vars <- args[names(args) == '']
+  other <- args[names(args) != '']
+  vars <- sapply(vars, as.character)
+  if(length(vars) < 2) stop('scatter requires two items to plot')
+  var <- vars[1:2] # take first two
+  groups <- NULL
+  if(length(vars) > 2){
+    groups <- vars[[3]]
+    if(groups == '') groups <- NULL
+  }
+  facets <- NULL
+  if(length(vars) > 3) facets <- vars[4:length(vars)]
+  prime <- list(x = x, var = var, groups = groups, facets = facets)
+  formal <- list(
+    ylog = ylog,
+    xlog = xlog,
+    yref = yref,
+    xref = xref,
+    ylab = ylab,
+    xlab = xlab,
+    ysmooth = ysmooth,
+    xsmooth = xsmooth,
+    density = density,
+    iso = iso,
+    main = main,
+    corr = corr,
+    na.rm = na.rm,
+    conf = conf,
+    fit = fit,
+    loc = loc,
+    aspect = aspect,
+    cols = cols,
+    crit = crit,
+    auto.key = auto.key,
+    as.table = as.table,
+    msg = 'metastats',
+    panel = metapanel
+  )
+  args <- c(prime, formal, other)
+  do.call(fun, args)
+}
+
 
 #' Panel Function for Metaplot Scatterplot
 #'
@@ -269,11 +438,36 @@ ypos <- function(loc){
 #' @import lattice
 #' @importFrom rlang UQS
 #' @family bivariate plots
-#' @describeIn scatter folded method
+#' @family scatter
+#' @param x folded
+#' @param xvar x values
+#' @param yvar y values
+#' @param groups optional grouping item
+#' @param ... passed to \code{\link{region}}
+#' @param ylog reference line from y axis
+#' @param xlog reference line from x axis
+#' @param yref reference line from y axis
+#' @param xref reference line from x axis
+#' @param ysmooth supply loess smooth of y on x
+#' @param xsmooth supply loess smmoth of x on y
+#' @param cols default columns for auto.key
+#' @param auto.key passed to \code{\link[lattice]{xyplot}}
+#' @param density plot point density instead of points
+#' @param iso use isometric axes with line of unity
+#' @param main logical: whether to construct a default title; or a substitute title or NULL
+#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
+#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
+#' @param na.rm whether to remove data points with one or more missing coordinates
+#' @param fit draw a linear fit of y ~ x
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param loc where to print statistics on a panel
+#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param panel default panel function
+#
 scatter.folded <- function(
   x,
-  .y,
-  .x,
+  yvar,
+  xvar,
   groups = NULL,
   ...,
   ylog = FALSE,
@@ -283,11 +477,11 @@ scatter.folded <- function(
   ysmooth = FALSE,
   xsmooth = FALSE,
   cols = 3,
+  auto.key = list(columns = cols),
   density = FALSE,
   iso = FALSE,
   main = FALSE,
   corr = FALSE,
-  # group_codes = NULL,
   crit = 1.3,
   na.rm = TRUE,
   fit = conf,
@@ -297,20 +491,20 @@ scatter.folded <- function(
   panel = metapanel
 ){
   stopifnot(
-    length(.x) == 1,
-    length(.y) == 1,
+    length(xvar) == 1,
+    length(yvar) == 1,
     length(groups) <= 1
   )
-  y <- x %>% unfold(UQS(c(.y,.x,groups)))
-  stopifnot(all(c(.x,.y,groups) %in% names(y)))
+  y <- x %>% unfold(UQS(c(yvar,xvar,groups)))
+  stopifnot(all(c(xvar,yvar,groups) %in% names(y)))
   gc <- if(length(groups)) guide(x,groups) else NULL
   if(!is.null(gc))if(all(is.na(gc))) gc <- NULL
-  ylab <- axislabel(x,.y,ylog)
-  xlab <- axislabel(x,.x,xlog)
-  scatter(
+  ylab <- axislabel(x,yvar,ylog)
+  xlab <- axislabel(x,xvar,xlog)
+  scatter_data_frame(
     y,
-    .y = .y,
-    .x = .x,
+    yvar = yvar,
+    xvar = xvar,
     ylab = ylab,
     xlab = xlab,
     groups = groups,

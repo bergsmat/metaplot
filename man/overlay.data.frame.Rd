@@ -40,6 +40,11 @@ Creates an overlay plot for class 'data.frame'. Continuous items are plotted vs 
 \seealso{
 \code{\link{overlay.folded}}
 
-Other multivariate plots: \code{\link{corsplom}},
-  \code{\link{metaplot}}, \code{\link{overlay.folded}}
+Other multivariate plots: \code{\link{corsplom.data.frame}},
+  \code{\link{corsplom.folded}},
+  \code{\link{corsplom_data_frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot.folded}},
+  \code{\link{metaplot.grouped_df}},
+  \code{\link{overlay.folded}}
 }

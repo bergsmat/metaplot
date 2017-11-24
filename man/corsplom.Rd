@@ -2,54 +2,18 @@
 % Please edit documentation in R/corsplom.R
 \name{corsplom}
 \alias{corsplom}
-\alias{corsplom.data.frame}
-\alias{corsplom.folded}
 \title{Correlated Splom}
 \usage{
 corsplom(x, ...)
-
-\method{corsplom}{data.frame}(x, upper.panel = u.p, lower.panel = l.p,
-  pscales = 0, xlab = "", varname.cex = 1, diag.panel = my.diag.panel,
-  split = TRUE, ...)
-
-\method{corsplom}{folded}(x, ...)
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{passed arguments}
-
-\item{upper.panel}{passed to splom}
-
-\item{lower.panel}{passed to splom}
-
-\item{pscales}{passed to splom}
-
-\item{xlab}{passed to splom}
-
-\item{varname.cex}{passed to splom}
-
-\item{diag.panel}{passed to splom}
-
-\item{split}{break diagonal names on white space}
 }
 \description{
 Scatterplot matrix with correlations.
-
-Creates a scatterplot matrix with correlations in lower panel, by default.
-
-Creates a scatterplot matrix with correlations for folded.
-Categoricals in \dots are currently ignored. dots (\dots) are
-names of items in VARIABLE to be plotted, or named arguments
-to be passed to data.frame method.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{data.frame}: data.frame method
-
-\item \code{folded}: folded method
-}}
-
 \seealso{
 Other generic functions: \code{\link{axislabel}},
   \code{\link{continuous}}, \code{\link{dens}},
@@ -57,11 +21,7 @@ Other generic functions: \code{\link{axislabel}},
   \code{\link{metaplot}}, \code{\link{overlay}},
   \code{\link{scatter}}
 
-Other multivariate plots: \code{\link{metaplot}},
-  \code{\link{overlay.data.frame}},
-  \code{\link{overlay.folded}}
-
-Other multivariate plots: \code{\link{metaplot}},
-  \code{\link{overlay.data.frame}},
-  \code{\link{overlay.folded}}
+Other corsplom: \code{\link{corsplom.data.frame}},
+  \code{\link{corsplom.folded}},
+  \code{\link{corsplom_data_frame}}
 }

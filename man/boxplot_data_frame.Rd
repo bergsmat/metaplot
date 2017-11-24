@@ -41,9 +41,9 @@ Boxplot for data.frame. Uses standard evaluation.
 \examples{
 library(magrittr)
 library(dplyr)
-boxplot_data_frame(Theoph,'Subject','conc')
+boxplot_data_frame(Theoph,c('Subject','conc'))
 boxplot_data_frame(Theoph \%>\% filter(conc > 0),
-'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
+c('conc','Subject'), log = TRUE, ref = c(2,5),horizontal = FALSE)
 }
 \seealso{
 Other bivariate functions: \code{\link{boxplot.data.frame}}

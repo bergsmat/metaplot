@@ -12,17 +12,20 @@ globalVariables('panel_')
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
+#' @family metaplot
 metaplot <- function(x,...)UseMethod('metaplot')
 
 #' Create Metaplot from Grouped_df
 #'
 #' Creates a metaplot from grouped_df.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 #'
+#' @param x object
+#' @param ... passed arguments
 #' @family metaplots
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots
-#' @describeIn metaplot grouped_df method
+#' @family metaplot
 #' @export
 metaplot.grouped_df <- function(x,...){
   y <- fold(x)
@@ -33,11 +36,12 @@ metaplot.grouped_df <- function(x,...){
 #'
 #' Creates a metaplot from data.frame.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
 #'
-#' @family metaplots
+#' @param x object
+#' @param ... passed arguments
+#' @family metaplot
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots
-#' @describeIn metaplot data.frame method
 #' @export
 metaplot.data.frame <- function(x,...){
   y <- fold(x)
@@ -73,11 +77,12 @@ metaplot.data.frame <- function(x,...){
 #'
 #' Stratification, e.g. conditioning for trellis plots, is currently unimplemented.
 
-#' @family metaplots
+#' @param x object
+#' @param ... passed arguments
+#' @family metaplot
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots
-#' @describeIn metaplot folded method
 #' @importFrom graphics boxplot
 #' @importFrom stats as.formula cor density loess.smooth median
 #' @importFrom dplyr filter
@@ -86,7 +91,7 @@ metaplot.data.frame <- function(x,...){
 #' @examples
 #' # quick example
 #'
-#'library(magrittr)
+#' library(magrittr)
 #' library(fold)
 #' x <- as.folded(system.file(package='metaplot','extdata','drug1001.fld'))
 

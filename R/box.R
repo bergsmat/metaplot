@@ -24,9 +24,9 @@ NULL
 #' @examples
 #' library(magrittr)
 #' library(dplyr)
-#' boxplot_data_frame(Theoph,'Subject','conc')
+#' boxplot_data_frame(Theoph,c('Subject','conc'))
 #' boxplot_data_frame(Theoph %>% filter(conc > 0),
-#' 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
+#' c('conc','Subject'), log = TRUE, ref = c(2,5),horizontal = FALSE)
 boxplot_data_frame <- function(
   x,
   var,
@@ -177,7 +177,7 @@ boxplot.data.frame <- function(
   if(length(var) < 2) stop('boxplot requires two items to plot')
   if(length(var) > 2)warning('only retaining the first two items')
   var <- var[1:2] # take first two
-  main <- list(x = x, var = var)
+  prime <- list(x = x, var = var)
   formal <- list(
     log = log,
     horizontal = horizontal,
@@ -190,7 +190,7 @@ boxplot.data.frame <- function(
     ylab = ylab,
     aspect = aspect
   )
-  args <- c(main, formal, other)
+  args <- c(prime, formal, other)
   do.call(fun, args)
 }
 

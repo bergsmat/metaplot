@@ -17,12 +17,12 @@ Imports:
  magrittr,
  lazyeval,
  dplyr (>= 0.7.1),
+ tidyr,
  rlang,
+ fold,
  ggplot2
 Suggests:
- fold,
  spec,
- tidyr,
  csv
 Depends:
   R (>= 2.10)
