@@ -13,15 +13,15 @@ boxplot_data_frame(x, var, log = FALSE, horizontal = NULL, main = FALSE,
 
 \item{var}{character vector of variables to plot (expecting length: 2)}
 
-\item{log}{whether to log transform continuous variable (auto-selected if NULL)}
+\item{log}{whether to log transform numeric variable (auto-selected if NULL)}
 
-\item{horizontal}{whether box/whisker axis should be horizontal (continuous x, categorical y); defaults TRUE if (var[[2]] is continuous}
+\item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric}
 
 \item{main}{logical: whether to include title indicating x and y items; or a substitute title or NULL}
 
 \item{crit}{if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value}
 
-\item{ref}{optional reference line on continuous axis}
+\item{ref}{optional reference line on numeric axis}
 
 \item{nobs}{whether to include the number of observations under the category label}
 

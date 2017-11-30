@@ -1,7 +1,7 @@
 Package: metaplot
 Type: Package
 Title: Formalized Plots for Self-Describing Data
-Version: 0.3.0
+Version: 0.2.6
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Creates fully-annotated plots with minimum guidance.
@@ -18,12 +18,13 @@ Imports:
  lazyeval,
  dplyr (>= 0.7.1),
  tidyr,
- rlang,
  fold,
+ rlang,
  ggplot2
 Suggests:
  spec,
- csv
+ csv,
+ nlme
 Depends:
   R (>= 2.10)
 License: GPL-3

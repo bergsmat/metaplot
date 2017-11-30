@@ -1,12 +1,12 @@
-#' Hide Something
+#' Pack Something
 #'
-#' Hide Something.  Generic, with method for data.frame.
+#' Pack Something.  Generic, with method for data.frame.
 #'
 #' @export
 #' @param x object
 #' @param ... other arguments
-#' @seealso unhide
-hide <- function(x,...)UseMethod('hide')
+#' @seealso unpack
+pack <- function(x,...)UseMethod('pack')
 
 
 #' Capture Scalar Column Metadata as Column Attributes
@@ -20,8 +20,8 @@ hide <- function(x,...)UseMethod('hide')
 #' @export
 #' @importFrom utils write.table read.table
 #' @return data.frame
-#' @family hide
-#' @seealso \code{\link{unhide.data.frame}}
+#' @family pack
+#' @seealso \code{\link{unpack.data.frame}}
 #' @return data.frame
 #' @examples
 #' foo <- data.frame(head(Theoph))
@@ -35,14 +35,14 @@ hide <- function(x,...)UseMethod('hide')
 #' attr(foo$Dose, 'guide') <-  'mg/kg'
 #' attr(foo$Time, 'guide') <-  'h'
 #' attr(foo$conc, 'guide') <-  'mg/L'
-#' unhide(foo, pos = 1)
-#' unhide(foo, pos = 2)
-#' unhide(foo, pos = 3)
-#' unhide(foo, pos = 4)
-#' bar <- unhide(foo)
-#' hide(bar)
-#' attributes(hide(bar)$Subject)
-hide.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ...){
+#' unpack(foo, pos = 1)
+#' unpack(foo, pos = 2)
+#' unpack(foo, pos = 3)
+#' unpack(foo, pos = 4)
+#' bar <- unpack(foo)
+#' pack(bar)
+#' attributes(pack(bar)$Subject)
+pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ...){
   stopifnot(meta %in% names(x))
   i <- x[[meta]]
   y <- x[!is.na(i),]
@@ -68,16 +68,16 @@ hide.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ..
   x
 }
 
-#' Unhide Something
+#' Unpack Something
 #'
-#' Hide Something.  Generic, with method for data.frame.
+#' Unpack Something.  Generic, with method for data.frame.
 #'
-#' @family unhide
+#' @family unpack
 #' @export
 #' @param x object
 #' @param ... other arguments
-#' @seealso hide
-unhide <- function(x,...)UseMethod('unhide')
+#' @seealso pack
+unpack <- function(x,...)UseMethod('unpack')
 
 
 #' Express Scalar Column Attributes as Column Metadata
@@ -91,11 +91,11 @@ unhide <- function(x,...)UseMethod('unhide')
 #' @param ... ignored arguments
 #' @export
 #' @return data.frame
-#' @family hide
-#' @seealso \code{\link{hide.data.frame}}
+#' @family pack
+#' @seealso \code{\link{pack.data.frame}}
 #' @importFrom dplyr bind_rows bind_cols
 #' @return data.frame with all columns of class character
-unhide.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L, ignore = 'class', ...){
+unpack.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L, ignore = 'class', ...){
   stopifnot(length(position) == 1)
   stopifnot(length(meta) == 1)
   stopifnot(!meta %in% names(x))
@@ -132,7 +132,7 @@ unhide.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L,
 #'
 #' Convert folded data.frame to conventional format with column attributes. Scalar metadata is converted to column attributes. Other metadata left unfolded.
 #' @export
-#' @family hide
+#' @family pack
 #' @return data.frame
 #' @seealso \code{\link[fold]{fold.data.frame}}
 #' @param x folded
@@ -141,10 +141,10 @@ unhide.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L,
 #' @examples
 #' library(fold)
 #' data(eventsf)
-#' head(hide(eventsf))
-#' attributes(hide(eventsf)$BLQ)
+#' head(pack(eventsf))
+#' attributes(pack(eventsf)$BLQ)
 #'
-hide.folded <- function(x, tolower = TRUE, ...){
+pack.folded <- function(x, tolower = TRUE, ...){
   y <- unfold(x)
   for (col in names(y)){
     if(grepl('_',col)){
@@ -170,19 +170,19 @@ hide.folded <- function(x, tolower = TRUE, ...){
   }
   y
 }
-#' Unhide a Folded Data Frame
+#' Unpack a Folded Data Frame
 #'
 #' Convert folded data.frame to 'unhidden' format with scalar metadata as row entries.
 #' @export
-#' @family unhide
+#' @family unpack
 #' @return data.frame
-#' @seealso \code{\link[fold]{fold.data.frame}} \code{\link{hide.folded}}
+#' @seealso \code{\link[fold]{fold.data.frame}} \code{\link{pack.folded}}
 #' @param x folded
 #' @param tolower whether to coerce attribute names to lower case
 #' @param ... other arguments
 #' @examples
 #' library(fold)
 #' data(eventsf)
-#' head(unhide(eventsf))
+#' head(unpack(eventsf))
 #'
-unhide.folded <- function(x, tolower = TRUE, ...)unhide(hide(x, tolower = tolower, ...), ...)
+unpack.folded <- function(x, tolower = TRUE, ...)unpack(pack(x, tolower = tolower, ...), ...)

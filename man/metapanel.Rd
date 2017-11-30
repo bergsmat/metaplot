@@ -47,6 +47,4 @@ Panel function for metaplot::scatterplot.data.frame.
 
 Other panel functions: \code{\link{l.p}},
   \code{\link{my.diag.panel}}, \code{\link{u.p}}
-
-Other metaplots: \code{\link{metaplot.grouped_df}}
 }

@@ -23,8 +23,7 @@ dens(eventsf, DV)
 Other univariate plots: \code{\link{dens.data.frame}},
   \code{\link{dens_data_frame}},
   \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}}
+  \code{\link{metaplot.folded}}
 
 Other dens: \code{\link{dens.data.frame}},
   \code{\link{dens_data_frame}}

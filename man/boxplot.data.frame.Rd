@@ -14,15 +14,15 @@
 
 \item{...}{unquoted names of two items to plot (y , x)}
 
-\item{log}{whether to log transform continuous variable (auto-selected if NULL)}
+\item{log}{whether to log transform numeric variable (auto-selected if NULL)}
 
-\item{horizontal}{whether box/whisker axis should be horizontal (continuous x, categorical y)}
+\item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y)}
 
 \item{main}{logical: whether to include title indicating x and y items; or a substitute title or NULL}
 
 \item{crit}{if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value}
 
-\item{ref}{optional reference line on continuous axis}
+\item{ref}{optional reference line on numeric axis}
 
 \item{nobs}{whether to include the number of observations under the category label}
 

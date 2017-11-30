@@ -4,12 +4,12 @@
 \alias{scatter.data.frame}
 \title{Scatterplot Method for Data Frame}
 \usage{
-\method{scatter}{data.frame}(x, ..., ylog = NULL, xlog = NULL,
-  yref = NULL, xref = NULL, ylab = NULL, xlab = NULL, ysmooth = FALSE,
+\method{scatter}{data.frame}(x, ..., ylog = log, xlog = log, yref = NULL,
+  xref = NULL, ylab = NULL, xlab = NULL, ysmooth = FALSE,
   xsmooth = FALSE, density = FALSE, iso = FALSE, main = FALSE,
   corr = FALSE, na.rm = TRUE, conf = FALSE, fit = conf, loc = 0,
-  aspect = 1, cols = 3, crit = 1.3, auto.key = list(columns = cols),
-  as.table = TRUE, msg = "metastats", panel = metapanel,
+  aspect = 1, cols = NULL, crit = 1.3, auto.key = NULL,
+  as.table = TRUE, log = FALSE, msg = "metastats", panel = metapanel,
   fun = getOption("metaplot_scatter", "scatter_data_frame"))
 }
 \arguments{
@@ -59,6 +59,8 @@
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
+\item{log}{a default shared by \code{ylog} and \code{xlog}}
+
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
 \item{panel}{name or definition of panel function}
@@ -90,7 +92,6 @@ scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
 Other bivariate plots: \code{\link{boxplot.folded}},
   \code{\link{metaplot.data.frame}},
   \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
   \code{\link{scatter.folded}},
   \code{\link{scatter_data_frame}}
 

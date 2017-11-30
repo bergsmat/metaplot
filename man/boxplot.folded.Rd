@@ -22,7 +22,6 @@ boxplot(eventsf, SEX, WT, ref = 68)
 \seealso{
 Other bivariate plots: \code{\link{metaplot.data.frame}},
   \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
   \code{\link{scatter.data.frame}},
   \code{\link{scatter.folded}},
   \code{\link{scatter_data_frame}}

@@ -17,10 +17,9 @@ Generic axis label, with method for 'folded'.
 \seealso{
 \code{\link{axislabel.folded}}
 
-Other generic functions: \code{\link{continuous}},
-  \code{\link{corsplom}}, \code{\link{dens}},
-  \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{overlay}},
+Other generic functions: \code{\link{corsplom}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot}},
   \code{\link{scatter}}
 }
 \keyword{internal}

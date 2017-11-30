@@ -38,8 +38,14 @@ corsplom_data_frame <- function(
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
-  labels <- sapply(x,attr,'label')
-  if(all(is.defined(labels))) names(x) <- labels
+  x <- x[,var,drop=FALSE]
+  label <- lapply(x,attr,'label')
+  label[sapply(label, is.null)] <- ''
+  label <- as.character(label)
+  stopifnot(all(sapply(label,length) <= 1))
+  i <- is.defined(label) & label != ''
+  names(x)[i] <- label[i]
+
   if(split) names(x) <- fracture(names(x))
   splom(
     x,
@@ -66,7 +72,7 @@ corsplom_data_frame <- function(
 #' @param split break diagonal names on white space
 #' @param fun function to do the actual plotting
 #' @export
-#' @importFrom rlang UQS
+#' @importFrom rlang UQS quos
 #' @family multivariate plots
 #' @family corsplom
 corsplom.data.frame <- function(
@@ -86,7 +92,7 @@ corsplom.data.frame <- function(
   vars <- args[names(args) == '']
   other <- args[names(args) != '']
   vars <- sapply(vars, as.character)
-  prime <- list(x = x, vars = vars)
+  prime <- list(x = x, var = vars)
   formal <- list(
    upper.panel = upper.panel,
    lower.panel = lower.panel,
@@ -110,24 +116,4 @@ corsplom.data.frame <- function(
 #' @family corsplom
 #' @param x folded
 #' @param ... unquoted names of variables to plot, or other named arguments
-corsplom.folded <- function(x, ...){
-  var <- quos(...)
-  var <- lapply(var, f_rhs)
-  item <- var[names(var) == '']
-  item <- sapply(item,as.character)
-  named <- var[names(var) != '']
-  x %<>% filter(VARIABLE %in% item)
-  cont <- sapply(item,function(nm)continuous(x,nm))
-  item <- item[cont] # ignoring categoricals
-  meta <- x %>% filter(!is.na(META))
-  data <- x %>% filter(is.na(META))
-  data %<>% unfold(UQS(item))
-  data %<>% ungroup %>% select(UQS(item)) # ungroup should not be necessary
-  for(nm in names(data)){
-    y <- label(meta,nm)
-    if(!is.na(y))names(data)[names(data) == nm] <- y
-  }
-  this <- list(x=data)
-  out <- c(this,named)
-  do.call(corsplom,out)
-}
+corsplom.folded <- function(x, ...)corsplom(pack(x,...),...)

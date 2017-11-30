@@ -21,10 +21,7 @@ to be passed to data.frame method.
 Other multivariate plots: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
-  \code{\link{overlay.data.frame}},
-  \code{\link{overlay.folded}}
+  \code{\link{metaplot.folded}}
 
 Other corsplom: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom_data_frame}}, \code{\link{corsplom}}

@@ -4,12 +4,12 @@
 \alias{scatter.folded}
 \title{Scatterplot for Folded}
 \usage{
-\method{scatter}{folded}(x, yvar, xvar, groups = NULL, ..., ylog = FALSE,
-  xlog = FALSE, yref = NULL, xref = NULL, ysmooth = FALSE,
+\method{scatter}{folded}(x, yvar, xvar, groups = NULL, ..., ylog = log,
+  xlog = log, yref = NULL, xref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, cols = 3, auto.key = list(columns = cols),
   density = FALSE, iso = FALSE, main = FALSE, corr = FALSE,
-  crit = 1.3, na.rm = TRUE, fit = conf, conf = FALSE, loc = 0,
-  msg = "metastats", panel = metapanel)
+  crit = 1.3, na.rm = TRUE, fit = conf, log = FALSE, conf = FALSE,
+  loc = 0, msg = "metastats", panel = metapanel)
 }
 \arguments{
 \item{x}{folded}
@@ -52,6 +52,8 @@
 
 \item{fit}{draw a linear fit of y ~ x}
 
+\item{log}{default for ylog and xlog}
+
 \item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval}
 
 \item{loc}{where to print statistics on a panel}
@@ -67,7 +69,6 @@ Scatterplot for class 'folded'.
 Other bivariate plots: \code{\link{boxplot.folded}},
   \code{\link{metaplot.data.frame}},
   \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
   \code{\link{scatter.data.frame}},
   \code{\link{scatter_data_frame}}
 

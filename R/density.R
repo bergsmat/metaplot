@@ -71,7 +71,7 @@ dens_data_frame<- function(
 #' @importFrom rlang get_expr quo
 #' @import lattice
 #' @export
-#' @importFrom rlang f_rhs
+#' @importFrom rlang f_rhs quos
 #' @family dens
 #' @examples
 #' dens(Theoph, Wt, grid = TRUE )
@@ -112,5 +112,5 @@ dens.data.frame<- function(
 #' library(fold)
 #' data(eventsf)
 #' dens(eventsf, DV)
-dens.folded <- function(x, ...)dens(hide(x),...)
+dens.folded <- function(x, ...)dens(pack(x),...)
 

@@ -16,12 +16,11 @@ Creates a metaplot.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{continuous}}, \code{\link{corsplom}},
-  \code{\link{dens}}, \code{\link{guide}},
-  \code{\link{label}}, \code{\link{overlay}},
+  \code{\link{corsplom}}, \code{\link{dens}},
+  \code{\link{guide}}, \code{\link{label}},
   \code{\link{scatter}}
 
-Other metaplot: \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}}
+Other metaplot: \code{\link{categorical}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot.folded}}
 }

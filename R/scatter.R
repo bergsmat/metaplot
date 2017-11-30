@@ -38,6 +38,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param fit draw a linear fit of y ~ x
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param log a default sharede by \code{ylog} and \code{xlog}
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param loc where to print statistics on a panel
 #' @param aspect tpassed to \code{\link[lattice]{xyplot}}
@@ -59,28 +60,28 @@ scatter <- function(x,...)UseMethod('scatter')
 #' attr(Theoph$Time,'label') <- 'time'
 #' attr(Theoph$Time,'guide') <- 'h'
 #' attr(Theoph$Subject,'guide') <- '////'
-#' scatter_data_frame(Theoph, c('conc','Time'))
-#' scatter_data_frame(Theoph, c('conc','Time'), 'Subject')
-#' scatter_data_frame(Theoph, c('conc','Time'), facets = 'Subject')
-#' scatter_data_frame(Theoph %>% filter(conc > 0), c('conc','Time'), 'Subject',ylog = TRUE, yref = 5)
-#' scatter_data_frame(Theoph, c('conc','Time'), 'Subject',ysmooth = TRUE)
-#' scatter_data_frame(Theoph, c('conc','Time'),main = TRUE, corr = TRUE)
-#' scatter_data_frame(Theoph, c('conc','Time'),conf = TRUE, loc = 3, yref = 6)
+#' scatter_data_frame(Theoph, 'conc', 'Time')
+#' scatter_data_frame(Theoph, 'conc','Time', 'Subject')
+#' scatter_data_frame(Theoph, 'conc','Time', facets = 'Subject')
+#' scatter_data_frame(Theoph %>% filter(conc > 0), 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
+#' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE)
+#' scatter_data_frame(Theoph, 'conc','Time', main = TRUE, corr = TRUE)
+#' scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 scatter_data_frame <- function(
   x,
   yvar,
   xvar,
   groups = NULL,
   facets = NULL,
-  ylog = NULL,
-  xlog = NULL,
+  ylog = log,
+  xlog = log,
   yref = NULL,
   xref = NULL,
   ylab = NULL,
   xlab = NULL,
   ysmooth = FALSE,
   xsmooth = FALSE,
-  cols = if(length(yvar) > 1) 1 else 3,
+  cols = NULL,
   density = FALSE,
   iso = FALSE,
   main = FALSE,
@@ -91,8 +92,9 @@ scatter_data_frame <- function(
   conf = FALSE,
   loc = 0,
   aspect = 1,
-  auto.key = list(columns = cols),
+  auto.key = NULL,
   as.table = TRUE,
+  log = FALSE,
   msg = 'metastats',
   panel = metapanel,
   ...
@@ -103,6 +105,10 @@ scatter_data_frame <- function(
   stopifnot(is.character(yvar))
   stopifnot(is.character(xvar))
   stopifnot(length(xvar) == 1)
+  if(is.null(cols))if(length(yvar) > 1)cols <- 1
+  if(is.null(cols))if(length(yvar) == 1)cols <- 3
+  if(is.null(auto.key)) auto.key = list(columns = cols)
+
   if(!is.null(facets))stopifnot(is.character(facets))
   # if(length(var) < 2) stop('need two items to make scatterplot')
   # if(length(var) > 2) warning('only using first two of supplied var items')
@@ -111,7 +117,7 @@ scatter_data_frame <- function(
   if(length(yvar) > 1){
     if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
       stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
-    y %<>% gather(metaplot_groups, metaplot_values, !!!yvar)
+    suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar))
     groups <- 'metaplot_groups'
     labs <- sapply(yvar, function(col){
       a <- attr(x[[col]], 'label')
@@ -169,7 +175,7 @@ scatter_data_frame <- function(
   }
   if(!is.null(groups))y[[groups]] <- ifcoded(y, groups)
   if(!is.null(facets)){
-    for (i in length(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+    for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
   }
   prepanel = if(iso) function(x,y,...){
     lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
@@ -247,6 +253,7 @@ scatter_data_frame <- function(
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param fit draw a linear fit of y ~ x
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param log a default shared by \code{ylog} and \code{xlog}
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param loc where to print statistics on a panel
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
@@ -257,7 +264,7 @@ scatter_data_frame <- function(
 #' @seealso \code{\link{scatter_data_frame}}
 #' @export
 #' @import lattice
-#' @importFrom rlang f_rhs
+#' @importFrom rlang f_rhs quos
 #' @family bivariate plots
 #' @family scatter
 #' @examples
@@ -278,8 +285,8 @@ scatter_data_frame <- function(
 scatter.data.frame <- function(
   x,
   ...,
-  ylog = NULL,
-  xlog = NULL,
+  ylog = log,
+  xlog = log,
   yref = NULL,
   xref = NULL,
   ylab = NULL,
@@ -295,10 +302,11 @@ scatter.data.frame <- function(
   fit = conf,
   loc = 0,
   aspect = 1,
-  cols = 3,
+  cols = NULL,
   crit = 1.3,
-  auto.key = list(columns = cols),
+  auto.key = NULL,
   as.table = TRUE,
+  log = FALSE,
   msg = 'metastats',
   panel = metapanel,
   fun = getOption('metaplot_scatter','scatter_data_frame')
@@ -308,17 +316,67 @@ scatter.data.frame <- function(
   vars <- args[names(args) == '']
   other <- args[names(args) != '']
   vars <- sapply(vars, as.character)
-  if(length(vars) < 2) stop('scatter requires two items to plot')
-  var <- vars[1:2] # take first two
-  groups <- NULL
-  if(length(vars) > 2){
-    groups <- vars[[3]]
-    if(groups == '') groups <- NULL
+
+  # this function needs to explicitly assign xvar, yvar, groups, and facets
+  # prime is all y, if present, and x
+  # prime is defined as all vars before groups or facets, if present
+  # non-prime start with the first missing or categorical in position 3 or later
+  # since groups may be missing, checking properties may fail
+  # isolate non-prime
+  missing <- match('',vars)
+  if(is.defined(missing)){
+    prime <- vars[seq_len(missing - 1)]
+    if(length(vars) > missing) nonpr <- vars[(missing+1):length(vars)]
+    vars <- vars[-missing]
   }
+  # now we have protected vars from missingness, but preserved info from missing group, if any
+
+  # test numeric
+  stopifnot(all(vars %in% names(x)))
+  num <- sapply(x[vars], is.numeric)
+
+  # but the definition of numeric depends partly on guide.
+  guide <- lapply(x[vars], attr, 'guide')
+  guide[is.null(guide)] <- ''
+  stopifnot(all(sapply(guide,length) <= 1))
+  guide <- as.character(guide)
+
+  encoded <- encoded(guide)
+  num[encoded] <- FALSE # now num is fully defined
+
+  # if groups was not passed as missing, prime etc can be defined in terms of num
+  # must reserve at least one yvar and one xvar.
+  # find first categorical in position 3 or later
+  pos <- seq_along(num)
+  can <- !num & pos > 2
+  grp <- match(TRUE, can)
+
+  # we now have var, giving the names of all real variables
+  # missing is NA, or one greater than the last prime
+  # grp is NA, or the position of the first (remaining) non-prime
+  # x is last position in var not greater than missing or grp
+  xlim <- min(na.rm = T, missing, grp, length(vars) + 1)
+  xpos <- xlim - 1
+  xvar <- vars[xpos]
+  yvar <- vars[seq_len(xpos -1)]
+  groups <- NULL
   facets <- NULL
-  if(length(vars) > 3) facets <- vars[4:length(vars)]
-  prime <- list(x = x, var = var, groups = groups, facets = facets)
+  more <- character(0)
+  if(length(vars) > xpos) more <- vars[(xpos+1):length(vars)]
+  # first additional is groups if missing:NA and length(y) == 1
+  if(length(more) & is.na(missing) & length(yvar) == 1){
+    groups <- more[[1]]
+    more <- more[-1]
+  }
+  # any remaining are facets
+  if(length(more)) facets <- more
+
   formal <- list(
+    x = x,
+    yvar = yvar,
+    xvar = xvar,
+    groups = groups,
+    facets = facets,
     ylog = ylog,
     xlog = xlog,
     yref = yref,
@@ -336,15 +394,18 @@ scatter.data.frame <- function(
     fit = fit,
     loc = loc,
     aspect = aspect,
-    cols = cols,
+    # cols = cols,
     crit = crit,
-    auto.key = auto.key,
+    # auto.key = auto.key,
     as.table = as.table,
     msg = 'metastats',
     panel = metapanel
   )
-  args <- c(prime, formal, other)
-  do.call(fun, args)
+  if(!is.null(cols))formal <- c(formal, list(cols = cols)) # fun is better at picking defaults
+  if(!is.null(auto.key))formal <- c(formal, list(auto.key = auto.key))
+
+  args <- c(formal, other)
+  do.call(match.fun(fun), args)
 }
 
 
@@ -459,6 +520,7 @@ ypos <- function(loc){
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param fit draw a linear fit of y ~ x
+#' @param log default for ylog and xlog
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
 #' @param loc where to print statistics on a panel
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
@@ -470,8 +532,8 @@ scatter.folded <- function(
   xvar,
   groups = NULL,
   ...,
-  ylog = FALSE,
-  xlog = FALSE,
+  ylog = log,
+  xlog = log,
   yref = NULL,
   xref = NULL,
   ysmooth = FALSE,
@@ -485,6 +547,7 @@ scatter.folded <- function(
   crit = 1.3,
   na.rm = TRUE,
   fit = conf,
+  log = FALSE,
   conf = FALSE,
   loc = 0,
   msg = 'metastats',

@@ -36,8 +36,7 @@ dens_data_frame(Theoph, 'Wt', grid = TRUE)
 Other univariate plots: \code{\link{dens.data.frame}},
   \code{\link{dens.folded}},
   \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}}
+  \code{\link{metaplot.folded}}
 
 Other dens: \code{\link{dens.data.frame}},
   \code{\link{dens.folded}}

@@ -16,9 +16,8 @@ Scatterplot matrix with correlations.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{continuous}}, \code{\link{dens}},
-  \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{overlay}},
+  \code{\link{dens}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot}},
   \code{\link{scatter}}
 
 Other corsplom: \code{\link{corsplom.data.frame}},

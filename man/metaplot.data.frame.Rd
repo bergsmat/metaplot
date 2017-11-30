@@ -2,30 +2,184 @@
 % Please edit documentation in R/metaplot.R
 \name{metaplot.data.frame}
 \alias{metaplot.data.frame}
-\title{Create Metaplot from Data.frame.}
+\title{Create Metaplot for Data Frame.}
 \usage{
-\method{metaplot}{data.frame}(x, ...)
+\method{metaplot}{data.frame}(x, ...,
+  univariate = getOption("metaplot_univariate", "dens"),
+  mixedvariate = getOption("metaplot_mixedvariate", "boxplot"),
+  bivariate = getOption("metaplot_bivariate", "scatter"),
+  multivariate = getOption("metaplot_multivariate", "corsplom"),
+  categorical = getOption("metaplot_categorical", "categorical"))
 }
 \arguments{
 \item{x}{object}
 
 \item{...}{passed arguments}
+
+\item{univariate}{function for univariate arguments}
+
+\item{mixedvariate}{function for bivariate combinations of numeric and categoral arguments}
+
+\item{bivariate}{function for arguments that resolve to two numerics (see rules)}
+
+\item{multivariate}{function for more than two numeric arguments}
+
+\item{categorical}{function for categorical arguments}
 }
 \description{
-Creates a metaplot from data.frame.  Folds x and calls the method for folded. Dots arguments are passed only to metaplot.
+Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encoded}} \code{guide} attribute will be treated as categorical.
+}
+\details{
+Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (optional).
+
+The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) causing groups and facets to be ignored.
+
+The x variable is the last variable before groups, if present.
+
+The y variables are those before x. If none, the result is univariate. If one, the result is typically a boxplot or scatterplot, depending on x. Several numeric y followed by a numeric x are treated as multivariate (scatterplot matrix).  But if all y have the same \code{guide} attribute and it is different from that for x, the result is bivariate (i.e, an \code{overlay} scatterplot).
+
+The groups argument is only relevant for bivariate plots with one y.  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets. To specify facets without specifying groups, let groups be empty, e.g., \code{(metaplot(y, x, , facet1, facet2))}.
+
+Template designs follow; substitute behaviors by setting global options (see argument list).
+
+\itemize{
+\item{NUM:}{ univariate (densityplot) }
+
+\item{CAT:}{ categorical (unimplemented) }
+
+\item{NUM, CAT:}{mixedvariate (vertical boxplot)}
+
+\item{CAT, NUM:}{mixedvariate (horizontal boxplot)}
+
+\item{NUM, NUM:}{bivariate (scatterplot)}
+
+\item{CAT, CAT:}{ categorical (unimplemented)}
+
+\item{NUM, NUM, CAT:}{ grouped bivariate (grouped scatterplot)}
+
+\item{NUM, NUM,, CAT:}{ non-grouped bivariate with one facet}
+
+\item{NUM, NUM, CAT, CAT:}{ grouped bivariate with one facet}
+
+\item{NUM, NUM, CAT, CAT, CAT:}{ grouped bivariate with two facets}
+
+\item{NUM, NUM, NUM:}{ multivariate, or grouped bivariate for \code{overlay}}
+
+\item{NUM, NUM, NUM, CAT}{ multivariate, or faceted bivariate for \code{overlay}}
+
+\item{NUM, NUM, NUM, CAT, CAT}{ multivariate, or bivariate with two facets for \code{overlay}}
+
+}
+}
+\examples{
+\dontrun{
+library(magrittr)
+library(dplyr)
+library(csv)
+library(nlme)
+x <- Theoph
+
+# mixed effects model
+m1 <- nlme(
+  conc ~ SSfol(Dose, Time, lKe, lKa, lCl),
+  data = x,
+  fixed = lKe + lKa + lCl ~ 1,
+  random = lKe + lKa + lCl ~ 1
+)
+
+# some numeric and categorical properties
+x \%<>\% mutate(arm = ifelse(as.numeric(as.character(Subject)) \%\% 2 == 0, 1, 2))
+x \%<>\% mutate(site = ifelse(as.numeric(as.character(Subject)) < 7, 1, 2))
+x \%<>\% mutate(pred = predict(m1,level = 0))
+x \%<>\% mutate(ipred = predict(m1))
+x \%<>\% mutate(res = residuals(m1))
+x \%<>\% mutate(sres = residuals(m1, type = 'pearson'))
+r <- ranef(m1)
+r$Subject <- rownames(r)
+x \%<>\% left_join(r)
+# metadata
+attr(x$Subject,'label') <- 'subject identifier'
+attr(x$Wt,'label') <- 'subject weight'
+attr(x$Dose,'label') <- 'theophylline dose'
+attr(x$Time,'label') <- 'time since dose administration'
+attr(x$conc,'label') <- 'theophylline concentration'
+attr(x$arm,'label') <- 'trial arm'
+attr(x$site,'label') <- 'investigational site'
+attr(x$pred,'label') <- 'population-predicted concentration'
+attr(x$ipred,'label') <- 'individual-predicted conentration'
+attr(x$res,'label') <- 'residuals'
+attr(x$sres,'label') <- 'standardized residuals'
+attr(x$lKe,'label') <- 'natural log of elimination rate constant'
+attr(x$lKa,'label') <- 'natural log of absorption rate constant'
+attr(x$lCl,'label') <- 'natural log of clearance'
+attr(x$Subject,'guide') <- '....'
+attr(x$Wt,'guide') <- 'kg'
+attr(x$Dose,'guide') <- 'mg/kg'
+attr(x$Time,'guide') <- 'h'
+attr(x$conc,'guide') <- 'mg/L'
+attr(x$arm,'guide') <- '//1/Arm A//2/Arm B//'
+attr(x$site,'guide') <- '//1/Site 1//2/Site 2//'
+attr(x$pred,'guide') <- 'mg/L'
+attr(x$ipred,'guide') <- 'mg/L'
+x \%>\% unpack \%>\% as.csv('theoph.csv')
+}
+
+library(magrittr)
+library(dplyr)
+library(csv)
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+x \%<>\% pack
+# sample plots
+x \%>\% metaplot(conc)
+#x \%>\% metaplot(site)
+x \%>\% metaplot(Wt, arm)
+x \%>\% metaplot(arm, Wt)
+x \%>\% metaplot(conc, Time)
+#x \%>\% metaplot(arm, site)
+x \%>\% metaplot(conc, Time, Subject)
+x \%>\% metaplot(conc, Time, , Subject)
+x \%>\% metaplot(conc, Time, Subject, site)
+x \%>\% metaplot(conc, Time, Subject, site, arm)
+x \%>\% metaplot(lKe, lKa, lCl)
+x \%>\% metaplot(conc, ipred, Time)
+x \%>\% metaplot(conc, ipred, Time, Subject)
+x \%>\% metaplot(conc, ipred, Time, site, arm)
+x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
+
+\dontshow{
+y <- x
+y[] <- lapply(y, as.character)
+y[] <- lapply(y, as.numeric)
+y$arm <- as.factor(y$arm)
+y$site <- as.factor(y$site)
+y$Subject <- as.factor(y$Subject)
+y \%>\% metaplot(conc)
+#y \%>\% metaplot(site)
+y \%>\% metaplot(Wt, arm)
+y \%>\% metaplot(arm, Wt)
+y \%>\% metaplot(conc, Time)
+#y \%>\% metaplot(arm, site)
+y \%>\% metaplot(conc, Time, Subject)
+y \%>\% metaplot(conc, Time, , Subject)
+y \%>\% metaplot(conc, Time, Subject, site)
+y \%>\% metaplot(conc, Time, Subject, site, arm)
+y \%>\% metaplot(lKe, lKa, lCl)
+y \%>\% scatter(conc, ipred, Time)
+y \%>\% scatter(conc, ipred, Time, Subject)
+y \%>\% scatter(conc, ipred, Time, site, arm)
+}
+
 }
 \seealso{
-Other metaplot: \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}}, \code{\link{metaplot}}
+Other metaplot: \code{\link{categorical}},
+  \code{\link{metaplot.folded}}, \code{\link{metaplot}}
 
 Other univariate plots: \code{\link{dens.data.frame}},
   \code{\link{dens.folded}}, \code{\link{dens_data_frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}}
+  \code{\link{metaplot.folded}}
 
 Other bivariate plots: \code{\link{boxplot.folded}},
   \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
   \code{\link{scatter.data.frame}},
   \code{\link{scatter.folded}},
   \code{\link{scatter_data_frame}}
@@ -33,8 +187,5 @@ Other bivariate plots: \code{\link{boxplot.folded}},
 Other multivariate plots: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom.folded}},
   \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
-  \code{\link{overlay.data.frame}},
-  \code{\link{overlay.folded}}
+  \code{\link{metaplot.folded}}
 }

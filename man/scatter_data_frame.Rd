@@ -5,11 +5,11 @@
 \title{Scatterplot Function for Data Frame}
 \usage{
 scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
-  ylog = NULL, xlog = NULL, yref = NULL, xref = NULL, ylab = NULL,
-  xlab = NULL, ysmooth = FALSE, xsmooth = FALSE, cols = if (length(yvar)
-  > 1) 1 else 3, density = FALSE, iso = FALSE, main = FALSE,
-  corr = FALSE, crit = 1.3, na.rm = TRUE, fit = conf, conf = FALSE,
-  loc = 0, aspect = 1, auto.key = list(columns = cols), as.table = TRUE,
+  ylog = log, xlog = log, yref = NULL, xref = NULL, ylab = NULL,
+  xlab = NULL, ysmooth = FALSE, xsmooth = FALSE, cols = NULL,
+  density = FALSE, iso = FALSE, main = FALSE, corr = FALSE,
+  crit = 1.3, na.rm = TRUE, fit = conf, conf = FALSE, loc = 0,
+  aspect = 1, auto.key = NULL, as.table = TRUE, log = FALSE,
   msg = "metastats", panel = metapanel, ...)
 }
 \arguments{
@@ -65,6 +65,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
+\item{log}{a default sharede by \code{ylog} and \code{xlog}}
+
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
 \item{panel}{name or definition of panel function}
@@ -82,13 +84,13 @@ attr(Theoph$conc,'guide') <- 'mg/L'
 attr(Theoph$Time,'label') <- 'time'
 attr(Theoph$Time,'guide') <- 'h'
 attr(Theoph$Subject,'guide') <- '////'
-scatter_data_frame(Theoph, c('conc','Time'))
-scatter_data_frame(Theoph, c('conc','Time'), 'Subject')
-scatter_data_frame(Theoph, c('conc','Time'), facets = 'Subject')
-scatter_data_frame(Theoph \%>\% filter(conc > 0), c('conc','Time'), 'Subject',ylog = TRUE, yref = 5)
-scatter_data_frame(Theoph, c('conc','Time'), 'Subject',ysmooth = TRUE)
-scatter_data_frame(Theoph, c('conc','Time'),main = TRUE, corr = TRUE)
-scatter_data_frame(Theoph, c('conc','Time'),conf = TRUE, loc = 3, yref = 6)
+scatter_data_frame(Theoph, 'conc', 'Time')
+scatter_data_frame(Theoph, 'conc','Time', 'Subject')
+scatter_data_frame(Theoph, 'conc','Time', facets = 'Subject')
+scatter_data_frame(Theoph \%>\% filter(conc > 0), 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
+scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE)
+scatter_data_frame(Theoph, 'conc','Time', main = TRUE, corr = TRUE)
+scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 }
 \seealso{
 \code{\link{metapanel}}
@@ -96,7 +98,6 @@ scatter_data_frame(Theoph, c('conc','Time'),conf = TRUE, loc = 3, yref = 6)
 Other bivariate plots: \code{\link{boxplot.folded}},
   \code{\link{metaplot.data.frame}},
   \code{\link{metaplot.folded}},
-  \code{\link{metaplot.grouped_df}},
   \code{\link{scatter.data.frame}},
   \code{\link{scatter.folded}}
 

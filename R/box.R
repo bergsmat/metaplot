@@ -8,11 +8,11 @@ NULL
 #' Boxplot for data.frame. Uses standard evaluation.
 #' @param x data.frame
 #' @param var character vector of variables to plot (expecting length: 2)
-#' @param log whether to log transform continuous variable (auto-selected if NULL)
-#' @param horizontal whether box/whisker axis should be horizontal (continuous x, categorical y); defaults TRUE if (var[[2]] is continuous
+#' @param log whether to log transform numeric variable (auto-selected if NULL)
+#' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
 #' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
 #' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
-#' @param ref optional reference line on continuous axis
+#' @param ref optional reference line on numeric axis
 #' @param nobs whether to include the number of observations under the category label
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param ylab passed to \code{\link[lattice]{bwplot}}
@@ -20,6 +20,7 @@ NULL
 #' @param aspect passed to \code{\link[lattice]{bwplot}}
 #' @param ... passed arguments
 #' @export
+#' @importFrom rlang quos
 #' @family bivariate functions
 #' @examples
 #' library(magrittr)
@@ -49,13 +50,28 @@ boxplot_data_frame <- function(
   if(length(var) > 2) warning('only using first two of supplied items')
   .y <- var[[1]]
   .x <- var[[2]]
-  if(is.null(horizontal)) horizontal <- continuous(x, .x)
+  num <- sapply(x[var], is.numeric)
+
+  guide <- lapply(x[var], attr, 'guide')
+  guide[is.null(guide)] <- ''
+  stopifnot(all(sapply(guide,length) <= 1))
+  guide <- as.character(guide)
+
+  label <- lapply(x[var], attr, 'label')
+  label[is.null(label)] <- ''
+  stopifnot(all(sapply(label,length) <= 1))
+  label <- as.character(label)
+
+  encoded <- encoded(guide)
+  num[encoded] <- FALSE
+
+  if(is.null(horizontal)) horizontal <- num[[2]]
   cat <- if(horizontal) .y else .x
   con <- if(horizontal) .x else .y
   stopifnot(all(c(cat,con) %in% names(y)))
   if(na.rm) y %<>% filter(is.defined(!!cat) & is.defined(!!con)) # preserves attributes
   formula <- as.formula(paste(sep = ' ~ ', .y, .x))
-  if(!continuous(y[[con]]))stop(con, ' must be continuous')
+  if(!is.numeric(y[[con]]))stop(con, ' must be numeric')
   if(is.null(log)){
     if(any(y[[con]] <= 0, na.rm = TRUE)){
       log <- FALSE
@@ -69,10 +85,10 @@ boxplot_data_frame <- function(
   }
   if(log){
     ref <- ref[ref > 0]
-    ref <- log10(ref)
+    if(length(ref)) ref <- log10(ref)
     if(!length(ref)) ref <- NULL
   }
-  catlab <- axislabel(y,var = cat, log = log)
+  catlab <- axislabel(y,var = cat)
   conlab <- axislabel(y,var = con, log = log)
   if(is.null(ylab)) ylab <- if(horizontal) catlab else conlab
   if(is.null(xlab)) xlab <- if(horizontal) conlab else catlab
@@ -135,11 +151,11 @@ boxplot_data_frame <- function(
 #' Boxplot for data.frame.  Uses nonstandard evaluation.
 #' @param x data.frame
 #' @param ... unquoted names of two items to plot (y , x)
-#' @param log whether to log transform continuous variable (auto-selected if NULL)
-#' @param horizontal whether box/whisker axis should be horizontal (continuous x, categorical y)
+#' @param log whether to log transform numeric variable (auto-selected if NULL)
+#' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y)
 #' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
 #' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
-#' @param ref optional reference line on continuous axis
+#' @param ref optional reference line on numeric axis
 #' @param nobs whether to include the number of observations under the category label
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param ylab passed to \code{\link[lattice]{bwplot}}
@@ -206,5 +222,5 @@ boxplot.data.frame <- function(
 #' library(fold)
 #' data(eventsf)
 #' boxplot(eventsf, SEX, WT, ref = 68)
-boxplot.folded <- function(x, ...)boxplot(hide(x),...)
+boxplot.folded <- function(x, ...)boxplot(pack(x),...)
 

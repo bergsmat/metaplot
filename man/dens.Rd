@@ -16,8 +16,7 @@ Creates a density plot.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{continuous}}, \code{\link{corsplom}},
-  \code{\link{guide}}, \code{\link{label}},
-  \code{\link{metaplot}}, \code{\link{overlay}},
+  \code{\link{corsplom}}, \code{\link{guide}},
+  \code{\link{label}}, \code{\link{metaplot}},
   \code{\link{scatter}}
 }
