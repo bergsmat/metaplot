@@ -447,7 +447,7 @@ metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = F
     y = y,
     groups = groups,
     panel.groups = function(x,y,...){
-      panel.xyplot(x,y,lty,type,...)
+      panel.xyplot(x,y,...)
       foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
       bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
       if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',...))
@@ -497,108 +497,3 @@ ypos <- function(loc){
   ypos
 }
 
-#' Scatterplot for Folded
-#'
-#' Scatterplot for class 'folded'.
-#' @export
-#' @import encode
-#' @import lattice
-#' @importFrom rlang UQS
-#' @family bivariate plots
-#' @family scatter
-#' @param x folded
-#' @param xvar x values
-#' @param yvar y values
-#' @param groups optional grouping item
-#' @param ... passed to \code{\link{region}}
-#' @param ylog reference line from y axis
-#' @param xlog reference line from x axis
-#' @param yref reference line from y axis
-#' @param xref reference line from x axis
-#' @param ysmooth supply loess smooth of y on x
-#' @param xsmooth supply loess smmoth of x on y
-#' @param cols default columns for auto.key
-#' @param auto.key passed to \code{\link[lattice]{xyplot}}
-#' @param density plot point density instead of points
-#' @param iso use isometric axes with line of unity
-#' @param main logical: whether to construct a default title; or a substitute title or NULL
-#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
-#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
-#' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param fit draw a linear fit of y ~ x
-#' @param log default for ylog and xlog
-#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
-#' @param loc where to print statistics on a panel
-#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
-#' @param panel default panel function
-#' @param sub passed to \code{\link[lattice]{xyplot}}
-#
-scatter.folded <- function(
-  x,
-  yvar,
-  xvar,
-  groups = NULL,
-  ...,
-  ylog = log,
-  xlog = log,
-  yref = NULL,
-  xref = NULL,
-  ysmooth = FALSE,
-  xsmooth = FALSE,
-  cols = 3,
-  auto.key = list(columns = cols),
-  density = FALSE,
-  iso = FALSE,
-  main = FALSE,
-  corr = FALSE,
-  crit = 1.3,
-  na.rm = TRUE,
-  fit = conf,
-  log = FALSE,
-  conf = FALSE,
-  loc = 0,
-  msg = 'metastats',
-  panel = metapanel,
-  sub = attr(x,'source')
-){
-  stopifnot(
-    length(xvar) == 1,
-    length(yvar) == 1,
-    length(groups) <= 1
-  )
-  y <- x %>% unfold(UQS(c(yvar,xvar,groups)))
-  stopifnot(all(c(xvar,yvar,groups) %in% names(y)))
-  gc <- if(length(groups)) guide(x,groups) else NULL
-  if(!is.null(gc))if(all(is.na(gc))) gc <- NULL
-  ylab <- axislabel(x,yvar,ylog)
-  xlab <- axislabel(x,xvar,xlog)
-  scatter_data_frame(
-    y,
-    yvar = yvar,
-    xvar = xvar,
-    ylab = ylab,
-    xlab = xlab,
-    groups = groups,
-    ylog = ylog,
-    xlog = xlog,
-    yref = yref,
-    xref = xref,
-    ysmooth = ysmooth,
-    xsmooth = xsmooth,
-    cols = cols,
-    density = density,
-    iso = iso,
-    main = main,
-    corr = corr,
-    group_codes = gc,
-    crit = crit,
-    na.rm = na.rm,
-    fit = fit,
-    conf = conf,
-    loc = loc,
-    msg = msg,
-    panel = panel,
-    sub = sub,
-    ...
-  )
-}

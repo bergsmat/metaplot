@@ -19,5 +19,5 @@ Categorical plot.  Currently unimplemented. Returns a named vector indicating wh
 }
 \seealso{
 Other metaplot: \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}}, \code{\link{metaplot}}
+  \code{\link{metaplot}}
 }

@@ -36,11 +36,8 @@ Plot density for object of class 'data.frame'. Uses nonstandard evaluation.
 dens(Theoph, Wt, grid = TRUE )
 }
 \seealso{
-Other univariate plots: \code{\link{dens.folded}},
-  \code{\link{dens_data_frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}}
+Other univariate plots: \code{\link{dens_data_frame}},
+  \code{\link{metaplot.data.frame}}
 
-Other dens: \code{\link{dens.folded}},
-  \code{\link{dens_data_frame}}
+Other dens: \code{\link{dens_data_frame}}
 }

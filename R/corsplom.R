@@ -110,16 +110,3 @@ corsplom.data.frame <- function(
   do.call(fun, args)
 }
 
-#' Correlated Splom for Folded
-#'
-#' Creates a scatterplot matrix with correlations for folded.
-#' Categoricals in \dots are currently ignored. dots (\dots) are
-#' names of items in VARIABLE to be plotted, or named arguments
-#' to be passed to data.frame method.
-#' @import lattice
-#' @export
-#' @family multivariate plots
-#' @family corsplom
-#' @param x folded
-#' @param ... unquoted names of variables to plot, or other named arguments
-corsplom.folded <- function(x, ...)corsplom(pack(x,...),...)

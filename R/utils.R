@@ -1,58 +1,28 @@
 #' Generic Axis Label
 #'
-#' Generic axis label, with method for 'folded'.
+#' Generic axis label, with method for 'data.frame'.
 #' @param x object
 #' @param ... passed arguments
 #' @export
 #' @keywords internal
 #' @family generic functions
-#' @seealso \code{\link{axislabel.folded}}
+#' @family axislabel
 axislabel <- function(x,...)UseMethod('axislabel')
 
-#' Axis Label for Folded
-#'
-#' Axis label for folded.
-#' @param x folded
-#' @param var item of interest
-#' @param log whether this is for a log scale
-#' @param ... passed arguments
-#' @keywords internal
-#' @export
-#' @import magrittr
-#' @return character
-axislabel.folded <- function(x, var, log = FALSE, ...){
-  x <- x[x$VARIABLE == var & is.defined(x$META),,drop = FALSE]
-  lab <- unique(x$VALUE[x$META =='LABEL'])
-  guide <- unique(x$VALUE[x$META =='GUIDE'])
-  res <- var
-  if(length(lab) == 1){
-    if(lab %>% is.defined){
-      res <- lab
-    }
-  }
-  if(length(guide) == 1){
-    if(!encoded(guide)){
-      if(guide %>% is.defined){
-        guide <- paste0('(',guide,')')
-        res <- paste(res,guide)
-      }
-    }
-  }
-  if(log) res <- paste0(res,'\n(log)')
-  res
-}
 
 #' Axis Label for Data Frame
 #'
 #' Axis label for data.frame.
-#' @param x folded
+#' @param x data.frame
 #' @param var item of interest
 #' @param log whether this is for a log scale
 #' @param ... passed arguments
 #' @keywords internal
+#' @family axislabel
 #' @export
 #' @import magrittr
 #' @return character
+#'
 axislabel.data.frame <- function(x, var, log = FALSE, ...){
   #x <- x[x$VARIABLE == var & is.defined(x$META),,drop = FALSE]
   #lab <- unique(x$VALUE[x$META =='LABEL'])
@@ -73,61 +43,6 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
   res
 }
 
-#' Extract Guide
-#'
-#' Extracts guide.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-guide <- function(x,...)UseMethod('guide')
-
-#' Extract Guide for Folded
-#'
-#' Extracts guide for class folded, given a variable.
-#' @param x folded
-#' @param var length-one character
-#' @param ... ignored arguments
-#' @return length-one character, possibly NA
-#' @export
-#' @keywords internal
-guide.folded <- function(x,var,...){
-  stopifnot(length(var) == 1)
-  y <- x[is.defined(x$META) & x$META =='GUIDE' & x$VARIABLE == var,'VALUE']
-  y <- unique(y) #
-  if(length(y) > 1)stop('conflicting guides for ', var)
-  if(length(y) == 0) y <- NA_character_
-  y
-}
-
-#' Extract Label
-#'
-#' Extracts label.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @keywords internal
-#' @family generic functions
-label <- function(x,...)UseMethod('label')
-
-#' Extract Label for Folded
-#'
-#' Extracts label for class folded, given a variable.
-#' @param x folded
-#' @param var length-one character
-#' @param ... ignored arguments
-#' @return length-one character, possibly NA
-#' @export
-#' @keywords internal
-label.folded <- function(x,var, ...){
-  stopifnot(length(var) == 1)
-  y <- x[is.defined(x$META) & x$META =='LABEL' & x$VARIABLE == var,'VALUE']
-  y <- unique(y)
-  if(length(y) > 1)stop('conflicting guides for ', var)
-  if(length(y) == 0) y <- NA_character_
-  y
-}
 
 #' Upper Panel Function
 #'

@@ -56,26 +56,6 @@ categorical <- function(x,...){
   num
 }
 
-#' Create Metaplot from Folded
-#'
-#' Creates a plot from folded.  Packs metadata into attributes and calls next method.
-#'
-
-#' @param x object
-#' @param ... passed arguments
-#' @family metaplot
-#' @family univariate plots
-#' @family bivariate plots
-#' @family multivariate plots
-#' @importFrom graphics boxplot
-#' @importFrom stats as.formula cor density loess.smooth median
-#' @importFrom dplyr filter
-#' @import fold
-#' @export
-
-metaplot.folded <- function(x, ...)metaplot(pack(x,...),...)
-
-
 #' Create Metaplot for Data Frame.
 #'
 #' Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encoded}} \code{guide} attribute will be treated as categorical.

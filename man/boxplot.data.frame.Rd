@@ -48,6 +48,4 @@ boxplot(Theoph,conc,Subject)
 }
 \seealso{
 Other bivariate functions: \code{\link{boxplot_data_frame}}
-
-Other boxplot: \code{\link{boxplot.folded}}
 }

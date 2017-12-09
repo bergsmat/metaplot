@@ -30,5 +30,5 @@ Expresses scalar column attributes as column metadata (row values).  Column with
 \code{\link{pack.data.frame}}
 
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{pack.folded}}, \code{\link{pack}}
+  \code{\link{pack}}
 }

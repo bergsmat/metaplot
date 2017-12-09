@@ -24,7 +24,6 @@ Imports:
  lazyeval,
  dplyr (>= 0.7.1),
  tidyr,
- fold,
  rlang,
  ggplot2
 Suggests:

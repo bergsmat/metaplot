@@ -16,6 +16,4 @@ Unpack Something.  Generic, with method for data.frame.
 }
 \seealso{
 pack
-
-Other unpack: \code{\link{unpack.folded}}
 }

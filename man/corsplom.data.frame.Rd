@@ -36,11 +36,9 @@
 Creates a scatterplot matrix using nonstandard evaluation.
 }
 \seealso{
-Other multivariate plots: \code{\link{corsplom.folded}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}}
+Other multivariate plots: \code{\link{corsplom_data_frame}},
+  \code{\link{metaplot.data.frame}}
 
-Other corsplom: \code{\link{corsplom.folded}},
-  \code{\link{corsplom_data_frame}}, \code{\link{corsplom}}
+Other corsplom: \code{\link{corsplom_data_frame}},
+  \code{\link{corsplom}}
 }

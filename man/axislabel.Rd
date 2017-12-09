@@ -12,14 +12,13 @@ axislabel(x, ...)
 \item{...}{passed arguments}
 }
 \description{
-Generic axis label, with method for 'folded'.
+Generic axis label, with method for 'data.frame'.
 }
 \seealso{
-\code{\link{axislabel.folded}}
-
 Other generic functions: \code{\link{corsplom}},
-  \code{\link{dens}}, \code{\link{guide}},
-  \code{\link{label}}, \code{\link{metaplot}},
+  \code{\link{dens}}, \code{\link{metaplot}},
   \code{\link{scatter}}
+
+Other axislabel: \code{\link{axislabel.data.frame}}
 }
 \keyword{internal}

@@ -47,6 +47,6 @@ attributes(pack(bar)$Subject)
 \seealso{
 \code{\link{unpack.data.frame}}
 
-Other pack: \code{\link{pack.folded}}, \code{\link{pack}},
+Other pack: \code{\link{pack}},
   \code{\link{unpack.data.frame}}
 }

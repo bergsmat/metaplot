@@ -97,12 +97,8 @@ scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 \seealso{
 \code{\link{metapanel}}
 
-Other bivariate plots: \code{\link{boxplot.folded}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot.folded}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter.folded}}
+Other bivariate plots: \code{\link{metaplot.data.frame}},
+  \code{\link{scatter.data.frame}}
 
-Other scatter: \code{\link{scatter.data.frame}},
-  \code{\link{scatter.folded}}
+Other scatter: \code{\link{scatter.data.frame}}
 }

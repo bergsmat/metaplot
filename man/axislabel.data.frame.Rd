@@ -7,7 +7,7 @@
 \method{axislabel}{data.frame}(x, var, log = FALSE, ...)
 }
 \arguments{
-\item{x}{folded}
+\item{x}{data.frame}
 
 \item{var}{item of interest}
 
@@ -20,5 +20,8 @@ character
 }
 \description{
 Axis label for data.frame.
+}
+\seealso{
+Other axislabel: \code{\link{axislabel}}
 }
 \keyword{internal}

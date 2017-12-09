@@ -18,6 +18,5 @@ Pack Something.  Generic, with method for data.frame.
 \code{\link{unpack}}
 
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{pack.folded}},
   \code{\link{unpack.data.frame}}
 }

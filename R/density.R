@@ -104,17 +104,3 @@ dens.data.frame<- function(
   do.call(fun, args)
 }
 
-#' Dens Method for Folded
-#'
-#' Dens method for folded. Converts to data.frame with defined column attributes and calls data.frame method.
-#' @param x folded
-#' @param ... passed to \code{\link{boxplot.data.frame}}
-#' @export
-#' @family univariate plots
-#' @family dens
-#' @examples
-#' library(fold)
-#' data(eventsf)
-#' dens(eventsf, DV)
-dens.folded <- function(x, ...)dens(pack(x),...)
-

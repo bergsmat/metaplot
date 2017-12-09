@@ -174,20 +174,14 @@ y \%>\% scatter(conc, ipred, Time, site, arm)
 }
 \seealso{
 Other metaplot: \code{\link{categorical}},
-  \code{\link{metaplot.folded}}, \code{\link{metaplot}}
+  \code{\link{metaplot}}
 
 Other univariate plots: \code{\link{dens.data.frame}},
-  \code{\link{dens.folded}}, \code{\link{dens_data_frame}},
-  \code{\link{metaplot.folded}}
+  \code{\link{dens_data_frame}}
 
-Other bivariate plots: \code{\link{boxplot.folded}},
-  \code{\link{metaplot.folded}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter.folded}},
+Other bivariate plots: \code{\link{scatter.data.frame}},
   \code{\link{scatter_data_frame}}
 
 Other multivariate plots: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom.folded}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot.folded}}
+  \code{\link{corsplom_data_frame}}
 }

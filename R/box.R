@@ -22,6 +22,10 @@ NULL
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos
+#' @importFrom graphics boxplot
+#' @import dplyr
+#' @import lattice
+#' @importFrom stats as.formula median cor loess.smooth density
 #' @family bivariate functions
 #' @examples
 #' library(magrittr)
@@ -216,17 +220,4 @@ boxplot.data.frame <- function(
   do.call(fun, args)
 }
 
-#' Boxplot Method for Folded
-#'
-#' Boxplot for folded. Converts to data.frame with defined column attributes and calls data.frame method.
-#' @param x folded
-#' @param ... passed to \code{\link{boxplot.data.frame}}
-#' @export
-#' @family bivariate plots
-#' @family boxplot
-#' @examples
-#' library(fold)
-#' data(eventsf)
-#' boxplot(eventsf, SEX, WT, ref = 68)
-boxplot.folded <- function(x, ...)boxplot(pack(x),...)
 
