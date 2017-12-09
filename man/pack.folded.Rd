@@ -30,5 +30,5 @@ attributes(pack(eventsf)$BLQ)
 \code{\link[fold]{fold.data.frame}}
 
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{unpack.data.frame}}
+  \code{\link{pack}}, \code{\link{unpack.data.frame}}
 }

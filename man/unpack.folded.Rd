@@ -17,7 +17,7 @@
 data.frame
 }
 \description{
-Convert folded data.frame to 'unhidden' format with scalar metadata as row entries.
+Convert folded data.frame to unpacked format with scalar metadata as row entries.
 }
 \examples{
 library(fold)

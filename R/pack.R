@@ -5,7 +5,8 @@
 #' @export
 #' @param x object
 #' @param ... other arguments
-#' @seealso unpack
+#' @seealso \code{\link{unpack}}
+#' @family pack
 pack <- function(x,...)UseMethod('pack')
 
 
@@ -95,7 +96,7 @@ unpack <- function(x,...)UseMethod('unpack')
 #' @seealso \code{\link{pack.data.frame}}
 #' @importFrom dplyr bind_rows bind_cols
 #' @return data.frame with all columns of class character
-unpack.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L, ignore = 'class', ...){
+unpack.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L, ignore = c('class','levels'), ...){
   stopifnot(length(position) == 1)
   stopifnot(length(meta) == 1)
   stopifnot(!meta %in% names(x))
@@ -172,7 +173,7 @@ pack.folded <- function(x, tolower = TRUE, ...){
 }
 #' Unpack a Folded Data Frame
 #'
-#' Convert folded data.frame to 'unhidden' format with scalar metadata as row entries.
+#' Convert folded data.frame to unpacked format with scalar metadata as row entries.
 #' @export
 #' @family unpack
 #' @return data.frame

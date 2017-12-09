@@ -18,6 +18,7 @@ dens <- function(x,...)UseMethod('dens')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
+#' @param sub  passed to \code{\link[lattice]{densityplot}}
 #' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
 #' @importFrom rlang get_expr quo
@@ -35,6 +36,7 @@ dens_data_frame<- function(
   aspect = 1,
   scales = NULL,
   panel = NULL,
+  sub = attr(x,'source'),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -53,7 +55,7 @@ dens_data_frame<- function(
   xvarlab <- attr(x[[var]],'label')
   if(!is.null(xvarlab)) default_xlab <- xvarlab
   if(is.null(xlab)) xlab <- default_xlab
-  densityplot(x[[var]], xlab = xlab, ref = ref, log = log, aspect = aspect, scales = scales, panel = panel, ...)
+  densityplot(x[[var]], xlab = xlab, ref = ref, log = log, aspect = aspect, scales = scales, panel = panel, sub = sub,...)
 }
 #' Dens Method for Data Frame
 #'
@@ -66,6 +68,7 @@ dens_data_frame<- function(
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
+#' @param sub  passed to \code{\link[lattice]{densityplot}}
 #' @param fun function that does the actual plotting
 #' @family univariate plots
 #' @importFrom rlang get_expr quo
@@ -84,6 +87,7 @@ dens.data.frame<- function(
   aspect = 1,
   scales = NULL,
   panel = NULL,
+  sub = attr(x,'source'),
   fun = getOption('metaplot_dens','dens_data_frame')
 ){
   args <- quos(...)
@@ -95,7 +99,7 @@ dens.data.frame<- function(
   if(length(var) > 1)warning('only retaining the first item')
   var <- var[[1]] # take first (perh. only)
   prime <- list(x = x, var = var)
-  formal <- list(xlab = xlab, ref = ref, aspect = aspect, scales = scales, panel = panel)
+  formal <- list(xlab = xlab, ref = ref, aspect = aspect, scales = scales, panel = panel, sub = sub)
   args <- c(prime, formal, other)
   do.call(fun, args)
 }

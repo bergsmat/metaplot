@@ -9,7 +9,8 @@
   xsmooth = FALSE, cols = 3, auto.key = list(columns = cols),
   density = FALSE, iso = FALSE, main = FALSE, corr = FALSE,
   crit = 1.3, na.rm = TRUE, fit = conf, log = FALSE, conf = FALSE,
-  loc = 0, msg = "metastats", panel = metapanel)
+  loc = 0, msg = "metastats", panel = metapanel, sub = attr(x,
+  "source"))
 }
 \arguments{
 \item{x}{folded}
@@ -61,6 +62,8 @@
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
 \item{panel}{default panel function}
+
+\item{sub}{passed to \code{\link[lattice]{xyplot}}}
 }
 \description{
 Scatterplot for class 'folded'.

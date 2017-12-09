@@ -6,7 +6,7 @@
 \usage{
 boxplot_data_frame(x, var, log = FALSE, horizontal = NULL, main = FALSE,
   crit = 1.3, ref = NULL, nobs = FALSE, na.rm = TRUE, xlab = NULL,
-  ylab = NULL, aspect = 1, ...)
+  ylab = NULL, aspect = 1, sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -32,6 +32,8 @@ boxplot_data_frame(x, var, log = FALSE, horizontal = NULL, main = FALSE,
 \item{ylab}{passed to \code{\link[lattice]{bwplot}}}
 
 \item{aspect}{passed to \code{\link[lattice]{bwplot}}}
+
+\item{sub}{passed to \code{\link[lattice]{bwplot}}}
 
 \item{...}{passed arguments}
 }

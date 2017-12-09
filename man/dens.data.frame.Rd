@@ -5,7 +5,7 @@
 \title{Dens Method for Data Frame}
 \usage{
 \method{dens}{data.frame}(x, ..., xlab = NULL, ref = NULL, log = FALSE,
-  aspect = 1, scales = NULL, panel = NULL,
+  aspect = 1, scales = NULL, panel = NULL, sub = attr(x, "source"),
   fun = getOption("metaplot_dens", "dens_data_frame"))
 }
 \arguments{
@@ -24,6 +24,8 @@
 \item{scales}{passed to \code{\link[lattice]{densityplot}}}
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
+
+\item{sub}{passed to \code{\link[lattice]{densityplot}}}
 
 \item{fun}{function that does the actual plotting}
 }

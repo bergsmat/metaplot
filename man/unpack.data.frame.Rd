@@ -5,7 +5,7 @@
 \title{Express Scalar Column Attributes as Column Metadata}
 \usage{
 \method{unpack}{data.frame}(x, meta = getOption("meta", "meta"),
-  position = 1L, ignore = "class", ...)
+  position = 1L, ignore = c("class", "levels"), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -30,5 +30,5 @@ Expresses scalar column attributes as column metadata (row values).  Column with
 \code{\link{pack.data.frame}}
 
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{pack.folded}}
+  \code{\link{pack.folded}}, \code{\link{pack}}
 }

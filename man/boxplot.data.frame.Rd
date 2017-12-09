@@ -6,8 +6,8 @@
 \usage{
 \method{boxplot}{data.frame}(x, ..., log = FALSE, horizontal = NULL,
   main = FALSE, crit = 1.3, ref = NULL, nobs = FALSE, na.rm = TRUE,
-  xlab = NULL, ylab = NULL, aspect = 1, fun = getOption("metaplot_box",
-  "boxplot_data_frame"))
+  xlab = NULL, ylab = NULL, aspect = 1, sub = attr(x, "source"),
+  fun = getOption("metaplot_box", "boxplot_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
@@ -33,6 +33,8 @@
 \item{ylab}{passed to \code{\link[lattice]{bwplot}}}
 
 \item{aspect}{passed to \code{\link[lattice]{bwplot}}}
+
+\item{sub}{passed to \code{\link[lattice]{bwplot}}}
 
 \item{fun}{function that does the actual plotting}
 }

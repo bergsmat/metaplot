@@ -12,7 +12,10 @@ metaplot(x, ...)
 \item{...}{passed arguments}
 }
 \description{
-Creates a metaplot.
+Creates a metaplot. Generic.  See \code{\link{metaplot.data.frame}}.
+}
+\examples{
+example(metaplot.data.frame)
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},

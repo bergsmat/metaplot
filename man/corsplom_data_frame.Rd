@@ -6,7 +6,7 @@
 \usage{
 corsplom_data_frame(x, var = names(x), upper.panel = u.p,
   lower.panel = l.p, pscales = 0, xlab = "", varname.cex = 1,
-  diag.panel = my.diag.panel, split = TRUE, ...)
+  diag.panel = my.diag.panel, split = TRUE, sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -26,6 +26,8 @@ corsplom_data_frame(x, var = names(x), upper.panel = u.p,
 \item{diag.panel}{passed to splom}
 
 \item{split}{break diagonal names on white space}
+
+\item{sub}{passed to splom}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}}}
 }

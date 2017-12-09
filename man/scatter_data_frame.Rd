@@ -10,7 +10,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   density = FALSE, iso = FALSE, main = FALSE, corr = FALSE,
   crit = 1.3, na.rm = TRUE, fit = conf, conf = FALSE, loc = 0,
   aspect = 1, auto.key = NULL, as.table = TRUE, log = FALSE,
-  msg = "metastats", panel = metapanel, ...)
+  msg = "metastats", panel = metapanel, sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -59,7 +59,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{loc}{where to print statistics on a panel}
 
-\item{aspect}{tpassed to \code{\link[lattice]{xyplot}}}
+\item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{auto.key}{passed to \code{\link[lattice]{xyplot}}}
 
@@ -70,6 +70,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
 \item{panel}{name or definition of panel function}
+
+\item{sub}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{...}{passed to \code{\link{region}}}
 }

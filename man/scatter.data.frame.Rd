@@ -10,7 +10,8 @@
   corr = FALSE, na.rm = TRUE, conf = FALSE, fit = conf, loc = 0,
   aspect = 1, cols = NULL, crit = 1.3, auto.key = NULL,
   as.table = TRUE, log = FALSE, msg = "metastats", panel = metapanel,
-  fun = getOption("metaplot_scatter", "scatter_data_frame"))
+  fun = getOption("metaplot_scatter", "scatter_data_frame"), sub = attr(x,
+  "source"))
 }
 \arguments{
 \item{x}{data.frame}
@@ -66,6 +67,8 @@
 \item{panel}{name or definition of panel function}
 
 \item{fun}{function to draw the plot}
+
+\item{sub}{passed to \code{\link[lattice]{xyplot}}}
 }
 \description{
 Scatterplot method for class 'data.frame'. Uses nonstandard evaluation. By default, passes arguments to \code{\link{scatter_data_frame}}.

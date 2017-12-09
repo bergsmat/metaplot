@@ -30,7 +30,7 @@
 Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encoded}} \code{guide} attribute will be treated as categorical.
 }
 \details{
-Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (optional).
+Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 
 The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) causing groups and facets to be ignored.
 
@@ -145,8 +145,10 @@ x \%>\% metaplot(conc, ipred, Time)
 x \%>\% metaplot(conc, ipred, Time, Subject)
 x \%>\% metaplot(conc, ipred, Time, site, arm)
 x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
+x \%>\% metaplot(conc, Time, panel = panel.smoothScatter)
 
 \dontshow{
+\dontrun{
 y <- x
 y[] <- lapply(y, as.character)
 y[] <- lapply(y, as.numeric)
@@ -167,7 +169,7 @@ y \%>\% metaplot(lKe, lKa, lCl)
 y \%>\% scatter(conc, ipred, Time)
 y \%>\% scatter(conc, ipred, Time, Subject)
 y \%>\% scatter(conc, ipred, Time, site, arm)
-}
+}}
 
 }
 \seealso{

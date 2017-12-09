@@ -6,7 +6,8 @@
 \usage{
 \method{corsplom}{data.frame}(x, ..., upper.panel = u.p, lower.panel = l.p,
   pscales = 0, xlab = "", varname.cex = 1, diag.panel = my.diag.panel,
-  split = TRUE, fun = getOption("metaplot_corsplom", "corsplom_data_frame"))
+  split = TRUE, fun = getOption("metaplot_corsplom", "corsplom_data_frame"),
+  sub = attr(x, "source"))
 }
 \arguments{
 \item{x}{data.frame}
@@ -28,6 +29,8 @@
 \item{split}{break diagonal names on white space}
 
 \item{fun}{function to do the actual plotting}
+
+\item{sub}{passed to splom}
 }
 \description{
 Creates a scatterplot matrix using nonstandard evaluation.

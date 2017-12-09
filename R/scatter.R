@@ -41,10 +41,11 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param log a default sharede by \code{ylog} and \code{xlog}
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param loc where to print statistics on a panel
-#' @param aspect tpassed to \code{\link[lattice]{xyplot}}
+#' @param aspect passed to \code{\link[lattice]{xyplot}}
 #' @param auto.key passed to \code{\link[lattice]{xyplot}}
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param panel name or definition of panel function
+#' @param sub passed to \code{\link[lattice]{xyplot}}
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{metapanel}}
 #' @export
@@ -97,6 +98,7 @@ scatter_data_frame <- function(
   log = FALSE,
   msg = 'metastats',
   panel = metapanel,
+  sub = attr(x,'source'),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -227,6 +229,7 @@ scatter_data_frame <- function(
     loc = loc,
     msg = msg,
     panel = panel,
+    sub = sub,
     ...
   )
 }
@@ -261,6 +264,7 @@ scatter_data_frame <- function(
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param panel name or definition of panel function
 #' @param fun function to draw the plot
+#' @param sub passed to \code{\link[lattice]{xyplot}}
 #' @seealso \code{\link{scatter_data_frame}}
 #' @export
 #' @import lattice
@@ -309,7 +313,8 @@ scatter.data.frame <- function(
   log = FALSE,
   msg = 'metastats',
   panel = metapanel,
-  fun = getOption('metaplot_scatter','scatter_data_frame')
+  fun = getOption('metaplot_scatter','scatter_data_frame'),
+  sub = attr(x,'source')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -398,8 +403,9 @@ scatter.data.frame <- function(
     crit = crit,
     # auto.key = auto.key,
     as.table = as.table,
-    msg = 'metastats',
-    panel = metapanel
+    msg = msg,
+    panel = panel,
+    sub = sub
   )
   if(!is.null(cols))formal <- c(formal, list(cols = cols)) # fun is better at picking defaults
   if(!is.null(auto.key))formal <- c(formal, list(auto.key = auto.key))
@@ -440,8 +446,8 @@ metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = F
     x = x,
     y = y,
     groups = groups,
-    panel.groups = function(x,y,lty,type,...){
-      panel.xyplot(x,y,...)
+    panel.groups = function(x,y,...){
+      panel.xyplot(x,y,lty,type,...)
       foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
       bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
       if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',...))
@@ -525,6 +531,7 @@ ypos <- function(loc){
 #' @param loc where to print statistics on a panel
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param panel default panel function
+#' @param sub passed to \code{\link[lattice]{xyplot}}
 #
 scatter.folded <- function(
   x,
@@ -551,7 +558,8 @@ scatter.folded <- function(
   conf = FALSE,
   loc = 0,
   msg = 'metastats',
-  panel = metapanel
+  panel = metapanel,
+  sub = attr(x,'source')
 ){
   stopifnot(
     length(xvar) == 1,
@@ -590,6 +598,7 @@ scatter.folded <- function(
     loc = loc,
     msg = msg,
     panel = panel,
+    sub = sub,
     ...
   )
 }

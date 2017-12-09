@@ -18,6 +18,7 @@ NULL
 #' @param ylab passed to \code{\link[lattice]{bwplot}}
 #' @param xlab passed to \code{\link[lattice]{bwplot}}
 #' @param aspect passed to \code{\link[lattice]{bwplot}}
+#' @param sub passed to \code{\link[lattice]{bwplot}}
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos
@@ -41,6 +42,7 @@ boxplot_data_frame <- function(
   xlab = NULL,
   ylab = NULL,
   aspect = 1,
+  sub = attr(x,'source'),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -142,6 +144,7 @@ boxplot_data_frame <- function(
     ylab = ylab,
     xlab = xlab,
     panel = mypanel,
+    sub = sub,
     ...
   )
 }
@@ -161,6 +164,7 @@ boxplot_data_frame <- function(
 #' @param ylab passed to \code{\link[lattice]{bwplot}}
 #' @param xlab passed to \code{\link[lattice]{bwplot}}
 #' @param aspect passed to \code{\link[lattice]{bwplot}}
+#' @param sub passed to \code{\link[lattice]{bwplot}}
 #' @param fun function that does the actual plotting
 #' @export
 #' @importFrom rlang f_rhs
@@ -183,6 +187,7 @@ boxplot.data.frame <- function(
   xlab = NULL,
   ylab = NULL,
   aspect = 1,
+  sub = attr(x,'source'),
   fun = getOption('metaplot_box','boxplot_data_frame')
 ){
   args <- quos(...)
@@ -204,7 +209,8 @@ boxplot.data.frame <- function(
     na.rm = na.rm,
     xlab = xlab,
     ylab = ylab,
-    aspect = aspect
+    aspect = aspect,
+    sub = sub
   )
   args <- c(prime, formal, other)
   do.call(fun, args)

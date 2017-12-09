@@ -5,7 +5,7 @@
 \title{Density Function for Data Frame}
 \usage{
 dens_data_frame(x, var, xlab = NULL, ref = NULL, log = FALSE,
-  aspect = 1, scales = NULL, panel = NULL, ...)
+  aspect = 1, scales = NULL, panel = NULL, sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -23,6 +23,8 @@ dens_data_frame(x, var, xlab = NULL, ref = NULL, log = FALSE,
 \item{scales}{passed to \code{\link[lattice]{densityplot}}}
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
+
+\item{sub}{passed to \code{\link[lattice]{densityplot}}}
 
 \item{...}{passed to \code{\link[lattice]{densityplot}}}
 }

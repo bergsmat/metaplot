@@ -20,6 +20,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param varname.cex passed to splom
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
+#' @param sub passed to splom
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}}
 #' @export
 #' @importFrom rlang UQS
@@ -35,6 +36,7 @@ corsplom_data_frame <- function(
   varname.cex = 1,
   diag.panel = my.diag.panel,
   split = TRUE,
+  sub = attr(x, 'source'),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -55,6 +57,7 @@ corsplom_data_frame <- function(
     xlab = xlab,
     varname.cex = varname.cex,
     diag.panel = diag.panel,
+    sub = sub,
     ...
   )
 }
@@ -71,6 +74,7 @@ corsplom_data_frame <- function(
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
 #' @param fun function to do the actual plotting
+#' @param sub passed to splom
 #' @export
 #' @importFrom rlang UQS quos
 #' @family multivariate plots
@@ -85,7 +89,8 @@ corsplom.data.frame <- function(
   varname.cex = 1,
   diag.panel = my.diag.panel,
   split = TRUE,
-  fun = getOption('metaplot_corsplom','corsplom_data_frame')
+  fun = getOption('metaplot_corsplom','corsplom_data_frame'),
+  sub = attr(x,'source')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -98,7 +103,8 @@ corsplom.data.frame <- function(
    lower.panel = lower.panel,
    xlab = '',
    varname.cex = varname.cex,
-   split = split
+   split = split,
+   sub = sub
   )
   args <- c(prime, formal, other)
   do.call(fun, args)
