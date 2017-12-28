@@ -17,52 +17,13 @@ globalVariables('panel_')
 #' example(metaplot.data.frame)
 metaplot <- function(x,...)UseMethod('metaplot')
 
-#' Categorical Plot
-#'
-#' Categorical plot.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
-#'
-#' @param x data.frame
-#' @param ... other arguments
-#' @family categorical
-#' @family metaplot
-#' @return character
-#' @export
-#' @importFrom rlang quos
-#'
-categorical <- function(x,...){
-  args <- quos(...)
-  args <- lapply(args,f_rhs)
-  vars <- args[names(args) == '']
-  other <- args[names(args) != '']
-  vars <- sapply(vars, as.character)
-  stopifnot(all(vars %in% names(x)))
-  num <- with(x, sapply(vars, is.numeric))
-
-  guide <- with(x, lapply(vars, attr, 'guide'))
-  guide[is.null(guide)] <- ''
-  stopifnot(all(sapply(guide,length) <= 1))
-  guide <- as.character(guide)
-
-  label <- with(x, lapply(vars, attr, 'label'))
-  label[is.null(label)] <- ''
-  stopifnot(all(sapply(label,length) <= 1))
-  label <- as.character(label)
-
-  encoded <- with(x, sapply(vars, encoded))
-  num[encoded] <- FALSE
-  num <- ifelse(num,'numeric','categorical')
-  names(num) <- vars
-  warning('categorical() is currently unimplemented')
-  num
-}
-
 #' Create Metaplot for Data Frame.
 #'
 #' Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encoded}} \code{guide} attribute will be treated as categorical.
 #'
 #' Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 #'
-#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) causing groups and facets to be ignored.
+#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) which is implicitly grouped.
 #'
 #' The x variable is the last variable before groups, if present.
 #'
@@ -77,13 +38,15 @@ categorical <- function(x,...){
 #'
 #' \item{CAT:}{ categorical (unimplemented) }
 #'
-#' \item{NUM, CAT:}{mixedvariate (vertical boxplot)}
-#'
-#' \item{CAT, NUM:}{mixedvariate (horizontal boxplot)}
-#'
-#' \item{NUM, NUM:}{bivariate (scatterplot)}
-#'
 #'\item{CAT, CAT:}{ categorical (unimplemented)}
+#'
+#' \item{NUM, CAT:}{ mixedvariate (vertical boxplot)}
+#'
+#' \item{CAT, NUM:}{ mixedvariate (horizontal boxplot)}
+#'
+#' \item{CAT, NUM, CAT:}{ mixedvariate with one facet}
+#'
+#' \item{NUM, NUM:}{ bivariate (scatterplot)}
 #'
 #' \item{NUM, NUM, CAT:}{ grouped bivariate (grouped scatterplot)}
 #'
@@ -184,6 +147,8 @@ categorical <- function(x,...){
 #'#x %>% metaplot(site)
 #' x %>% metaplot(Wt, arm)
 #' x %>% metaplot(arm, Wt)
+#' x %>% metaplot(Wt, arm, site)
+#' x %>% metaplot(Wt, site, arm)
 #' x %>% metaplot(conc, Time)
 #'#x %>% metaplot(arm, site)
 #' x %>% metaplot(conc, Time, Subject)
@@ -209,6 +174,7 @@ categorical <- function(x,...){
 #'#y %>% metaplot(site)
 #' y %>% metaplot(Wt, arm)
 #' y %>% metaplot(arm, Wt)
+#' y %>% metaplot(arm, Wt,site)
 #' y %>% metaplot(conc, Time)
 #'#y %>% metaplot(arm, site)
 #' y %>% metaplot(conc, Time, Subject)
@@ -218,6 +184,8 @@ categorical <- function(x,...){
 #' y %>% metaplot(lKe, lKa, lCl)
 #' y %>% scatter(conc, ipred, Time)
 #' y %>% scatter(conc, ipred, Time, Subject)
+#' y %>% scatter(conc, ipred, Time, site, arm)
+#' y %<>% mutate(Time = ifelse(Time > 15, NA, Time))
 #' y %>% scatter(conc, ipred, Time, site, arm)
 #'}}
 #'

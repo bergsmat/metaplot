@@ -19,9 +19,9 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xvar}{character: x variable}
 
-\item{groups}{optional grouping item; ignored if more than one \code{yvar}}
+\item{groups}{optional grouping variable; ignored if more than one \code{yvar}}
 
-\item{facets}{character: up to two grouping items}
+\item{facets}{optional conditioning variables}
 
 \item{ylog}{log transform y axis (guessed if NULL)}
 

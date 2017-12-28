@@ -35,11 +35,12 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
       res <- lab
   if(length(guide) == 1)
     if(!encoded(guide))
-      if(is.defined(guide)){
+      if(is.defined(guide))
+        if(nchar(guide)){
         guide <- paste0('(',guide,')')
         res <- paste(res,guide)
       }
-  if(log) res <- paste0(res,'\n(log)')
+  if(log) res <- paste0(res,'\n(log scale)')
   res
 }
 
@@ -55,7 +56,7 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 #' @keywords internal
 #' @export
 #' @family panel functions
-u.p = function(x,y,col = 'black', loess = 'red',...){
+u.p = function(x,y, col, loess = col,...){
   panel.xyplot(x,y,col = col, ...)
   panel.loess(x,y,col = loess)
 }

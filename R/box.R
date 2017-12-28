@@ -7,7 +7,9 @@ NULL
 #'
 #' Boxplot for data.frame. Uses standard evaluation.
 #' @param x data.frame
-#' @param var character vector of variables to plot (expecting length: 2)
+#' @param yvar y variable
+#' @param xvar x variable
+#' @param facets optional conditioning variables
 #' @param log whether to log transform numeric variable (auto-selected if NULL)
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
 #' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
@@ -21,7 +23,7 @@ NULL
 #' @param sub passed to \code{\link[lattice]{bwplot}}
 #' @param ... passed arguments
 #' @export
-#' @importFrom rlang quos
+#' @importFrom rlang quos UQ
 #' @importFrom graphics boxplot
 #' @import dplyr
 #' @import lattice
@@ -30,12 +32,14 @@ NULL
 #' @examples
 #' library(magrittr)
 #' library(dplyr)
-#' boxplot_data_frame(Theoph,c('Subject','conc'))
+#' boxplot_data_frame(Theoph,'Subject','conc')
 #' boxplot_data_frame(Theoph %>% filter(conc > 0),
-#' c('conc','Subject'), log = TRUE, ref = c(2,5),horizontal = FALSE)
+#' 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
 boxplot_data_frame <- function(
   x,
-  var,
+  yvar,
+  xvar,
+  facets = NULL,
   log = FALSE,
   horizontal = NULL,
   main = FALSE,
@@ -50,33 +54,38 @@ boxplot_data_frame <- function(
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
-  stopifnot(is.character(var))
+  stopifnot(is.character(xvar))
+  stopifnot(is.character(yvar))
+  if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
-  if(length(var) < 2) stop('need two items to make boxplot')
-  if(length(var) > 2) warning('only using first two of supplied items')
-  .y <- var[[1]]
-  .x <- var[[2]]
-  num <- sapply(x[var], is.numeric)
+  stopifnot(all(c(xvar,yvar,facets) %in% names(y)))
 
-  guide <- lapply(x[var], attr, 'guide')
-  guide[is.null(guide)] <- ''
-  stopifnot(all(sapply(guide,length) <= 1))
-  guide <- as.character(guide)
+  xguide <- attr(x[[xvar]], 'guide')
+  if(is.null(xguide)) xguide <- ''
+  xguide <- as.character(xguide)
 
-  label <- lapply(x[var], attr, 'label')
-  label[is.null(label)] <- ''
-  stopifnot(all(sapply(label,length) <= 1))
-  label <- as.character(label)
-
-  encoded <- encoded(guide)
-  num[encoded] <- FALSE
-
-  if(is.null(horizontal)) horizontal <- num[[2]]
-  cat <- if(horizontal) .y else .x
-  con <- if(horizontal) .x else .y
+  if(is.null(horizontal)) horizontal <- is.numeric(x[[xvar]]) & !encoded(xguide)
+  cat <- if(horizontal) yvar else xvar
+  con <- if(horizontal) xvar else yvar
   stopifnot(all(c(cat,con) %in% names(y)))
-  if(na.rm) y %<>% filter(is.defined(!!cat) & is.defined(!!con)) # preserves attributes
-  formula <- as.formula(paste(sep = ' ~ ', .y, .x))
+  if(na.rm) y %<>% filter(is.defined(UQ(cat)) & is.defined(UQ(con))) # preserves attributes
+  ff <- character(0)
+  if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
+  if(!is.null(facets))ff <- paste0('|',ff)
+  formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
+  ifcoded <- function(x, var){
+    guide <- attr(x[[var]],'guide')
+    if(!encoded(guide)) return(x[[var]])
+    decoded <- decode(x[[var]], encoding = guide)
+    if(!any(is.na(decoded))) return(decoded)
+    if(all(is.na(decoded)))return(decode(x[[var]]))
+    x[[var]]
+  }
+  if(!is.null(facets)){
+    for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+  }
+
+  #formula <- as.formula(paste(sep = ' ~ ', yvar, xvar))
   if(!is.numeric(y[[con]]))stop(con, ' must be numeric')
   if(is.null(log)){
     if(any(y[[con]] <= 0, na.rm = TRUE)){
@@ -118,7 +127,7 @@ boxplot_data_frame <- function(
     tck = c(1,0),
     y = list(log = log,equispaced.log = FALSE)
   )
-  mn <- paste(sep = ' ~ ',.y,.x)
+  mn <- paste(sep = ' ~ ',yvar,xvar)
   mn <- list(mn, cex = 1, fontface = 1)
   if(is.logical(main)){
     if(main){
@@ -175,9 +184,13 @@ boxplot_data_frame <- function(
 #' @family bivariate functions
 #' @family boxplot
 #' @examples
+#' library(dplyr)
+#' library(magrittr)
+#' Theoph %<>% mutate(site = ifelse(as.numeric(Subject) > 6, 'Site A','Site B'))
 #' boxplot(Theoph,'Subject','conc')
 #' boxplot(Theoph,Subject,conc)
 #' boxplot(Theoph,conc,Subject)
+#' boxplot(Theoph,conc,Subject,site, drop.unused.levels = T)
 boxplot.data.frame <- function(
   x,
   ...,
@@ -199,11 +212,18 @@ boxplot.data.frame <- function(
   var <- args[names(args) == '']
   other <- args[names(args) != '']
   var <- sapply(var, as.character)
-  if(length(var) < 2) stop('boxplot requires two items to plot')
-  if(length(var) > 2)warning('only retaining the first two items')
-  var <- var[1:2] # take first two
-  prime <- list(x = x, var = var)
+  ypos <- 1
+  xpos <- 2
+  yvar <- var[ypos]
+  xvar <- var[xpos]
+  more <- character(0)
+  if(length(var) > xpos) more <- var[(xpos+1):length(var)]
+  facets <- if(length(more)) more else NULL
   formal <- list(
+    x = x,
+    yvar = yvar,
+    xvar = xvar,
+    facets = facets,
     log = log,
     horizontal = horizontal,
     main = main,
@@ -216,7 +236,7 @@ boxplot.data.frame <- function(
     aspect = aspect,
     sub = sub
   )
-  args <- c(prime, formal, other)
+  args <- c(formal, other)
   do.call(fun, args)
 }
 

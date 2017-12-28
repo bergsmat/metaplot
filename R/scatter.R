@@ -19,8 +19,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param x data.frame
 #' @param yvar character: y variable(s)
 #' @param xvar character: x variable
-#' @param groups optional grouping item; ignored if more than one \code{yvar}
-#' @param facets character: up to two grouping items
+#' @param groups optional grouping variable; ignored if more than one \code{yvar}
+#' @param facets optional conditioning variables
 #' @param ylog log transform y axis (guessed if NULL)
 #' @param xlog log transform x axis (guessed if NULL)
 #' @param yref reference line from y axis
@@ -112,8 +112,6 @@ scatter_data_frame <- function(
   if(is.null(auto.key)) auto.key = list(columns = cols)
 
   if(!is.null(facets))stopifnot(is.character(facets))
-  # if(length(var) < 2) stop('need two items to make scatterplot')
-  # if(length(var) > 2) warning('only using first two of supplied var items')
   y <- x
   stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
   if(length(yvar) > 1){
@@ -140,7 +138,7 @@ scatter_data_frame <- function(
     if(length(gui) == 1) attr(y$metaplot_values, 'guide') <- gui
     yvar <- 'metaplot_values'
   }
-  if(na.rm) y %<>% filter(is.defined(!!yvar) & is.defined(!!xvar)) # preserves attributes
+  if(na.rm) y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
@@ -446,7 +444,7 @@ metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = F
     x = x,
     y = y,
     groups = groups,
-    panel.groups = function(x,y,...){
+    panel.groups = function(x,y,type,...){
       panel.xyplot(x,y,...)
       foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
       bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
@@ -460,13 +458,19 @@ metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = F
     if(!density)panel.xyplot(x,y,...)
     foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
     bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,col = 'black',lty = 'dashed',type = 'l'))
-    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,col = 'black',lty = 'dashed',type = 'l'))
+    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,type = 'l',...))
+    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,type = 'l',...))
   }
   f <- data.frame()
   if(fit || conf) f <- region(x, y, conf = conf, ...)
   if(fit) try(panel.xyplot(x=f$x, y=f$y, col='black', type='l', ...))
-  if(conf)try(panel.polygon(x = c(f$x, rev(f$x)),y = c(f$lo, rev(f$hi)),col='grey', border = FALSE, alpha=0.2, ...))
+  if(conf)try(panel.polygon(
+    x = c(f$x, rev(f$x)),
+    y = c(f$lo, rev(f$hi)),
+    border = FALSE,
+    alpha=0.1,
+    col='black'
+  ))
   if(sum(loc))panel = panel.text(x = xpos(loc), y = ypos(loc), label = match.fun(msg)(x = x, y = y, ...))
   if(length(yref))panel.abline(h = yref)
   if(length(xref))panel.abline(v = xref)

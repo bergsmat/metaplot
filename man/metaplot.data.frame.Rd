@@ -32,7 +32,7 @@ Metaplot creates univariate, bivariate, or multivariate plots depending on the n
 \details{
 Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 
-The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) causing groups and facets to be ignored.
+The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) which is implicitly grouped.
 
 The x variable is the last variable before groups, if present.
 
@@ -47,13 +47,15 @@ Template designs follow; substitute behaviors by setting global options (see arg
 
 \item{CAT:}{ categorical (unimplemented) }
 
-\item{NUM, CAT:}{mixedvariate (vertical boxplot)}
-
-\item{CAT, NUM:}{mixedvariate (horizontal boxplot)}
-
-\item{NUM, NUM:}{bivariate (scatterplot)}
-
 \item{CAT, CAT:}{ categorical (unimplemented)}
+
+\item{NUM, CAT:}{ mixedvariate (vertical boxplot)}
+
+\item{CAT, NUM:}{ mixedvariate (horizontal boxplot)}
+
+\item{CAT, NUM, CAT:}{ mixedvariate with one facet}
+
+\item{NUM, NUM:}{ bivariate (scatterplot)}
 
 \item{NUM, NUM, CAT:}{ grouped bivariate (grouped scatterplot)}
 
@@ -134,6 +136,8 @@ x \%>\% metaplot(conc)
 #x \%>\% metaplot(site)
 x \%>\% metaplot(Wt, arm)
 x \%>\% metaplot(arm, Wt)
+x \%>\% metaplot(Wt, arm, site)
+x \%>\% metaplot(Wt, site, arm)
 x \%>\% metaplot(conc, Time)
 #x \%>\% metaplot(arm, site)
 x \%>\% metaplot(conc, Time, Subject)
@@ -159,6 +163,7 @@ y \%>\% metaplot(conc)
 #y \%>\% metaplot(site)
 y \%>\% metaplot(Wt, arm)
 y \%>\% metaplot(arm, Wt)
+y \%>\% metaplot(arm, Wt,site)
 y \%>\% metaplot(conc, Time)
 #y \%>\% metaplot(arm, site)
 y \%>\% metaplot(conc, Time, Subject)
@@ -168,6 +173,8 @@ y \%>\% metaplot(conc, Time, Subject, site, arm)
 y \%>\% metaplot(lKe, lKa, lCl)
 y \%>\% scatter(conc, ipred, Time)
 y \%>\% scatter(conc, ipred, Time, Subject)
+y \%>\% scatter(conc, ipred, Time, site, arm)
+y \%<>\% mutate(Time = ifelse(Time > 15, NA, Time))
 y \%>\% scatter(conc, ipred, Time, site, arm)
 }}
 

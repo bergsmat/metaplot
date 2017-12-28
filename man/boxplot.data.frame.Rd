@@ -42,9 +42,13 @@
 Boxplot for data.frame.  Uses nonstandard evaluation.
 }
 \examples{
+library(dplyr)
+library(magrittr)
+Theoph \%<>\% mutate(site = ifelse(as.numeric(Subject) > 6, 'Site A','Site B'))
 boxplot(Theoph,'Subject','conc')
 boxplot(Theoph,Subject,conc)
 boxplot(Theoph,conc,Subject)
+boxplot(Theoph,conc,Subject,site, drop.unused.levels = T)
 }
 \seealso{
 Other bivariate functions: \code{\link{boxplot_data_frame}}

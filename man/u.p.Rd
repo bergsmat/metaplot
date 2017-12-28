@@ -4,7 +4,7 @@
 \alias{u.p}
 \title{Upper Panel Function}
 \usage{
-u.p(x, y, col = "black", loess = "red", ...)
+u.p(x, y, col, loess = col, ...)
 }
 \arguments{
 \item{x}{x values}
