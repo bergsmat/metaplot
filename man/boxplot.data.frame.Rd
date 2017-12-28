@@ -4,42 +4,18 @@
 \alias{boxplot.data.frame}
 \title{Boxplot Method for Data Frame}
 \usage{
-\method{boxplot}{data.frame}(x, ..., log = FALSE, horizontal = NULL,
-  main = FALSE, crit = 1.3, ref = NULL, nobs = FALSE, na.rm = TRUE,
-  xlab = NULL, ylab = NULL, aspect = 1, sub = attr(x, "source"),
-  fun = getOption("metaplot_box", "boxplot_data_frame"))
+\method{boxplot}{data.frame}(x, ..., fun = getOption("metaplot_box",
+  "boxplot_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{unquoted names of two items to plot (y , x)}
-
-\item{log}{whether to log transform numeric variable (auto-selected if NULL)}
-
-\item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y)}
-
-\item{main}{logical: whether to include title indicating x and y items; or a substitute title or NULL}
-
-\item{crit}{if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value}
-
-\item{ref}{optional reference line on numeric axis}
-
-\item{nobs}{whether to include the number of observations under the category label}
-
-\item{na.rm}{whether to remove data points with one or more missing coordinates}
-
-\item{xlab}{passed to \code{\link[lattice]{bwplot}}}
-
-\item{ylab}{passed to \code{\link[lattice]{bwplot}}}
-
-\item{aspect}{passed to \code{\link[lattice]{bwplot}}}
-
-\item{sub}{passed to \code{\link[lattice]{bwplot}}}
+\item{...}{passed to fun}
 
 \item{fun}{function that does the actual plotting}
 }
 \description{
-Boxplot for data.frame.  Uses nonstandard evaluation.
+Boxplot for data.frame.  Parses arguments and generates the call: fun(x, yvar, xvar, facets, ...).
 }
 \examples{
 library(dplyr)

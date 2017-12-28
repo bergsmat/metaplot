@@ -4,36 +4,18 @@
 \alias{corsplom.data.frame}
 \title{Correlated Scatterplot Matrix Method for Data Frame}
 \usage{
-\method{corsplom}{data.frame}(x, ..., upper.panel = u.p, lower.panel = l.p,
-  pscales = 0, xlab = "", varname.cex = 1, diag.panel = my.diag.panel,
-  split = TRUE, fun = getOption("metaplot_corsplom", "corsplom_data_frame"),
-  sub = attr(x, "source"))
+\method{corsplom}{data.frame}(x, ..., fun = getOption("metaplot_corsplom",
+  "corsplom_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{variables to plot as unquoted character strings}
-
-\item{upper.panel}{passed to splom}
-
-\item{lower.panel}{passed to splom}
-
-\item{pscales}{passed to splom}
-
-\item{xlab}{passed to splom}
-
-\item{varname.cex}{passed to splom}
-
-\item{diag.panel}{passed to splom}
-
-\item{split}{break diagonal names on white space}
+\item{...}{passed to fun}
 
 \item{fun}{function to do the actual plotting}
-
-\item{sub}{passed to splom}
 }
 \description{
-Creates a scatterplot matrix using nonstandard evaluation.
+Creates a scatterplot matrix.  Parses arguments and generates the call: fun(x, xvar, ...).
 }
 \seealso{
 Other multivariate plots: \code{\link{corsplom_data_frame}},

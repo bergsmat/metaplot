@@ -12,7 +12,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #'
 #' Creates a scatterplot matrix with correlations in lower panel, by default.
 #' @param x data.frame
-#' @param var variables to plot
+#' @param xvar variables to plot
 #' @param upper.panel passed to splom
 #' @param lower.panel passed to splom
 #' @param pscales passed to splom
@@ -28,7 +28,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @family corsplom
 corsplom_data_frame <- function(
   x,
-  var = names(x),
+  xvar = names(x),
   upper.panel = u.p,
   lower.panel= l.p,
   pscales= 0,
@@ -40,7 +40,7 @@ corsplom_data_frame <- function(
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
-  x <- x[,var,drop=FALSE]
+  x <- x[,xvar,drop=FALSE]
   label <- lapply(x,attr,'label')
   label[sapply(label, is.null)] <- ''
   label <- as.character(label)
@@ -63,18 +63,10 @@ corsplom_data_frame <- function(
 }
 #' Correlated Scatterplot Matrix Method for Data Frame
 #'
-#' Creates a scatterplot matrix using nonstandard evaluation.
+#' Creates a scatterplot matrix.  Parses arguments and generates the call: fun(x, xvar, ...).
 #' @param x data.frame
-#' @param ... variables to plot as unquoted character strings
-#' @param upper.panel passed to splom
-#' @param lower.panel passed to splom
-#' @param pscales passed to splom
-#' @param xlab passed to splom
-#' @param varname.cex passed to splom
-#' @param diag.panel passed to splom
-#' @param split break diagonal names on white space
+#' @param ... passed to fun
 #' @param fun function to do the actual plotting
-#' @param sub passed to splom
 #' @export
 #' @importFrom rlang UQS quos
 #' @family multivariate plots
@@ -82,31 +74,15 @@ corsplom_data_frame <- function(
 corsplom.data.frame <- function(
   x,
   ...,
-  upper.panel = u.p,
-  lower.panel= l.p,
-  pscales= 0,
-  xlab = '',
-  varname.cex = 1,
-  diag.panel = my.diag.panel,
-  split = TRUE,
-  fun = getOption('metaplot_corsplom','corsplom_data_frame'),
-  sub = attr(x,'source')
+  fun = getOption('metaplot_corsplom','corsplom_data_frame')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
   vars <- args[names(args) == '']
   other <- args[names(args) != '']
   vars <- sapply(vars, as.character)
-  prime <- list(x = x, var = vars)
-  formal <- list(
-   upper.panel = upper.panel,
-   lower.panel = lower.panel,
-   xlab = '',
-   varname.cex = varname.cex,
-   split = split,
-   sub = sub
-  )
-  args <- c(prime, formal, other)
+  prime <- list(x = x, xvar = vars)
+  args <- c(prime, other)
   do.call(fun, args)
 }
 

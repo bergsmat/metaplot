@@ -73,14 +73,7 @@ boxplot_data_frame <- function(
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
   formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
-  ifcoded <- function(x, var){
-    guide <- attr(x[[var]],'guide')
-    if(!encoded(guide)) return(x[[var]])
-    decoded <- decode(x[[var]], encoding = guide)
-    if(!any(is.na(decoded))) return(decoded)
-    if(all(is.na(decoded)))return(decode(x[[var]]))
-    x[[var]]
-  }
+
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
   }
@@ -164,20 +157,9 @@ boxplot_data_frame <- function(
 
 #' Boxplot Method for Data Frame
 #'
-#' Boxplot for data.frame.  Uses nonstandard evaluation.
+#' Boxplot for data.frame.  Parses arguments and generates the call: fun(x, yvar, xvar, facets, ...).
 #' @param x data.frame
-#' @param ... unquoted names of two items to plot (y , x)
-#' @param log whether to log transform numeric variable (auto-selected if NULL)
-#' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y)
-#' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
-#' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
-#' @param ref optional reference line on numeric axis
-#' @param nobs whether to include the number of observations under the category label
-#' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param ylab passed to \code{\link[lattice]{bwplot}}
-#' @param xlab passed to \code{\link[lattice]{bwplot}}
-#' @param aspect passed to \code{\link[lattice]{bwplot}}
-#' @param sub passed to \code{\link[lattice]{bwplot}}
+#' @param ... passed to fun
 #' @param fun function that does the actual plotting
 #' @export
 #' @importFrom rlang f_rhs
@@ -194,17 +176,6 @@ boxplot_data_frame <- function(
 boxplot.data.frame <- function(
   x,
   ...,
-  log = FALSE,
-  horizontal = NULL,
-  main = FALSE,
-  crit = 1.3,
-  ref = NULL,
-  nobs = FALSE,
-  na.rm = TRUE,
-  xlab = NULL,
-  ylab = NULL,
-  aspect = 1,
-  sub = attr(x,'source'),
   fun = getOption('metaplot_box','boxplot_data_frame')
 ){
   args <- quos(...)
@@ -223,18 +194,7 @@ boxplot.data.frame <- function(
     x = x,
     yvar = yvar,
     xvar = xvar,
-    facets = facets,
-    log = log,
-    horizontal = horizontal,
-    main = main,
-    crit = crit,
-    ref = ref,
-    nobs =nobs,
-    na.rm = na.rm,
-    xlab = xlab,
-    ylab = ylab,
-    aspect = aspect,
-    sub = sub
+    facets = facets
   )
   args <- c(formal, other)
   do.call(fun, args)

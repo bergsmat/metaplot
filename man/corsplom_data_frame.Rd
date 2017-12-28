@@ -4,14 +4,14 @@
 \alias{corsplom_data_frame}
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
-corsplom_data_frame(x, var = names(x), upper.panel = u.p,
+corsplom_data_frame(x, xvar = names(x), upper.panel = u.p,
   lower.panel = l.p, pscales = 0, xlab = "", varname.cex = 1,
   diag.panel = my.diag.panel, split = TRUE, sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{var}{variables to plot}
+\item{xvar}{variables to plot}
 
 \item{upper.panel}{passed to splom}
 

@@ -165,14 +165,6 @@ scatter_data_frame <- function(
   if(is.null(ylab))ylab <- axislabel(y,var = yvar, log = ylog)
   ylab <- sub('metaplot_values','',ylab)
   if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
-  ifcoded <- function(x, var){
-    guide <- attr(x[[var]],'guide')
-    if(!encoded(guide)) return(x[[var]])
-    decoded <- decode(x[[var]], encoding = guide)
-    if(!any(is.na(decoded))) return(decoded)
-    if(all(is.na(decoded)))return(decode(x[[var]]))
-    x[[var]]
-  }
   if(!is.null(groups))y[[groups]] <- ifcoded(y, groups)
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
@@ -234,35 +226,10 @@ scatter_data_frame <- function(
 
 #' Scatterplot Method for Data Frame
 #'
-#' Scatterplot method for class 'data.frame'. Uses nonstandard evaluation. By default, passes arguments to \code{\link{scatter_data_frame}}.
+#' Scatterplot method for class 'data.frame'. Parses arguments and generates the call: fun(x, yvar, xvar, groups, facets, ...).
 #' @param x data.frame
-#' @param ... unquoted names for variables: y, x, groups (may be missing) and conditioning variables (facets)
-#' @param ylog log transform y axis (guessed if NULL)
-#' @param xlog log transform x axis (guessed if NULL)
-#' @param yref reference line from y axis
-#' @param xref reference line from x axis
-#' @param ysmooth supply loess smooth of y on x
-#' @param xsmooth supply loess smmoth of x on y
-#' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
-#' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
-#' @param cols suggested columns for auto.key
-#' @param density plot point density instead of points (ignored if \code{groups} is supplied)
-#' @param iso use isometric axes with line of unity
-#' @param main logical: whether to construct a default title; or a substitute title or NULL
-#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
-#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
-#' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param fit draw a linear fit of y ~ x
-#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
-#' @param log a default shared by \code{ylog} and \code{xlog}
-#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
-#' @param loc where to print statistics on a panel
-#' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param auto.key passed to \code{\link[lattice]{xyplot}}
-#' @param as.table passed to \code{\link[lattice]{xyplot}}
-#' @param panel name or definition of panel function
+#' @param ... passed to fun
 #' @param fun function to draw the plot
-#' @param sub passed to \code{\link[lattice]{xyplot}}
 #' @seealso \code{\link{scatter_data_frame}}
 #' @export
 #' @import lattice
@@ -287,32 +254,7 @@ scatter_data_frame <- function(
 scatter.data.frame <- function(
   x,
   ...,
-  ylog = log,
-  xlog = log,
-  yref = NULL,
-  xref = NULL,
-  ylab = NULL,
-  xlab = NULL,
-  ysmooth = FALSE,
-  xsmooth = FALSE,
-  density = FALSE,
-  iso = FALSE,
-  main = FALSE,
-  corr = FALSE,
-  na.rm = TRUE,
-  conf = FALSE,
-  fit = conf,
-  loc = 0,
-  aspect = 1,
-  cols = NULL,
-  crit = 1.3,
-  auto.key = NULL,
-  as.table = TRUE,
-  log = FALSE,
-  msg = 'metastats',
-  panel = metapanel,
-  fun = getOption('metaplot_scatter','scatter_data_frame'),
-  sub = attr(x,'source')
+  fun = getOption('metaplot_scatter','scatter_data_frame')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -321,15 +263,15 @@ scatter.data.frame <- function(
   vars <- sapply(vars, as.character)
 
   # this function needs to explicitly assign xvar, yvar, groups, and facets
-  # prime is all y, if present, and x
+  # prime is all yvar, if present, and xvar
   # prime is defined as all vars before groups or facets, if present
   # non-prime start with the first missing or categorical in position 3 or later
   # since groups may be missing, checking properties may fail
   # isolate non-prime
   missing <- match('',vars)
   if(is.defined(missing)){
-    prime <- vars[seq_len(missing - 1)]
-    if(length(vars) > missing) nonpr <- vars[(missing+1):length(vars)]
+    #prime <- vars[seq_len(missing - 1)]
+    #if(length(vars) > missing) nonpr <- vars[(missing+1):length(vars)]
     vars <- vars[-missing]
   }
   # now we have protected vars from missingness, but preserved info from missing group, if any
@@ -379,35 +321,8 @@ scatter.data.frame <- function(
     yvar = yvar,
     xvar = xvar,
     groups = groups,
-    facets = facets,
-    ylog = ylog,
-    xlog = xlog,
-    yref = yref,
-    xref = xref,
-    ylab = ylab,
-    xlab = xlab,
-    ysmooth = ysmooth,
-    xsmooth = xsmooth,
-    density = density,
-    iso = iso,
-    main = main,
-    corr = corr,
-    na.rm = na.rm,
-    conf = conf,
-    fit = fit,
-    loc = loc,
-    aspect = aspect,
-    # cols = cols,
-    crit = crit,
-    # auto.key = auto.key,
-    as.table = as.table,
-    msg = msg,
-    panel = panel,
-    sub = sub
+    facets = facets
   )
-  if(!is.null(cols))formal <- c(formal, list(cols = cols)) # fun is better at picking defaults
-  if(!is.null(auto.key))formal <- c(formal, list(auto.key = auto.key))
-
   args <- c(formal, other)
   do.call(match.fun(fun), args)
 }

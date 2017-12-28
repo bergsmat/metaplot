@@ -4,36 +4,23 @@
 \alias{dens.data.frame}
 \title{Dens Method for Data Frame}
 \usage{
-\method{dens}{data.frame}(x, ..., xlab = NULL, ref = NULL, log = FALSE,
-  aspect = 1, scales = NULL, panel = NULL, sub = attr(x, "source"),
-  fun = getOption("metaplot_dens", "dens_data_frame"))
+\method{dens}{data.frame}(x, ..., fun = getOption("metaplot_dens",
+  "dens_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{item to plot, given as unquoted column name}
+\item{...}{passed to fun}
 
-\item{xlab}{x axis label}
-
-\item{ref}{optional numeric}
-
-\item{log}{whether to use log scale}
-
-\item{aspect}{passed to \code{\link[lattice]{densityplot}}}
-
-\item{scales}{passed to \code{\link[lattice]{densityplot}}}
-
-\item{panel}{passed to \code{\link[lattice]{densityplot}}}
-
-\item{sub}{passed to \code{\link[lattice]{densityplot}}}
-
-\item{fun}{function that does the actual plotting}
+\item{fun}{plotting function}
 }
 \description{
-Plot density for object of class 'data.frame'. Uses nonstandard evaluation.
+Plot density for object of class 'data.frame'. Parses arguments and generates the call: fun(x, xvar, groups, facets,...).
 }
 \examples{
-dens(Theoph, Wt, grid = TRUE )
+dens(Theoph, conc, grid = TRUE )
+dens(Theoph, conc, Subject )
+dens(Theoph, conc, , Subject )
 }
 \seealso{
 Other univariate plots: \code{\link{dens_data_frame}},

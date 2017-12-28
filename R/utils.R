@@ -207,4 +207,11 @@ metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial'
   t
 }
 
-
+ifcoded <- function(x, var){
+  guide <- attr(x[[var]],'guide')
+  if(!encoded(guide)) return(x[[var]])
+  decoded <- decode(x[[var]], encoding = guide)
+  if(!any(is.na(decoded))) return(decoded)
+  if(all(is.na(decoded)))return(decode(x[[var]]))
+  x[[var]]
+}

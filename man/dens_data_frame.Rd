@@ -4,13 +4,18 @@
 \alias{dens_data_frame}
 \title{Density Function for Data Frame}
 \usage{
-dens_data_frame(x, var, xlab = NULL, ref = NULL, log = FALSE,
-  aspect = 1, scales = NULL, panel = NULL, sub = attr(x, "source"), ...)
+dens_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
+  ref = NULL, log = FALSE, aspect = 1, scales = NULL, panel = NULL,
+  sub = attr(x, "source"), ...)
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{var}{item to plot, given as length-one character}
+\item{xvar}{variable to plot}
+
+\item{groups}{optional grouping variable}
+
+\item{facets}{optional conditioning variables}
 
 \item{xlab}{x axis label}
 
@@ -32,7 +37,9 @@ dens_data_frame(x, var, xlab = NULL, ref = NULL, log = FALSE,
 Plot density for object of class 'data.frame' using standard evaluation.
 }
 \examples{
-dens_data_frame(Theoph, 'Wt', grid = TRUE)
+dens_data_frame(Theoph, 'conc', grid = TRUE)
+dens_data_frame(Theoph, 'conc', 'Subject')
+dens_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
 Other univariate plots: \code{\link{dens.data.frame}},

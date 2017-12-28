@@ -4,74 +4,18 @@
 \alias{scatter.data.frame}
 \title{Scatterplot Method for Data Frame}
 \usage{
-\method{scatter}{data.frame}(x, ..., ylog = log, xlog = log, yref = NULL,
-  xref = NULL, ylab = NULL, xlab = NULL, ysmooth = FALSE,
-  xsmooth = FALSE, density = FALSE, iso = FALSE, main = FALSE,
-  corr = FALSE, na.rm = TRUE, conf = FALSE, fit = conf, loc = 0,
-  aspect = 1, cols = NULL, crit = 1.3, auto.key = NULL,
-  as.table = TRUE, log = FALSE, msg = "metastats", panel = metapanel,
-  fun = getOption("metaplot_scatter", "scatter_data_frame"), sub = attr(x,
-  "source"))
+\method{scatter}{data.frame}(x, ..., fun = getOption("metaplot_scatter",
+  "scatter_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
 
-\item{...}{unquoted names for variables: y, x, groups (may be missing) and conditioning variables (facets)}
-
-\item{ylog}{log transform y axis (guessed if NULL)}
-
-\item{xlog}{log transform x axis (guessed if NULL)}
-
-\item{yref}{reference line from y axis}
-
-\item{xref}{reference line from x axis}
-
-\item{ylab}{y axis label, constructed from attributes \code{label} and \code{guide} if available}
-
-\item{xlab}{x axis label, constructed from attributes \code{label} and \code{guide} if available}
-
-\item{ysmooth}{supply loess smooth of y on x}
-
-\item{xsmooth}{supply loess smmoth of x on y}
-
-\item{density}{plot point density instead of points (ignored if \code{groups} is supplied)}
-
-\item{iso}{use isometric axes with line of unity}
-
-\item{main}{logical: whether to construct a default title; or a substitute title or NULL}
-
-\item{corr}{append Pearson correlation coefficient to default title (only if main is \code{TRUE})}
-
-\item{na.rm}{whether to remove data points with one or more missing coordinates}
-
-\item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval}
-
-\item{fit}{draw a linear fit of y ~ x}
-
-\item{loc}{where to print statistics on a panel}
-
-\item{aspect}{passed to \code{\link[lattice]{xyplot}}}
-
-\item{cols}{suggested columns for auto.key}
-
-\item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
-
-\item{auto.key}{passed to \code{\link[lattice]{xyplot}}}
-
-\item{as.table}{passed to \code{\link[lattice]{xyplot}}}
-
-\item{log}{a default shared by \code{ylog} and \code{xlog}}
-
-\item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
-
-\item{panel}{name or definition of panel function}
+\item{...}{passed to fun}
 
 \item{fun}{function to draw the plot}
-
-\item{sub}{passed to \code{\link[lattice]{xyplot}}}
 }
 \description{
-Scatterplot method for class 'data.frame'. Uses nonstandard evaluation. By default, passes arguments to \code{\link{scatter_data_frame}}.
+Scatterplot method for class 'data.frame'. Parses arguments and generates the call: fun(x, yvar, xvar, groups, facets, ...).
 }
 \examples{
 library(magrittr)
