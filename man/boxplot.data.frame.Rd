@@ -24,8 +24,18 @@ Theoph \%<>\% mutate(site = ifelse(as.numeric(Subject) > 6, 'Site A','Site B'))
 boxplot(Theoph,'Subject','conc')
 boxplot(Theoph,Subject,conc)
 boxplot(Theoph,conc,Subject)
-boxplot(Theoph,conc,Subject,site, drop.unused.levels = T)
+boxplot(Theoph,conc,Subject,site)
+attr(Theoph,'title') <- 'Theophylline'
+boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
+boxplot(Theoph, Subject, conc, sub= function(x,...)attr(x,'title'))
 }
 \seealso{
-Other bivariate functions: \code{\link{boxplot_data_frame}}
+Other mixedvariate plots: \code{\link{boxplot_data_frame}}
+
+Other boxplot: \code{\link{boxplot_data_frame}}
+
+Other metaplot: \code{\link{categorical}},
+  \code{\link{corsplom}}, \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot}}, \code{\link{scatter}}
 }

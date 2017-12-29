@@ -49,4 +49,7 @@ Panel function for metaplot::scatterplot.data.frame.
 
 Other panel functions: \code{\link{l.p}},
   \code{\link{my.diag.panel}}, \code{\link{u.p}}
+
+Other scatter: \code{\link{scatter.data.frame}},
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 }

@@ -18,4 +18,16 @@ Creates a density plot.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{corsplom}}, \code{\link{metaplot}},
   \code{\link{scatter}}
+
+Other univariate plots: \code{\link{densplot.data.frame}},
+  \code{\link{densplot_data_frame}},
+  \code{\link{metaplot.data.frame}}
+
+Other densplot: \code{\link{densplot.data.frame}},
+  \code{\link{densplot_data_frame}}
+
+Other metaplot: \code{\link{boxplot.data.frame}},
+  \code{\link{categorical}}, \code{\link{corsplom}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot}}, \code{\link{scatter}}
 }

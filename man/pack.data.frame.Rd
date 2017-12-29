@@ -18,8 +18,6 @@
 }
 \value{
 data.frame
-
-data.frame
 }
 \description{
 Captures scalar column metadata (row values) as column attributes.  Excises rows with non-missing values of \code{meta}, converting column values to column attributes. Afterward, column classes are re-optimized using default behavior of \code{read.table}. It is an error if \code{meta} is not in \code{names(x)}.
@@ -45,8 +43,6 @@ pack(bar)
 attributes(pack(bar)$Subject)
 }
 \seealso{
-\code{\link{unpack.data.frame}}
-
-Other pack: \code{\link{pack}},
-  \code{\link{unpack.data.frame}}
+Other pack: \code{\link{unpack.data.frame}},
+  \code{\link{unpack}}
 }

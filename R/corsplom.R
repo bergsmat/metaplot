@@ -6,6 +6,7 @@
 #' @export
 #' @family generic functions
 #' @family corsplom
+#' @family metaplot
 corsplom <- function(x,...)UseMethod('corsplom')
 
 #' Correlated Scatterplot Matrix Function for Data Frame
@@ -20,7 +21,8 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param varname.cex passed to splom
 #' @param diag.panel passed to splom
 #' @param split break diagonal names on white space
-#' @param sub passed to splom
+#' @param main character, or a function of x, xvar
+#' @param sub character, or a function of x, xvar
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}}
 #' @export
 #' @importFrom rlang UQS
@@ -36,7 +38,8 @@ corsplom_data_frame <- function(
   varname.cex = 1,
   diag.panel = my.diag.panel,
   split = TRUE,
-  sub = attr(x, 'source'),
+  main = getOption('metaplot_main',NULL),
+  sub = getOption('metaplot_sub',NULL),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -49,6 +52,10 @@ corsplom_data_frame <- function(
   names(x)[i] <- label[i]
 
   if(split) names(x) <- fracture(names(x))
+
+  if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
+  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
+
   splom(
     x,
     upper.panel = upper.panel,
@@ -57,6 +64,7 @@ corsplom_data_frame <- function(
     xlab = xlab,
     varname.cex = varname.cex,
     diag.panel = diag.panel,
+    main = main,
     sub = sub,
     ...
   )

@@ -9,6 +9,9 @@ globalVariables('metaplot_values')
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
+#' @family scatter
+#' @family bivariate plots
+#' @family metaplot
 scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot Function for Data Frame
@@ -30,7 +33,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
 #' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
-#' @param iso use isometric axes with line of unity
+#' @param iso plot line of unity
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
@@ -44,6 +47,9 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param symbols replacements for default symbols in group order
 #' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
+#' @param main character, or a function of x, yvar, xvar, groups, facets, and log
+#' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
+
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{metapanel}}
 #' @export
@@ -98,6 +104,9 @@ scatter_data_frame <- function(
   symbols = NULL,
   points = TRUE,
   lines = FALSE,
+  main = getOption('metaplot_main',NULL),
+  sub = getOption('metaplot_sub',NULL),
+
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -169,6 +178,9 @@ scatter_data_frame <- function(
   if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
   # if (is.null(groups)) # cannot be null at this point
   y[[groups]] <- ifcoded(y, groups)
+  if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
+  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
+
   groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
@@ -219,6 +231,8 @@ scatter_data_frame <- function(
     panel = panel,
     subscripts = TRUE,
     par.settings = pars,
+    main = main,
+    sub = sub,
     ...
   )
 }
@@ -250,6 +264,15 @@ scatter_data_frame <- function(
 #' scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 #' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
 #' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6, global = TRUE)
+#' \dontrun{
+#' \dontshow{
+#' attr(Theoph,'title') <- 'Theophylline'
+#' scatter(Theoph, conc, Time, main = function(x,...)attr(x,'title'))
+#' scatter(Theoph, conc, Time, sub= function(x,...)attr(x,'title'))
+#' options(metaplot_main = function(x,...)attr(x,'title'))
+#' scatter(Theoph, conc, Time)
+#' }
+#' }
 scatter.data.frame <- function(
   x,
   ...,
@@ -348,7 +371,7 @@ scatter.data.frame <- function(
 #' @param type overridden by metapanel
 #' @param ... passed to panel.superpose, panel.xyplot, panel.polygon, region, panel.text
 #' @family panel functions
-#' @family metaplots
+#' @family scatter
 #' @seealso \code{\link{metastats}}
 #' @seealso \code{\link{scatter.data.frame}}
 #'

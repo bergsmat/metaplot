@@ -32,12 +32,22 @@ scatter(Theoph \%>\% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 
 scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
 scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6, global = TRUE)
+\dontrun{
+\dontshow{
+attr(Theoph,'title') <- 'Theophylline'
+scatter(Theoph, conc, Time, main = function(x,...)attr(x,'title'))
+scatter(Theoph, conc, Time, sub= function(x,...)attr(x,'title'))
+options(metaplot_main = function(x,...)attr(x,'title'))
+scatter(Theoph, conc, Time)
+}
+}
 }
 \seealso{
 \code{\link{scatter_data_frame}}
 
 Other bivariate plots: \code{\link{metaplot.data.frame}},
-  \code{\link{scatter_data_frame}}
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
-Other scatter: \code{\link{scatter_data_frame}}
+Other scatter: \code{\link{metapanel}},
+  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 }

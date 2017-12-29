@@ -18,4 +18,17 @@ Scatterplot.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{corsplom}}, \code{\link{densplot}},
   \code{\link{metaplot}}
+
+Other scatter: \code{\link{metapanel}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{scatter_data_frame}}
+
+Other bivariate plots: \code{\link{metaplot.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{scatter_data_frame}}
+
+Other metaplot: \code{\link{boxplot.data.frame}},
+  \code{\link{categorical}}, \code{\link{corsplom}},
+  \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}}, \code{\link{metaplot}}
 }

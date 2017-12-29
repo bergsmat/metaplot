@@ -5,9 +5,10 @@
 \title{Boxplot Function for Data Frame}
 \usage{
 boxplot_data_frame(x, yvar, xvar, facets = NULL, log = FALSE,
-  horizontal = NULL, main = FALSE, crit = 1.3, ref = NULL,
-  nobs = FALSE, na.rm = TRUE, xlab = NULL, ylab = NULL, aspect = 1,
-  sub = attr(x, "source"), ...)
+  horizontal = NULL, crit = 1.3, ref = NULL, nobs = FALSE,
+  na.rm = TRUE, xlab = NULL, ylab = NULL, aspect = 1,
+  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
+  NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -21,8 +22,6 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL, log = FALSE,
 \item{log}{whether to log transform numeric variable (auto-selected if NULL)}
 
 \item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric}
-
-\item{main}{logical: whether to include title indicating x and y items; or a substitute title or NULL}
 
 \item{crit}{if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value}
 
@@ -38,7 +37,9 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL, log = FALSE,
 
 \item{aspect}{passed to \code{\link[lattice]{bwplot}}}
 
-\item{sub}{passed to \code{\link[lattice]{bwplot}}}
+\item{main}{character, or a function of x, yvar, xvar, facets, and log}
+
+\item{sub}{character, or a function of x, yvar, xvar, facets, and log}
 
 \item{...}{passed arguments}
 }
@@ -53,5 +54,7 @@ boxplot_data_frame(Theoph \%>\% filter(conc > 0),
 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
 }
 \seealso{
-Other bivariate functions: \code{\link{boxplot.data.frame}}
+Other mixedvariate plots: \code{\link{boxplot.data.frame}}
+
+Other boxplot: \code{\link{boxplot.data.frame}}
 }

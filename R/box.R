@@ -12,7 +12,6 @@ NULL
 #' @param facets optional conditioning variables
 #' @param log whether to log transform numeric variable (auto-selected if NULL)
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
-#' @param main logical: whether to include title indicating x and y items; or a substitute title or NULL
 #' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
 #' @param ref optional reference line on numeric axis
 #' @param nobs whether to include the number of observations under the category label
@@ -20,7 +19,8 @@ NULL
 #' @param ylab passed to \code{\link[lattice]{bwplot}}
 #' @param xlab passed to \code{\link[lattice]{bwplot}}
 #' @param aspect passed to \code{\link[lattice]{bwplot}}
-#' @param sub passed to \code{\link[lattice]{bwplot}}
+#' @param main character, or a function of x, yvar, xvar, facets, and log
+#' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos UQ
@@ -28,13 +28,15 @@ NULL
 #' @import dplyr
 #' @import lattice
 #' @importFrom stats as.formula median cor loess.smooth density
-#' @family bivariate functions
+#' @family mixedvariate plots
+#' @family boxplot
 #' @examples
 #' library(magrittr)
 #' library(dplyr)
 #' boxplot_data_frame(Theoph,'Subject','conc')
 #' boxplot_data_frame(Theoph %>% filter(conc > 0),
 #' 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
+
 boxplot_data_frame <- function(
   x,
   yvar,
@@ -42,7 +44,6 @@ boxplot_data_frame <- function(
   facets = NULL,
   log = FALSE,
   horizontal = NULL,
-  main = FALSE,
   crit = 1.3,
   ref = NULL,
   nobs = FALSE,
@@ -50,7 +51,8 @@ boxplot_data_frame <- function(
   xlab = NULL,
   ylab = NULL,
   aspect = 1,
-  sub = attr(x,'source'),
+  main = getOption('metaplot_main',NULL),
+  sub = getOption('metaplot_sub',NULL),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -120,36 +122,31 @@ boxplot_data_frame <- function(
     tck = c(1,0),
     y = list(log = log,equispaced.log = FALSE)
   )
-  mn <- paste(sep = ' ~ ',yvar,xvar)
-  mn <- list(mn, cex = 1, fontface = 1)
-  if(is.logical(main)){
-    if(main){
-      main <- mn
-    } else{
-      main <- NULL
-    }
-  }
+
   mypanel <- function(...){
       panel.bwplot(...)
-      if(length(ref)){
-        if(horizontal) {
-          panel.abline(v = ref)
-        }else{
-          panel.abline(h = ref)
-        }
+    if(length(ref)){
+      if(horizontal) {
+        panel.abline(v = ref)
+      }else{
+        panel.abline(h = ref)
       }
     }
+  }
+  if(!is.null(main))if(is.function(main)) main <- main(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
+  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
+
   bwplot(
     formula,
     data = y,
     aspect = aspect,
     horizontal = horizontal,
-    main = main,
     par.settings = standard.theme('pdf',color = FALSE),
     scales = scales,
     ylab = ylab,
     xlab = xlab,
     panel = mypanel,
+    main = main,
     sub = sub,
     ...
   )
@@ -163,8 +160,9 @@ boxplot_data_frame <- function(
 #' @param fun function that does the actual plotting
 #' @export
 #' @importFrom rlang f_rhs
-#' @family bivariate functions
+#' @family mixedvariate plots
 #' @family boxplot
+#' @family metaplot
 #' @examples
 #' library(dplyr)
 #' library(magrittr)
@@ -172,7 +170,10 @@ boxplot_data_frame <- function(
 #' boxplot(Theoph,'Subject','conc')
 #' boxplot(Theoph,Subject,conc)
 #' boxplot(Theoph,conc,Subject)
-#' boxplot(Theoph,conc,Subject,site, drop.unused.levels = T)
+#' boxplot(Theoph,conc,Subject,site)
+#' attr(Theoph,'title') <- 'Theophylline'
+#' boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
+#' boxplot(Theoph, Subject, conc, sub= function(x,...)attr(x,'title'))
 boxplot.data.frame <- function(
   x,
   ...,

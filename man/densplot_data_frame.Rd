@@ -6,7 +6,8 @@
 \usage{
 densplot_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
   ref = NULL, log = FALSE, aspect = 1, scales = NULL, panel = NULL,
-  auto.key = TRUE, ...)
+  auto.key = NULL, keycols = NULL, main = getOption("metaplot_main",
+  NULL), sub = getOption("metaplot_sub", NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -31,6 +32,12 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
 
 \item{auto.key}{passed to \code{\link[lattice]{densityplot}}}
 
+\item{keycols}{number of auto.key columns}
+
+\item{main}{character, or a function of x, xvar, groups, facets, and log}
+
+\item{sub}{character, or a function of x, xvar, groups, facets, and log}
+
 \item{...}{passed to \code{\link[lattice]{densityplot}}}
 }
 \description{
@@ -43,7 +50,8 @@ densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
 Other univariate plots: \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}}
+  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
 
-Other densplot: \code{\link{densplot.data.frame}}
+Other densplot: \code{\link{densplot.data.frame}},
+  \code{\link{densplot}}
 }

@@ -18,6 +18,8 @@ character
 Categorical plot.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
 }
 \seealso{
-Other metaplot: \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot}}
+Other metaplot: \code{\link{boxplot.data.frame}},
+  \code{\link{corsplom}}, \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot}}, \code{\link{scatter}}
 }

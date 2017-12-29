@@ -6,7 +6,9 @@
 \usage{
 corsplom_data_frame(x, xvar = names(x), upper.panel = u.p,
   lower.panel = l.p, pscales = 0, xlab = "", varname.cex = 1,
-  diag.panel = my.diag.panel, split = TRUE, sub = attr(x, "source"), ...)
+  diag.panel = my.diag.panel, split = TRUE,
+  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
+  NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -27,7 +29,9 @@ corsplom_data_frame(x, xvar = names(x), upper.panel = u.p,
 
 \item{split}{break diagonal names on white space}
 
-\item{sub}{passed to splom}
+\item{main}{character, or a function of x, xvar}
+
+\item{sub}{character, or a function of x, xvar}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}}}
 }

@@ -5,6 +5,9 @@
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
+#' @family univariate plots
+#' @family densplot
+#' @family metaplot
 densplot <- function(x,...)UseMethod('densplot')
 
 #' Density Function for Data Frame
@@ -21,11 +24,14 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
 #' @param auto.key  passed to \code{\link[lattice]{densityplot}}
+#' @param keycols number of auto.key columns
+#' @param main character, or a function of x, xvar, groups, facets, and log
+#' @param sub character, or a function of x, xvar, groups, facets, and log
 #' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
+#' @family densplot
 #' @import lattice
 #' @export
-#' @family densplot
 #' @examples
 #' densplot_data_frame(Theoph, 'conc', grid = TRUE)
 #' densplot_data_frame(Theoph, 'conc', 'Subject')
@@ -41,7 +47,10 @@ densplot_data_frame<- function(
   aspect = 1,
   scales = NULL,
   panel = NULL,
-  auto.key = TRUE,
+  auto.key = NULL,
+  keycols = NULL,
+  main = getOption('metaplot_main',NULL),
+  sub = getOption('metaplot_sub',NULL),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -61,6 +70,9 @@ densplot_data_frame<- function(
   if(!is.null(xvarlab)) default_xlab <- xvarlab
   if(is.null(xlab)) xlab <- default_xlab
 
+  if(is.null(keycols))if(!is.null(groups))keycols <- min(3, length(unique(x[[groups]])))
+  if(is.null(auto.key))if(!is.null(groups))if(length(unique(x[[groups]])) > 1) auto.key = list(columns = keycols,lines=TRUE)
+
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
@@ -68,6 +80,8 @@ densplot_data_frame<- function(
   if(!is.null(facets)){
     for (i in seq_along(facets)) x[[facets[[i]]]] <- ifcoded(x, facets[[i]])
   }
+  if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
+  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(groups)) {
     x[[groups]] <- ifcoded(x, groups)
     groups <- as.formula(paste('~',groups))
@@ -83,6 +97,8 @@ densplot_data_frame<- function(
     scales = scales,
     panel = panel,
     auto.key = auto.key,
+    main = main,
+    sub = sub,
     ...
   )
 }
@@ -92,15 +108,19 @@ densplot_data_frame<- function(
 #' @param x data.frame
 #' @param ... passed to fun
 #' @param fun plotting function
-#' @family univariate plots
 #' @import lattice
 #' @export
 #' @importFrom rlang f_rhs quos
+#' @family univariate plots
 #' @family densplot
 #' @examples
 #' densplot(Theoph, conc, grid = TRUE )
 #' densplot(Theoph, conc, Subject )
 #' densplot(Theoph, conc, , Subject )
+#' attr(Theoph,'title') <- 'Theophylline'
+#' densplot(Theoph, conc, main= function(x,...)attr(x,'title'))
+#' densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))
+
 densplot.data.frame<- function(
   x,
   ...,

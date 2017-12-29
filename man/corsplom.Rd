@@ -21,4 +21,9 @@ Other generic functions: \code{\link{axislabel}},
 
 Other corsplom: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom_data_frame}}
+
+Other metaplot: \code{\link{boxplot.data.frame}},
+  \code{\link{categorical}}, \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{metaplot}}, \code{\link{scatter}}
 }

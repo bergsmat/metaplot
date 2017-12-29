@@ -14,9 +14,3 @@ pack(x, ...)
 \description{
 Pack Something.  Generic, with method for data.frame.
 }
-\seealso{
-\code{\link{unpack}}
-
-Other pack: \code{\link{pack.data.frame}},
-  \code{\link{unpack.data.frame}}
-}

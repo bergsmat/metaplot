@@ -21,10 +21,14 @@ Plot density for object of class 'data.frame'. Parses arguments and generates th
 densplot(Theoph, conc, grid = TRUE )
 densplot(Theoph, conc, Subject )
 densplot(Theoph, conc, , Subject )
+attr(Theoph,'title') <- 'Theophylline'
+densplot(Theoph, conc, main= function(x,...)attr(x,'title'))
+densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))
 }
 \seealso{
 Other univariate plots: \code{\link{densplot_data_frame}},
-  \code{\link{metaplot.data.frame}}
+  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
 
-Other densplot: \code{\link{densplot_data_frame}}
+Other densplot: \code{\link{densplot_data_frame}},
+  \code{\link{densplot}}
 }

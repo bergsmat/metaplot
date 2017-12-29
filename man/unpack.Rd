@@ -15,5 +15,6 @@ unpack(x, ...)
 Unpack Something.  Generic, with method for data.frame.
 }
 \seealso{
-pack
+Other pack: \code{\link{pack.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

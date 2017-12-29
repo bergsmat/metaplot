@@ -10,7 +10,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   iso = FALSE, crit = 1.3, na.rm = TRUE, aspect = 1, auto.key = NULL,
   keycols = NULL, as.table = TRUE, prepanel = NULL, scales = NULL,
   panel = metapanel, colors = NULL, symbols = NULL, points = TRUE,
-  lines = FALSE, ...)
+  lines = FALSE, main = getOption("metaplot_main", NULL),
+  sub = getOption("metaplot_sub", NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -41,7 +42,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
-\item{iso}{use isometric axes with line of unity}
+\item{iso}{plot line of unity}
 
 \item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
 
@@ -69,6 +70,10 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1}
 
+\item{main}{character, or a function of x, yvar, xvar, groups, facets, and log}
+
+\item{sub}{character, or a function of x, yvar, xvar, groups, facets, and log}
+
 \item{...}{passed to \code{\link{region}}}
 }
 \description{
@@ -95,7 +100,8 @@ scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 \code{\link{metapanel}}
 
 Other bivariate plots: \code{\link{metaplot.data.frame}},
-  \code{\link{scatter.data.frame}}
+  \code{\link{scatter.data.frame}}, \code{\link{scatter}}
 
-Other scatter: \code{\link{scatter.data.frame}}
+Other scatter: \code{\link{metapanel}},
+  \code{\link{scatter.data.frame}}, \code{\link{scatter}}
 }
