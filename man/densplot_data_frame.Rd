@@ -29,17 +29,17 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{...}{passed to \code{\link[lattice]{densityplot}}}
+\item{auto.key}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{sub}{passed to \code{\link[lattice]{densityplot}}}
+\item{...}{passed to \code{\link[lattice]{densityplot}}}
 }
 \description{
 Plot density for object of class 'data.frame' using standard evaluation.
 }
 \examples{
-dens_data_frame(Theoph, 'conc', grid = TRUE)
-dens_data_frame(Theoph, 'conc', 'Subject')
-dens_data_frame(Theoph, 'conc', , 'Subject')
+densplot_data_frame(Theoph, 'conc', grid = TRUE)
+densplot_data_frame(Theoph, 'conc', 'Subject')
+densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
 Other univariate plots: \code{\link{densplot.data.frame}},

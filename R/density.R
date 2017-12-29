@@ -20,16 +20,16 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
-#' @param sub  passed to \code{\link[lattice]{densityplot}}
+#' @param auto.key  passed to \code{\link[lattice]{densityplot}}
 #' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
 #' @import lattice
 #' @export
 #' @family densplot
 #' @examples
-#' dens_data_frame(Theoph, 'conc', grid = TRUE)
-#' dens_data_frame(Theoph, 'conc', 'Subject')
-#' dens_data_frame(Theoph, 'conc', , 'Subject')
+#' densplot_data_frame(Theoph, 'conc', grid = TRUE)
+#' densplot_data_frame(Theoph, 'conc', 'Subject')
+#' densplot_data_frame(Theoph, 'conc', , 'Subject')
 densplot_data_frame<- function(
   x,
   xvar,

@@ -40,7 +40,6 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function
-#' @param type passed to \code{\link[lattice]{xyplot}}
 #' @param colors replacements for default colors in group order
 #' @param symbols replacements for default symbols in group order
 #' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
@@ -95,7 +94,6 @@ scatter_data_frame <- function(
   prepanel = NULL,
   scales = NULL,
   panel = metapanel,
-  type = c('p','l'),
   colors = NULL,
   symbols = NULL,
   points = TRUE,
@@ -141,7 +139,7 @@ scatter_data_frame <- function(
     groups <- 'metaplot_groups'
   }
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key = list(columns = keycols)
+  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key = list(columns = keycols,points=TRUE,lines=TRUE)
   if(na.rm) y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
@@ -220,7 +218,6 @@ scatter_data_frame <- function(
     iso = iso,
     panel = panel,
     subscripts = TRUE,
-    type = type,
     par.settings = pars,
     ...
   )
@@ -348,6 +345,7 @@ scatter.data.frame <- function(
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
 #' @param loc where to print statistics on a panel; suppressed for grouped plots
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param type overridden by metapanel
 #' @param ... passed to panel.superpose, panel.xyplot, panel.polygon, region, panel.text
 #' @family panel functions
 #' @family metaplots
@@ -368,6 +366,7 @@ metapanel <- function(
   iso = FALSE,
   global = FALSE,
   msg = 'metastats',
+  type,
   ...
 )
 {
@@ -395,7 +394,9 @@ metapanel <- function(
       col=col.symbol
     ))
   }
-  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.xyplot,...)
+  superpose.line <- trellis.par.get()$superpose.line
+  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.lines,type='l',alpha = superpose.line$alpha, ...)
+  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',...)
   if(conf){
     if(global){
       myconf(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)

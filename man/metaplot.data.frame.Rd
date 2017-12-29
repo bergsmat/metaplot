@@ -108,7 +108,7 @@ attr(x$conc,'label') <- 'theophylline concentration'
 attr(x$arm,'label') <- 'trial arm'
 attr(x$site,'label') <- 'investigational site'
 attr(x$pred,'label') <- 'population-predicted concentration'
-attr(x$ipred,'label') <- 'individual-predicted conentration'
+attr(x$ipred,'label') <- 'individual-predicted concentration'
 attr(x$res,'label') <- 'residuals'
 attr(x$sres,'label') <- 'standardized residuals'
 attr(x$lKe,'label') <- 'natural log of elimination rate constant'
@@ -140,6 +140,7 @@ x \%>\% metaplot(arm, Wt)
 x \%>\% metaplot(Wt, arm, site)
 x \%>\% metaplot(Wt, site, arm)
 x \%>\% metaplot(conc, Time)
+x \%>\% metaplot(conc, Time, panel = panel.smoothScatter)
 #x \%>\% metaplot(arm, site)
 x \%>\% metaplot(conc, Time, Subject)
 x \%>\% metaplot(conc, Time, , Subject)
@@ -148,9 +149,11 @@ x \%>\% metaplot(conc, Time, Subject, site, arm)
 x \%>\% metaplot(lKe, lKa, lCl)
 x \%>\% metaplot(conc, ipred, Time)
 x \%>\% metaplot(conc, ipred, Time, Subject)
+x \%>\% metaplot(conc, ipred, Time, Subject, colors = 'black', points = c(T,F), lines = c(F,T))
 x \%>\% metaplot(conc, ipred, Time, site, arm)
 x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
-x \%>\% metaplot(conc, Time, panel = panel.smoothScatter)
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T )
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T)
 
 \dontshow{
 \dontrun{
@@ -174,6 +177,7 @@ y \%>\% metaplot(conc, Time, Subject, site, arm)
 y \%>\% metaplot(lKe, lKa, lCl)
 y \%>\% scatter(conc, ipred, Time)
 y \%>\% scatter(conc, ipred, Time, Subject)
+x \%>\% metaplot(conc, ipred, Time, Subject, colors = 'black', points = c(T,F), lines = c(F,T))
 y \%>\% scatter(conc, ipred, Time, site, arm)
 y \%<>\% mutate(Time = ifelse(Time > 15, NA, Time))
 y \%>\% scatter(conc, ipred, Time, site, arm)

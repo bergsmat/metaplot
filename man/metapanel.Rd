@@ -6,7 +6,7 @@
 \usage{
 metapanel(x, y, groups, xref = NULL, yref = NULL, ysmooth = FALSE,
   xsmooth = FALSE, fit = conf, conf = FALSE, loc = 0, iso = FALSE,
-  global = FALSE, msg = "metastats", ...)
+  global = FALSE, msg = "metastats", type, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -35,7 +35,9 @@ metapanel(x, y, groups, xref = NULL, yref = NULL, ysmooth = FALSE,
 
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
-\item{...}{passed to panel.superpose, panel.smoothScatter, panel.xyplot, panel.polygon, region, panel.text}
+\item{type}{overridden by metapanel}
+
+\item{...}{passed to panel.superpose, panel.xyplot, panel.polygon, region, panel.text}
 }
 \description{
 Panel function for metaplot::scatterplot.data.frame.

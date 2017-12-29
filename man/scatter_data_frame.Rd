@@ -9,7 +9,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   ylab = NULL, xlab = NULL, ysmooth = FALSE, xsmooth = FALSE,
   iso = FALSE, crit = 1.3, na.rm = TRUE, aspect = 1, auto.key = NULL,
   keycols = NULL, as.table = TRUE, prepanel = NULL, scales = NULL,
-  panel = metapanel, ...)
+  panel = metapanel, colors = NULL, symbols = NULL, points = TRUE,
+  lines = FALSE, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -59,6 +60,14 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 \item{scales}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
 
 \item{panel}{name or definition of panel function}
+
+\item{colors}{replacements for default colors in group order}
+
+\item{symbols}{replacements for default symbols in group order}
+
+\item{points}{whether to plot points for each group: logical, or alpha values between 0 and 1}
+
+\item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1}
 
 \item{...}{passed to \code{\link{region}}}
 }
