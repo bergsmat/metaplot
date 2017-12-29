@@ -16,7 +16,7 @@ Generic axis label, with method for 'data.frame'.
 }
 \seealso{
 Other generic functions: \code{\link{corsplom}},
-  \code{\link{dens}}, \code{\link{metaplot}},
+  \code{\link{densplot}}, \code{\link{metaplot}},
   \code{\link{scatter}}
 
 Other axislabel: \code{\link{axislabel.data.frame}}

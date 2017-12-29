@@ -13,7 +13,7 @@ scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot Function for Data Frame
 #'
-#' Scatterplot function for class 'data.frame'. Uses standard evaluation.
+#' Scatterplot function for class 'data.frame'.
 #'
 #'
 #' @param x data.frame
@@ -21,6 +21,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xvar character: x variable
 #' @param groups optional grouping variable; ignored if more than one \code{yvar}
 #' @param facets optional conditioning variables
+#' @param log a default sharede by \code{ylog} and \code{xlog}
 #' @param ylog log transform y axis (guessed if NULL)
 #' @param xlog log transform x axis (guessed if NULL)
 #' @param yref reference line from y axis
@@ -29,23 +30,21 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
 #' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
-#' @param cols suggested columns for auto.key
-#' @param density plot point density instead of points (ignored if \code{groups} is supplied)
 #' @param iso use isometric axes with line of unity
-#' @param main logical: whether to construct a default title; or a substitute title or NULL
-#' @param corr append Pearson correlation coefficient to default title (only if main is \code{TRUE})
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param fit draw a linear fit of y ~ x
-#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
-#' @param log a default sharede by \code{ylog} and \code{xlog}
-#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
-#' @param loc where to print statistics on a panel
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
 #' @param auto.key passed to \code{\link[lattice]{xyplot}}
+#' @param keycols number of auto.key columns
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
+#' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
+#' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function
-#' @param sub passed to \code{\link[lattice]{xyplot}}
+#' @param type passed to \code{\link[lattice]{xyplot}}
+#' @param colors replacements for default colors in group order
+#' @param symbols replacements for default symbols in group order
+#' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
+#' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{metapanel}}
 #' @export
@@ -66,14 +65,18 @@ scatter <- function(x,...)UseMethod('scatter')
 #' scatter_data_frame(Theoph, 'conc','Time', facets = 'Subject')
 #' scatter_data_frame(Theoph %>% filter(conc > 0), 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
 #' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE)
-#' scatter_data_frame(Theoph, 'conc','Time', main = TRUE, corr = TRUE)
+#' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE,global = TRUE)
 #' scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
+#' scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
+
+
 scatter_data_frame <- function(
   x,
   yvar,
   xvar,
   groups = NULL,
   facets = NULL,
+  log = FALSE,
   ylog = log,
   xlog = log,
   yref = NULL,
@@ -82,41 +85,36 @@ scatter_data_frame <- function(
   xlab = NULL,
   ysmooth = FALSE,
   xsmooth = FALSE,
-  cols = NULL,
-  density = FALSE,
   iso = FALSE,
-  main = FALSE,
-  corr = FALSE,
   crit = 1.3,
   na.rm = TRUE,
-  fit = conf,
-  conf = FALSE,
-  loc = 0,
   aspect = 1,
   auto.key = NULL,
+  keycols = NULL,
   as.table = TRUE,
-  log = FALSE,
-  msg = 'metastats',
+  prepanel = NULL,
+  scales = NULL,
   panel = metapanel,
-  sub = attr(x,'source'),
+  type = c('p','l'),
+  colors = NULL,
+  symbols = NULL,
+  points = TRUE,
+  lines = FALSE,
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
-  stopifnot(is.logical(corr))
   stopifnot(length(groups) <= 1)
   stopifnot(is.character(yvar))
   stopifnot(is.character(xvar))
   stopifnot(length(xvar) == 1)
-  if(is.null(cols))if(length(yvar) > 1)cols <- 1
-  if(is.null(cols))if(length(yvar) == 1)cols <- 3
-  if(is.null(auto.key)) auto.key = list(columns = cols)
 
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
   stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
-  if(length(yvar) > 1){
-    if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
+  if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
       stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
+  if(length(yvar) > 1){
+    if(is.null(keycols))if(length(yvar) > 1)keycols <- 1
     suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar))
     groups <- 'metaplot_groups'
     labs <- sapply(yvar, function(col){
@@ -138,6 +136,12 @@ scatter_data_frame <- function(
     if(length(gui) == 1) attr(y$metaplot_values, 'guide') <- gui
     yvar <- 'metaplot_values'
   }
+  if(is.null(groups)){
+    y$metaplot_groups <- TRUE
+    groups <- 'metaplot_groups'
+  }
+  if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
+  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key = list(columns = keycols)
   if(na.rm) y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
@@ -161,41 +165,43 @@ scatter_data_frame <- function(
   if(length(xref) & xlog & !(any(xref <= 0))) xref <- log10(xref)
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
-  scales = list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
+  if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
   if(is.null(ylab))ylab <- axislabel(y,var = yvar, log = ylog)
   ylab <- sub('metaplot_values','',ylab)
   if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
-  if(!is.null(groups))y[[groups]] <- ifcoded(y, groups)
+  # if (is.null(groups)) # cannot be null at this point
+  y[[groups]] <- ifcoded(y, groups)
+  groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
   }
-  prepanel = if(iso) function(x,y,...){
+  if(is.null(prepanel))if(iso) prepanel <- function(x,y,...){
     lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
     list(
       xlim = lim,
       ylim = lim
     )
-  } else NULL
-  cor <- cor(
-    use = 'pair',
-    if(ylog) log(y[[yvar]]) else y[[yvar]],
-    if(xlog) log(y[[xvar]]) else y[[xvar]]
-  )
-  cor <- signif(cor,2)
-  cor <- paste('R =',cor)
-  cor <- parens(cor)
-  mn <- paste(sep = ' ~ ',yvar,xvar)
-  if(length(groups)) mn <- paste(mn,'by',groups)
-  if(corr) mn <- paste(mn, cor)
-  mn <- list(mn, cex = 1, fontface = 1)
-  if(is.logical(main)){
-    if(main){
-      main <- mn
-    }else{
-      main <- NULL
-    }
   }
-  if(!is.null(groups)) groups <- as.formula(paste('~',groups))
+
+  if(!is.null(points)) points <- as.numeric(points)
+  if(!is.null(lines)) lines <- as.numeric(lines)
+  sym <- list(
+    col = colors,
+    alpha = points,
+    pch = symbols
+  )
+  line <- list(
+    col = colors,
+    alpha = lines
+  )
+  sym <- sym[sapply(sym,function(i)!is.null(i))]
+  line <- line[sapply(line,function(i)!is.null(i))]
+  pars <- list(
+    superpose.symbol = sym,
+    superpose.line = line
+  )
+  pars <- pars[sapply(pars, function(i)length(i) > 0 )]
+
   xyplot(
     formula,
     data = y,
@@ -211,15 +217,11 @@ scatter_data_frame <- function(
     xsmooth = xsmooth,
     ylab = ylab,
     xlab = xlab,
-    density = density,
     iso = iso,
-    main = main,
-    fit = fit,
-    conf = conf,
-    loc = loc,
-    msg = msg,
     panel = panel,
-    sub = sub,
+    subscripts = TRUE,
+    type = type,
+    par.settings = pars,
     ...
   )
 }
@@ -248,9 +250,9 @@ scatter_data_frame <- function(
 #' scatter(Theoph, conc, Time, Subject) # Subject as groups
 #' scatter(Theoph, conc, Time, , Subject) # Subject as facet
 #' scatter(Theoph %>% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 5)
-#' scatter(Theoph, conc, Time, Subject,ysmooth = TRUE)
-#' scatter(Theoph, conc, Time, main = TRUE, corr = TRUE)
+#' scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 #' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
+#' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6, global = TRUE)
 scatter.data.frame <- function(
   x,
   ...,
@@ -340,53 +342,93 @@ scatter.data.frame <- function(
 #' @param xref reference line from x axis
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
-#' @param density plot point density instead of points
 #' @param iso use isometric axes with line of unity
+#' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param fit draw a linear fit of y ~ x
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
-#' @param loc where to print statistics on a panel
+#' @param loc where to print statistics on a panel; suppressed for grouped plots
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
-#' @param ... passed to panel.superpose, panel.smoothScatter, panel.xyplot, panel.polygon, region, panel.text
+#' @param ... passed to panel.superpose, panel.xyplot, panel.polygon, region, panel.text
 #' @family panel functions
 #' @family metaplots
 #' @seealso \code{\link{metastats}}
 #' @seealso \code{\link{scatter.data.frame}}
 #'
-metapanel <- function(x, y, groups = NULL, xref = NULL, yref = NULL, ysmooth = FALSE, xsmooth = FALSE, density = FALSE, iso = FALSE, fit = conf, conf = FALSE, loc = 0, msg = 'metastats', ...)
+metapanel <- function(
+  x,
+  y,
+  groups,
+  xref = NULL,
+  yref = NULL,
+  ysmooth = FALSE,
+  xsmooth = FALSE,
+  fit = conf,
+  conf = FALSE,
+  loc = 0,
+  iso = FALSE,
+  global = FALSE,
+  msg = 'metastats',
+  ...
+)
 {
-
-  if( length(groups))panel.superpose(
-    x = x,
-    y = y,
-    groups = groups,
-    panel.groups = function(x,y,type,...){
-      panel.xyplot(x,y,...)
-      foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
-      bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-      if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',...))
-      if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = 'dashed',type = 'l',...))
-    },
-    ...
-  )
-  if(!length(groups)){
-    if( density)panel.smoothScatter(x,y,...)
-    if(!density)panel.xyplot(x,y,...)
-    foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
+  # if(is.null(groups)) groups <- rep(TRUE,length(x)) # cannot be NULL
+  myxsmooth <- function(x,y,type,lty,col, col.symbol, col.line,...){
     bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,type = 'l',...))
-    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,type = 'l',...))
+    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = 'dashed',type = 'l',col = col.line,...))
   }
-  f <- data.frame()
-  if(fit || conf) f <- region(x, y, conf = conf, ...)
-  if(fit) try(panel.xyplot(x=f$x, y=f$y, col='black', type='l', ...))
-  if(conf)try(panel.polygon(
-    x = c(f$x, rev(f$x)),
-    y = c(f$lo, rev(f$hi)),
-    border = FALSE,
-    alpha=0.1,
-    col='black'
-  ))
-  if(sum(loc))panel = panel.text(x = xpos(loc), y = ypos(loc), label = match.fun(msg)(x = x, y = y, ...))
+  myysmooth <- function(x,y,type,lty,col, col.symbol, col.line,...){
+    foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
+    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',col = col.line,...))
+  }
+  myfit <- function(x,y,type,lty,col, col.symbol, col.line,...){
+    f <- data.frame()
+    f <- region(x, y, conf = conf, ...)
+    try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l', ...))
+  }
+  myconf <- function(x,y,type,lty,col, col.symbol, col.line,...){
+    f <- region(x, y, conf = conf, ...)
+    try(panel.polygon(
+      x = c(f$x, rev(f$x)),
+      y = c(f$lo, rev(f$hi)),
+      border = FALSE,
+      alpha=0.2,
+      col=col.symbol
+    ))
+  }
+  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.xyplot,...)
+  if(conf){
+    if(global){
+      myconf(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+    }else{
+      panel.superpose(x = x, y = y, groups = groups, panel.groups = myconf, ...)
+    }
+  }
+  if(fit){
+    if(global){
+      myfit(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+    }else{
+      panel.superpose(x = x, y = y, groups = groups, panel.groups = myfit, ...)
+    }
+  }
+  if(ysmooth){
+    if(global){
+      myysmooth(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+    }else{
+      panel.superpose(x = x, y = y, groups = groups, panel.groups = myysmooth, ...)
+    }
+  }
+  if(xsmooth){
+    if(global){
+      myxsmooth(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+    }else{
+      panel.superpose(x = x, y = y, groups = groups, panel.groups = myxsmooth, ...)
+    }
+  }
+  if(sum(loc))panel = panel.text(
+    x = xpos(loc),
+    y = ypos(loc),
+    label = match.fun(msg)(x = x, y = y, ...)
+  )
   if(length(yref))panel.abline(h = yref)
   if(length(xref))panel.abline(v = xref)
   if(iso)panel.abline(0,1)

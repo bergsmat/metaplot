@@ -5,7 +5,7 @@
 \title{Create Metaplot for Data Frame.}
 \usage{
 \method{metaplot}{data.frame}(x, ...,
-  univariate = getOption("metaplot_univariate", "dens"),
+  univariate = getOption("metaplot_univariate", "densplot"),
   mixedvariate = getOption("metaplot_mixedvariate", "boxplot"),
   bivariate = getOption("metaplot_bivariate", "scatter"),
   multivariate = getOption("metaplot_multivariate", "corsplom"),
@@ -135,6 +135,7 @@ x \%<>\% pack
 x \%>\% metaplot(conc)
 #x \%>\% metaplot(site)
 x \%>\% metaplot(Wt, arm)
+x \%>\% densplot(Wt, arm)
 x \%>\% metaplot(arm, Wt)
 x \%>\% metaplot(Wt, arm, site)
 x \%>\% metaplot(Wt, site, arm)
@@ -183,8 +184,8 @@ y \%>\% scatter(conc, ipred, Time, site, arm)
 Other metaplot: \code{\link{categorical}},
   \code{\link{metaplot}}
 
-Other univariate plots: \code{\link{dens.data.frame}},
-  \code{\link{dens_data_frame}}
+Other univariate plots: \code{\link{densplot.data.frame}},
+  \code{\link{densplot_data_frame}}
 
 Other bivariate plots: \code{\link{scatter.data.frame}},
   \code{\link{scatter_data_frame}}

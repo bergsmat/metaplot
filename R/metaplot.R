@@ -115,7 +115,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' attr(x$arm,'label') <- 'trial arm'
 #' attr(x$site,'label') <- 'investigational site'
 #' attr(x$pred,'label') <- 'population-predicted concentration'
-#' attr(x$ipred,'label') <- 'individual-predicted conentration'
+#' attr(x$ipred,'label') <- 'individual-predicted concentration'
 #' attr(x$res,'label') <- 'residuals'
 #' attr(x$sres,'label') <- 'standardized residuals'
 #' attr(x$lKe,'label') <- 'natural log of elimination rate constant'
@@ -146,6 +146,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' x %>% metaplot(conc)
 #'#x %>% metaplot(site)
 #' x %>% metaplot(Wt, arm)
+#' x %>% densplot(Wt, arm)
 #' x %>% metaplot(arm, Wt)
 #' x %>% metaplot(Wt, arm, site)
 #' x %>% metaplot(Wt, site, arm)
@@ -158,8 +159,11 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' x %>% metaplot(lKe, lKa, lCl)
 #' x %>% metaplot(conc, ipred, Time)
 #' x %>% metaplot(conc, ipred, Time, Subject)
+#' x %>% metaplot(conc, ipred, Time, Subject, colors = 'black', points = c(T,F), lines = c(F,T))
 #' x %>% metaplot(conc, ipred, Time, site, arm)
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T)
 #' x %>% metaplot(conc, Time, panel = panel.smoothScatter)
 #'
 #'\dontshow{
@@ -192,7 +196,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 metaplot.data.frame <- function(
   x,
   ...,
-  univariate   = getOption('metaplot_univariate','dens'),
+  univariate   = getOption('metaplot_univariate','densplot'),
   mixedvariate = getOption('metaplot_mixedvariate','boxplot'),
   bivariate    = getOption('metaplot_bivariate','scatter'),
   multivariate = getOption('metaplot_multivariate','corsplom'),

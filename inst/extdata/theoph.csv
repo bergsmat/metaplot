@@ -1,5 +1,5 @@
 meta,Subject,Wt,Dose,Time,conc,arm,site,pred,ipred,res,sres,lKe,lKa,lCl
-label,subject identifier,subject weight,theophylline dose,time since dose administration,theophylline concentration,trial arm,investigational site,population-predicted concentration,individual-predicted conentration,residuals,standardized residuals,natural log of elimination rate constant,natural log of absorption rate constant,natural log of clearance
+label,subject identifier,subject weight,theophylline dose,time since dose administration,theophylline concentration,trial arm,investigational site,population-predicted concentration,individual-predicted concentration,residuals,standardized residuals,natural log of elimination rate constant,natural log of absorption rate constant,natural log of clearance
 guide,....,kg,mg/kg,h,mg/L,//1/Arm A//2/Arm B//,//1/Site 1//2/Site 2//,mg/L,mg/L,.,.,.,.,.
 .,1,79.6,4.02,0,0.74,2,1,0,0,0.74,1.08532096783537,-0.289179837142759,0.0380694576074951,-0.553641639776263
 .,1,79.6,4.02,0.25,2.84,2,1,2.81963190813042,3.7997424465307,-0.959742446530695,-1.40760621748835,-0.289179837142759,0.0380694576074951,-0.553641639776263

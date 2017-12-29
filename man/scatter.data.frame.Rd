@@ -29,9 +29,9 @@ scatter(Theoph,conc, Time)
 scatter(Theoph, conc, Time, Subject) # Subject as groups
 scatter(Theoph, conc, Time, , Subject) # Subject as facet
 scatter(Theoph \%>\% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 5)
-scatter(Theoph, conc, Time, Subject,ysmooth = TRUE)
-scatter(Theoph, conc, Time, main = TRUE, corr = TRUE)
+scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)
+scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6, global = TRUE)
 }
 \seealso{
 \code{\link{scatter_data_frame}}

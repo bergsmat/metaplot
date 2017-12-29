@@ -16,6 +16,6 @@ Scatterplot.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{corsplom}}, \code{\link{dens}},
+  \code{\link{corsplom}}, \code{\link{densplot}},
   \code{\link{metaplot}}
 }

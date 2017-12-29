@@ -5,7 +5,7 @@
 #' @param ... passed arguments
 #' @export
 #' @family generic functions
-dens <- function(x,...)UseMethod('dens')
+densplot <- function(x,...)UseMethod('densplot')
 
 #' Density Function for Data Frame
 #'
@@ -25,12 +25,12 @@ dens <- function(x,...)UseMethod('dens')
 #' @family univariate plots
 #' @import lattice
 #' @export
-#' @family dens
+#' @family densplot
 #' @examples
 #' dens_data_frame(Theoph, 'conc', grid = TRUE)
 #' dens_data_frame(Theoph, 'conc', 'Subject')
 #' dens_data_frame(Theoph, 'conc', , 'Subject')
-dens_data_frame<- function(
+densplot_data_frame<- function(
   x,
   xvar,
   groups = NULL,
@@ -41,7 +41,7 @@ dens_data_frame<- function(
   aspect = 1,
   scales = NULL,
   panel = NULL,
-  sub = attr(x,'source'),
+  auto.key = TRUE,
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -68,7 +68,10 @@ dens_data_frame<- function(
   if(!is.null(facets)){
     for (i in seq_along(facets)) x[[facets[[i]]]] <- ifcoded(x, facets[[i]])
   }
-  if(!is.null(groups)) groups <- as.formula(paste('~',groups))
+  if(!is.null(groups)) {
+    x[[groups]] <- ifcoded(x, groups)
+    groups <- as.formula(paste('~',groups))
+  }
   densityplot(
     formula,
     data = x,
@@ -79,11 +82,11 @@ dens_data_frame<- function(
     aspect = aspect,
     scales = scales,
     panel = panel,
-    sub = sub,
+    auto.key = auto.key,
     ...
   )
 }
-#' Dens Method for Data Frame
+#' Densplot Method for Data Frame
 #'
 #' Plot density for object of class 'data.frame'. Parses arguments and generates the call: fun(x, xvar, groups, facets,...).
 #' @param x data.frame
@@ -93,15 +96,15 @@ dens_data_frame<- function(
 #' @import lattice
 #' @export
 #' @importFrom rlang f_rhs quos
-#' @family dens
+#' @family densplot
 #' @examples
-#' dens(Theoph, conc, grid = TRUE )
-#' dens(Theoph, conc, Subject )
-#' dens(Theoph, conc, , Subject )
-dens.data.frame<- function(
+#' densplot(Theoph, conc, grid = TRUE )
+#' densplot(Theoph, conc, Subject )
+#' densplot(Theoph, conc, , Subject )
+densplot.data.frame<- function(
   x,
   ...,
-  fun = getOption('metaplot_dens','dens_data_frame')
+  fun = getOption('metaplot_dens','densplot_data_frame')
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
