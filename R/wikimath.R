@@ -1,11 +1,11 @@
-lhs <- function(x,...)sub(' *~.*','',x,...)
-rhs <- function(x,...)sub('.*~ *','',x,...)
+lhs <- function(x,...)base::sub(' *~.*','',x,...)
+rhs <- function(x,...)base::sub('.*~ *','',x,...)
 nospace <- function(x,...)gsub(' ','',x)
 tos <- function(x,...){
   at <- regexpr('(theta|omega|sigma)_[0-9.]+',x,ignore.case=TRUE)
   length <- attr(at,'match.length')
   x <- substr(x,start=at, stop=at+length-1)
-  x <- sub('_','',x)
+  x <- base::sub('_','',x)
   x <- toupper(x)
   x
 }
@@ -80,7 +80,7 @@ wikiparse <- function(
   nbsp='~',
   ...
 ){
-  x <- sub('^ *','',x) #strip leading white
+  x <- base::sub('^ *','',x) #strip leading white
   x <- gsub('~',sim,x) #substitute equality symbol
   x <- gsub('\\.',nbsp,x) #substitute non-breaking space
   x <- gsub('\\*',dot,x) #substitute multiply symbol
@@ -101,4 +101,4 @@ justUnits <- function(x,...){
   x <- substr(x,start=at+1, stop=at+length-2)
   x
 }
-noUnits <- function(x,...)sub('\\([^)]*\\)','',x)
+noUnits <- function(x,...)base::sub('\\([^)]*\\)','',x)

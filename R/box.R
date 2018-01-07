@@ -25,7 +25,7 @@ NULL
 #' @export
 #' @importFrom rlang quos UQ
 #' @importFrom graphics boxplot
-#' @import dplyr
+#' @importFrom dplyr filter
 #' @import lattice
 #' @importFrom stats as.formula median cor loess.smooth density
 #' @family mixedvariate plots

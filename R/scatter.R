@@ -174,7 +174,7 @@ scatter_data_frame <- function(
   xscale = list(log = xlog,equispaced.log = FALSE)
   if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
   if(is.null(ylab))ylab <- axislabel(y,var = yvar, log = ylog)
-  ylab <- sub('metaplot_values','',ylab)
+  ylab <- base::sub('metaplot_values','',ylab)
   if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
   # if (is.null(groups)) # cannot be null at this point
   y[[groups]] <- ifcoded(y, groups)
