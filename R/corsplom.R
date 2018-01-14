@@ -17,10 +17,9 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param upper.panel passed to splom
 #' @param lower.panel passed to splom
 #' @param pscales passed to splom
-#' @param xlab passed to splom
+#' @param xlab passed to splom, can be function(x = x, var = xvar, ...){...}
 #' @param varname.cex passed to splom
 #' @param diag.panel passed to splom
-#' @param split break diagonal names on white space
 #' @param main character, or a function of x, xvar
 #' @param sub character, or a function of x, xvar
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}}
@@ -31,31 +30,24 @@ corsplom <- function(x,...)UseMethod('corsplom')
 corsplom_data_frame <- function(
   x,
   xvar = names(x),
-  upper.panel = u.p,
-  lower.panel= l.p,
-  pscales= 0,
-  xlab = '',
-  varname.cex = 1,
-  diag.panel = my.diag.panel,
-  split = TRUE,
+  upper.panel = getOption('metaplot_upper.panel',u.p),
+  lower.panel= getOption('metaplot_lower.panel',l.p),
+  pscales= getOption('metaplot_pscales',0),
+  xlab = getOption('metaplot_corsplom_xlab',NULL),
+  varname.cex = getOption('metaplot_varname.cex',1),
+  diag.panel = getOption('metaplot_diag.panel',my.diag.panel),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
   ...
 ){
+  if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
+  if(is.function(xlab)) xlab <- xlab(x, xvar, ...)
+  if(is.null(xlab)) xlab <- ''
+
   stopifnot(inherits(x, 'data.frame'))
   x <- x[,xvar,drop=FALSE]
-  label <- lapply(x,attr,'label')
-  label[sapply(label, is.null)] <- ''
-  label <- as.character(label)
-  stopifnot(all(sapply(label,length) <= 1))
-  i <- is.defined(label) & label != ''
-  names(x)[i] <- label[i]
-
-  if(split) names(x) <- fracture(names(x))
-
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
-
   splom(
     x,
     upper.panel = upper.panel,
@@ -66,6 +58,8 @@ corsplom_data_frame <- function(
     diag.panel = diag.panel,
     main = main,
     sub = sub,
+    .data = x,
+    split = split,
     ...
   )
 }

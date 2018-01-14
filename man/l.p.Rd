@@ -17,7 +17,9 @@ l.p(x, y, ...)
 Lower panel function for corsplom(). Plots Pearson correlation coefficient.
 }
 \seealso{
-Other panel functions: \code{\link{metapanel}},
+Other panel functions: \code{\link{diag_label}},
+  \code{\link{diag_pin}}, \code{\link{metapanel_ref}},
+  \code{\link{metapanel}}, \code{\link{metaplot_ref}},
   \code{\link{my.diag.panel}}, \code{\link{u.p}}
 }
 \keyword{internal}

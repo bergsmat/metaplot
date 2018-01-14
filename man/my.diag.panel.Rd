@@ -4,12 +4,34 @@
 \alias{my.diag.panel}
 \title{Diagonal Panel Function}
 \usage{
-my.diag.panel(x, denscale = 0.2, ...)
+my.diag.panel(x, varname, .data, diag.label = getOption("metaplot_diag.label",
+  diag_label), pin = getOption("metaplot_pin", diag_pin),
+  pin.col = getOption("metaplot_pin.col", "darkgrey"),
+  pin.alpha = getOption("metaplot_pin.alpha", 1),
+  dens.col = getOption("metaplot_dens.col", "grey"),
+  dens.scale = getOption("metaplot_dens.scale", 0.2),
+  dens.alpha = getOption("metaplot_dens.alpha", 0.5), ...)
 }
 \arguments{
 \item{x}{numeric}
 
-\item{denscale}{inflation factor for height of density smooth}
+\item{varname}{variable name}
+
+\item{.data}{copy of original dataset}
+
+\item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
+
+\item{pin}{location for a pin (reference line) in the density region; can be a function of x, varname, .data}
+
+\item{pin.col}{color of pin, if any}
+
+\item{pin.alpha}{alpha transparency of pin}
+
+\item{dens.col}{color for density region}
+
+\item{dens.scale}{inflation factor for height of density smooth}
+
+\item{dens.alpha}{alpha transparency for density region}
 
 \item{...}{passed arguments}
 }
@@ -19,7 +41,9 @@ Diagonal panel function for corsplom(). Plots a density smooth against the corre
 \seealso{
 \code{\link{corsplom}}
 
-Other panel functions: \code{\link{l.p}},
-  \code{\link{metapanel}}, \code{\link{u.p}}
+Other panel functions: \code{\link{diag_label}},
+  \code{\link{diag_pin}}, \code{\link{l.p}},
+  \code{\link{metapanel_ref}}, \code{\link{metapanel}},
+  \code{\link{metaplot_ref}}, \code{\link{u.p}}
 }
 \keyword{internal}

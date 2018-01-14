@@ -5,7 +5,7 @@
 \title{Capture Scalar Column Metadata as Column Attributes}
 \usage{
 \method{pack}{data.frame}(x, meta = getOption("meta", "meta"), as.is = TRUE,
-  ...)
+  attributes = TRUE, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +13,8 @@
 \item{meta}{column in x giving names of attributes}
 
 \item{as.is}{passed to \code{\link[utils]{read.table}}}
+
+\item{attributes}{preserve non-standard attributes (ignores names, row.names, class)}
 
 \item{...}{ignored arguments}
 }

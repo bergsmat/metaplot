@@ -4,7 +4,9 @@
 \alias{u.p}
 \title{Upper Panel Function}
 \usage{
-u.p(x, y, col, loess = col, ...)
+u.p(x, y, col, loess.col = getOption("metaplot_loess.col", col),
+  loess.lty = getOption("metaplot_loess.lty", "solid"),
+  loess.alpha = getOption("metaplot_loess.alpha", 1), ...)
 }
 \arguments{
 \item{x}{x values}
@@ -13,7 +15,11 @@ u.p(x, y, col, loess = col, ...)
 
 \item{col}{point color}
 
-\item{loess}{loess color}
+\item{loess.col}{loess color}
+
+\item{loess.lty}{loess line type}
+
+\item{loess.alpha}{loess alpha}
 
 \item{...}{passed arguments}
 }
@@ -21,7 +27,9 @@ u.p(x, y, col, loess = col, ...)
 Upper panel function for corsplom(). Plots data with loess smooth.
 }
 \seealso{
-Other panel functions: \code{\link{l.p}},
-  \code{\link{metapanel}}, \code{\link{my.diag.panel}}
+Other panel functions: \code{\link{diag_label}},
+  \code{\link{diag_pin}}, \code{\link{l.p}},
+  \code{\link{metapanel_ref}}, \code{\link{metapanel}},
+  \code{\link{metaplot_ref}}, \code{\link{my.diag.panel}}
 }
 \keyword{internal}

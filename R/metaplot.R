@@ -7,18 +7,6 @@ globalVariables('panel_')
 
 #' Metaplot
 #'
-#' Creates a metaplot. Generic.  See \code{\link{metaplot.data.frame}}.
-#' @param x object
-#' @param ... passed arguments
-#' @export
-#' @family generic functions
-#' @family metaplot
-#' @examples
-#' example(metaplot.data.frame)
-metaplot <- function(x,...)UseMethod('metaplot')
-
-#' Create Metaplot for Data Frame.
-#'
 #' Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encode}}d \code{guide} attribute will be treated as categorical.
 #'
 #' Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
@@ -63,6 +51,57 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' \item{NUM, NUM, NUM, CAT, CAT}{ multivariate, or bivariate with two facets for \code{overlay}}
 #'
 #'}
+#' @param x object
+#' @param ... passed arguments
+#' @export
+#' @family generic functions
+#' @family metaplot
+#' @examples
+#'
+#' library(magrittr)
+#' library(dplyr)
+#' library(csv)
+
+#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+#' x %<>% pack
+
+
+#' # sample plots
+#' x %>% metaplot(sres)
+#'#x %>% metaplot(site)
+#' x %>% metaplot(Wt, arm)
+#' x %>% densplot(Wt, arm)
+#' x %>% metaplot(arm, Wt)
+#' x %>% metaplot(Wt, arm, site, ref = 70)
+#' x %>% metaplot(Wt, site, arm, ref = 70)
+#' x %>% metaplot(conc, Time)
+#' x %>% metaplot(conc, Time, panel = panel.smoothScatter)
+#'#x %>% metaplot(arm, site)
+#' x %>% metaplot(conc, Time, Subject)
+#' x %>% metaplot(conc, Time, , Subject)
+#' x %>% metaplot(conc, Time, Subject, site)
+#' x %>% metaplot(conc, Time, Subject, site, arm)
+#' x %>% metaplot(lKe, lKa, lCl)
+#' x %>% metaplot(
+#'   lKe, lKa, lCl,
+#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   dens.col='blue',dens.alpha = 0.1
+#' )
+#' x %>% metaplot(conc, pred, ipred, Time)
+#' x %>% metaplot(conc, pred, ipred, Time, Subject)
+#' x %>% metaplot(conc, pred, ipred, Time, Subject,
+#' colors = c('black','blue','magenta'),
+#' points = c(0.9,0, 0.4),
+#' lines = c(F,T,T))
+#' x %>% metaplot(conc, ipred, Time, site, arm)
+#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, refcol = 'red')
+#'
+metaplot <- function(x,...)UseMethod('metaplot')
+
+
+#' Create Metaplot for Data Frame.
 #'
 #' @param x object
 #' @param univariate function for univariate arguments
@@ -98,11 +137,11 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' # some numeric and categorical properties
 #' x %<>% mutate(arm = ifelse(as.numeric(as.character(Subject)) %% 2 == 0, 1, 2))
 #' x %<>% mutate(site = ifelse(as.numeric(as.character(Subject)) < 7, 1, 2))
-#' x %<>% mutate(pred = predict(m1,level = 0))
-#' x %<>% mutate(ipred = predict(m1))
-#' x %<>% mutate(res = residuals(m1))
-#' x %<>% mutate(sres = residuals(m1, type = 'pearson'))
-#' r <- ranef(m1)
+#' x %<>% mutate(pred = predict(m1,level = 0) %>% signif(4))
+#' x %<>% mutate(ipred = predict(m1) %>% signif(4))
+#' x %<>% mutate(res = residuals(m1) %>% signif(4))
+#' x %<>% mutate(sres = residuals(m1, type = 'pearson') %>% signif(4))
+#' r <- ranef(m1) %>% signif(4)
 #' r$Subject <- rownames(r)
 #' x %<>% left_join(r)
 
@@ -131,41 +170,32 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' attr(x$site,'guide') <- '//1/Site 1//2/Site 2//'
 #' attr(x$pred,'guide') <- 'mg/L'
 #' attr(x$ipred,'guide') <- 'mg/L'
+#'
+#' attr(x$lKe,'reference') <- 0
+#' attr(x$lKa,'reference') <- 0
+#' attr(x$lCl,'reference') <- 0
+#' attr(x$res,'reference') <- 0
+#' attr(x$sres,'reference') <- '//-1.96//1.96//'
+#'
+#' attr(x$Subject,'symbol') <- 'ID_i'
+#' attr(x$Wt,'symbol') <- 'W_i'
+#' attr(x$Dose,'symbol') <- 'A_i'
+#' attr(x$Time,'symbol') <- 't_i,j'
+#' attr(x$conc,'symbol') <- 'C_i,j'
+#' attr(x$arm,'symbol') <- 'Arm_i'
+#' attr(x$site,'symbol') <- 'Site_i'
+#' attr(x$pred,'symbol') <- 'C_pred_p'
+#' attr(x$ipred,'symbol') <- 'C_pred_i'
+#' attr(x$res,'symbol') <- '\\epsilon'
+#' attr(x$sres,'symbol') <- '\\epsilon_st'
+#' attr(x$lKe,'symbol') <- 'ln(K_e.)'
+#' attr(x$lKa,'symbol') <- 'ln(K_a.)'
+#' attr(x$lCl,'symbol') <- 'ln(Cl_c./F)'
+#'
+#'
 #' x %>% unpack %>% as.csv('theoph.csv')
 #' }
-#'
-#' library(magrittr)
-#' library(dplyr)
-#' library(csv)
 
-#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
-#' x %<>% pack
-
-
-#' # sample plots
-#' x %>% metaplot(conc)
-#'#x %>% metaplot(site)
-#' x %>% metaplot(Wt, arm)
-#' x %>% densplot(Wt, arm)
-#' x %>% metaplot(arm, Wt)
-#' x %>% metaplot(Wt, arm, site)
-#' x %>% metaplot(Wt, site, arm)
-#' x %>% metaplot(conc, Time)
-#' x %>% metaplot(conc, Time, panel = panel.smoothScatter)
-#'#x %>% metaplot(arm, site)
-#' x %>% metaplot(conc, Time, Subject)
-#' x %>% metaplot(conc, Time, , Subject)
-#' x %>% metaplot(conc, Time, Subject, site)
-#' x %>% metaplot(conc, Time, Subject, site, arm)
-#' x %>% metaplot(lKe, lKa, lCl)
-#' x %>% metaplot(conc, ipred, Time)
-#' x %>% metaplot(conc, ipred, Time, Subject)
-#' x %>% metaplot(conc, ipred, Time, Subject, colors = 'black', points = c(T,F), lines = c(F,T))
-#' x %>% metaplot(conc, ipred, Time, site, arm)
-#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
-#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
-#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T)
-#'
 #'\dontshow{
 #'\dontrun{
 #' y <- x

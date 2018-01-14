@@ -5,13 +5,28 @@
 \title{Scatterplot Function for Data Frame}
 \usage{
 scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
-  log = FALSE, ylog = log, xlog = log, yref = NULL, xref = NULL,
-  ylab = NULL, xlab = NULL, ysmooth = FALSE, xsmooth = FALSE,
-  iso = FALSE, crit = 1.3, na.rm = TRUE, aspect = 1, auto.key = NULL,
-  keycols = NULL, as.table = TRUE, prepanel = NULL, scales = NULL,
-  panel = metapanel, colors = NULL, symbols = NULL, points = TRUE,
-  lines = FALSE, main = getOption("metaplot_main", NULL),
-  sub = getOption("metaplot_sub", NULL), ...)
+  log = getOption("metaplot_log", FALSE), ylog = getOption("metaplot_ylog",
+  log), xlog = getOption("metaplot_xlog", log),
+  yref = getOption("metaplot_ref", NULL), xref = getOption("metaplot_ref",
+  NULL), ylab = getOption("metaplot_lab", axislabel),
+  xlab = getOption("metaplot_lab", axislabel),
+  ysmooth = getOption("metaplot_ysmooth", FALSE),
+  xsmooth = getOption("metaplot_xsmooth", FALSE),
+  iso = getOption("metaplot_iso", FALSE), crit = getOption("metaplot_crit",
+  1.3), na.rm = getOption("metaplot_na.rm", TRUE),
+  aspect = getOption("metaplot_aspect", 1),
+  auto.key = getOption("metaplot_auto.key", NULL),
+  keycols = getOption("metaplot_keycols", NULL),
+  as.table = getOption("metaplot_scatter_as.table", TRUE),
+  prepanel = getOption("metaplot_scatter_prepanel", NULL),
+  scales = getOption("metaplot_scatter_scales", NULL),
+  panel = getOption("metaplot_scatter_panel", metapanel),
+  colors = getOption("metaplot_colors", NULL),
+  symbols = getOption("metaplot_symbols", NULL),
+  points = getOption("metaplot_points", TRUE),
+  lines = getOption("metaplot_lines", FALSE),
+  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
+  NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -24,19 +39,19 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{facets}{optional conditioning variables}
 
-\item{log}{a default sharede by \code{ylog} and \code{xlog}}
+\item{log}{a default shared by \code{ylog} and \code{xlog}}
 
 \item{ylog}{log transform y axis (guessed if NULL)}
 
 \item{xlog}{log transform x axis (guessed if NULL)}
 
-\item{yref}{reference line from y axis}
+\item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...){...}}
 
-\item{xref}{reference line from x axis}
+\item{xref}{reference line from x axis; can be function(x = x, var = xvar, ...){...}}
 
-\item{ylab}{y axis label, constructed from attributes \code{label} and \code{guide} if available}
+\item{ylab}{y axis label; can be function(x = x, var = yvar, log = ylog, ..){...}}
 
-\item{xlab}{x axis label, constructed from attributes \code{label} and \code{guide} if available}
+\item{xlab}{x axis label; can be function(x = x, var = xvar, log = xlog, ..){...}}
 
 \item{ysmooth}{supply loess smooth of y on x}
 

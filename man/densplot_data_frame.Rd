@@ -4,10 +4,20 @@
 \alias{densplot_data_frame}
 \title{Density Function for Data Frame}
 \usage{
-densplot_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
-  ref = NULL, log = FALSE, aspect = 1, scales = NULL, panel = NULL,
-  auto.key = NULL, keycols = NULL, main = getOption("metaplot_main",
-  NULL), sub = getOption("metaplot_sub", NULL), ...)
+densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
+  xlab = getOption("metaplot_lab", axislabel),
+  ref = getOption("metaplot_ref", metaplot_ref),
+  ref.col = getOption("metaplot_ref.col", "grey"),
+  ref.lty = getOption("metaplot_ref.lty", "solid"),
+  ref.alpha = getOption("metaplot_ref.alpha", 1),
+  log = getOption("metaplot_log", FALSE),
+  aspect = getOption("metaplot_aspect", 1),
+  scales = getOption("metaplot_dens.scales", NULL),
+  panel = getOption("metaplot_dens.panel", NULL),
+  auto.key = getOption("metaplot_auto.key", NULL),
+  keycols = getOption("metaplot_keycols", NULL),
+  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
+  NULL), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -18,9 +28,15 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL, xlab = NULL,
 
 \item{facets}{optional conditioning variables}
 
-\item{xlab}{x axis label}
+\item{xlab}{x axis label; can be function(x = x, var = xvar, log = log, ...){...}}
 
-\item{ref}{optional numeric}
+\item{ref}{reference line; can be function(x = x, var = xvar, ...){...}}
+
+\item{ref.col}{color for reference line(s)}
+
+\item{ref.lty}{type for reference line(s)}
+
+\item{ref.alpha}{transparency for reference line(s)}
 
 \item{log}{whether to use log scale}
 

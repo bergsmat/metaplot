@@ -24,15 +24,15 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xvar character: x variable
 #' @param groups optional grouping variable; ignored if more than one \code{yvar}
 #' @param facets optional conditioning variables
-#' @param log a default sharede by \code{ylog} and \code{xlog}
+#' @param log a default shared by \code{ylog} and \code{xlog}
 #' @param ylog log transform y axis (guessed if NULL)
 #' @param xlog log transform x axis (guessed if NULL)
-#' @param yref reference line from y axis
-#' @param xref reference line from x axis
+#' @param yref reference line from y axis; can be function(x = x, var = yvar, ...){...}
+#' @param xref reference line from x axis; can be function(x = x, var = xvar, ...){...}
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
-#' @param ylab y axis label, constructed from attributes \code{label} and \code{guide} if available
-#' @param xlab x axis label, constructed from attributes \code{label} and \code{guide} if available
+#' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..){...}
+#' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..){...}
 #' @param iso plot line of unity
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
@@ -81,34 +81,44 @@ scatter_data_frame <- function(
   xvar,
   groups = NULL,
   facets = NULL,
-  log = FALSE,
-  ylog = log,
-  xlog = log,
-  yref = NULL,
-  xref = NULL,
-  ylab = NULL,
-  xlab = NULL,
-  ysmooth = FALSE,
-  xsmooth = FALSE,
-  iso = FALSE,
-  crit = 1.3,
-  na.rm = TRUE,
-  aspect = 1,
-  auto.key = NULL,
-  keycols = NULL,
-  as.table = TRUE,
-  prepanel = NULL,
-  scales = NULL,
-  panel = metapanel,
-  colors = NULL,
-  symbols = NULL,
-  points = TRUE,
-  lines = FALSE,
+  log = getOption('metaplot_log',FALSE),
+  ylog = getOption('metaplot_ylog',log),
+  xlog = getOption('metaplot_xlog',log),
+  yref = getOption('metaplot_ref',NULL),
+  xref = getOption('metaplot_ref',NULL),
+  ylab = getOption('metaplot_lab',axislabel),
+  xlab = getOption('metaplot_lab',axislabel),
+  ysmooth = getOption('metaplot_ysmooth',FALSE),
+  xsmooth = getOption('metaplot_xsmooth',FALSE),
+  iso = getOption('metaplot_iso',FALSE),
+  crit = getOption('metaplot_crit',1.3),
+  na.rm = getOption('metaplot_na.rm',TRUE),
+  aspect = getOption('metaplot_aspect',1),
+  auto.key = getOption('metaplot_auto.key',NULL),
+  keycols = getOption('metaplot_keycols',NULL),
+  as.table = getOption('metaplot_scatter_as.table',TRUE),
+  prepanel = getOption('metaplot_scatter_prepanel',NULL),
+  scales = getOption('metaplot_scatter_scales',NULL),
+  panel = getOption('metaplot_scatter_panel',metapanel),
+  colors = getOption('metaplot_colors',NULL),
+  symbols = getOption('metaplot_symbols',NULL),
+  points = getOption('metaplot_points',TRUE),
+  lines = getOption('metaplot_lines',FALSE),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
-
   ...
 ){
+  # yref
+  if(is.character(yref)) yref <- match.fun(yref)
+  if(is.function(yref)) yref <- yref(x = x, var = yvar,...)
+  yref <- as.numeric(yref)
+  yref <- yref[is.defined(yref)]
+  # xref
+  if(is.character(xref)) xref <- match.fun(xref)
+  if(is.function(xref)) xref <- xref(x = x, var = yvar,...)
+  xref <- as.numeric(xref)
+  xref <- xref[is.defined(xref)]
+
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
   stopifnot(is.character(yvar))
@@ -148,8 +158,16 @@ scatter_data_frame <- function(
     groups <- 'metaplot_groups'
   }
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key = list(columns = keycols,points=TRUE,lines=TRUE)
-  if(na.rm) y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
+  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(points),lines=any(lines))
+  if(na.rm) {
+    #y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
+    foo <- y
+    y <- y[is.defined(y[[yvar]]) & is.defined(y[[xvar]]),]
+    for(col in names(foo))attributes(y[[col]]) <- attributes(foo[[col]])
+    at <- attributes(foo)
+    at$row.names <- NULL
+    for(a in names(at)) attr(y,a) <- attr(foo,a)
+  }
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
@@ -160,22 +178,31 @@ scatter_data_frame <- function(
   }
   if(ylog %>% is.null) ylog <- default_log(y[[yvar]], crit)
   if(xlog %>% is.null) xlog <- default_log(y[[xvar]], crit)
+
   if(ylog)if(any(y[[yvar]] <= 0, na.rm = TRUE)){
     warning(yvar, ' must be positive for log scale')
     ylog <- FALSE
   }
   if(xlog)if(any(y[[xvar]] <= 0, na.rm = TRUE)){
     warning(xvar, ' must be positive for log scale')
-    ylog <- FALSE
+    xlog <- FALSE
   }
-  if(length(yref) & ylog & !(any(yref <= 0))) yref <- log10(yref)
-  if(length(xref) & xlog & !(any(xref <= 0))) xref <- log10(xref)
+
+  if(ylog) yref <- log10(yref[yref > 0])
+  if(xlog) xref <- log10(xref[xref > 0])
+
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
+
   if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
-  if(is.null(ylab))ylab <- axislabel(y,var = yvar, log = ylog)
+
+  if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
+  if(is.function(ylab)) ylab <- ylab(y, var = yvar, log = ylog, ...)
   ylab <- base::sub('metaplot_values','',ylab)
-  if(is.null(xlab))xlab <- axislabel(y,var = xvar, log = xlog)
+
+  if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
+  if(is.function(xlab)) xlab <- xlab(y, var = xvar, log = xlog, ...)
+
   # if (is.null(groups)) # cannot be null at this point
   y[[groups]] <- ifcoded(y, groups)
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
@@ -233,6 +260,7 @@ scatter_data_frame <- function(
     par.settings = pars,
     main = main,
     sub = sub,
+    .data = y,
     ...
   )
 }
@@ -358,14 +386,23 @@ scatter.data.frame <- function(
 #' @param x x values
 #' @param y y values
 #' @param groups optional grouping item
-#' @param yref reference line from y axis
-#' @param xref reference line from x axis
+#' @param yref reference line from y axis; can be function of x, y
+#' @param xref reference line from x axis; can be function of x, y
+#' @param ref.col reference line color
+#' @param ref.lty reference line type
+#' @param ref.alpha reference line alpha
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
+#' @param smooth.lty smooth line type
+#' @param smooth.alpha smooth alpha
 #' @param iso use isometric axes with line of unity
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
+#' @param global.col color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
-#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval
+#' @param fit.lty fit line type
+#' @param fit.alpha fit alpha
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE
+#' @param conf.alpha alpha transparency for confidence region
 #' @param loc where to print statistics on a panel; suppressed for grouped plots
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param type overridden by metapanel
@@ -379,71 +416,82 @@ metapanel <- function(
   x,
   y,
   groups,
-  xref = NULL,
-  yref = NULL,
-  ysmooth = FALSE,
-  xsmooth = FALSE,
-  fit = conf,
-  conf = FALSE,
-  loc = 0,
-  iso = FALSE,
-  global = FALSE,
-  msg = 'metastats',
+  xref = getOption('metapanel_ref',NULL),
+  yref = getOption('metapanel_ref',NULL),
+  ref.col = getOption('metaplot_ref.col','grey'),
+  ref.lty = getOption('metaplot_ref.lty','solid'),
+  ref.alpha = getOption('metaplot_ref.alpha',1),
+  ysmooth = getOption('metaplot_ysmooth',FALSE),
+  xsmooth = getOption('metaplot_xsmooth',FALSE),
+  smooth.lty = getOption('metaplot_smooth.lty','dashed'),
+  smooth.alpha = getOption('metaplot_smooth.alpha',1),
+  fit = getOption('metaplot_fit',conf),
+  fit.lty = getOption('metaplot_fit.lty','solid'),
+  fit.alpha = getOption('metaplot_fit.alpha',1),
+  conf = getOption('metaplot_conf',FALSE),
+  conf.alpha = getOption('metaplot_conf.alpha',1),
+  loc = getOption('metaplot_loc',0),
+  iso = getOption('metaplot_iso',FALSE),
+  global = getOption('metaplot_global',FALSE),
+  global.col = getOption('metaplot_global.col','grey'),
+  msg = getOption('metaplot_msg','metastats'),
   type,
   ...
 )
 {
+  stopifnot(length(global) == 1, is.logical(global))
   # if(is.null(groups)) groups <- rep(TRUE,length(x)) # cannot be NULL
   myxsmooth <- function(x,y,type,lty,col, col.symbol, col.line,...){
     bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = 'dashed',type = 'l',col = col.line,...))
+    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = smooth.lty, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }
-  myysmooth <- function(x,y,type,lty,col, col.symbol, col.line,...){
+  myysmooth <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
     foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
-    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = 'dashed',type = 'l',col = col.line,...))
+    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = smooth.lty, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }
-  myfit <- function(x,y,type,lty,col, col.symbol, col.line,...){
+  myfit <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
     f <- data.frame()
     f <- region(x, y, conf = conf, ...)
-    try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l', ...))
+    try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l',lty = fit.lty,alpha= fit.alpha, ...))
   }
-  myconf <- function(x,y,type,lty,col, col.symbol, col.line,...){
+  myconf <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
     f <- region(x, y, conf = conf, ...)
     try(panel.polygon(
       x = c(f$x, rev(f$x)),
       y = c(f$lo, rev(f$hi)),
       border = FALSE,
-      alpha=0.2,
+      alpha=conf.alpha,
       col=col.symbol
     ))
   }
   superpose.line <- trellis.par.get()$superpose.line
+  superpose.symbol <- trellis.par.get()$superpose.symbol
   panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.lines,type='l',alpha = superpose.line$alpha, ...)
-  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',...)
+  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',alpha = superpose.symbol$alpha,...)
   if(conf){
     if(global){
-      myconf(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+      myconf(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myconf, ...)
     }
   }
   if(fit){
     if(global){
-      myfit(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+      myfit(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myfit, ...)
     }
   }
   if(ysmooth){
     if(global){
-      myysmooth(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+      myysmooth(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myysmooth, ...)
     }
   }
   if(xsmooth){
     if(global){
-      myxsmooth(x,y, col = 'grey', col.symbol = 'grey', col.line = 'grey',...)
+      myxsmooth(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myxsmooth, ...)
     }
@@ -453,8 +501,19 @@ metapanel <- function(
     y = ypos(loc),
     label = match.fun(msg)(x = x, y = y, ...)
   )
-  if(length(yref))panel.abline(h = yref)
-  if(length(xref))panel.abline(v = xref)
+  if(is.character(yref)) yref <- match.fun(yref)
+  if(is.function(yref)) yref <- yref(y, x, ...)
+  yref <- as.numeric(yref)
+  yref <- yref[is.defined(yref)]
+
+  if(is.character(xref)) xref <- match.fun(xref)
+  if(is.function(xref)) xref <- xref(x, y, ...)
+  xref <- as.numeric(xref)
+  xref <- xref[is.defined(xref)]
+
+  if(length(yref))panel.abline(h = yref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
+  if(length(xref))panel.abline(v = xref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
+
   if(iso)panel.abline(0,1)
 }
 

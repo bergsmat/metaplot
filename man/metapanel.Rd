@@ -4,9 +4,24 @@
 \alias{metapanel}
 \title{Panel Function for Metaplot Scatterplot}
 \usage{
-metapanel(x, y, groups, xref = NULL, yref = NULL, ysmooth = FALSE,
-  xsmooth = FALSE, fit = conf, conf = FALSE, loc = 0, iso = FALSE,
-  global = FALSE, msg = "metastats", type, ...)
+metapanel(x, y, groups, xref = getOption("metapanel_ref", NULL),
+  yref = getOption("metapanel_ref", NULL),
+  ref.col = getOption("metaplot_ref.col", "grey"),
+  ref.lty = getOption("metaplot_ref.lty", "solid"),
+  ref.alpha = getOption("metaplot_ref.alpha", 1),
+  ysmooth = getOption("metaplot_ysmooth", FALSE),
+  xsmooth = getOption("metaplot_xsmooth", FALSE),
+  smooth.lty = getOption("metaplot_smooth.lty", "dashed"),
+  smooth.alpha = getOption("metaplot_smooth.alpha", 1),
+  fit = getOption("metaplot_fit", conf),
+  fit.lty = getOption("metaplot_fit.lty", "solid"),
+  fit.alpha = getOption("metaplot_fit.alpha", 1),
+  conf = getOption("metaplot_conf", FALSE),
+  conf.alpha = getOption("metaplot_conf.alpha", 1),
+  loc = getOption("metaplot_loc", 0), iso = getOption("metaplot_iso",
+  FALSE), global = getOption("metaplot_global", FALSE),
+  global.col = getOption("metaplot_global.col", "grey"),
+  msg = getOption("metaplot_msg", "metastats"), type, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -15,23 +30,41 @@ metapanel(x, y, groups, xref = NULL, yref = NULL, ysmooth = FALSE,
 
 \item{groups}{optional grouping item}
 
-\item{xref}{reference line from x axis}
+\item{xref}{reference line from x axis; can be function of x, y}
 
-\item{yref}{reference line from y axis}
+\item{yref}{reference line from y axis; can be function of x, y}
+
+\item{ref.col}{reference line color}
+
+\item{ref.lty}{reference line type}
+
+\item{ref.alpha}{reference line alpha}
 
 \item{ysmooth}{supply loess smooth of y on x}
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
+\item{smooth.lty}{smooth line type}
+
+\item{smooth.alpha}{smooth alpha}
+
 \item{fit}{draw a linear fit of y ~ x}
 
-\item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval}
+\item{fit.lty}{fit line type}
+
+\item{fit.alpha}{fit alpha}
+
+\item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE}
+
+\item{conf.alpha}{alpha transparency for confidence region}
 
 \item{loc}{where to print statistics on a panel; suppressed for grouped plots}
 
 \item{iso}{use isometric axes with line of unity}
 
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
+
+\item{global.col}{color for global aesthetics}
 
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
@@ -47,7 +80,9 @@ Panel function for metaplot::scatterplot.data.frame.
 
 \code{\link{scatter.data.frame}}
 
-Other panel functions: \code{\link{l.p}},
+Other panel functions: \code{\link{diag_label}},
+  \code{\link{diag_pin}}, \code{\link{l.p}},
+  \code{\link{metapanel_ref}}, \code{\link{metaplot_ref}},
   \code{\link{my.diag.panel}}, \code{\link{u.p}}
 
 Other scatter: \code{\link{scatter.data.frame}},

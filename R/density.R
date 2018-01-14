@@ -17,8 +17,11 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param xvar variable to plot
 #' @param groups optional grouping variable
 #' @param facets optional conditioning variables
-#' @param xlab x axis label
-#' @param ref optional numeric
+#' @param xlab x axis label; can be function(x = x, var = xvar, log = log, ...){...}
+#' @param ref reference line; can be function(x = x, var = xvar, ...){...}
+#' @param ref.col color for reference line(s)
+#' @param ref.lty type for reference line(s)
+#' @param ref.alpha transparency for reference line(s)
 #' @param log whether to use log scale
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
@@ -41,14 +44,17 @@ densplot_data_frame<- function(
   xvar,
   groups = NULL,
   facets = NULL,
-  xlab = NULL,
-  ref = NULL,
-  log = FALSE,
-  aspect = 1,
-  scales = NULL,
-  panel = NULL,
-  auto.key = NULL,
-  keycols = NULL,
+  xlab = getOption('metaplot_lab',axislabel),
+  ref = getOption('metaplot_ref',metaplot_ref),
+  ref.col = getOption('metaplot_ref.col','grey'),
+  ref.lty = getOption('metaplot_ref.lty','solid'),
+  ref.alpha = getOption('metaplot_ref.alpha',1),
+  log = getOption('metaplot_log',FALSE),
+  aspect = getOption('metaplot_aspect',1),
+  scales = getOption('metaplot_dens.scales',NULL),
+  panel = getOption('metaplot_dens.panel',NULL),
+  auto.key = getOption('metaplot_auto.key',NULL),
+  keycols = getOption('metaplot_keycols',NULL),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
   ...
@@ -61,14 +67,23 @@ densplot_data_frame<- function(
     log <- FALSE
   }
   if(is.null(scales)) scales <- list(tck = c(1,0),x = list(log = log,equispaced.log = FALSE))
+
+  if(is.character(ref)) ref <- match.fun(ref)
+  if(is.function(ref)) ref <- ref(x = x, var = xvar, log = log, ...)
+  ref <- as.numeric(ref)
+  ref <- ref[is.defined(ref)]
+  if(log){
+    ref <- ref[ref > 0]
+    ref <- log(ref)
+  }
+
   if(is.null(panel)) panel <- function(ref = NULL, ...){
     panel.densityplot(...)
-    if(length(ref))panel.abline(v = ref)
+    if(length(ref))panel.abline(v = ref, col=ref.col, lty = ref.lty, alpha = ref.alpha)
   }
-  default_xlab <- xvar
-  xvarlab <- attr(x[[xvar]],'label')
-  if(!is.null(xvarlab)) default_xlab <- xvarlab
-  if(is.null(xlab)) xlab <- default_xlab
+
+  if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
+  if(is.function(xlab)) xlab <- xlab(x = x, var = xvar, log = log, ...)
 
   if(is.null(keycols))if(!is.null(groups))keycols <- min(3, length(unique(x[[groups]])))
   if(is.null(auto.key))if(!is.null(groups))if(length(unique(x[[groups]])) > 1) auto.key = list(columns = keycols,lines=TRUE)

@@ -15,6 +15,7 @@ pack <- function(x,...)UseMethod('pack')
 #' @param x data.frame
 #' @param meta column in x giving names of attributes
 #' @param as.is passed to \code{\link[utils]{read.table}}
+#' @param attributes preserve non-standard attributes (ignores names, row.names, class)
 #' @param ... ignored arguments
 #' @export
 #' @importFrom utils write.table read.table
@@ -39,8 +40,12 @@ pack <- function(x,...)UseMethod('pack')
 #' bar <- unpack(foo)
 #' pack(bar)
 #' attributes(pack(bar)$Subject)
-pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ...){
+pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, attributes = TRUE, ...){
   stopifnot(meta %in% names(x))
+  a <- attributes(x)
+  a$row.names <- NULL
+  a$names <- NULL
+  a$class <- NULL
   i <- x[[meta]]
   y <- x[!is.na(i),]
   x <- x[is.na(i),]
@@ -62,6 +67,7 @@ pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, ..
       attr(x[[col]], attr) <- y[y$meta == attr, col]
     }
   }
+  if(attributes)for(at in names(a))attr(x,at) <- a[[at]]
   x
 }
 

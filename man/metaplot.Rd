@@ -12,10 +12,91 @@ metaplot(x, ...)
 \item{...}{passed arguments}
 }
 \description{
-Creates a metaplot. Generic.  See \code{\link{metaplot.data.frame}}.
+Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encode}}d \code{guide} attribute will be treated as categorical.
+}
+\details{
+Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
+
+The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) which is implicitly grouped.
+
+The x variable is the last variable before groups, if present.
+
+The y variables are those before x. If none, the result is univariate. If one, the result is typically a boxplot or scatterplot, depending on x. Several numeric y followed by a numeric x are treated as multivariate (scatterplot matrix).  But if all y have the same \code{guide} attribute and it is different from that for x, the result is bivariate (i.e, an \code{overlay} scatterplot).
+
+The groups argument is only relevant for bivariate plots with one y (but see \code{\link{densplot.data.frame}}).  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets. To specify facets without specifying groups, let groups be empty, e.g., \code{(metaplot(y, x, , facet1, facet2))}.
+
+Template designs follow; substitute behaviors by setting global options (see argument list).
+
+\itemize{
+\item{NUM:}{ univariate (densityplot) }
+
+\item{CAT:}{ categorical (unimplemented) }
+
+\item{CAT, CAT:}{ categorical (unimplemented)}
+
+\item{NUM, CAT:}{ mixedvariate (vertical boxplot)}
+
+\item{CAT, NUM:}{ mixedvariate (horizontal boxplot)}
+
+\item{CAT, NUM, CAT:}{ mixedvariate with one facet}
+
+\item{NUM, NUM:}{ bivariate (scatterplot)}
+
+\item{NUM, NUM, CAT:}{ grouped bivariate (grouped scatterplot)}
+
+\item{NUM, NUM,, CAT:}{ non-grouped bivariate with one facet}
+
+\item{NUM, NUM, CAT, CAT:}{ grouped bivariate with one facet}
+
+\item{NUM, NUM, CAT, CAT, CAT:}{ grouped bivariate with two facets}
+
+\item{NUM, NUM, NUM:}{ multivariate, or grouped bivariate for \code{overlay}}
+
+\item{NUM, NUM, NUM, CAT}{ multivariate, or faceted bivariate for \code{overlay}}
+
+\item{NUM, NUM, NUM, CAT, CAT}{ multivariate, or bivariate with two facets for \code{overlay}}
+
+}
 }
 \examples{
-example(metaplot.data.frame)
+
+library(magrittr)
+library(dplyr)
+library(csv)
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+x \%<>\% pack
+# sample plots
+x \%>\% metaplot(sres)
+#x \%>\% metaplot(site)
+x \%>\% metaplot(Wt, arm)
+x \%>\% densplot(Wt, arm)
+x \%>\% metaplot(arm, Wt)
+x \%>\% metaplot(Wt, arm, site, ref = 70)
+x \%>\% metaplot(Wt, site, arm, ref = 70)
+x \%>\% metaplot(conc, Time)
+x \%>\% metaplot(conc, Time, panel = panel.smoothScatter)
+#x \%>\% metaplot(arm, site)
+x \%>\% metaplot(conc, Time, Subject)
+x \%>\% metaplot(conc, Time, , Subject)
+x \%>\% metaplot(conc, Time, Subject, site)
+x \%>\% metaplot(conc, Time, Subject, site, arm)
+x \%>\% metaplot(lKe, lKa, lCl)
+x \%>\% metaplot(
+  lKe, lKa, lCl,
+  col = 'black',loess.col = 'red', pin.col = 'red',
+  dens.col='blue',dens.alpha = 0.1
+)
+x \%>\% metaplot(conc, pred, ipred, Time)
+x \%>\% metaplot(conc, pred, ipred, Time, Subject)
+x \%>\% metaplot(conc, pred, ipred, Time, Subject,
+colors = c('black','blue','magenta'),
+points = c(0.9,0, 0.4),
+lines = c(F,T,T))
+x \%>\% metaplot(conc, ipred, Time, site, arm)
+x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T )
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, refcol = 'red')
+
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
