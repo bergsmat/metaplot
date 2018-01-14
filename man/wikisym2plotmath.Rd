@@ -15,14 +15,9 @@ wikisym2plotmath(x, ...)
 expression
 }
 \description{
-Converts wiki symbol to plotmath.  A Wiki symbol is simple text with arbitrarily nested subscript (\code{_}) and superscript (\code{^}) groupings.  Use dot (\code{.}) to explicitly terminate a grouping, and use backslash-dot (\code{\.}) for a literal dot.  Examples: \code{V_c./F}. Trailing dots need not be supplied. Leading/trailing whitespace is removed. Tab character not allowed.
-}
-\examples{
-wikisym2plotmath('V_c./F')
-wikisym2plotmath('AUC_ss')
-wikisym2plotmath('C_max_ss')
-wikisym2plotmath('var^\\\\eta_j')
+Converts wiki symbol to plotmath.  Vectorized version of \code{link{wikisym2plotmathOne}}.
 }
 \seealso{
-Other formatters: \code{\link{diag_label}}
+Other formatters: \code{\link{diag_label}},
+  \code{\link{wikisym2plotmathOne}}
 }

@@ -35,5 +35,6 @@ Other panel functions: \code{\link{diag_pin}},
   \code{\link{metapanel}}, \code{\link{metaplot_ref}},
   \code{\link{my.diag.panel}}, \code{\link{u.p}}
 
-Other formatters: \code{\link{wikisym2plotmath}}
+Other formatters: \code{\link{wikisym2plotmathOne}},
+  \code{\link{wikisym2plotmath}}
 }

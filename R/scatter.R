@@ -429,7 +429,7 @@ metapanel <- function(
   fit.lty = getOption('metaplot_fit.lty','solid'),
   fit.alpha = getOption('metaplot_fit.alpha',1),
   conf = getOption('metaplot_conf',FALSE),
-  conf.alpha = getOption('metaplot_conf.alpha',1),
+  conf.alpha = getOption('metaplot_conf.alpha',0.3),
   loc = getOption('metaplot_loc',0),
   iso = getOption('metaplot_iso',FALSE),
   global = getOption('metaplot_global',FALSE),
@@ -454,13 +454,13 @@ metapanel <- function(
     f <- region(x, y, conf = conf, ...)
     try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l',lty = fit.lty,alpha= fit.alpha, ...))
   }
-  myconf <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
+  myconf <- function(x,y,type,lty,col, col.symbol, col.line, alpha, ...){
     f <- region(x, y, conf = conf, ...)
     try(panel.polygon(
       x = c(f$x, rev(f$x)),
       y = c(f$lo, rev(f$hi)),
       border = FALSE,
-      alpha=conf.alpha,
+      alpha = conf.alpha,
       col=col.symbol
     ))
   }
@@ -470,7 +470,7 @@ metapanel <- function(
   panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',alpha = superpose.symbol$alpha,...)
   if(conf){
     if(global){
-      myconf(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
+      myconf(x, y, col = global.col, col.symbol = global.col, col.line = global.col, alpha = conf.alpha, ...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myconf, ...)
     }

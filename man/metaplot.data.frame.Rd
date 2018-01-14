@@ -97,9 +97,9 @@ attr(x$pred,'symbol') <- 'C_pred_p'
 attr(x$ipred,'symbol') <- 'C_pred_i'
 attr(x$res,'symbol') <- '\\\\epsilon'
 attr(x$sres,'symbol') <- '\\\\epsilon_st'
-attr(x$lKe,'symbol') <- 'ln(K_e)'
-attr(x$lKa,'symbol') <- 'ln(K_a)'
-attr(x$lCl,'symbol') <- 'ln(Cl_c./F'
+attr(x$lKe,'symbol') <- 'ln(K_e.)'
+attr(x$lKa,'symbol') <- 'ln(K_a.)'
+attr(x$lCl,'symbol') <- 'ln(Cl_c./F)'
 
 
 x \%>\% unpack \%>\% as.csv('theoph.csv')

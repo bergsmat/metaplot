@@ -198,7 +198,7 @@ metaplot_ref <- function(x, var, ...){
   ref <- attr(x[[var]],'reference')
   if(encoded(ref)) ref <- codes(ref)
   if(is.character(ref)) ref <- as.numeric(ref)
-  ref <- ref[is.defined(ref)]
+  if(length(ref))ref <- ref[is.defined(ref)]
   ref
 }
 
@@ -216,7 +216,7 @@ metapanel_ref <- function(a, b, ...){
   ref <- attr(a,'reference')
   if(encoded(ref)) ref <- codes(ref)
   if(is.character(ref)) ref <- as.numeric(ref)
-  ref <- ref[is.defined(ref)]
+  if(length(ref))ref <- ref[is.defined(ref)]
   ref
 }
 
@@ -267,23 +267,31 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 
 #' Convert Wiki Symbol to Plotmath
 #'
-#' Converts wiki symbol to plotmath.  A Wiki symbol is simple text with arbitrarily nested subscript (\code{_}) and superscript (\code{^}) groupings.  Use dot (\code{.}) to explicitly terminate a grouping, and use backslash-dot (\code{\.}) for a literal dot.  Examples: \code{V_c./F}. Trailing dots need not be supplied. Leading/trailing whitespace is removed. Tab character not allowed.
+#' Converts wiki symbol to plotmath.  Vectorized version of \code{link{wikisym2plotmathOne}}.
 #'
 #' @export
 #' @return expression
 #' @family formatters
 #' @param x character
 #' @param ... ignored
-#' @importFrom dplyr recode
-#' @examples
-#' wikisym2plotmath('V_c./F')
-#' wikisym2plotmath('AUC_ss')
-#' wikisym2plotmath('C_max_ss')
-#' wikisym2plotmath('var^\\eta_j')
 wikisym2plotmath <- function(x,...){
   sapply(x, wikisym2plotmathOne,...)
 }
 
+#' Convert One Wiki Symbol to Plotmath
+#'
+#' Converts one wiki symbol to plotmath.  A Wiki symbol is simple text with arbitrarily nested subscript (\code{_}) and superscript (\code{^}) groupings.  Use dot (\code{.}) to explicitly terminate a grouping, and use backslash-dot (\code{\.}) for a literal dot.  Examples: \code{V_c./F}. Trailing dots need not be supplied. Leading/trailing whitespace is removed. Tab character not allowed.
+#'
+#' @export
+#' @return expression
+#' @family formatters
+#' @param x character
+#' @param ... ignored
+#' @examples
+#' wikisym2plotmathOne('V_c./F')
+#' wikisym2plotmathOne('AUC_ss')
+#' wikisym2plotmathOne('C_max_ss')
+#' wikisym2plotmathOne('var^eta_j')
 wikisym2plotmathOne <- function(x,...){
   stopifnot(length(x) == 1)
   if(grepl('\t',x)) stop('tab character not allowed in wikisym')
@@ -317,9 +325,9 @@ wikisym2plotmathOne <- function(x,...){
 
   # all characters handled
   # empty closer stack
-  b <- paste(b,collapse = '')
+  b <- paste(rev(b),collapse = '')
   y <- paste0(y,b)
-  y <- as.expression(y)
+  y <- parse(text = y)
   y
 }
 
