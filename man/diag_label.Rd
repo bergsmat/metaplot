@@ -30,10 +30,14 @@ character
 Formats a diagonal label. Can return a simple column name, a column label (if attribute defined), a fractured column label (split on spaces), or a processed symbol (over-rides label).
 }
 \seealso{
-Other panel functions: \code{\link{diag_pin}},
-  \code{\link{l.p}}, \code{\link{metapanel_ref}},
-  \code{\link{metapanel}}, \code{\link{metaplot_ref}},
-  \code{\link{my.diag.panel}}, \code{\link{u.p}}
+Other panel functions: \code{\link{boxplot_panel}},
+  \code{\link{corsplom_panel_correlation}},
+  \code{\link{corsplom_panel_diagonal}},
+  \code{\link{corsplom_panel_scatter}},
+  \code{\link{dens_panel}}, \code{\link{diag_pin}},
+  \code{\link{iso_prepanel}}, \code{\link{metaplot_ref}},
+  \code{\link{scatter_panel_ref}},
+  \code{\link{scatter_panel}}
 
 Other formatters: \code{\link{wikisym2plotmathOne}},
   \code{\link{wikisym2plotmath}}

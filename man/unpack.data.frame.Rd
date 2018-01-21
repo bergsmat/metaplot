@@ -28,5 +28,14 @@ Expresses scalar column attributes as column metadata (row values).  Column with
 }
 \seealso{
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{unpack}}
+  \code{\link{pack}}, \code{\link{unpack}}
+
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{densplot.data.frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{pack.data.frame}},
+  \code{\link{scatter.data.frame}}
 }

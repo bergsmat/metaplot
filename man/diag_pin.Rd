@@ -22,11 +22,15 @@ numeric
 Calculates pin placement in the density region, inside margin of diagonal panels.
 }
 \seealso{
-Other panel functions: \code{\link{diag_label}},
-  \code{\link{l.p}}, \code{\link{metapanel_ref}},
-  \code{\link{metapanel}}, \code{\link{metaplot_ref}},
-  \code{\link{my.diag.panel}}, \code{\link{u.p}}
+Other panel functions: \code{\link{boxplot_panel}},
+  \code{\link{corsplom_panel_correlation}},
+  \code{\link{corsplom_panel_diagonal}},
+  \code{\link{corsplom_panel_scatter}},
+  \code{\link{dens_panel}}, \code{\link{diag_label}},
+  \code{\link{iso_prepanel}}, \code{\link{metaplot_ref}},
+  \code{\link{scatter_panel_ref}},
+  \code{\link{scatter_panel}}
 
-Other reference lines: \code{\link{metapanel_ref}},
-  \code{\link{metaplot_ref}}
+Other reference lines: \code{\link{metaplot_ref}},
+  \code{\link{scatter_panel_ref}}
 }

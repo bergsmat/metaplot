@@ -16,5 +16,10 @@ Unpack Something.  Generic, with method for data.frame.
 }
 \seealso{
 Other pack: \code{\link{pack.data.frame}},
-  \code{\link{unpack.data.frame}}
+  \code{\link{pack}}, \code{\link{unpack.data.frame}}
+
+Other generic functions: \code{\link{axislabel}},
+  \code{\link{categorical}}, \code{\link{corsplom}},
+  \code{\link{densplot}}, \code{\link{metaplot}},
+  \code{\link{pack}}, \code{\link{scatter}}
 }

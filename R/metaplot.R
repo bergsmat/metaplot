@@ -7,17 +7,17 @@ globalVariables('panel_')
 
 #' Metaplot
 #'
-#' Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encode}}d \code{guide} attribute will be treated as categorical.
+#' Metaplot creates univariate, bivariate, or multivariate plots depending on the number and types of variables represented by the anonymous arguments.  Types are either numeric (NUM, e.g. real, integer) or categorical (CAT, e.g. factor, character).  A variable stored as numeric that nonetheless has an \code{\link[encode]{encode}}d \code{guide} attribute will be treated as categorical. Mnemonic: \code{ x \%>\% metaplot(yvars, xvar, groupvar, facets)} where arguments are unquoted column names, and only xvar is required.  Column attributes \code{label}, \code{guide}, \code{reference}, and \code{symbol} modify the behavior of the default handlers.
 #'
 #' Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 #'
-#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion) which is implicitly grouped.
+#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion).
 #'
 #' The x variable is the last variable before groups, if present.
 #'
 #' The y variables are those before x. If none, the result is univariate. If one, the result is typically a boxplot or scatterplot, depending on x. Several numeric y followed by a numeric x are treated as multivariate (scatterplot matrix).  But if all y have the same \code{guide} attribute and it is different from that for x, the result is bivariate (i.e, an \code{overlay} scatterplot).
 #'
-#' The groups argument is only relevant for bivariate plots with one y (but see \code{\link{densplot.data.frame}}).  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets. To specify facets without specifying groups, let groups be empty, e.g., \code{(metaplot(y, x, , facet1, facet2))}.
+#' Wherever a groups argument is meaningful, it may be missing.  This allows specification of facets in the absence of groups, e.g., \code{(metaplot(y, x, , facet1, facet2))}.  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets.
 #'
 #' Template designs follow; substitute behaviors by setting global options (see argument list).
 #'
@@ -51,6 +51,16 @@ globalVariables('panel_')
 #' \item{NUM, NUM, NUM, CAT, CAT}{ multivariate, or bivariate with two facets for \code{overlay}}
 #'
 #'}
+#'
+#' Variable attributes may be supplied by conventional means;  \code{\link{pack}} and \code{\link{unpack}} support storing and retrieving scalar column attributes.  The following scalar attributes are currently supported.
+#' \itemize{
+#' \item{label:}{ A variable descriptor.  If present, panel functions will use label to create informative axis labels. See \code{\link{axislabel}}. }
+#' \item{guide:}{ Units for a numeric variable, or an encoding (scalar string giving codes and possibly decodes) for a categorical item.  If present, units will be used to inform the corresponding axis label (\code{\link{axislabel}}).  If present, codes will be used to impose sort order on categorical variables.  If present, decodes will be used as substitutes for stored values when presenting categorical labels, legends, and facet names. For more on encodings, see \code{\link[encode]{encode}}.}
+#' \item{reference:}{ Some variables have values to which they can be compared.  For example, residual error is often expected to be centered at zero. Default panel functions plot corresponding reference lines if this attribute is present. See for example \code{\link{dens_panel}}.}
+#' \item{symbol:}{ Variable names are useful for programming, and variable labels are useful as axis labels.  A symbol can be more formal than a variable name and more compact than a label.  For example, \code{\link{diag_label}} will use variable names as labels for the diagonal panels of a scatterplot matrix; but it will prefer labels, if available; and will prefer symbols most of all. Markup rules for symbols are given in \code{\link{wikisym2plotmathOne}}.}
+#'}
+
+#'
 #' @param x object
 #' @param ... passed arguments
 #' @export
@@ -103,6 +113,8 @@ metaplot <- function(x,...)UseMethod('metaplot')
 
 #' Create Metaplot for Data Frame.
 #'
+#' Creates a metaplot for class 'data.frame'.  Implements a rule to decided whether to make a density plot, a boxplot, a scatter plot, or a scatterplot matrix, given the supplied column names.
+#'
 #' @param x object
 #' @param univariate function for univariate arguments
 #' @param mixedvariate function for bivariate combinations of numeric and categoral arguments
@@ -111,7 +123,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' @param categorical function for categorical arguments
 #' @param ... passed arguments
 #' @import encode
-#' @family metaplot
+#' @family methods
 #' @family univariate plots
 #' @family bivariate plots
 #' @family multivariate plots

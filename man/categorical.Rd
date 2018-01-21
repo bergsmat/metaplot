@@ -7,19 +7,18 @@
 categorical(x, ...)
 }
 \arguments{
-\item{x}{data.frame}
+\item{x}{object of dispatch}
 
-\item{...}{other arguments}
-}
-\value{
-character
+\item{...}{passed arugments}
 }
 \description{
-Categorical plot.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
+Categorical Plot. Generic, with method for 'data.frame'.
 }
 \seealso{
-Other metaplot: \code{\link{boxplot.data.frame}},
+Other generic functions: \code{\link{axislabel}},
   \code{\link{corsplom}}, \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
+  \code{\link{metaplot}}, \code{\link{pack}},
+  \code{\link{scatter}}, \code{\link{unpack}}
+
+Other categorical: \code{\link{categorical.data.frame}}
 }

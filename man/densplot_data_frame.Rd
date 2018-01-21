@@ -13,7 +13,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   log = getOption("metaplot_log", FALSE),
   aspect = getOption("metaplot_aspect", 1),
   scales = getOption("metaplot_dens.scales", NULL),
-  panel = getOption("metaplot_dens.panel", NULL),
+  panel = getOption("metaplot_dens.panel", dens_panel),
   auto.key = getOption("metaplot_auto.key", NULL),
   keycols = getOption("metaplot_keycols", NULL),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
@@ -28,9 +28,9 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{facets}{optional conditioning variables}
 
-\item{xlab}{x axis label; can be function(x = x, var = xvar, log = log, ...){...}}
+\item{xlab}{x axis label; can be function(x = x, var = xvar, log = log, ...)}
 
-\item{ref}{reference line; can be function(x = x, var = xvar, ...){...}}
+\item{ref}{reference line; can be function(x = x, var = xvar, ...)}
 
 \item{ref.col}{color for reference line(s)}
 
@@ -57,7 +57,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 \item{...}{passed to \code{\link[lattice]{densityplot}}}
 }
 \description{
-Plot density for object of class 'data.frame' using standard evaluation.
+Plot density for object of class 'data.frame' using \code{dens_panel} by default.
 }
 \examples{
 densplot_data_frame(Theoph, 'conc', grid = TRUE)
@@ -65,9 +65,14 @@ densplot_data_frame(Theoph, 'conc', 'Subject')
 densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
-Other univariate plots: \code{\link{densplot.data.frame}},
+Other univariate plots: \code{\link{dens_panel}},
+  \code{\link{densplot.data.frame}},
   \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
 
 Other densplot: \code{\link{densplot.data.frame}},
   \code{\link{densplot}}
+
+Other metaplot: \code{\link{boxplot_data_frame}},
+  \code{\link{corsplom_data_frame}},
+  \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
 }

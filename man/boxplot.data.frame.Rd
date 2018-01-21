@@ -30,12 +30,17 @@ boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
 boxplot(Theoph, Subject, conc, sub= function(x,...)attr(x,'title'))
 }
 \seealso{
-Other mixedvariate plots: \code{\link{boxplot_data_frame}}
+Other mixedvariate plots: \code{\link{boxplot_data_frame}},
+  \code{\link{boxplot_panel}}
 
 Other boxplot: \code{\link{boxplot_data_frame}}
 
-Other metaplot: \code{\link{categorical}},
-  \code{\link{corsplom}}, \code{\link{densplot}},
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{densplot.data.frame}},
   \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
+  \code{\link{pack.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

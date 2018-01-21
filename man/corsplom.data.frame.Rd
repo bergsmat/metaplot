@@ -23,4 +23,13 @@ Other multivariate plots: \code{\link{corsplom_data_frame}},
 
 Other corsplom: \code{\link{corsplom_data_frame}},
   \code{\link{corsplom}}
+
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{densplot.data.frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{pack.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

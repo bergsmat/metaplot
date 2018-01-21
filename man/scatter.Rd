@@ -16,19 +16,16 @@ Scatterplot.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{corsplom}}, \code{\link{densplot}},
-  \code{\link{metaplot}}
-
-Other scatter: \code{\link{metapanel}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}}
-
-Other bivariate plots: \code{\link{metaplot.data.frame}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}}
-
-Other metaplot: \code{\link{boxplot.data.frame}},
   \code{\link{categorical}}, \code{\link{corsplom}},
-  \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}}, \code{\link{metaplot}}
+  \code{\link{densplot}}, \code{\link{metaplot}},
+  \code{\link{pack}}, \code{\link{unpack}}
+
+Other scatter: \code{\link{scatter.data.frame}},
+  \code{\link{scatter_data_frame}},
+  \code{\link{scatter_panel}}
+
+Other bivariate plots: \code{\link{iso_prepanel}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{scatter_data_frame}}
 }

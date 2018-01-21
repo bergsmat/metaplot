@@ -26,9 +26,19 @@ densplot(Theoph, conc, main= function(x,...)attr(x,'title'))
 densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))
 }
 \seealso{
-Other univariate plots: \code{\link{densplot_data_frame}},
+Other univariate plots: \code{\link{dens_panel}},
+  \code{\link{densplot_data_frame}},
   \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
 
 Other densplot: \code{\link{densplot_data_frame}},
   \code{\link{densplot}}
+
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{pack.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

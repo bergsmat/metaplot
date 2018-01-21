@@ -20,10 +20,10 @@ metastats(x, y, family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else
 character
 }
 \description{
-Formats GLM statistics.
+Formats GLM statistics. Uses a gaussian family by default, or binomial family if all y are 0 or 1, to fit a general linear model.  Formats number of observations, p-value, and Pearson correlation coefficient into a string for printing.
 }
 \seealso{
-\code{\link{metapanel}}
+\code{\link{scatter_panel}}
 
 Other regression functions: \code{\link{model}},
   \code{\link{region}}

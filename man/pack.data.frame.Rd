@@ -45,6 +45,15 @@ pack(bar)
 attributes(pack(bar)$Subject)
 }
 \seealso{
-Other pack: \code{\link{unpack.data.frame}},
-  \code{\link{unpack}}
+Other pack: \code{\link{pack}},
+  \code{\link{unpack.data.frame}}, \code{\link{unpack}}
+
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{densplot.data.frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

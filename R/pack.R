@@ -5,6 +5,8 @@
 #' @export
 #' @param x object
 #' @param ... other arguments
+#' @family generic functions
+#' @family pack
 pack <- function(x,...)UseMethod('pack')
 
 
@@ -21,6 +23,7 @@ pack <- function(x,...)UseMethod('pack')
 #' @importFrom utils write.table read.table
 #' @return data.frame
 #' @family pack
+#' @family methods
 #' @examples
 #' foo <- data.frame(head(Theoph))
 #' attr(foo$Subject, 'label') <-  'subject identifier'
@@ -76,6 +79,7 @@ pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, at
 #' Unpack Something.  Generic, with method for data.frame.
 #'
 #' @family pack
+#' @family generic functions
 #' @export
 #' @param x object
 #' @param ... other arguments
@@ -94,6 +98,7 @@ unpack <- function(x,...)UseMethod('unpack')
 #' @export
 #' @return data.frame
 #' @family pack
+#' @family methods
 #' @importFrom dplyr bind_rows bind_cols
 #' @return data.frame with all columns of class character
 unpack.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L, ignore = c('class','levels'), ...){

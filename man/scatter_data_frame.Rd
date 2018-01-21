@@ -18,9 +18,9 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   auto.key = getOption("metaplot_auto.key", NULL),
   keycols = getOption("metaplot_keycols", NULL),
   as.table = getOption("metaplot_scatter_as.table", TRUE),
-  prepanel = getOption("metaplot_scatter_prepanel", NULL),
-  scales = getOption("metaplot_scatter_scales", NULL),
-  panel = getOption("metaplot_scatter_panel", metapanel),
+  prepanel = getOption("metaplot_scatter_prepanel", if (iso) iso_prepanel else
+  NULL), scales = getOption("metaplot_scatter_scales", NULL),
+  panel = getOption("metaplot_scatter_panel", scatter_panel),
   colors = getOption("metaplot_colors", NULL),
   symbols = getOption("metaplot_symbols", NULL),
   points = getOption("metaplot_points", TRUE),
@@ -45,13 +45,13 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xlog}{log transform x axis (guessed if NULL)}
 
-\item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...){...}}
+\item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...)}
 
-\item{xref}{reference line from x axis; can be function(x = x, var = xvar, ...){...}}
+\item{xref}{reference line from x axis; can be function(x = x, var = xvar, ...)}
 
-\item{ylab}{y axis label; can be function(x = x, var = yvar, log = ylog, ..){...}}
+\item{ylab}{y axis label; can be function(x = x, var = yvar, log = ylog, ..)}
 
-\item{xlab}{x axis label; can be function(x = x, var = xvar, log = xlog, ..){...}}
+\item{xlab}{x axis label; can be function(x = x, var = xvar, log = xlog, ..)}
 
 \item{ysmooth}{supply loess smooth of y on x}
 
@@ -112,11 +112,16 @@ scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 }
 \seealso{
-\code{\link{metapanel}}
+\code{\link{scatter_panel}}
 
-Other bivariate plots: \code{\link{metaplot.data.frame}},
+Other bivariate plots: \code{\link{iso_prepanel}},
+  \code{\link{metaplot.data.frame}},
   \code{\link{scatter.data.frame}}, \code{\link{scatter}}
 
-Other scatter: \code{\link{metapanel}},
-  \code{\link{scatter.data.frame}}, \code{\link{scatter}}
+Other metaplot: \code{\link{boxplot_data_frame}},
+  \code{\link{corsplom_data_frame}},
+  \code{\link{densplot_data_frame}}, \code{\link{metaplot}}
+
+Other scatter: \code{\link{scatter.data.frame}},
+  \code{\link{scatter_panel}}, \code{\link{scatter}}
 }

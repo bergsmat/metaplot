@@ -11,13 +11,14 @@ axislabel <- function(x,...)UseMethod('axislabel')
 
 #' Axis Label for Data Frame
 #'
-#' Axis label for data.frame.
+#' Axis label for data.frame. Substitutes label attribute if present for column name, and puts units if present in parentheses, trailing.  Puts 'log scale' in parentheses on a new line if log is TRUE.
 #' @param x data.frame
 #' @param var item of interest
 #' @param log whether this is for a log scale
 #' @param ... passed arguments
 #' @keywords internal
 #' @family axislabel
+#' @family methods
 #' @export
 #' @import magrittr
 #' @return character
@@ -44,9 +45,9 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 }
 
 
-#' Upper Panel Function
+#' Scatter Panel Function for Metaplot Corsplom
 #'
-#' Upper panel function for corsplom(). Plots data with loess smooth.
+#' Default upper panel function for corsplom_data_frame. Plots data with loess smooth.
 #' @param x x values
 #' @param y y values
 #' @param col point color
@@ -57,7 +58,7 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 #' @keywords internal
 #' @export
 #' @family panel functions
-u.p = function(
+corsplom_panel_scatter = function(
   x,
   y,
   col,
@@ -70,16 +71,16 @@ u.p = function(
   panel.loess(x,y,col = loess.col, lty = loess.lty, alpha = loess.alpha)
 }
 
-#' Lower Panel Function
+#' Correlation Panel Function for Metaplot Corsplom
 #'
-#' Lower panel function for corsplom(). Plots Pearson correlation coefficient.
+#' Default lower panel function for corsplom_data_frame. Plots Pearson correlation coefficient.
 #' @param x x values
 #' @param y y values
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
 #' @family panel functions
-l.p = function(x, y, ...) {
+corsplom_panel_correlation = function(x, y, ...) {
   x1 <- range(x,na.rm = T)
   y1 <- range(y,na.rm = T)
   x0 <- min(x1)+(max(x1)-min(x1))/2
@@ -87,9 +88,9 @@ l.p = function(x, y, ...) {
   panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y),2) ))
 }
 
-#' Diagonal Panel Function
+#' Diagonal Panel Function for Metaplot Corsplom
 #'
-#' Diagonal panel function for corsplom(). Plots a density smooth against the corresponding axis from within the diagonal panel.  Plots a grey pin at each axis zero.
+#' Default diagonal panel function for corsplom_data_frame. Plots a density smooth against the corresponding axis from within the diagonal panel.  Plots a grey pin at each axis zero.
 #' @param x numeric
 #' @param varname variable name
 #' @param .data copy of original dataset
@@ -97,6 +98,7 @@ l.p = function(x, y, ...) {
 #' @param pin location for a pin (reference line) in the density region; can be a function of x, varname, .data
 #' @param pin.col color of pin, if any
 #' @param pin.alpha alpha transparency of pin
+#' @param density whether to plot density polygons
 #' @param dens.col color for density region
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
@@ -105,10 +107,11 @@ l.p = function(x, y, ...) {
 #' @export
 #' @family panel functions
 #' @seealso \code{\link{corsplom}}
-my.diag.panel <- function(
+corsplom_panel_diagonal <- function(
   x,
   varname,
   .data,
+  density = TRUE,
   diag.label = getOption('metaplot_diag.label',diag_label),
   pin = getOption('metaplot_pin',diag_pin),
   pin.col = getOption('metaplot_pin.col','darkgrey'),
@@ -118,53 +121,52 @@ my.diag.panel <- function(
   dens.alpha = getOption('metaplot_dens.alpha',0.5),
   ...
 ){
-  # diag.label
-  # pin
-  d <- density(x)
-  lim <- current.panel.limits()$x
-  lo <- lim[[1]]
-  hi <- lim[[2]]
-  len <- hi - lo
+  if(density){
+    d <- density(x)
+    lim <- current.panel.limits()$x
+    lo <- lim[[1]]
+    hi <- lim[[2]]
+    len <- hi - lo
 
-  x1 <- d$x
-  y1 <- d$y
-  y1 <- y1 / max(y1,na.rm = TRUE)
-  y1 <- y1 * len * dens.scale
-  z1 <- hi - y1
-  y1 <- y1 + lo
-  lpolygon(
-    x = x1,
-    y = z1,
-    col = dens.col,
-    border = NA,
-    alpha = dens.alpha
-  )
-  lpolygon(
-    y = x1,
-    x = y1,
-    col = dens.col,
-    border = NA,
-    alpha = dens.alpha
-  )
+    x1 <- d$x
+    y1 <- d$y
+    y1 <- y1 / max(y1,na.rm = TRUE)
+    y1 <- y1 * len * dens.scale
+    z1 <- hi - y1
+    y1 <- y1 + lo
+    lpolygon(
+      x = x1,
+      y = z1,
+      col = dens.col,
+      border = NA,
+      alpha = dens.alpha
+    )
+    lpolygon(
+      y = x1,
+      x = y1,
+      col = dens.col,
+      border = NA,
+      alpha = dens.alpha
+    )
 
-  if(is.character(pin))pin <- match.fun(pin)
-  if(is.function(pin)) pin <- pin(x = x, varname = varname, .data = .data, ...)
-  ref <- pin
-  ref <- as.numeric(ref)
-  ref <- ref[is.defined(ref)]
-  if(length(ref)){
-    x0 = ref
-    x1 = ref
-    y0 = rep(hi, length(ref))
-    y1 = rep(hi - len * dens.scale, length(ref))
-    lsegments(y0 = y0, y1 = y1, x0 = x0, x1 = x1, col = pin.col, alpha = pin.alpha)
-    y0 = ref
-    y1 = ref
-    x0 = rep(lo, length(ref))
-    x1 = rep(lo + len * dens.scale, length(ref))
-    lsegments(x0 = x0, x1 = x1, y0 = y0,y1 = y1, col = pin.col ,alpha = pin.alpha)
+    if(is.character(pin))pin <- match.fun(pin)
+    if(is.function(pin)) pin <- pin(x = x, varname = varname, .data = .data, ...)
+    ref <- pin
+    ref <- as.numeric(ref)
+    ref <- ref[is.defined(ref)]
+    if(length(ref)){
+      x0 = ref
+      x1 = ref
+      y0 = rep(hi, length(ref))
+      y1 = rep(hi - len * dens.scale, length(ref))
+      lsegments(y0 = y0, y1 = y1, x0 = x0, x1 = x1, col = pin.col, alpha = pin.alpha)
+      y0 = ref
+      y1 = ref
+      x0 = rep(lo, length(ref))
+      x1 = rep(lo + len * dens.scale, length(ref))
+      lsegments(x0 = x0, x1 = x1, y0 = y0,y1 = y1, col = pin.col ,alpha = pin.alpha)
+    }
   }
-
   if(is.character(diag.label))diag.label <- match.fun(diag.label)
   if(is.function(diag.label))diag.label <- diag.label(varname = varname, .data = .data, ...)
 
@@ -186,7 +188,7 @@ diag_pin <- function(x, varname, .data, ...)metaplot_ref(x = .data, var = varnam
 
 #' Calculate Reference Values
 #'
-#' Calculates reference values for x and y axes.
+#' Calculates reference values for x and y axes.  Coerces column attribute 'reference' to numeric: a single value or an encoding giving multiple numeric values (decodes are ignored).
 #' @export
 #' @return numeric
 #' @family panel functions
@@ -212,7 +214,7 @@ metaplot_ref <- function(x, var, ...){
 #' @param a vector of interest
 #' @param b vector for other axis
 #' @param ... ignored
-metapanel_ref <- function(a, b, ...){
+scatter_panel_ref <- function(a, b, ...){
   ref <- attr(a,'reference')
   if(encoded(ref)) ref <- codes(ref)
   if(is.character(ref)) ref <- as.numeric(ref)
@@ -267,7 +269,7 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 
 #' Convert Wiki Symbol to Plotmath
 #'
-#' Converts wiki symbol to plotmath.  Vectorized version of \code{link{wikisym2plotmathOne}}.
+#' Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmathOne}}.
 #'
 #' @export
 #' @return expression
@@ -392,7 +394,8 @@ region <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' el
 
 #' Format GLM Statistics
 #'
-#' Formats GLM statistics.
+#' Formats GLM statistics. Uses a gaussian family by default, or binomial family if all y are 0 or 1, to fit a general linear model.  Formats number of observations, p-value, and Pearson correlation coefficient into a string for printing.
+#'
 #' @export
 #' @param x x values
 #' @param y y values
@@ -401,7 +404,7 @@ region <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' el
 #' @importFrom stats coef glm plogis qnorm predict
 #' @return character
 #' @family regression functions
-#' @seealso \code{\link{metapanel}}
+#' @seealso \code{\link{scatter_panel}}
 #'
 metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', ...){
   n <- paste('n =', length(x))

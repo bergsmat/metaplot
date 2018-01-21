@@ -16,14 +16,10 @@ Scatterplot matrix with correlations.
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},
-  \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{scatter}}
+  \code{\link{categorical}}, \code{\link{densplot}},
+  \code{\link{metaplot}}, \code{\link{pack}},
+  \code{\link{scatter}}, \code{\link{unpack}}
 
 Other corsplom: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom_data_frame}}
-
-Other metaplot: \code{\link{boxplot.data.frame}},
-  \code{\link{categorical}}, \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{metaplot}}, \code{\link{scatter}}
 }

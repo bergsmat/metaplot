@@ -27,7 +27,7 @@
 \item{categorical}{function for categorical arguments}
 }
 \description{
-Create Metaplot for Data Frame.
+Creates a metaplot for class 'data.frame'.  Implements a rule to decided whether to make a density plot, a boxplot, a scatter plot, or a scatterplot matrix, given the supplied column names.
 }
 \examples{
 \dontrun{
@@ -134,15 +134,21 @@ y \%>\% scatter(conc, ipred, Time, site, arm)
 
 }
 \seealso{
-Other metaplot: \code{\link{boxplot.data.frame}},
-  \code{\link{categorical}}, \code{\link{corsplom}},
-  \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{scatter}}
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{densplot.data.frame}},
+  \code{\link{pack.data.frame}},
+  \code{\link{scatter.data.frame}},
+  \code{\link{unpack.data.frame}}
 
-Other univariate plots: \code{\link{densplot.data.frame}},
+Other univariate plots: \code{\link{dens_panel}},
+  \code{\link{densplot.data.frame}},
   \code{\link{densplot_data_frame}}, \code{\link{densplot}}
 
-Other bivariate plots: \code{\link{scatter.data.frame}},
+Other bivariate plots: \code{\link{iso_prepanel}},
+  \code{\link{scatter.data.frame}},
   \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
 Other multivariate plots: \code{\link{corsplom.data.frame}},

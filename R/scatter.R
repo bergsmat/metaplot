@@ -11,7 +11,7 @@ globalVariables('metaplot_values')
 #' @family generic functions
 #' @family scatter
 #' @family bivariate plots
-#' @family metaplot
+
 scatter <- function(x,...)UseMethod('scatter')
 
 #' Scatterplot Function for Data Frame
@@ -27,12 +27,12 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param log a default shared by \code{ylog} and \code{xlog}
 #' @param ylog log transform y axis (guessed if NULL)
 #' @param xlog log transform x axis (guessed if NULL)
-#' @param yref reference line from y axis; can be function(x = x, var = yvar, ...){...}
-#' @param xref reference line from x axis; can be function(x = x, var = xvar, ...){...}
+#' @param yref reference line from y axis; can be function(x = x, var = yvar, ...)
+#' @param xref reference line from x axis; can be function(x = x, var = xvar, ...)
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
-#' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..){...}
-#' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..){...}
+#' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
+#' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
 #' @param iso plot line of unity
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param na.rm whether to remove data points with one or more missing coordinates
@@ -51,11 +51,12 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
 
 #' @param ... passed to \code{\link{region}}
-#' @seealso \code{\link{metapanel}}
+#' @seealso \code{\link{scatter_panel}}
 #' @export
 #' @import lattice
 #' @importFrom tidyr gather
 #' @family bivariate plots
+#' @family metaplot
 #' @family scatter
 #' @examples
 #' library(magrittr)
@@ -97,9 +98,9 @@ scatter_data_frame <- function(
   auto.key = getOption('metaplot_auto.key',NULL),
   keycols = getOption('metaplot_keycols',NULL),
   as.table = getOption('metaplot_scatter_as.table',TRUE),
-  prepanel = getOption('metaplot_scatter_prepanel',NULL),
+  prepanel = getOption('metaplot_scatter_prepanel',if(iso)iso_prepanel else NULL),
   scales = getOption('metaplot_scatter_scales',NULL),
-  panel = getOption('metaplot_scatter_panel',metapanel),
+  panel = getOption('metaplot_scatter_panel',scatter_panel),
   colors = getOption('metaplot_colors',NULL),
   symbols = getOption('metaplot_symbols',NULL),
   points = getOption('metaplot_points',TRUE),
@@ -158,7 +159,7 @@ scatter_data_frame <- function(
     groups <- 'metaplot_groups'
   }
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(points),lines=any(lines))
+  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(as.logical(points)),lines=any(as.logical(lines)))
   if(na.rm) {
     #y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
     foo <- y
@@ -212,13 +213,6 @@ scatter_data_frame <- function(
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
   }
-  if(is.null(prepanel))if(iso) prepanel <- function(x,y,...){
-    lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
-    list(
-      xlim = lim,
-      ylim = lim
-    )
-  }
 
   if(!is.null(points)) points <- as.numeric(points)
   if(!is.null(lines)) lines <- as.numeric(lines)
@@ -265,6 +259,24 @@ scatter_data_frame <- function(
   )
 }
 
+#' Prepanel Function for Isometric Axes
+#'
+#' Prepanel function for isometric axes.  Returns join minimum and maximum for limits on both axes.
+#' @export
+#' @return list
+#' @family panel functions
+#' @family bivariate plots
+#' @keywords internal
+#' @param x numeric
+#' @param y numeric
+#'
+iso_prepanel <- function(x,y,...){
+  lim = c(min(x,y,na.rm = T),max(x,y,na.rm = T))
+  list(
+    xlim = lim,
+    ylim = lim
+  )
+}
 #' Scatterplot Method for Data Frame
 #'
 #' Scatterplot method for class 'data.frame'. Parses arguments and generates the call: fun(x, yvar, xvar, groups, facets, ...).
@@ -277,6 +289,7 @@ scatter_data_frame <- function(
 #' @importFrom rlang f_rhs quos
 #' @family bivariate plots
 #' @family scatter
+#' @family methods
 #' @examples
 #' library(magrittr)
 #' library(dplyr)
@@ -380,7 +393,7 @@ scatter.data.frame <- function(
 
 #' Panel Function for Metaplot Scatterplot
 #'
-#' Panel function for metaplot::scatterplot.data.frame.
+#' Default panel function for scatter_data_frame. Calls \code{\link[lattice]{panel.xyplot}} and optionally plots linear fit, confidence region, reference lines, and statistics.
 #'
 #' @export
 #' @param x x values
@@ -405,19 +418,19 @@ scatter.data.frame <- function(
 #' @param conf.alpha alpha transparency for confidence region
 #' @param loc where to print statistics on a panel; suppressed for grouped plots
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
-#' @param type overridden by metapanel
+#' @param type overridden by scatter_panel
 #' @param ... passed to panel.superpose, panel.xyplot, panel.polygon, region, panel.text
 #' @family panel functions
 #' @family scatter
 #' @seealso \code{\link{metastats}}
 #' @seealso \code{\link{scatter.data.frame}}
 #'
-metapanel <- function(
+scatter_panel <- function(
   x,
   y,
   groups,
-  xref = getOption('metapanel_ref',NULL),
-  yref = getOption('metapanel_ref',NULL),
+  xref = getOption('scatter_panel_ref',NULL),
+  yref = getOption('scatter_panel_ref',NULL),
   ref.col = getOption('metaplot_ref.col','grey'),
   ref.lty = getOption('metaplot_ref.lty','solid'),
   ref.alpha = getOption('metaplot_ref.alpha',1),

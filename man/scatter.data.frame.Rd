@@ -45,9 +45,19 @@ scatter(Theoph, conc, Time)
 \seealso{
 \code{\link{scatter_data_frame}}
 
-Other bivariate plots: \code{\link{metaplot.data.frame}},
+Other bivariate plots: \code{\link{iso_prepanel}},
+  \code{\link{metaplot.data.frame}},
   \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
-Other scatter: \code{\link{metapanel}},
-  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
+Other scatter: \code{\link{scatter_data_frame}},
+  \code{\link{scatter_panel}}, \code{\link{scatter}}
+
+Other methods: \code{\link{axislabel.data.frame}},
+  \code{\link{boxplot.data.frame}},
+  \code{\link{categorical.data.frame}},
+  \code{\link{corsplom.data.frame}},
+  \code{\link{densplot.data.frame}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{pack.data.frame}},
+  \code{\link{unpack.data.frame}}
 }

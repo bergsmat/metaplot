@@ -1,16 +1,27 @@
+
 #' Categorical Plot
 #'
-#' Categorical plot.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
+#' Categorical Plot. Generic, with method for 'data.frame'.
+#' @export
+#' @param x object of dispatch
+#' @param ... passed arugments
+#' @family generic functions
+#' @family categorical
+categorical <- function(x, ...)UseMethod('categorical')
+
+#' Categorical Method for Data Frame
+#'
+#' Categorical method for 'data.frame'.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
 #'
 #' @param x data.frame
 #' @param ... other arguments
 #' @family categorical
-#' @family metaplot
+#' @family methods
 #' @return character
 #' @export
 #' @importFrom rlang quos
 #'
-categorical <- function(x,...){
+categorical.data.frame <- function(x,...){
   args <- quos(...)
   args <- lapply(args,f_rhs)
   vars <- args[names(args) == '']
