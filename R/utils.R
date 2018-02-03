@@ -269,7 +269,7 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 
 #' Convert Wiki Symbol to Plotmath
 #'
-#' Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmathOne}}.
+#' Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmath_}}.
 #'
 #' @export
 #' @return expression
@@ -277,7 +277,7 @@ fracture <- function(x,sep='\n')gsub('\\s+',sep,x)
 #' @param x character
 #' @param ... ignored
 wikisym2plotmath <- function(x,...){
-  sapply(x, wikisym2plotmathOne,...)
+  sapply(x, wikisym2plotmath_,...)
 }
 
 #' Convert One Wiki Symbol to Plotmath
@@ -289,12 +289,13 @@ wikisym2plotmath <- function(x,...){
 #' @family formatters
 #' @param x character
 #' @param ... ignored
+#' @aliases wikisym wikisymbol
 #' @examples
-#' wikisym2plotmathOne('V_c./F')
-#' wikisym2plotmathOne('AUC_ss')
-#' wikisym2plotmathOne('C_max_ss')
-#' wikisym2plotmathOne('var^eta_j')
-wikisym2plotmathOne <- function(x,...){
+#' wikisym2plotmath_('V_c./F')
+#' wikisym2plotmath_('AUC_ss')
+#' wikisym2plotmath_('C_max_ss')
+#' wikisym2plotmath_('var^eta_j')
+wikisym2plotmath_ <- function(x,...){
   stopifnot(length(x) == 1)
   if(grepl('\t',x)) stop('tab character not allowed in wikisym')
   x <- sub('^\\s+','',x) # strip leading whitespace

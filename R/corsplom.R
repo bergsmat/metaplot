@@ -45,9 +45,9 @@ corsplom_data_frame <- function(
   if(is.null(xlab)) xlab <- ''
 
   stopifnot(inherits(x, 'data.frame'))
-  x <- x[,xvar,drop=FALSE]
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
+  x <- x[,xvar,drop=FALSE]
   splom(
     x,
     upper.panel = upper.panel,

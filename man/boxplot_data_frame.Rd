@@ -5,9 +5,8 @@
 \title{Boxplot Function for Data Frame}
 \usage{
 boxplot_data_frame(x, yvar, xvar, facets = NULL,
-  log = getOption("metaplot_log", FALSE),
-  horizontal = getOption("metaplot_horizontal", NULL),
-  crit = getOption("metaplot_crit", 1.3),
+  log = getOption("metaplot_log", FALSE), crit = getOption("metaplot_crit",
+  1.3), horizontal = getOption("metaplot_horizontal", NULL),
   panel = getOption("metaplot_boxplot_panel", boxplot_panel),
   ref = getOption("metaplot_ref", metaplot_ref),
   ref.col = getOption("metaplot_ref.col", "grey"),
@@ -30,11 +29,11 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{facets}{optional conditioning variables}
 
-\item{log}{whether to log transform numeric variable (auto-selected if NULL)}
+\item{log}{whether to log transform numeric variable (auto-selected if NA)}
+
+\item{crit}{if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value}
 
 \item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric}
-
-\item{crit}{if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value}
 
 \item{panel}{panel function}
 

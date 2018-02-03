@@ -10,9 +10,9 @@ NULL
 #' @param yvar y variable
 #' @param xvar x variable
 #' @param facets optional conditioning variables
-#' @param log whether to log transform numeric variable (auto-selected if NULL)
+#' @param log whether to log transform numeric variable (auto-selected if NA)
+#' @param crit if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
-#' @param crit if log is NULL, log-transform if mean/median ratio for non-missing x is greater than this value
 #' @param panel panel function
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
 #' @param ref.col color for reference line(s)
@@ -49,8 +49,8 @@ boxplot_data_frame <- function(
   xvar,
   facets = NULL,
   log = getOption('metaplot_log',FALSE),
-  horizontal = getOption('metaplot_horizontal',NULL),
   crit = getOption('metaplot_crit',1.3),
+  horizontal = getOption('metaplot_horizontal',NULL),
   panel = getOption('metaplot_boxplot_panel',boxplot_panel),
   ref = getOption('metaplot_ref',metaplot_ref),
   ref.col = getOption('metaplot_ref.col','grey'),
@@ -108,7 +108,8 @@ boxplot_data_frame <- function(
 
   #formula <- as.formula(paste(sep = ' ~ ', yvar, xvar))
   if(!is.numeric(y[[con]]))stop(con, ' must be numeric')
-  if(is.null(log)){
+  if(is.null(log)) log <- FALSE # same as default
+  if(is.na(log)){
     if(any(y[[con]] <= 0, na.rm = TRUE)){
       log <- FALSE
     } else{
@@ -135,7 +136,7 @@ boxplot_data_frame <- function(
 
   guide <- attr(y[[cat]], 'guide')
   if(encoded(guide)){
-    y[[cat]] <- decode(y[[cat]],encoding = guide)
+    y[[cat]] <- decode(y[[cat]],encoding = if(length(decodes(guide)))guide else NULL)
     y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
   }
   if(!is.factor(y[[cat]])) y[[cat]] <- factor(y[[cat]],levels = unique(y[[cat]]))

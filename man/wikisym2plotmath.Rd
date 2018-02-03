@@ -15,9 +15,9 @@ wikisym2plotmath(x, ...)
 expression
 }
 \description{
-Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmathOne}}.
+Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmath_}}.
 }
 \seealso{
 Other formatters: \code{\link{diag_label}},
-  \code{\link{wikisym2plotmathOne}}
+  \code{\link{wikisym2plotmath_}}
 }

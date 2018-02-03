@@ -7,19 +7,20 @@
 scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   log = getOption("metaplot_log", FALSE), ylog = getOption("metaplot_ylog",
   log), xlog = getOption("metaplot_xlog", log),
-  yref = getOption("metaplot_ref", NULL), xref = getOption("metaplot_ref",
-  NULL), ylab = getOption("metaplot_lab", axislabel),
+  crit = getOption("metaplot_crit", 1.3), yref = getOption("metaplot_ref",
+  metaplot_ref), xref = getOption("metaplot_ref", metaplot_ref),
+  ylab = getOption("metaplot_lab", axislabel),
   xlab = getOption("metaplot_lab", axislabel),
   ysmooth = getOption("metaplot_ysmooth", FALSE),
   xsmooth = getOption("metaplot_xsmooth", FALSE),
-  iso = getOption("metaplot_iso", FALSE), crit = getOption("metaplot_crit",
-  1.3), na.rm = getOption("metaplot_na.rm", TRUE),
+  iso = getOption("metaplot_iso", FALSE),
+  na.rm = getOption("metaplot_na.rm", TRUE),
   aspect = getOption("metaplot_aspect", 1),
   auto.key = getOption("metaplot_auto.key", NULL),
   keycols = getOption("metaplot_keycols", NULL),
   as.table = getOption("metaplot_scatter_as.table", TRUE),
-  prepanel = getOption("metaplot_scatter_prepanel", if (iso) iso_prepanel else
-  NULL), scales = getOption("metaplot_scatter_scales", NULL),
+  prepanel = getOption("metaplot_scatter_prepanel", NULL),
+  scales = getOption("metaplot_scatter_scales", NULL),
   panel = getOption("metaplot_scatter_panel", scatter_panel),
   colors = getOption("metaplot_colors", NULL),
   symbols = getOption("metaplot_symbols", NULL),
@@ -41,9 +42,11 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{log}{a default shared by \code{ylog} and \code{xlog}}
 
-\item{ylog}{log transform y axis (guessed if NULL)}
+\item{ylog}{log transform y axis (auto-selected if NA)}
 
-\item{xlog}{log transform x axis (guessed if NULL)}
+\item{xlog}{log transform x axis (auto-selected if NA)}
+
+\item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
 
 \item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...)}
 
@@ -57,9 +60,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
-\item{iso}{plot line of unity}
-
-\item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
+\item{iso}{plot line of unity (auto-selected if NA)}
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 

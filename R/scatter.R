@@ -25,16 +25,16 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param groups optional grouping variable; ignored if more than one \code{yvar}
 #' @param facets optional conditioning variables
 #' @param log a default shared by \code{ylog} and \code{xlog}
-#' @param ylog log transform y axis (guessed if NULL)
-#' @param xlog log transform x axis (guessed if NULL)
+#' @param ylog log transform y axis (auto-selected if NA)
+#' @param xlog log transform x axis (auto-selected if NA)
+#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
 #' @param yref reference line from y axis; can be function(x = x, var = yvar, ...)
 #' @param xref reference line from x axis; can be function(x = x, var = xvar, ...)
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
-#' @param iso plot line of unity
-#' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
+#' @param iso plot line of unity (auto-selected if NA)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
 #' @param auto.key passed to \code{\link[lattice]{xyplot}}
@@ -85,20 +85,20 @@ scatter_data_frame <- function(
   log = getOption('metaplot_log',FALSE),
   ylog = getOption('metaplot_ylog',log),
   xlog = getOption('metaplot_xlog',log),
-  yref = getOption('metaplot_ref',NULL),
-  xref = getOption('metaplot_ref',NULL),
+  crit = getOption('metaplot_crit',1.3),
+  yref = getOption('metaplot_ref',metaplot_ref),
+  xref = getOption('metaplot_ref',metaplot_ref),
   ylab = getOption('metaplot_lab',axislabel),
   xlab = getOption('metaplot_lab',axislabel),
   ysmooth = getOption('metaplot_ysmooth',FALSE),
   xsmooth = getOption('metaplot_xsmooth',FALSE),
   iso = getOption('metaplot_iso',FALSE),
-  crit = getOption('metaplot_crit',1.3),
   na.rm = getOption('metaplot_na.rm',TRUE),
   aspect = getOption('metaplot_aspect',1),
   auto.key = getOption('metaplot_auto.key',NULL),
   keycols = getOption('metaplot_keycols',NULL),
   as.table = getOption('metaplot_scatter_as.table',TRUE),
-  prepanel = getOption('metaplot_scatter_prepanel',if(iso)iso_prepanel else NULL),
+  prepanel = getOption('metaplot_scatter_prepanel', NULL),
   scales = getOption('metaplot_scatter_scales',NULL),
   panel = getOption('metaplot_scatter_panel',scatter_panel),
   colors = getOption('metaplot_colors',NULL),
@@ -109,16 +109,6 @@ scatter_data_frame <- function(
   sub = getOption('metaplot_sub',NULL),
   ...
 ){
-  # yref
-  if(is.character(yref)) yref <- match.fun(yref)
-  if(is.function(yref)) yref <- yref(x = x, var = yvar,...)
-  yref <- as.numeric(yref)
-  yref <- yref[is.defined(yref)]
-  # xref
-  if(is.character(xref)) xref <- match.fun(xref)
-  if(is.function(xref)) xref <- xref(x = x, var = yvar,...)
-  xref <- as.numeric(xref)
-  xref <- xref[is.defined(xref)]
 
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
@@ -158,6 +148,36 @@ scatter_data_frame <- function(
     y$metaplot_groups <- TRUE
     groups <- 'metaplot_groups'
   }
+
+  # groups now assigned, and yvar is singular
+  # yref
+  yref
+  if(is.character(yref)) yref <- match.fun(yref)
+  if(is.function(yref)) yref <- yref(x = x, var = yvar,...)
+  yref <- as.numeric(yref)
+  yref <- yref[is.defined(yref)]
+  # xref
+  xref
+  if(is.character(xref)) xref <- match.fun(xref)
+  if(is.function(xref)) xref <- xref(x = x, var = xvar,...)
+  xref <- as.numeric(xref)
+  xref <- xref[is.defined(xref)]
+
+
+  iso
+  if(is.null(iso)) iso <- FALSE # same as default
+  if(is.na(iso)){
+    left <- attr(y[[yvar]],'guide')
+    right <- attr(y[[xvar]],'guide')
+    if(is.character(left))
+       if(!is.na(left))
+          if(is.character(right))
+            if(!is.na(right))
+              if(left == right)iso <- TRUE
+  }
+  if(is.na(iso)) iso <- FALSE
+  if(iso)if(is.null(prepanel))prepanel <- iso_prepanel
+
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
   if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(as.logical(points)),lines=any(as.logical(lines)))
   if(na.rm) {
@@ -177,8 +197,10 @@ scatter_data_frame <- function(
     x <- x[!is.na(x)]
     all(x > 0) && (mean(x)/median(x) > crit)
   }
-  if(ylog %>% is.null) ylog <- default_log(y[[yvar]], crit)
-  if(xlog %>% is.null) xlog <- default_log(y[[xvar]], crit)
+  if(is.null(ylog)) ylog <- FALSE # same as default
+  if(is.null(xlog)) xlog <- FALSE # same as default
+  if(is.na(ylog)) ylog <- default_log(y[[yvar]], crit)
+  if(is.na(xlog)) xlog <- default_log(y[[xvar]], crit)
 
   if(ylog)if(any(y[[yvar]] <= 0, na.rm = TRUE)){
     warning(yvar, ' must be positive for log scale')
@@ -399,8 +421,8 @@ scatter.data.frame <- function(
 #' @param x x values
 #' @param y y values
 #' @param groups optional grouping item
-#' @param yref reference line from y axis; can be function of x, y
-#' @param xref reference line from x axis; can be function of x, y
+#' @param yref reference line from y axis; can be function(y, x, ...)
+#' @param xref reference line from x axis; can be function(x, y, ...)
 #' @param ref.col reference line color
 #' @param ref.lty reference line type
 #' @param ref.alpha reference line alpha
@@ -408,7 +430,7 @@ scatter.data.frame <- function(
 #' @param xsmooth supply loess smmoth of x on y
 #' @param smooth.lty smooth line type
 #' @param smooth.alpha smooth alpha
-#' @param iso use isometric axes with line of unity
+#' @param iso use isometric axes with line of unity (auto-selected if NA)
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
@@ -429,8 +451,8 @@ scatter_panel <- function(
   x,
   y,
   groups,
-  xref = getOption('scatter_panel_ref',NULL),
-  yref = getOption('scatter_panel_ref',NULL),
+  xref = getOption('scatter_panel_ref',scatter_panel_ref),
+  yref = getOption('scatter_panel_ref',scatter_panel_ref),
   ref.col = getOption('metaplot_ref.col','grey'),
   ref.lty = getOption('metaplot_ref.lty','solid'),
   ref.alpha = getOption('metaplot_ref.alpha',1),

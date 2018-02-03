@@ -10,8 +10,8 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   ref.col = getOption("metaplot_ref.col", "grey"),
   ref.lty = getOption("metaplot_ref.lty", "solid"),
   ref.alpha = getOption("metaplot_ref.alpha", 1),
-  log = getOption("metaplot_log", FALSE),
-  aspect = getOption("metaplot_aspect", 1),
+  log = getOption("metaplot_log", FALSE), crit = getOption("metaplot_crit",
+  1.3), aspect = getOption("metaplot_aspect", 1),
   scales = getOption("metaplot_dens.scales", NULL),
   panel = getOption("metaplot_dens.panel", dens_panel),
   auto.key = getOption("metaplot_auto.key", NULL),
@@ -38,7 +38,9 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{ref.alpha}{transparency for reference line(s)}
 
-\item{log}{whether to use log scale}
+\item{log}{whether to log-transform x axis (auto-selected if NA)}
+
+\item{crit}{if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)}
 
 \item{aspect}{passed to \code{\link[lattice]{densityplot}}}
 

@@ -4,9 +4,9 @@
 \alias{scatter_panel}
 \title{Panel Function for Metaplot Scatterplot}
 \usage{
-scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref", NULL),
-  yref = getOption("scatter_panel_ref", NULL),
-  ref.col = getOption("metaplot_ref.col", "grey"),
+scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref",
+  scatter_panel_ref), yref = getOption("scatter_panel_ref",
+  scatter_panel_ref), ref.col = getOption("metaplot_ref.col", "grey"),
   ref.lty = getOption("metaplot_ref.lty", "solid"),
   ref.alpha = getOption("metaplot_ref.alpha", 1),
   ysmooth = getOption("metaplot_ysmooth", FALSE),
@@ -30,9 +30,9 @@ scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref", NULL),
 
 \item{groups}{optional grouping item}
 
-\item{xref}{reference line from x axis; can be function of x, y}
+\item{xref}{reference line from x axis; can be function(x, y, ...)}
 
-\item{yref}{reference line from y axis; can be function of x, y}
+\item{yref}{reference line from y axis; can be function(y, x, ...)}
 
 \item{ref.col}{reference line color}
 
@@ -60,7 +60,7 @@ scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref", NULL),
 
 \item{loc}{where to print statistics on a panel; suppressed for grouped plots}
 
-\item{iso}{use isometric axes with line of unity}
+\item{iso}{use isometric axes with line of unity (auto-selected if NA)}
 
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
 

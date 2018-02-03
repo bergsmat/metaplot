@@ -39,6 +39,6 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 
-Other formatters: \code{\link{wikisym2plotmathOne}},
+Other formatters: \code{\link{wikisym2plotmath_}},
   \code{\link{wikisym2plotmath}}
 }

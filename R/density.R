@@ -21,7 +21,8 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param ref.col color for reference line(s)
 #' @param ref.lty type for reference line(s)
 #' @param ref.alpha transparency for reference line(s)
-#' @param log whether to use log scale
+#' @param log whether to log-transform x axis (auto-selected if NA)
+#' @param crit if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
@@ -50,6 +51,7 @@ densplot_data_frame<- function(
   ref.lty = getOption('metaplot_ref.lty','solid'),
   ref.alpha = getOption('metaplot_ref.alpha',1),
   log = getOption('metaplot_log',FALSE),
+  crit = getOption('metaplot_crit',1.3),
   aspect = getOption('metaplot_aspect',1),
   scales = getOption('metaplot_dens.scales',NULL),
   panel = getOption('metaplot_dens.panel',dens_panel),
@@ -62,12 +64,19 @@ densplot_data_frame<- function(
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(xvar) == 1)
   stopifnot(is.character(xvar))
+  if(is.null(log))log <- FALSE # same as default
+  if(is.na(log)){
+    if(any(x[[xvar]] <= 0, na.rm = TRUE)){
+      log <- FALSE
+    } else{
+      log <- mean(x[[xvar]],na.rm = TRUE)/median(x[[xvar]],na.rm = TRUE) > crit
+    }
+  }
   if(log)if(any(x[[xvar]] <= 0, na.rm = TRUE)){
-    warning('cannot take log of negative values')
+    warning(xvar,' must be positive for log scale')
     log <- FALSE
   }
   if(is.null(scales)) scales <- list(tck = c(1,0),x = list(log = log,equispaced.log = FALSE))
-
   if(is.character(ref)) ref <- match.fun(ref)
   if(is.function(ref)) ref <- ref(x = x, var = xvar, log = log, ...)
   ref <- as.numeric(ref)

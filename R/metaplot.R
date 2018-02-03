@@ -57,7 +57,7 @@ globalVariables('panel_')
 #' \item{label:}{ A variable descriptor.  If present, panel functions will use label to create informative axis labels. See \code{\link{axislabel}}. }
 #' \item{guide:}{ Units for a numeric variable, or an encoding (scalar string giving codes and possibly decodes) for a categorical item.  If present, units will be used to inform the corresponding axis label (\code{\link{axislabel}}).  If present, codes will be used to impose sort order on categorical variables.  If present, decodes will be used as substitutes for stored values when presenting categorical labels, legends, and facet names. For more on encodings, see \code{\link[encode]{encode}}.}
 #' \item{reference:}{ Some variables have values to which they can be compared.  For example, residual error is often expected to be centered at zero. Default panel functions plot corresponding reference lines if this attribute is present. See for example \code{\link{dens_panel}}.}
-#' \item{symbol:}{ Variable names are useful for programming, and variable labels are useful as axis labels.  A symbol can be more formal than a variable name and more compact than a label.  For example, \code{\link{diag_label}} will use variable names as labels for the diagonal panels of a scatterplot matrix; but it will prefer labels, if available; and will prefer symbols most of all. Markup rules for symbols are given in \code{\link{wikisym2plotmathOne}}.}
+#' \item{symbol:}{ Variable names are useful for programming, and variable labels are useful as axis labels.  A symbol can be more formal than a variable name and more compact than a label.  For example, \code{\link{diag_label}} will use variable names as labels for the diagonal panels of a scatterplot matrix; but it will prefer labels, if available; and will prefer symbols most of all. Markup rules for symbols are given in \code{\link{wikisym2plotmath_}}.}
 #'}
 
 #'
@@ -79,11 +79,11 @@ globalVariables('panel_')
 #' # sample plots
 #' x %>% metaplot(sres)
 #'#x %>% metaplot(site)
-#' x %>% metaplot(Wt, arm)
-#' x %>% densplot(Wt, arm)
-#' x %>% metaplot(arm, Wt)
-#' x %>% metaplot(Wt, arm, site, ref = 70)
-#' x %>% metaplot(Wt, site, arm, ref = 70)
+#' x %>% metaplot(conc, arm)
+#' x %>% densplot(conc, arm)
+#' x %>% metaplot(arm, conc)
+#' x %>% metaplot(conc, arm, site)
+#' x %>% metaplot(conc, site, arm)
 #' x %>% metaplot(conc, Time)
 #' x %>% metaplot(conc, Time, panel = panel.smoothScatter)
 #'#x %>% metaplot(arm, site)
@@ -106,7 +106,8 @@ globalVariables('panel_')
 #' x %>% metaplot(conc, ipred, Time, site, arm)
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
-#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, refcol = 'red')
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
+#' x %>% metaplot(Subject,conc)
 #'
 metaplot <- function(x,...)UseMethod('metaplot')
 
