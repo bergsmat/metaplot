@@ -16,11 +16,11 @@ pack <- function(x,...)UseMethod('pack')
 #'
 #' @param x data.frame
 #' @param meta column in x giving names of attributes
-#' @param as.is passed to \code{\link[utils]{read.table}}
+#' @param as.is passed to \code{\link[utils]{type.convert}}
 #' @param attributes preserve non-standard attributes (ignores names, row.names, class)
 #' @param ... ignored arguments
 #' @export
-#' @importFrom utils write.table read.table
+#' @importFrom utils type.convert
 #' @return data.frame
 #' @family pack
 #' @family methods
@@ -56,12 +56,7 @@ pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, at
   if(nrow(y) == 0) return(x)
   # have at least one non-missing value of meta
   # now that meta is excised, refigure column classes
-  dat <- character(0)
-  z <- textConnection('dat','w',local = TRUE)
-  write.table(x,  z)
-  z <- textConnection(dat,'r')
-  x <- read.table(z)
-  close(z)
+  x[] <- lapply(x,type.convert, as.is = as.is)
   # distribute metadata
   y$meta <- as.character(y$meta)
   if(any(duplicated(y$meta)))stop('found duplicate metadata names')

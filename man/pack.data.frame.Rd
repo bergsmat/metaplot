@@ -12,7 +12,7 @@
 
 \item{meta}{column in x giving names of attributes}
 
-\item{as.is}{passed to \code{\link[utils]{read.table}}}
+\item{as.is}{passed to \code{\link[utils]{type.convert}}}
 
 \item{attributes}{preserve non-standard attributes (ignores names, row.names, class)}
 
