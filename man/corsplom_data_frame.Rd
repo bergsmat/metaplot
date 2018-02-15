@@ -48,6 +48,7 @@ Other corsplom: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom}}
 
 Other metaplot: \code{\link{boxplot_data_frame}},
+  \code{\link{categorical_data_frame}},
   \code{\link{densplot_data_frame}},
   \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
 }

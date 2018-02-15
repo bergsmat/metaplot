@@ -21,11 +21,13 @@ Calculates reference values for x and y axes.  Coerces column attribute 'referen
 }
 \seealso{
 Other panel functions: \code{\link{boxplot_panel}},
+  \code{\link{categorical_panel}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},
   \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
+  \code{\link{panel.tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 

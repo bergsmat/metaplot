@@ -18,7 +18,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   catlab = getOption("metaplot_lab", axislabel),
   aspect = getOption("metaplot_aspect", 1),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), ...)
+  NULL), par.settings = standard.theme("pdf", color = FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -63,6 +63,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{sub}{character, or a function of x, yvar, xvar, facets, and log}
 
+\item{par.settings}{default parameter settings}
+
 \item{...}{passed arguments}
 }
 \description{
@@ -81,7 +83,8 @@ Other mixedvariate plots: \code{\link{boxplot.data.frame}},
 
 Other boxplot: \code{\link{boxplot.data.frame}}
 
-Other metaplot: \code{\link{corsplom_data_frame}},
+Other metaplot: \code{\link{categorical_data_frame}},
+  \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
   \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
 }

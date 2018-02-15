@@ -49,6 +49,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
+#' @param subscripts passed to \code{\link[lattice]{xyplot}}
+#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
 
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{scatter_panel}}
@@ -107,6 +109,8 @@ scatter_data_frame <- function(
   lines = getOption('metaplot_lines',FALSE),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
+  subscripts = TRUE,
+  par.settings = NULL,
   ...
 ){
 
@@ -272,8 +276,8 @@ scatter_data_frame <- function(
     xlab = xlab,
     iso = iso,
     panel = panel,
-    subscripts = TRUE,
-    par.settings = pars,
+    subscripts = subscripts,
+    par.settings = if(is.null(par.settings)) pars else par.settings,
     main = main,
     sub = sub,
     .data = y,

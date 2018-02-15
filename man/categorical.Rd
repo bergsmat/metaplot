@@ -20,5 +20,7 @@ Other generic functions: \code{\link{axislabel}},
   \code{\link{metaplot}}, \code{\link{pack}},
   \code{\link{scatter}}, \code{\link{unpack}}
 
-Other categorical: \code{\link{categorical.data.frame}}
+Other categorical: \code{\link{categorical.data.frame}},
+  \code{\link{categorical_data_frame}},
+  \code{\link{categorical_panel}}, \code{\link{panel.tile}}
 }

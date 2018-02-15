@@ -27,6 +27,7 @@ NULL
 #' @param aspect passed to \code{\link[lattice]{bwplot}}
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
+#' @param par.settings default parameter settings
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos UQ
@@ -65,6 +66,7 @@ boxplot_data_frame <- function(
   aspect = getOption('metaplot_aspect',1),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
+  par.settings = standard.theme('pdf',color = FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -162,7 +164,7 @@ boxplot_data_frame <- function(
     data = y,
     aspect = aspect,
     horizontal = horizontal,
-    par.settings = standard.theme('pdf',color = FALSE),
+    par.settings = par.settings,
     scales = scales,
     ylab = ylab,
     xlab = xlab,

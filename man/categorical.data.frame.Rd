@@ -4,21 +4,26 @@
 \alias{categorical.data.frame}
 \title{Categorical Method for Data Frame}
 \usage{
-\method{categorical}{data.frame}(x, ...)
+\method{categorical}{data.frame}(x, ...,
+  fun = getOption("metaplot_categorical", "categorical_data_frame"))
 }
 \arguments{
 \item{x}{data.frame}
 
 \item{...}{other arguments}
+
+\item{fun}{function to draw the plot}
 }
 \value{
 character
 }
 \description{
-Categorical method for 'data.frame'.  Currently unimplemented. Returns a named vector indicating whether anonymous arguments were detected as numeric or categorical.
+Categorical method for 'data.frame'.
 }
 \seealso{
-Other categorical: \code{\link{categorical}}
+Other categorical: \code{\link{categorical_data_frame}},
+  \code{\link{categorical_panel}},
+  \code{\link{categorical}}, \code{\link{panel.tile}}
 
 Other methods: \code{\link{axislabel.data.frame}},
   \code{\link{boxplot.data.frame}},

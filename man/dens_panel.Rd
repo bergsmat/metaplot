@@ -20,11 +20,13 @@ Default panel function for dens_data_frame.  Calls panel.densityplot, and plots 
 }
 \seealso{
 Other panel functions: \code{\link{boxplot_panel}},
+  \code{\link{categorical_panel}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{diag_label}}, \code{\link{diag_pin}},
   \code{\link{iso_prepanel}}, \code{\link{metaplot_ref}},
+  \code{\link{panel.tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 

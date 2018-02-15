@@ -27,7 +27,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   points = getOption("metaplot_points", TRUE),
   lines = getOption("metaplot_lines", FALSE),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), ...)
+  NULL), subscripts = TRUE, par.settings = NULL, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -90,6 +90,10 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{sub}{character, or a function of x, yvar, xvar, groups, facets, and log}
 
+\item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
+
+\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+
 \item{...}{passed to \code{\link{region}}}
 }
 \description{
@@ -120,6 +124,7 @@ Other bivariate plots: \code{\link{iso_prepanel}},
   \code{\link{scatter.data.frame}}, \code{\link{scatter}}
 
 Other metaplot: \code{\link{boxplot_data_frame}},
+  \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}}, \code{\link{metaplot}}
 

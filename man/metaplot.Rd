@@ -114,6 +114,7 @@ Other generic functions: \code{\link{axislabel}},
   \code{\link{scatter}}, \code{\link{unpack}}
 
 Other metaplot: \code{\link{boxplot_data_frame}},
+  \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
   \code{\link{scatter_data_frame}}
