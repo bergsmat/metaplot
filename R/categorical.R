@@ -175,7 +175,8 @@ categorical_data_frame <- function(
     groups <- 'metaplot_groups'
   }
   if(is.null(yvar)){
-    y$yvar <- 'metaplot_values'
+    y$metaplot_values <- TRUE
+    yvar <- 'metaplot_values'
   }
   # groups now assigned, and yvar is singular
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))

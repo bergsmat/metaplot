@@ -84,30 +84,30 @@ globalVariables('panel_')
 #' x %>% metaplot(arm, conc)
 #' x %>% metaplot(conc, arm, site)
 #' x %>% metaplot(conc, site, arm)
-#' x %>% metaplot(conc, Time)
-#' x %>% metaplot(conc, Time, panel = panel.smoothScatter)
+#' x %>% metaplot(conc, time)
+#' x %>% metaplot(conc, time, panel = panel.smoothScatter)
 #' x %>% metaplot(arm, site)
-#' x %>% metaplot(conc, Time, Subject)
-#' x %>% metaplot(conc, Time, , Subject)
-#' x %>% metaplot(conc, Time, Subject, site)
-#' x %>% metaplot(conc, Time, Subject, site, arm)
+#' x %>% metaplot(conc, time, subject)
+#' x %>% metaplot(conc, time, , subject)
+#' x %>% metaplot(conc, time, subject, site)
+#' x %>% metaplot(conc, time, subject, site, arm)
 #' x %>% metaplot(lKe, lKa, lCl)
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
 #'   col = 'black',loess.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1
 #' )
-#' x %>% metaplot(conc, pred, ipred, Time)
-#' x %>% metaplot(conc, pred, ipred, Time, Subject)
-#' x %>% metaplot(conc, pred, ipred, Time, Subject,
+#' x %>% metaplot(conc, pred, ipred, time)
+#' x %>% metaplot(conc, pred, ipred, time, subject)
+#' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','magenta'),
 #' points = c(0.9,0, 0.4),
 #' lines = c(F,T,T))
-#' x %>% metaplot(conc, ipred, Time, site, arm)
+#' x %>% metaplot(conc, ipred, time, site, arm)
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
-#' x %>% metaplot(Subject,conc)
+#' x %>% metaplot(subject,conc)
 #'
 metaplot <- function(x,...)UseMethod('metaplot')
 
@@ -148,24 +148,27 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' )
 #'
 #' # some numeric and categorical properties
-#' x %<>% mutate(arm = ifelse(as.numeric(as.character(Subject)) %% 2 == 0, 1, 2))
-#' x %<>% mutate(site = ifelse(as.numeric(as.character(Subject)) < 7, 1, 2))
+#' names(x) <- tolower(names(x))
+#' x %<>% mutate(arm = ifelse(as.numeric(as.character(subject)) %% 2 == 0, 1, 2))
+#' x %<>% mutate(site = ifelse(as.numeric(as.character(subject)) < 6, 1, 2))
+#' x %<>% mutate(cohort = ifelse(as.numeric(as.character(subject)) %in% c(1:2,6:8), 1,2))
 #' x %<>% mutate(pred = predict(m1,level = 0) %>% signif(4))
 #' x %<>% mutate(ipred = predict(m1) %>% signif(4))
 #' x %<>% mutate(res = residuals(m1) %>% signif(4))
 #' x %<>% mutate(sres = residuals(m1, type = 'pearson') %>% signif(4))
 #' r <- ranef(m1) %>% signif(4)
-#' r$Subject <- rownames(r)
+#' r$subject <- rownames(r)
 #' x %<>% left_join(r)
 
 #' # metadata
-#' attr(x$Subject,'label') <- 'subject identifier'
-#' attr(x$Wt,'label') <- 'subject weight'
-#' attr(x$Dose,'label') <- 'theophylline dose'
-#' attr(x$Time,'label') <- 'time since dose administration'
+#' attr(x$subject,'label') <- 'subject identifier'
+#' attr(x$wt,'label') <- 'subject weight'
+#' attr(x$dose,'label') <- 'theophylline dose'
+#' attr(x$time,'label') <- 'time since dose administration'
 #' attr(x$conc,'label') <- 'theophylline concentration'
 #' attr(x$arm,'label') <- 'trial arm'
 #' attr(x$site,'label') <- 'investigational site'
+#' attr(x$cohort,'label') <- 'recruitment cohort'
 #' attr(x$pred,'label') <- 'population-predicted concentration'
 #' attr(x$ipred,'label') <- 'individual-predicted concentration'
 #' attr(x$res,'label') <- 'residuals'
@@ -174,13 +177,14 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' attr(x$lKa,'label') <- 'natural log of absorption rate constant'
 #' attr(x$lCl,'label') <- 'natural log of clearance'
 
-#' attr(x$Subject,'guide') <- '....'
-#' attr(x$Wt,'guide') <- 'kg'
-#' attr(x$Dose,'guide') <- 'mg/kg'
-#' attr(x$Time,'guide') <- 'h'
+#' attr(x$subject,'guide') <- '....'
+#' attr(x$wt,'guide') <- 'kg'
+#' attr(x$dose,'guide') <- 'mg/kg'
+#' attr(x$time,'guide') <- 'h'
 #' attr(x$conc,'guide') <- 'mg/L'
 #' attr(x$arm,'guide') <- '//1/Arm A//2/Arm B//'
 #' attr(x$site,'guide') <- '//1/Site 1//2/Site 2//'
+#' attr(x$cohort,'guide') <- '//1/Cohort 1//2/Cohort 2//'
 #' attr(x$pred,'guide') <- 'mg/L'
 #' attr(x$ipred,'guide') <- 'mg/L'
 #'
@@ -190,13 +194,14 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' attr(x$res,'reference') <- 0
 #' attr(x$sres,'reference') <- '//-1.96//1.96//'
 #'
-#' attr(x$Subject,'symbol') <- 'ID_i'
-#' attr(x$Wt,'symbol') <- 'W_i'
-#' attr(x$Dose,'symbol') <- 'A_i'
-#' attr(x$Time,'symbol') <- 't_i,j'
+#' attr(x$subject,'symbol') <- 'ID_i'
+#' attr(x$wt,'symbol') <- 'W_i'
+#' attr(x$dose,'symbol') <- 'A_i'
+#' attr(x$time,'symbol') <- 't_i,j'
 #' attr(x$conc,'symbol') <- 'C_i,j'
 #' attr(x$arm,'symbol') <- 'Arm_i'
 #' attr(x$site,'symbol') <- 'Site_i'
+#' attr(x$site,'symbol') <- 'Cohort_i'
 #' attr(x$pred,'symbol') <- 'C_pred_p'
 #' attr(x$ipred,'symbol') <- 'C_pred_i'
 #' attr(x$res,'symbol') <- '\\epsilon'
@@ -216,25 +221,25 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' y[] <- lapply(y, as.numeric)
 #' y$arm <- as.factor(y$arm)
 #' y$site <- as.factor(y$site)
-#' y$Subject <- as.factor(y$Subject)
+#' y$subject <- as.factor(y$subject)
 #' y %>% metaplot(conc)
 #'#y %>% metaplot(site)
-#' y %>% metaplot(Wt, arm)
-#' y %>% metaplot(arm, Wt)
-#' y %>% metaplot(arm, Wt,site)
-#' y %>% metaplot(conc, Time)
+#' y %>% metaplot(wt, arm)
+#' y %>% metaplot(arm, wt)
+#' y %>% metaplot(arm, wt,site)
+#' y %>% metaplot(conc, time)
 #'#y %>% metaplot(arm, site)
-#' y %>% metaplot(conc, Time, Subject)
-#' y %>% metaplot(conc, Time, , Subject)
-#' y %>% metaplot(conc, Time, Subject, site)
-#' y %>% metaplot(conc, Time, Subject, site, arm)
+#' y %>% metaplot(conc, time, subject)
+#' y %>% metaplot(conc, time, , subject)
+#' y %>% metaplot(conc, time, subject, site)
+#' y %>% metaplot(conc, time, subject, site, arm)
 #' y %>% metaplot(lKe, lKa, lCl)
-#' y %>% scatter(conc, ipred, Time)
-#' y %>% scatter(conc, ipred, Time, Subject)
-#' x %>% metaplot(conc, ipred, Time, Subject, colors = 'black', points = c(T,F), lines = c(F,T))
-#' y %>% scatter(conc, ipred, Time, site, arm)
-#' y %<>% mutate(Time = ifelse(Time > 15, NA, Time))
-#' y %>% scatter(conc, ipred, Time, site, arm)
+#' y %>% scatter(conc, ipred, time)
+#' y %>% scatter(conc, ipred, time, subject)
+#' x %>% metaplot(conc, ipred, time, subject, colors = 'black', points = c(T,F), lines = c(F,T))
+#' y %>% scatter(conc, ipred, time, site, arm)
+#' y %<>% mutate(time = ifelse(time > 15, NA, time))
+#' y %>% scatter(conc, ipred, time, site, arm)
 #'}}
 #'
 metaplot.data.frame <- function(
