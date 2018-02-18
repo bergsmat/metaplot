@@ -1,3 +1,9 @@
+globalVariables(c(
+'group_by','g','summarize', 'n','tf',
+'ff','mutate','sf','n','frac','prev','ungroup',
+'at',  'arrange','at','fd','ff','fh','fl','lag','left_join','n',
+'select','sf','sh','sl','summarize','tf','th','tl','ungroup','width'
+))
 
 #' Categorical Plot
 #'
@@ -141,7 +147,7 @@ categorical.data.frame <- function(
 #' library(magrittr)
 #' library(dplyr)
 #' library(csv)
-#' x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 #' x %<>% pack
 #' x %>% metaplot(site)
 #' x %>% metaplot(arm, site)
@@ -196,6 +202,9 @@ categorical_data_frame <- function(
     yvar <- 'metaplot_values'
   }
   # groups now assigned, and yvar is singular
+   y[[yvar]] <- ifcoded(y, yvar)
+   y[[xvar]] <- ifcoded(y, xvar)
+
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
   if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols, pch = 22, points=any(as.logical(tiles)),lines=any(as.logical(lines)))
   if(na.rm) {
@@ -442,6 +451,7 @@ categorical_panel <- function(
 #' @param alpha ignored
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param cex expansion for msg text; passed to msg
+#' @param ... passed arguments
 #' @family panel functions
 #' @family categorical
 #'
@@ -546,7 +556,7 @@ smaller <- function(xleft, xright, ybottom, ytop, tex,...){
 #' @export
 #' @param x x values
 #' @param y y values
-#' @param family categorical family
+#' @family categorical family
 #' @param ... other arguments
 #' @return character
 #' @seealso \code{\link{categorical_panel}}

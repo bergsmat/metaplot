@@ -37,6 +37,8 @@ panel_tile(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha,
 \item{cex}{expansion for msg text; passed to msg}
 
 \item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
+
+\item{...}{passed arguments}
 }
 \description{
 Draws a tile in a mosaic.

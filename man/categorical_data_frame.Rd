@@ -83,7 +83,7 @@ Categorical function for class 'data.frame'. Default panel function implements a
 library(magrittr)
 library(dplyr)
 library(csv)
-x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
 x \%>\% metaplot(site)
 x \%>\% metaplot(arm, site)

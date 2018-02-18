@@ -79,7 +79,7 @@ Variable attributes may be supplied by conventional means;  \code{\link{pack}} a
 library(magrittr)
 library(dplyr)
 library(csv)
-x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
 # sample plots
 x \%>\% metaplot(sres)

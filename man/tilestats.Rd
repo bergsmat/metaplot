@@ -12,8 +12,6 @@ tilestats(x, y, ...)
 \item{y}{y values}
 
 \item{...}{other arguments}
-
-\item{family}{categorical family}
 }
 \value{
 character

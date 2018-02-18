@@ -80,7 +80,7 @@ globalVariables('panel_')
 #' library(dplyr)
 #' library(csv)
 
-#' x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 #' x %<>% pack
 
 
