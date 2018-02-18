@@ -17,11 +17,13 @@ Metaplot creates univariate, bivariate, or multivariate plots depending on the n
 \details{
 Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 
-The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion).
+The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot or mosaic plot, depending on the type of the remaining variable.
 
 The x variable is the last variable before groups, if present.
 
 The y variables are those before x. If none, the result is univariate. If one, the result is typically a boxplot or scatterplot, depending on x. Several numeric y followed by a numeric x are treated as multivariate (scatterplot matrix).  But if all y have the same \code{guide} attribute and it is different from that for x, the result is bivariate (i.e, an \code{overlay} scatterplot).
+
+A single categorical variable results in a simple mosaic plot (see \code{link[graphics]{mosaicplot}} and \pkg{vcd} for more sophisticated treatment). Mosaic plots support only a single y variable; thus, whenever the first two variables are categorical, a two-way mosaic plot results, with remaining variables understood as groups and facets.
 
 Wherever a groups argument is meaningful, it may be missing.  This allows specification of facets in the absence of groups, e.g., \code{(metaplot(y, x, , facet1, facet2))}.  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets.
 
@@ -30,9 +32,15 @@ Template designs follow; substitute behaviors by setting global options (see arg
 \itemize{
 \item{NUM:}{ univariate (densityplot) }
 
-\item{CAT:}{ categorical (unimplemented) }
+\item{CAT:}{ categorical (one-way mosaic plot) }
 
-\item{CAT, CAT:}{ categorical (unimplemented)}
+\item{CAT, CAT:}{ categorical (two-way mosaic plot)}
+
+\item{CAT, CAT, CAT:}{grouped mosaic}
+
+\item{CAT, CAT, CAT, CAT:}{grouped mosaic with one facet}
+
+\item{CAT, CAT, CAT,, CAT:}{non-grouped mosaic with one facet}
 
 \item{NUM, CAT:}{ mixedvariate (vertical boxplot)}
 
@@ -71,40 +79,42 @@ Variable attributes may be supplied by conventional means;  \code{\link{pack}} a
 library(magrittr)
 library(dplyr)
 library(csv)
-x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
 x \%<>\% pack
 # sample plots
 x \%>\% metaplot(sres)
-#x \%>\% metaplot(site)
+x \%>\% metaplot(site)
 x \%>\% metaplot(conc, arm)
 x \%>\% densplot(conc, arm)
 x \%>\% metaplot(arm, conc)
 x \%>\% metaplot(conc, arm, site)
 x \%>\% metaplot(conc, site, arm)
-x \%>\% metaplot(conc, Time)
-x \%>\% metaplot(conc, Time, panel = panel.smoothScatter)
-#x \%>\% metaplot(arm, site)
-x \%>\% metaplot(conc, Time, Subject)
-x \%>\% metaplot(conc, Time, , Subject)
-x \%>\% metaplot(conc, Time, Subject, site)
-x \%>\% metaplot(conc, Time, Subject, site, arm)
+x \%>\% metaplot(conc, time)
+x \%>\% metaplot(conc, time, panel = panel.smoothScatter)
+x \%>\% metaplot(arm, site)
+x \%>\% metaplot(arm, site, cohort)
+x \%>\% metaplot(arm, site, , cohort)
+x \%>\% metaplot(conc, time, subject)
+x \%>\% metaplot(conc, time, , subject)
+x \%>\% metaplot(conc, time, subject, site)
+x \%>\% metaplot(conc, time, subject, site, arm)
 x \%>\% metaplot(lKe, lKa, lCl)
 x \%>\% metaplot(
   lKe, lKa, lCl,
   col = 'black',loess.col = 'red', pin.col = 'red',
   dens.col='blue',dens.alpha = 0.1
 )
-x \%>\% metaplot(conc, pred, ipred, Time)
-x \%>\% metaplot(conc, pred, ipred, Time, Subject)
-x \%>\% metaplot(conc, pred, ipred, Time, Subject,
+x \%>\% metaplot(conc, pred, ipred, time)
+x \%>\% metaplot(conc, pred, ipred, time, subject)
+x \%>\% metaplot(conc, pred, ipred, time, subject,
 colors = c('black','blue','magenta'),
 points = c(0.9,0, 0.4),
 lines = c(F,T,T))
-x \%>\% metaplot(conc, ipred, Time, site, arm)
+x \%>\% metaplot(conc, ipred, time, site, arm)
 x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T )
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
-x \%>\% metaplot(Subject,conc)
+x \%>\% metaplot(subject,conc)
 
 }
 \seealso{

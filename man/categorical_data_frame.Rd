@@ -12,14 +12,17 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   auto.key = getOption("metaplot_auto.key", NULL),
   keycols = getOption("metaplot_keycols", NULL),
   as.table = getOption("metaplot_categorical_as.table", TRUE),
-  prepanel = getOption("metaplot_categorical_prepanel", function(...) list(x =
-  0:1, y = 0:1)), scales = getOption("metaplot_categorical_scales", NULL),
+  prepanel = getOption("metaplot_categorical_prepanel", function(...)
+  list(xlim = 0:1, ylim = 0:1)),
+  scales = getOption("metaplot_categorical_scales", NULL),
   panel = getOption("metaplot_categorical_panel", categorical_panel),
   colors = getOption("metaplot_colors", NULL),
   tiles = getOption("metaplot_tiles", 0.5),
-  lines = getOption("metaplot_lines", FALSE),
+  lines = getOption("metaplot_lines", TRUE),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), subscripts = TRUE, par.settings = NULL, ...)
+  NULL), tex = getOption("metaplot_tex", 0.9),
+  pch = getOption("metaplot_categorical_pch", 22), subscripts = TRUE,
+  par.settings = NULL, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -62,6 +65,10 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{sub}{character, or a function of x, yvar, xvar, groups, facets}
 
+\item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
+
+\item{pch}{symbol character for legend}
+
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
@@ -69,14 +76,26 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 \item{...}{passed to \code{\link{region}}}
 }
 \description{
-Categorical function for class 'data.frame'.
+Categorical function for class 'data.frame'. Default panel function implements a simple mosaic plot.
+}
+\examples{
+
+library(magrittr)
+library(dplyr)
+library(csv)
+x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+x \%<>\% pack
+x \%>\% metaplot(site)
+x \%>\% metaplot(arm, site)
+x \%>\% metaplot(arm, site, cohort)
+x \%>\% metaplot(arm, site, , cohort)
 }
 \seealso{
 \code{\link{categorical_panel}}
 
 Other categorical: \code{\link{categorical.data.frame}},
   \code{\link{categorical_panel}},
-  \code{\link{categorical}}, \code{\link{panel.tile}}
+  \code{\link{categorical}}, \code{\link{panel_tile}}
 
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{corsplom_data_frame}},

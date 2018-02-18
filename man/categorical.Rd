@@ -22,5 +22,5 @@ Other generic functions: \code{\link{axislabel}},
 
 Other categorical: \code{\link{categorical.data.frame}},
   \code{\link{categorical_data_frame}},
-  \code{\link{categorical_panel}}, \code{\link{panel.tile}}
+  \code{\link{categorical_panel}}, \code{\link{panel_tile}}
 }

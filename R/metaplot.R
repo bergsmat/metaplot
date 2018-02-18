@@ -11,11 +11,13 @@ globalVariables('panel_')
 #'
 #' Design your plot by specifying y variables (optional), the x variable, the groups variable (optional) and the conditioning variables (i.e., facets, optional).
 #'
-#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot, e.g. horizontal boxplot (first position) or vertical boxplot (second postion).
+#' The single groups variable, if any, is the first categorical in the third position or later. An earlier categorical gives a "mixed" bivariate plot or mosaic plot, depending on the type of the remaining variable.
 #'
 #' The x variable is the last variable before groups, if present.
 #'
 #' The y variables are those before x. If none, the result is univariate. If one, the result is typically a boxplot or scatterplot, depending on x. Several numeric y followed by a numeric x are treated as multivariate (scatterplot matrix).  But if all y have the same \code{guide} attribute and it is different from that for x, the result is bivariate (i.e, an \code{overlay} scatterplot).
+#'
+#' A single categorical variable results in a simple mosaic plot (see \code{link[graphics]{mosaicplot}} and \pkg{vcd} for more sophisticated treatment). Mosaic plots support only a single y variable; thus, whenever the first two variables are categorical, a two-way mosaic plot results, with remaining variables understood as groups and facets.
 #'
 #' Wherever a groups argument is meaningful, it may be missing.  This allows specification of facets in the absence of groups, e.g., \code{(metaplot(y, x, , facet1, facet2))}.  For multiple y (overlay), the sources of y are the implied groups: any trailing categorical arguments are treated as facets.
 #'
@@ -24,9 +26,15 @@ globalVariables('panel_')
 #'\itemize{
 #' \item{NUM:}{ univariate (densityplot) }
 #'
-#' \item{CAT:}{ categorical (unimplemented) }
+#' \item{CAT:}{ categorical (one-way mosaic plot) }
 #'
-#'\item{CAT, CAT:}{ categorical (unimplemented)}
+#'\item{CAT, CAT:}{ categorical (two-way mosaic plot)}
+#'
+#' \item{CAT, CAT, CAT:}{grouped mosaic}
+#'
+#' \item{CAT, CAT, CAT, CAT:}{grouped mosaic with one facet}
+#'
+#' \item{CAT, CAT, CAT,, CAT:}{non-grouped mosaic with one facet}
 #'
 #' \item{NUM, CAT:}{ mixedvariate (vertical boxplot)}
 #'
@@ -72,7 +80,7 @@ globalVariables('panel_')
 #' library(dplyr)
 #' library(csv)
 
-#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+#' x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
 #' x %<>% pack
 
 
@@ -87,6 +95,8 @@ globalVariables('panel_')
 #' x %>% metaplot(conc, time)
 #' x %>% metaplot(conc, time, panel = panel.smoothScatter)
 #' x %>% metaplot(arm, site)
+#' x %>% metaplot(arm, site, cohort)
+#' x %>% metaplot(arm, site, , cohort)
 #' x %>% metaplot(conc, time, subject)
 #' x %>% metaplot(conc, time, , subject)
 #' x %>% metaplot(conc, time, subject, site)
@@ -201,7 +211,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' attr(x$conc,'symbol') <- 'C_i,j'
 #' attr(x$arm,'symbol') <- 'Arm_i'
 #' attr(x$site,'symbol') <- 'Site_i'
-#' attr(x$site,'symbol') <- 'Cohort_i'
+#' attr(x$cohort,'symbol') <- 'Cohort_i'
 #' attr(x$pred,'symbol') <- 'C_pred_p'
 #' attr(x$ipred,'symbol') <- 'C_pred_i'
 #' attr(x$res,'symbol') <- '\\epsilon'

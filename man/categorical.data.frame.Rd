@@ -23,7 +23,7 @@ Categorical method for 'data.frame'.
 \seealso{
 Other categorical: \code{\link{categorical_data_frame}},
   \code{\link{categorical_panel}},
-  \code{\link{categorical}}, \code{\link{panel.tile}}
+  \code{\link{categorical}}, \code{\link{panel_tile}}
 
 Other methods: \code{\link{axislabel.data.frame}},
   \code{\link{boxplot.data.frame}},

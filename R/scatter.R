@@ -536,8 +536,8 @@ scatter_panel <- function(
     }
   }
   if(sum(loc))panel = panel.text(
-    x = xpos(loc),
-    y = ypos(loc),
+    x = xpos(loc, range = current.panel.limits()$xlim),
+    y = ypos(loc, range = current.panel.limits()$ylim),
     label = match.fun(msg)(x = x, y = y, ...)
   )
   if(is.character(yref)) yref <- match.fun(yref)
@@ -556,26 +556,26 @@ scatter_panel <- function(
   if(iso)panel.abline(0,1)
 }
 
-xpos <- function(loc){
+xpos <- function(loc, range = 0:1, lo = range[[1]], hi = range[[2]]){
   stopifnot(length(loc) %in% 1:2)
   if(length(loc) == 1) stopifnot(loc == as.integer(loc), loc < 10)
   l <- rep(c(.2,.5,.8),3)
   x <- if(length(loc) == 1) l[[loc]] else loc[[1]]
   stopifnot(x <= 1, x >= 0)
-  lo <- current.panel.limits()$xlim[[1]]
-  hi <- current.panel.limits()$xlim[[2]]
+  # lo <- current.panel.limits()$xlim[[1]]
+  # hi <- current.panel.limits()$xlim[[2]]
   xpos <- lo + x * (hi - lo)
   xpos
 }
 
-ypos <- function(loc){
+ypos <- function(loc, range = 0:1, lo = range[[1]], hi = range[[2]]){
   stopifnot(length(loc) %in% 1:2)
   if(length(loc) == 1) stopifnot(loc == as.integer(loc), loc < 10)
   l <- rep(c(.8,.5,.2),each = 3)
   y <- if(length(loc) == 1) l[[loc]] else loc[[2]]
   stopifnot(y <= 1, y >= 0)
-  lo <- current.panel.limits()$ylim[[1]]
-  hi <- current.panel.limits()$ylim[[2]]
+  # lo <- current.panel.limits()$ylim[[1]]
+  # hi <- current.panel.limits()$ylim[[2]]
   ypos <- lo + y * (hi - lo)
   ypos
 }

@@ -5,7 +5,9 @@
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
 categorical_panel(x, y, groups, loc = getOption("metaplot_loc", 5),
-  msg = getOption("metaplot_msg", "tilestats"), ...)
+  msg = getOption("metaplot_msg", "tilestats"),
+  tex = getOption("metaplot_tex", 0.9),
+  cex = getOption("metaplot_categorical_panel_cex", 1), subscripts, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -16,9 +18,15 @@ categorical_panel(x, y, groups, loc = getOption("metaplot_loc", 5),
 
 \item{loc}{where to print statistics in a tile}
 
-\item{msg}{a function to print text in a tile: called with x values, y values, and \dots.}
+\item{msg}{a function of x and y to print text in a tile}
 
-\item{...}{passed to msg}
+\item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
+
+\item{cex}{expansion for msg text}
+
+\item{subscripts}{subscripts of the original data for this panel}
+
+\item{...}{passed to \code{link[lattice]{panel.superpose}}}
 }
 \description{
 Default panel function for categorical_data_frame. Implements a simple mosaic plot.
@@ -34,11 +42,11 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},
   \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_ref}}, \code{\link{panel.tile}},
+  \code{\link{metaplot_ref}}, \code{\link{panel_tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 
 Other categorical: \code{\link{categorical.data.frame}},
   \code{\link{categorical_data_frame}},
-  \code{\link{categorical}}, \code{\link{panel.tile}}
+  \code{\link{categorical}}, \code{\link{panel_tile}}
 }

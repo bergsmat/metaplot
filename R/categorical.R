@@ -56,11 +56,15 @@ categorical.data.frame <- function(
   # test presence
   stopifnot(all(vars %in% names(x)))
 
-  # if groups was not passed as missing, prime etc can be defined in terms of num
+  # if groups was not passed as missing, prime etc can be defined in terms of vars
+  # if length one: xvar
+  # if length two: yvar xvar
+  # if length three: yvar xvar grp
+  # if length four: yvar xvar grp facet
   # must reserve at least one xvar.
-  # find first categorical in position 2 or later
-  pos <- seq_along(var)
-  can <- pos > 1
+  # find first categorical in position 3 or later
+  pos <- seq_along(vars)
+  can <- pos > 2
   grp <- match(TRUE, can)
 
   # we now have var, giving the names of all real variables
@@ -96,12 +100,9 @@ categorical.data.frame <- function(
   do.call(match.fun(fun), args)
 }
 
-
-############################
-
 #' Categorical Function for Data Frame
 #'
-#' Categorical function for class 'data.frame'.
+#' Categorical function for class 'data.frame'. Default panel function implements a simple mosaic plot.
 #'
 #'
 #' @param x data.frame
@@ -126,6 +127,8 @@ categorical.data.frame <- function(
 #' @param sub character, or a function of x, yvar, xvar, groups, facets
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if null)
+#' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
+#' @param pch symbol character for legend
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{categorical_panel}}
 #' @export
@@ -133,6 +136,17 @@ categorical.data.frame <- function(
 #' @importFrom tidyr gather
 #' @family categorical
 #' @family metaplot
+#' @examples
+#'
+#' library(magrittr)
+#' library(dplyr)
+#' library(csv)
+#' x <- as.csv(system.file(package = 'metaplot', 'data/theoph.csv'))
+#' x %<>% pack
+#' x %>% metaplot(site)
+#' x %>% metaplot(arm, site)
+#' x %>% metaplot(arm, site, cohort)
+#' x %>% metaplot(arm, site, , cohort)
 
 categorical_data_frame <- function(
   x,
@@ -152,9 +166,11 @@ categorical_data_frame <- function(
   panel = getOption('metaplot_categorical_panel',categorical_panel),
   colors = getOption('metaplot_colors',NULL),
   tiles = getOption('metaplot_tiles',0.5),
-  lines = getOption('metaplot_lines',FALSE),
+  lines = getOption('metaplot_lines',TRUE),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
+  tex = getOption('metaplot_tex', 0.9),
+  pch = getOption('metaplot_categorical_pch',22),
   subscripts = TRUE,
   par.settings = NULL,
   ...
@@ -164,6 +180,7 @@ categorical_data_frame <- function(
   stopifnot(is.character(yvar) | length(yvar) == 0)
   stopifnot(is.character(xvar))
   stopifnot(length(xvar) == 1, length(yvar) <= 1)
+  stopifnot(length(tex) == 1, is.numeric(tex), tex <= 1)
 
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
@@ -194,7 +211,7 @@ categorical_data_frame <- function(
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
   formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
-  if(is.null(scales)) scales <- list(relation = 'free', tck = c(1,0), alternating = FALSE, col = 'transparent')
+  if(is.null(scales)) scales <- list(relation = 'free', draw = TRUE, tck = c(1,0), alternating = FALSE, col = 'transparent')
   if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
   if(is.function(ylab)) ylab <- ylab(y, var = yvar, ...)
   ylab <- base::sub('metaplot_values','',ylab)
@@ -216,7 +233,8 @@ categorical_data_frame <- function(
   if(!is.null(lines)) lines <- as.numeric(lines)
   sym <- list(
     col = colors,
-    alpha = tiles
+    alpha = tiles,
+    pch = pch
   )
   line <- list(
     col = colors,
@@ -247,10 +265,11 @@ categorical_data_frame <- function(
     main = main,
     sub = sub,
     .data = y,
+    tex = tex,
+    pch = pch,
     ...
   )
 }
-
 
 #' Panel Function for Metaplot Categorical Plot
 #'
@@ -261,10 +280,14 @@ categorical_data_frame <- function(
 #' @param y y values
 #' @param groups optional grouping item
 #' @param loc where to print statistics in a tile
-#' @param msg a function to print text in a tile: called with x values, y values, and \dots.
-#' @param ... passed to msg
+#' @param msg a function of x and y to print text in a tile
+#' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
+#' @param cex expansion for msg text
+#' @param subscripts subscripts of the original data for this panel
+#' @param ... passed to \code{link[lattice]{panel.superpose}}
 #' @family panel functions
 #' @family categorical
+#' @import grid
 #' @seealso \code{\link{tilestats}}
 #' @seealso \code{\link{categorical.data.frame}}
 #'
@@ -274,21 +297,28 @@ categorical_panel <- function(
   groups,
   loc = getOption('metaplot_loc',5),
   msg = getOption('metaplot_msg','tilestats'),
+  tex = getOption('metaplot_tex', 0.9),
+  cex = getOption('metaplot_categorical_panel_cex',1),
+  subscripts,
   ...
 )
 {
+
+  if(is.na(msg)) msg <- function(x,y)''
+  if(is.character(msg)) msg <- match.fun(msg)
+
   d <- data.frame(
     x = x,
     y = y,
-    g = groups
+    g = groups[subscripts]
   )
   tot <- nrow(d)
-  tiles  <- d %>% group_by(x,y,g) %>% summarize(n = n(), tf = n()/tot) # tile fraction
+  tiles  <- d %>% group_by(x,y,g) %>% summarize(n = n(), tf = n()/tot, msg = msg(x,y)) # tile fraction
   frames <- tiles %>% group_by(x,y) %>% summarize(ff = sum(tf)) # frame fraction
   spars <- frames %>% group_by(x) %>% summarize(sf = sum(ff)) # spar fraction
   spars %<>% mutate(sh = cumsum(sf)) # spar high
   spars %<>% mutate(sl = lag(sh,default = 0)) # spar low
-  frames %<>% left_join(spars) %>% arrange(x,y)
+  suppressMessages(frames %<>% left_join(spars) %>% arrange(x,y))
   # sh and sl are spar high and low (x dimension)
   # frames are nested within spars, sharing their x limits
   # from these we can calculate frame y limits
@@ -301,7 +331,7 @@ categorical_panel <- function(
   # now we know the limits of each frame
   # fd * sf should be ff
   # frame defined by x and y, and bounded by sh, sl, fh, fl
-  tiles %<>% left_join(frames %>% select(x,y,sl,sh, fl,fh)) %>% arrange(x,y,g)
+  suppressMessages(tiles %<>% left_join(frames %>% select(x,y,sl,sh, fl,fh)) %>% arrange(x,y,g))
   # tiles have the same high and low as corresponding frame.
   # tiles in a frame (x, y group) split delta sl, sh proportionally
   tiles %<>% group_by(x,y) %>% mutate(width = (sh - sl) / sum(tf) * tf)
@@ -313,8 +343,7 @@ categorical_panel <- function(
   tiles %<>% mutate(tl = ifelse(is.na(tl), sl, tl))
   # now the limits of each tile are completely defined by th, tl, fh, fl
   # draw tiles one group at a time
-  tiles %<>% select(x,y,g,n,tl,th,fl,fh)
-
+  tiles %<>% select(x,y,g,n,tl,th,fl,fh,msg)
 
   superpose.line <- trellis.par.get()$superpose.line
   superpose.symbol <- trellis.par.get()$superpose.symbol
@@ -323,14 +352,74 @@ categorical_panel <- function(
     y = tiles$y,
     groups = tiles$g,
     .src = tiles,
-    panel.groups = panel.tile,
-    alpha = superpose.symbol$alpha,
-    border = superpose.line$col,
+    panel.groups = panel_tile,
+    fill.alpha = superpose.symbol$alpha,
+    line.alpha = superpose.line$alpha,
+    #border = superpose.line$col,
     col = superpose.symbol$col,
+    col.symbol = superpose.symbol$col,
+    col.line = superpose.line$col,
     loc = loc,
     msg = msg,
+    tex = tex,
+    cex = cex,
+    subscripts = seq_along(tiles$x),
     ...
   )
+  yax <-
+    data.frame(y = y) %>%
+    arrange(y) %>%
+    mutate(tot = n()) %>%
+    group_by(tot, y) %>%
+    summarize(frac = n()/unique(tot)) %>%
+    mutate(max = cumsum(frac)) %>%
+    mutate(prev = lag(max, default = 0)) %>%
+    mutate(at = (max + prev)/2) %>%
+    ungroup %>%
+    select(y,at)
+
+  xax <-
+    data.frame(x = x) %>%
+    arrange(x) %>%
+    mutate(tot = n()) %>%
+    group_by(tot, x) %>%
+    summarize(frac = n()/unique(tot)) %>%
+    mutate(max = cumsum(frac)) %>%
+    mutate(prev = lag(max, default = 0)) %>%
+    mutate(at = (max + prev)/2) %>%
+    ungroup %>%
+    select(x,at)
+
+  xscale <- current.viewport()$xscale
+  yscale <- current.viewport()$yscale
+  pushViewport(viewport(width=2, height=2, clip=TRUE))
+  pushViewport(viewport(width=.5, height=.5,
+                         xscale=xscale, yscale=yscale))
+
+
+
+  if(nrow(yax) > 1) panel.axis(
+    side = 'left',
+    at = yax$at,
+    labels = yax$y,
+    outside = TRUE,
+    half = FALSE,
+    ticks = FALSE,
+    rot = c(90,90)
+  )
+
+
+  if(nrow(xax) > 1) panel.axis(
+    side = 'bottom',
+    at = xax$at,
+    labels = xax$x,
+    outside = TRUE,
+    half = FALSE,
+    ticks = FALSE,
+    rot = c(0,0)
+  )
+  popViewport(2)
+
 }
 
 #' Draw a Tile
@@ -340,31 +429,116 @@ categorical_panel <- function(
 #' @export
 #' @param x x values
 #' @param y y values
-#' @param subscripts
+#' @param subscripts subscripts
 #' @param group.number group number
 #' @param group.value group value
-#' @param alpha alpha transparency
-#' @param border border color
+#' @param fill.alpha alpha transparency for fill
+#' @param line.alpha alpha transparency for line
+#' @param col.line border color
 #' @param col fill color
 #' @param loc location for output of msg
-#' @param msg text message as a function of x and y
-#' @param .src data source for which subscripts give x, y, and tile limits
+#' @param msg ignored
+#' @param .src data source for which subscripts give x, y, msg,  and tile limits
+#' @param alpha ignored
+#' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
+#' @param cex expansion for msg text; passed to msg
 #' @family panel functions
 #' @family categorical
 #'
 #'
-panel.tile <- function(x, y, subscripts, group.number, group.value, alpha, border, col, loc, msg, .src,...){
-  panel.rect(
-    xleft = .src$tl[subscripts],
-    xright = .src$th[subscripts],
-    ybottom = .src$fl[subscripts],
-    ytop = .src$fh[subscripts],
-    alpha = alpha,
-    border = border,
+panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha, col, col.line, loc, msg, .src, alpha,cex, tex, ...){
+  line.alpha <- rep(line.alpha, length.out = group.number) # maybe not distributed by superpose
+  line.alpha <- rev(line.alpha)[[1]]
+  for(i in subscripts)one_rect(
+    x = x[i],
+    y = y[i],
+    xleft=.src$tl[i],
+    xright=.src$th[i],
+    ybottom=.src$fl[i],
+    ytop=.src$fh[i],
+    fill.alpha = fill.alpha,
+    line.alpha = line.alpha,
     col = col,
+    loc = loc,
+    msg = .src$msg[i],
+    cex = cex,
+    tex = tex,
     ...
   )
 }
+
+
+one_rect <- function(
+  x, y, xleft, xright, ybottom, ytop,
+  tex, fill.alpha, line.alpha, col,
+  msg=NA, loc, cex,
+  ...
+){
+  coords <- smaller(xleft, xright, ybottom, ytop, tex)
+  xleft <- coords$xleft
+  xright <- coords$xright
+  ybottom <- coords$ybottom
+  ytop <- coords$ytop
+
+  panel.rect(
+    xleft = xleft,
+    xright = xright,
+    ybottom = ybottom,
+    ytop = ytop,
+    alpha = fill.alpha,
+    border = 'transparent',
+    col = col
+  )
+  poly <- data.frame(
+    x = c(xleft, xright, xright,xleft,xleft),
+    y= c(ybottom, ybottom, ytop, ytop, ybottom)
+  )
+ panel.lines(x = poly$x, y = poly$y, alpha = line.alpha, col = col)
+ if(!is.na(msg)) panel.text(
+   x = xpos(loc, lo = xleft, hi = xright),
+   y = ypos(loc, lo = ybottom, hi = ytop),
+   labels = msg,
+   cex = cex
+  )
+}
+
+smaller <- function(xleft, xright, ybottom, ytop, tex,...){
+  stopifnot(tex <= 1)
+  width = xright - xleft
+  height = ytop - ybottom
+  area = width * height * tex
+  aspect = height/width
+  w = sqrt(area/aspect)
+  h = aspect * w
+  dh = height - h
+  dw = width - w
+  ymid = (ytop + ybottom)/2 # midpoint of y
+  # anchor point is proportional to throw
+  # throw is ymid relative to possible ymid
+  # possible ymid range from height/2 to 1 - height/2
+  ymin = height/2
+  ymax = 1 - height/2
+  yrange = ymax - ymin
+  ythrow = 0
+  if(yrange > 0) ythrow = (ymid - ymin)/yrange
+
+  xmid = (xright + xleft)/2
+  xmin = width/2
+  xmax = 1 - width/2
+  xrange = xmax - xmin
+  xthrow = 0
+  if(xrange > 0) xthrow = (xmid - xmin)/xrange
+  # if throw is zero, anchor bottom of box
+  # if throw is 1, anchor top of box
+  # pro-rate other throws
+  list(
+    ybottom = ybottom + dh * ythrow,
+    ytop = ytop - dh * (1 - ythrow),
+    xleft = xleft + dw * xthrow,
+    xright = xright - dw * (1 - xthrow)
+  )
+}
+
 #' Format Tile Statistics
 #'
 #' Formats statistics for a mosaic tile.
