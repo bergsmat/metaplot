@@ -13,6 +13,7 @@ NULL
 #' @param log whether to log transform numeric variable (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
+#' @param scales passed to \code{\link[lattice]{xyplot}}; can be function(x = x, horizontal, log,...)
 #' @param panel panel function
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
 #' @param ref.col color for reference line(s)
@@ -52,6 +53,7 @@ boxplot_data_frame <- function(
   log = getOption('metaplot_log',FALSE),
   crit = getOption('metaplot_crit',1.3),
   horizontal = getOption('metaplot_horizontal',NULL),
+  scales = getOption('metaplot_boxplot_scales',NULL),
   panel = getOption('metaplot_boxplot_panel',boxplot_panel),
   ref = getOption('metaplot_ref',metaplot_ref),
   ref.col = getOption('metaplot_ref.col','grey'),
@@ -147,14 +149,20 @@ boxplot_data_frame <- function(
     num <- sapply(lev,function(l)sum(na.rm = TRUE, y[[cat]] == l))
     levels(y[[cat]]) <- paste(lev,num,sep = '\n')
   }
-  scales <- list(
-    tck = c(1,0),
-    x = list(log = log,equispaced.log = FALSE)
-  )
-  if(!horizontal)scales <- list(
-    tck = c(1,0),
-    y = list(log = log,equispaced.log = FALSE)
-  )
+  if(is.null(scales)) scales <- function(x = y, horizontal = horizontal, log = log, ...){
+    s <- list(
+      tck = c(1,0),
+      x = list(log = log,equispaced.log = FALSE)
+    )
+    if(!horizontal)s <- list(
+      tck = c(1,0),
+      y = list(log = log,equispaced.log = FALSE)
+    )
+    s
+  }
+  if(is.character(scales)) scales <- match.fun(scales)
+  if(!is.function(scales)) stop('scales must be NULL, or function(x, horizontal, log,...), or the name of a function')
+  scales <- scales(x=x, horizontal = horizontal, log = log, ...)
 
   if(!is.null(main))if(is.function(main)) main <- main(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)

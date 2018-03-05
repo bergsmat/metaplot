@@ -135,6 +135,7 @@ categorical.data.frame <- function(
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if null)
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param pch symbol character for legend
+#' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{categorical_panel}}
 #' @export
@@ -153,6 +154,9 @@ categorical.data.frame <- function(
 #' x %>% metaplot(arm, site)
 #' x %>% metaplot(arm, site, cohort)
 #' x %>% metaplot(arm, site, , cohort)
+#' x %>% metaplot(arm, site, , cohort, rot = c(0,90))
+#' x %>% metaplot(arm, site, , cohort, rot = c(45, 45))
+#' x %>% metaplot(subject,cohort,arm, site, lines = F, rot = c(45,45))
 
 categorical_data_frame <- function(
   x,
@@ -177,6 +181,7 @@ categorical_data_frame <- function(
   sub = getOption('metaplot_sub',NULL),
   tex = getOption('metaplot_tex', 0.9),
   pch = getOption('metaplot_categorical_pch',22),
+  rot = getOption('metaplot_categorical_rot',c(90,0)),
   subscripts = TRUE,
   par.settings = NULL,
   ...
@@ -197,9 +202,11 @@ categorical_data_frame <- function(
     y$metaplot_groups <- TRUE
     groups <- 'metaplot_groups'
   }
+  bivariate <- TRUE
   if(is.null(yvar)){
     y$metaplot_values <- TRUE
     yvar <- 'metaplot_values'
+    bivariate <- FALSE
   }
   # groups now assigned, and yvar is singular
    y[[yvar]] <- ifcoded(y, yvar)
@@ -220,7 +227,26 @@ categorical_data_frame <- function(
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
   formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
-  if(is.null(scales)) scales <- list(relation = 'free', draw = TRUE, tck = c(1,0), alternating = FALSE, col = 'transparent')
+  ylev <- as.character(sort(unique(y[[yvar]])))
+  if(yvar == 'metaplot_values') ylev <- ''
+  xlev <- as.character(sort(unique(y[[xvar]])))
+  if(is.null(scales)) scales <- list(
+    relation = 'free',
+    draw = TRUE,
+    tck = c(0,0),
+    alternating = FALSE,
+    col = 'transparent',
+    x = list(
+      at = seq(from = 0, to = 1, length.out = length(xlev)),
+      labels = xlev,
+      rot = rot[[2]]
+    ),
+    y = list(
+      at = seq(from = 0, to = 1, length.out = length(ylev)),
+      labels = ylev,
+      rot = rot[[1]]
+    )
+  )
   if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
   if(is.function(ylab)) ylab <- ylab(y, var = yvar, ...)
   ylab <- base::sub('metaplot_values','',ylab)
@@ -276,6 +302,8 @@ categorical_data_frame <- function(
     .data = y,
     tex = tex,
     pch = pch,
+    rot = rot,
+    bivariate = bivariate,
     ...
   )
 }
@@ -288,10 +316,13 @@ categorical_data_frame <- function(
 #' @param x x values
 #' @param y y values
 #' @param groups optional grouping item
+#' @param bivariate whether to create y axis
 #' @param loc where to print statistics in a tile
 #' @param msg a function of x and y to print text in a tile
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param cex expansion for msg text
+#' @param pch symbol character for legend
+#' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param subscripts subscripts of the original data for this panel
 #' @param ... passed to \code{link[lattice]{panel.superpose}}
 #' @family panel functions
@@ -304,15 +335,19 @@ categorical_panel <- function(
   x,
   y,
   groups,
+  bivariate = TRUE,
   loc = getOption('metaplot_loc',5),
   msg = getOption('metaplot_msg','tilestats'),
   tex = getOption('metaplot_tex', 0.9),
   cex = getOption('metaplot_categorical_panel_cex',1),
+  pch = getOption('metaplot_categorical_pch',22),
+  rot = getOption('metaplot_categorical_rot',c(90,0)),
   subscripts,
   ...
 )
 {
-
+  if(is.null(rot)) rot <- c(90,0) # same as default
+  if(length(rot) == 1) rot <- c(rot,rot)
   if(is.na(msg)) msg <- function(x,y)''
   if(is.character(msg)) msg <- match.fun(msg)
 
@@ -372,6 +407,8 @@ categorical_panel <- function(
     msg = msg,
     tex = tex,
     cex = cex,
+    pch = pch,
+    rot = rot,
     subscripts = seq_along(tiles$x),
     ...
   )
@@ -407,25 +444,27 @@ categorical_panel <- function(
 
 
 
-  if(nrow(yax) > 1) panel.axis(
+  # if(nrow(yax) > 1)
+  if(bivariate) panel.axis(
     side = 'left',
     at = yax$at,
     labels = yax$y,
     outside = TRUE,
     half = FALSE,
     ticks = FALSE,
-    rot = c(90,90)
+    rot = c(rot[[1]],rot[[1]])
   )
 
 
-  if(nrow(xax) > 1) panel.axis(
+  # if(nrow(xax) > 1)
+  panel.axis(
     side = 'bottom',
     at = xax$at,
     labels = xax$x,
     outside = TRUE,
     half = FALSE,
     ticks = FALSE,
-    rot = c(0,0)
+    rot = c(rot[[2]],rot[[2]])
   )
   popViewport(2)
 

@@ -4,10 +4,12 @@
 \alias{categorical_panel}
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
-categorical_panel(x, y, groups, loc = getOption("metaplot_loc", 5),
-  msg = getOption("metaplot_msg", "tilestats"),
-  tex = getOption("metaplot_tex", 0.9),
-  cex = getOption("metaplot_categorical_panel_cex", 1), subscripts, ...)
+categorical_panel(x, y, groups, bivariate = TRUE,
+  loc = getOption("metaplot_loc", 5), msg = getOption("metaplot_msg",
+  "tilestats"), tex = getOption("metaplot_tex", 0.9),
+  cex = getOption("metaplot_categorical_panel_cex", 1),
+  pch = getOption("metaplot_categorical_pch", 22),
+  rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -16,6 +18,8 @@ categorical_panel(x, y, groups, loc = getOption("metaplot_loc", 5),
 
 \item{groups}{optional grouping item}
 
+\item{bivariate}{whether to create y axis}
+
 \item{loc}{where to print statistics in a tile}
 
 \item{msg}{a function of x and y to print text in a tile}
@@ -23,6 +27,10 @@ categorical_panel(x, y, groups, loc = getOption("metaplot_loc", 5),
 \item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
 
 \item{cex}{expansion for msg text}
+
+\item{pch}{symbol character for legend}
+
+\item{rot}{rotation for axis labels; can be length 2 for y and x axes, respectively}
 
 \item{subscripts}{subscripts of the original data for this panel}
 

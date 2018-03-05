@@ -21,7 +21,8 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   lines = getOption("metaplot_lines", TRUE),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
   NULL), tex = getOption("metaplot_tex", 0.9),
-  pch = getOption("metaplot_categorical_pch", 22), subscripts = TRUE,
+  pch = getOption("metaplot_categorical_pch", 22),
+  rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts = TRUE,
   par.settings = NULL, ...)
 }
 \arguments{
@@ -69,6 +70,8 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{pch}{symbol character for legend}
 
+\item{rot}{rotation for axis labels; can be length 2 for y and x axes, respectively}
+
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
@@ -89,6 +92,9 @@ x \%>\% metaplot(site)
 x \%>\% metaplot(arm, site)
 x \%>\% metaplot(arm, site, cohort)
 x \%>\% metaplot(arm, site, , cohort)
+x \%>\% metaplot(arm, site, , cohort, rot = c(0,90))
+x \%>\% metaplot(arm, site, , cohort, rot = c(45, 45))
+x \%>\% metaplot(subject,cohort,arm, site, lines = F, rot = c(45,45))
 }
 \seealso{
 \code{\link{categorical_panel}}
