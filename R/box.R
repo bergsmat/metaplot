@@ -30,6 +30,9 @@ NULL
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param par.settings default parameter settings
 #' @param reverse if y is categorical, present levels in reverse order (first at top)
+#' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
+#' @param notch whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}
+#' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos UQ
@@ -71,6 +74,9 @@ boxplot_data_frame <- function(
   sub = getOption('metaplot_sub',NULL),
   par.settings = standard.theme('pdf',color = FALSE),
   reverse = getOption('metaplot_boxplot_reverse',TRUE),
+  pch = getOption('metaplot_boxplot_pch','|'),
+  notch = getOption('metaplot_boxplot_notch',FALSE),
+  gg = getOption('metaplot_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -171,6 +177,7 @@ boxplot_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
 
+  if(gg)return(ggplot())
   bwplot(
     formula,
     data = y,
@@ -187,6 +194,8 @@ boxplot_data_frame <- function(
     ref.col = ref.col,
     ref.lty = ref.lty,
     ref.alpha = ref.alpha,
+    pch = pch,
+    notch = notch,
     ...
   )
 }

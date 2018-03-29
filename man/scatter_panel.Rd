@@ -21,7 +21,7 @@ scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref",
   loc = getOption("metaplot_loc", 0), iso = getOption("metaplot_iso",
   FALSE), global = getOption("metaplot_global", FALSE),
   global.col = getOption("metaplot_global.col", "grey"),
-  msg = getOption("metaplot_msg", "metastats"), type, ...)
+  msg = getOption("metaplot_scatter_msg", "metastats"), type, ...)
 }
 \arguments{
 \item{x}{x values}

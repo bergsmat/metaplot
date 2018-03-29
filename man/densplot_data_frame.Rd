@@ -17,7 +17,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   auto.key = getOption("metaplot_auto.key", NULL),
   keycols = getOption("metaplot_keycols", NULL),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), ...)
+  NULL), gg = getOption("metaplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -55,6 +55,8 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 \item{main}{character, or a function of x, xvar, groups, facets, and log}
 
 \item{sub}{character, or a function of x, xvar, groups, facets, and log}
+
+\item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{passed to \code{\link[lattice]{densityplot}}}
 }

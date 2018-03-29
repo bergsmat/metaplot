@@ -30,6 +30,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param keycols number of auto.key columns
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
+#' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
 #' @family densplot
@@ -59,6 +60,7 @@ densplot_data_frame<- function(
   keycols = getOption('metaplot_keycols',NULL),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
+  gg = getOption('metaplot_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -105,6 +107,8 @@ densplot_data_frame<- function(
     x[[groups]] <- as_factor(x[[groups]])
     groups <- as.formula(paste('~',groups))
   }
+
+  if(gg)return(ggplot())
   densityplot(
     formula,
     data = x,

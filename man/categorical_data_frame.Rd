@@ -23,7 +23,10 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   NULL), tex = getOption("metaplot_tex", 0.9),
   pch = getOption("metaplot_categorical_pch", 22),
   rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts = TRUE,
-  par.settings = NULL, ...)
+  par.settings = NULL, loc = getOption("metaplot_loc", 5),
+  msg = getOption("metaplot_categorical_msg", "tilestats"),
+  cex = getOption("metaplot_categorical_panel_cex", 1),
+  gg = getOption("metaplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -75,6 +78,14 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
+
+\item{loc}{where to print statistics in a tile}
+
+\item{msg}{a function of x and y to print text in a tile}
+
+\item{cex}{expansion for msg text}
+
+\item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{passed to \code{\link{region}}}
 }

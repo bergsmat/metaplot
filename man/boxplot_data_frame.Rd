@@ -20,7 +20,10 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   aspect = getOption("metaplot_aspect", 1),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
   NULL), par.settings = standard.theme("pdf", color = FALSE),
-  reverse = getOption("metaplot_boxplot_reverse", TRUE), ...)
+  reverse = getOption("metaplot_boxplot_reverse", TRUE),
+  pch = getOption("metaplot_boxplot_pch", "|"),
+  notch = getOption("metaplot_boxplot_notch", FALSE),
+  gg = getOption("metaplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -70,6 +73,12 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 \item{par.settings}{default parameter settings}
 
 \item{reverse}{if y is categorical, present levels in reverse order (first at top)}
+
+\item{pch}{special character for box median: passed to \code{\link[lattice]{panel.bwplot}}}
+
+\item{notch}{whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}}
+
+\item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{passed arguments}
 }

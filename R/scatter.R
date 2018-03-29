@@ -7,6 +7,8 @@ globalVariables('metaplot_values')
 #'
 #' @param x object
 #' @param ... passed arguments
+#' @import ggplot2
+#' @import ggformula
 #' @export
 #' @family generic functions
 #' @family scatter
@@ -51,7 +53,21 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
-
+#' @param ref.col reference line color
+#' @param ref.lty reference line type
+#' @param ref.alpha reference line alpha
+#' @param smooth.lty smooth line type
+#' @param smooth.alpha smooth alpha
+#' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
+#' @param global.col color for global aesthetics
+#' @param fit draw a linear fit of y ~ x
+#' @param fit.lty fit line type
+#' @param fit.alpha fit alpha
+#' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE
+#' @param conf.alpha alpha transparency for confidence region
+#' @param loc where to print statistics on a panel; suppressed for grouped plots
+#' @param msg a function to print text on a panel: called with x values, y values, and \dots.
+#' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{scatter_panel}}
 #' @export
@@ -111,6 +127,21 @@ scatter_data_frame <- function(
   sub = getOption('metaplot_sub',NULL),
   subscripts = TRUE,
   par.settings = NULL,
+  ref.col = getOption('metaplot_ref.col','grey'),
+  ref.lty = getOption('metaplot_ref.lty','solid'),
+  ref.alpha = getOption('metaplot_ref.alpha',1),
+  smooth.lty = getOption('metaplot_smooth.lty','dashed'),
+  smooth.alpha = getOption('metaplot_smooth.alpha',1),
+  fit = getOption('metaplot_fit',conf),
+  fit.lty = getOption('metaplot_fit.lty','solid'),
+  fit.alpha = getOption('metaplot_fit.alpha',1),
+  conf = getOption('metaplot_conf',FALSE),
+  conf.alpha = getOption('metaplot_conf.alpha',0.3),
+  loc = getOption('metaplot_loc',0),
+  global = getOption('metaplot_global',FALSE),
+  global.col = getOption('metaplot_global.col','grey'),
+  msg = getOption('metaplot_scatter_msg','metastats'),
+  gg = getOption('metaplot_gg',FALSE),
   ...
 ){
 
@@ -259,6 +290,8 @@ scatter_data_frame <- function(
   )
   pars <- pars[sapply(pars, function(i)length(i) > 0 )]
 
+  if(gg)return(ggplot())
+
   xyplot(
     formula,
     data = y,
@@ -281,6 +314,20 @@ scatter_data_frame <- function(
     main = main,
     sub = sub,
     .data = y,
+    ref.col = ref.col,
+    ref.lty = ref.lty,
+    ref.alpha = ref.alpha,
+    smooth.lty = smooth.lty,
+    smooth.alpha = smooth.alpha,
+    global = global,
+    global.col = global.col,
+    fit = fit,
+    fit.lty = fit.lty,
+    fit.alpha = fit.alpha,
+    conf = conf,
+    conf.alpha = conf.alpha,
+    loc = loc,
+    msg = msg,
     ...
   )
 }
@@ -416,7 +463,6 @@ scatter.data.frame <- function(
   do.call(match.fun(fun), args)
 }
 
-
 #' Panel Function for Metaplot Scatterplot
 #'
 #' Default panel function for scatter_data_frame. Calls \code{\link[lattice]{panel.xyplot}} and optionally plots linear fit, confidence region, reference lines, and statistics.
@@ -473,7 +519,7 @@ scatter_panel <- function(
   iso = getOption('metaplot_iso',FALSE),
   global = getOption('metaplot_global',FALSE),
   global.col = getOption('metaplot_global.col','grey'),
-  msg = getOption('metaplot_msg','metastats'),
+  msg = getOption('metaplot_scatter_msg','metastats'),
   type,
   ...
 )

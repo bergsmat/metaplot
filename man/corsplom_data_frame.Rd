@@ -12,7 +12,18 @@ corsplom_data_frame(x, xvar = names(x),
   xlab = getOption("metaplot_corsplom_xlab", NULL),
   varname.cex = getOption("metaplot_varname.cex", 1),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), ...)
+  NULL), col = getOption("metaplot_corsplom_point_col", "blue"),
+  loess.col = getOption("metaplot_loess.col", col),
+  loess.lty = getOption("metaplot_loess.lty", "solid"),
+  loess.alpha = getOption("metaplot_loess.alpha", 1), density = TRUE,
+  diag.label = getOption("metaplot_diag.label", diag_label),
+  pin = getOption("metaplot_pin", diag_pin),
+  pin.col = getOption("metaplot_pin.col", "darkgrey"),
+  pin.alpha = getOption("metaplot_pin.alpha", 1),
+  dens.col = getOption("metaplot_dens.col", "grey"),
+  dens.scale = getOption("metaplot_dens.scale", 0.2),
+  dens.alpha = getOption("metaplot_dens.alpha", 0.5),
+  gg = getOption("metaplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -34,6 +45,32 @@ corsplom_data_frame(x, xvar = names(x),
 \item{main}{character, or a function of x, xvar}
 
 \item{sub}{character, or a function of x, xvar}
+
+\item{col}{point color}
+
+\item{loess.col}{loess color}
+
+\item{loess.lty}{loess line type}
+
+\item{loess.alpha}{loess alpha}
+
+\item{density}{whether to plot density polygons}
+
+\item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
+
+\item{pin}{location for a pin (reference line) in the density region; can be a function of x, varname, .data}
+
+\item{pin.col}{color of pin, if any}
+
+\item{pin.alpha}{alpha transparency of pin}
+
+\item{dens.col}{color for density region}
+
+\item{dens.scale}{inflation factor for height of density smooth}
+
+\item{dens.alpha}{alpha transparency for density region}
+
+\item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}}}
 }

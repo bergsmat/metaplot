@@ -21,6 +21,19 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param varname.cex passed to splom
 #' @param main character, or a function of x, xvar
 #' @param sub character, or a function of x, xvar
+#' @param col point color
+#' @param loess.col loess color
+#' @param loess.lty loess line type
+#' @param loess.alpha loess alpha
+#' @param density whether to plot density polygons
+#' @param diag.label label for the diagonal; can be a function of x, varname, .data
+#' @param pin location for a pin (reference line) in the density region; can be a function of x, varname, .data
+#' @param pin.col color of pin, if any
+#' @param pin.alpha alpha transparency of pin
+#' @param dens.col color for density region
+#' @param dens.scale inflation factor for height of density smooth
+#' @param dens.alpha alpha transparency for density region
+#' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}}
 #' @export
 #' @importFrom rlang UQS
@@ -38,6 +51,19 @@ corsplom_data_frame <- function(
   varname.cex = getOption('metaplot_varname.cex',1),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
+  col = getOption('metaplot_corsplom_point_col','blue'),
+  loess.col = getOption('metaplot_loess.col',col),
+  loess.lty = getOption('metaplot_loess.lty','solid'),
+  loess.alpha = getOption('metaplot_loess.alpha',1),
+  density = TRUE,
+  diag.label = getOption('metaplot_diag.label',diag_label),
+  pin = getOption('metaplot_pin',diag_pin),
+  pin.col = getOption('metaplot_pin.col','darkgrey'),
+  pin.alpha = getOption('metaplot_pin.alpha',1),
+  dens.col = getOption('metaplot_dens.col','grey'),
+  dens.scale = getOption('metaplot_dens.scale',0.2),
+  dens.alpha = getOption('metaplot_dens.alpha',0.5),
+  gg = getOption('metaplot_gg',FALSE),
   ...
 ){
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
@@ -48,6 +74,8 @@ corsplom_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
   x <- x[,xvar,drop=FALSE]
+
+  if(gg)return(ggplot())
   splom(
     x,
     upper.panel = upper.panel,
@@ -60,6 +88,18 @@ corsplom_data_frame <- function(
     sub = sub,
     .data = x,
     split = split,
+    col = col,
+    loess.col = loess.col,
+    loess.lty = loess.lty,
+    loess.alpha = loess.alpha,
+    density = density,
+    diag.label = diag.label,
+    pin = pin,
+    pin.col = pin.col,
+    pin.alpha = pin.alpha,
+    dens.col = dens.col,
+    dens.scale = dens.scale,
+    dens.alpha = dens.alpha,
     ...
   )
 }

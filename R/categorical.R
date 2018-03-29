@@ -136,6 +136,10 @@ categorical.data.frame <- function(
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param pch symbol character for legend
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
+#' @param loc where to print statistics in a tile
+#' @param msg a function of x and y to print text in a tile
+#' @param cex expansion for msg text
+#' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{categorical_panel}}
 #' @export
@@ -184,6 +188,10 @@ categorical_data_frame <- function(
   rot = getOption('metaplot_categorical_rot',c(90,0)),
   subscripts = TRUE,
   par.settings = NULL,
+  loc = getOption('metaplot_loc',5),
+  msg = getOption('metaplot_categorical_msg','tilestats'),
+  cex = getOption('metaplot_categorical_panel_cex',1),
+  gg = getOption('metaplot_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -283,6 +291,8 @@ categorical_data_frame <- function(
   )
   pars <- pars[sapply(pars, function(i)length(i) > 0 )]
 
+  if(gg)return(ggplot())
+
   xyplot(
     formula,
     data = y,
@@ -304,6 +314,9 @@ categorical_data_frame <- function(
     pch = pch,
     rot = rot,
     bivariate = bivariate,
+    loc = loc,
+    msg = msg,
+    cex = cex,
     ...
   )
 }
@@ -337,7 +350,7 @@ categorical_panel <- function(
   groups,
   bivariate = TRUE,
   loc = getOption('metaplot_loc',5),
-  msg = getOption('metaplot_msg','tilestats'),
+  msg = getOption('metaplot_categorical_msg','tilestats'),
   tex = getOption('metaplot_tex', 0.9),
   cex = getOption('metaplot_categorical_panel_cex',1),
   pch = getOption('metaplot_categorical_pch',22),

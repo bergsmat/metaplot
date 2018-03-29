@@ -27,7 +27,21 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   points = getOption("metaplot_points", TRUE),
   lines = getOption("metaplot_lines", FALSE),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), subscripts = TRUE, par.settings = NULL, ...)
+  NULL), subscripts = TRUE, par.settings = NULL,
+  ref.col = getOption("metaplot_ref.col", "grey"),
+  ref.lty = getOption("metaplot_ref.lty", "solid"),
+  ref.alpha = getOption("metaplot_ref.alpha", 1),
+  smooth.lty = getOption("metaplot_smooth.lty", "dashed"),
+  smooth.alpha = getOption("metaplot_smooth.alpha", 1),
+  fit = getOption("metaplot_fit", conf),
+  fit.lty = getOption("metaplot_fit.lty", "solid"),
+  fit.alpha = getOption("metaplot_fit.alpha", 1),
+  conf = getOption("metaplot_conf", FALSE),
+  conf.alpha = getOption("metaplot_conf.alpha", 0.3),
+  loc = getOption("metaplot_loc", 0), global = getOption("metaplot_global",
+  FALSE), global.col = getOption("metaplot_global.col", "grey"),
+  msg = getOption("metaplot_scatter_msg", "metastats"),
+  gg = getOption("metaplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -93,6 +107,36 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+
+\item{ref.col}{reference line color}
+
+\item{ref.lty}{reference line type}
+
+\item{ref.alpha}{reference line alpha}
+
+\item{smooth.lty}{smooth line type}
+
+\item{smooth.alpha}{smooth alpha}
+
+\item{fit}{draw a linear fit of y ~ x}
+
+\item{fit.lty}{fit line type}
+
+\item{fit.alpha}{fit alpha}
+
+\item{conf}{logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE}
+
+\item{conf.alpha}{alpha transparency for confidence region}
+
+\item{loc}{where to print statistics on a panel; suppressed for grouped plots}
+
+\item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
+
+\item{global.col}{color for global aesthetics}
+
+\item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
+
+\item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{passed to \code{\link{region}}}
 }

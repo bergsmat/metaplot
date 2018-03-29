@@ -5,8 +5,9 @@
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
 categorical_panel(x, y, groups, bivariate = TRUE,
-  loc = getOption("metaplot_loc", 5), msg = getOption("metaplot_msg",
-  "tilestats"), tex = getOption("metaplot_tex", 0.9),
+  loc = getOption("metaplot_loc", 5),
+  msg = getOption("metaplot_categorical_msg", "tilestats"),
+  tex = getOption("metaplot_tex", 0.9),
   cex = getOption("metaplot_categorical_panel_cex", 1),
   pch = getOption("metaplot_categorical_pch", 22),
   rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts, ...)
