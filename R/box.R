@@ -29,6 +29,7 @@ NULL
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param par.settings default parameter settings
+#' @param reverse if y is categorical, present levels in reverse order (first at top)
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos UQ
@@ -69,6 +70,7 @@ boxplot_data_frame <- function(
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
   par.settings = standard.theme('pdf',color = FALSE),
+  reverse = getOption('metaplot_boxplot_reverse',TRUE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -107,7 +109,7 @@ boxplot_data_frame <- function(
   formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
 
   if(!is.null(facets)){
-    for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+    for (i in seq_along(facets)) y[[facets[[i]]]] <- as_factor(y[[ facets[[i]] ]])
   }
 
   #formula <- as.formula(paste(sep = ' ~ ', yvar, xvar))
@@ -138,12 +140,14 @@ boxplot_data_frame <- function(
   if(is.null(ylab)) ylab <- if(horizontal) catlab else numlab
   if(is.null(xlab)) xlab <- if(horizontal) numlab else catlab
 
-  guide <- attr(y[[cat]], 'guide')
-  if(encoded(guide)){
-    y[[cat]] <- decode(y[[cat]],encoding = if(length(decodes(guide)))guide else NULL)
-    y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
-  }
-  if(!is.factor(y[[cat]])) y[[cat]] <- factor(y[[cat]],levels = unique(y[[cat]]))
+  # guide <- attr(y[[cat]], 'guide')
+  # if(encoded(guide)){
+  #   y[[cat]] <- decode(y[[cat]],encoding = if(length(decodes(guide)))guide else NULL)
+  #   # y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
+  # }
+  # if(!is.factor(y[[cat]])) y[[cat]] <- factor(y[[cat]],levels = unique(y[[cat]]))
+  y[[cat]] <- as_factor(y[[cat]])
+  if(horizontal & reverse) y[[cat]] <- factor(y[[cat]],levels = rev(levels(y[[cat]])))
   if(nobs){
     lev <- levels(y[[cat]])
     num <- sapply(lev,function(l)sum(na.rm = TRUE, y[[cat]] == l))

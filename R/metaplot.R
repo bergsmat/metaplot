@@ -119,6 +119,19 @@ globalVariables('panel_')
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
 #' x %>% metaplot(subject,conc)
 #'
+#' # manage metadata
+#' attr(x$arm, 'guide') # //1/Arm A//2/Arm B//
+#' x %>% metaplot(conc, arm) # default
+#'
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//2/Arm B//1/Arm A//')) %>%
+#' metaplot(conc, arm) # different presentation order
+#'
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//1/Both Arms//2/Both Arms//')) %>%
+#' metaplot(conc, arm) # collapse cases
+#'
+#'
 metaplot <- function(x,...)UseMethod('metaplot')
 
 

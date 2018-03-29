@@ -231,13 +231,13 @@ scatter_data_frame <- function(
   if(is.function(xlab)) xlab <- xlab(y, var = xvar, log = xlog, ...)
 
   # if (is.null(groups)) # cannot be null at this point
-  y[[groups]] <- ifcoded(y, groups)
+  y[[groups]] <- as_factor(y[[groups]])
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
 
   groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
-    for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+    for (i in seq_along(facets)) y[[ facets[[i]] ]] <- as_factor(y[[ facets[[i]] ]])
   }
 
   if(!is.null(points)) points <- as.numeric(points)

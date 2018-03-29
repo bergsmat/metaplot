@@ -19,7 +19,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   catlab = getOption("metaplot_lab", axislabel),
   aspect = getOption("metaplot_aspect", 1),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), par.settings = standard.theme("pdf", color = FALSE), ...)
+  NULL), par.settings = standard.theme("pdf", color = FALSE),
+  reverse = getOption("metaplot_boxplot_reverse", TRUE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -67,6 +68,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 \item{sub}{character, or a function of x, yvar, xvar, facets, and log}
 
 \item{par.settings}{default parameter settings}
+
+\item{reverse}{if y is categorical, present levels in reverse order (first at top)}
 
 \item{...}{passed arguments}
 }

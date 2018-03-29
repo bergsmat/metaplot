@@ -122,7 +122,7 @@ corsplom_panel_diagonal <- function(
   ...
 ){
   if(density){
-    d <- density(x)
+    d <- density(x,na.rm=TRUE)
     lim <- current.panel.limits()$x
     lo <- lim[[1]]
     hi <- lim[[2]]
@@ -418,11 +418,45 @@ metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial'
   t
 }
 
-ifcoded <- function(x, var){
-  guide <- attr(x[[var]],'guide')
-  if(!encoded(guide)) return(x[[var]])
-  decoded <- decode(x[[var]], encoding = guide)
-  if(!any(is.na(decoded))) return(decoded)
-  if(all(is.na(decoded)))return(decode(x[[var]]))
-  x[[var]]
+#' Coerce to Factor using Encoding if Present
+#'
+#' Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed.
+#'
+#' @export
+#' @param x vector or factor
+#' @return factor
+#' @examples
+#' library(magrittr)
+#' foo <- c(1, 2, NA, 4, 5)
+#' as_factor(foo)
+#' as_factor(factor(foo))
+#' as_factor(as.factor(foo))
+#' as_factor(structure(foo, guide = '....'))
+#' as_factor(structure(foo, guide = '//5//'))
+#' as_factor(structure(foo, guide = '//5/bar//'))
+#' as_factor(structure(foo, guide = '//5/bar//6/baz//'))
+#' as_factor(structure(factor(foo), guide = '//5/bar//'))
+#' as_factor(structure(factor(foo), guide = '//5/bar//')) %>% sort
+#' as_factor(structure(factor(foo), guide = '....'))
+#' as_factor(structure(factor(foo), guide = '//1/bar//5/bar//'))
+#'
+#'
+as_factor <- function(x){
+  guide <- attr(x,'guide') # may be NULL (not encoded)
+  vals <- if(is.factor(x)) levels(x) else unique(x)
+  vals <- vals[!is.na(vals)]
+  if(is.null(guide)) guide <- encode(vals) # guide present
+  if(!encoded(guide)) guide <- encode(vals) # guide encoded
+  if(!length(decodes(guide))) guide <- encode(vals) # guide non-empty
+  codes <- codes(guide)
+  decodes <- decodes(guide)
+  decodes[is.na(decodes)] <- codes[is.na(decodes)] # decodes fully defined
+  extra <- setdiff(vals, codes) # values not captured by encoding
+  codes <- c(codes, extra) # all possible values now recognized ...
+  decodes <- c(decodes, extra) # ... and displayed as themselves
+  encoding <- encode(codes, labels = decodes)
+  x <- as.character(x)
+  x <- decode(x, encoding = encoding)
+  x <- factor(x)
+  x
 }

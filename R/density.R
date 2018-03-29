@@ -97,12 +97,12 @@ densplot_data_frame<- function(
   if(!is.null(facets))ff <- paste0('|',ff)
   formula <- as.formula(paste0('~', xvar) %>% paste(ff))
   if(!is.null(facets)){
-    for (i in seq_along(facets)) x[[facets[[i]]]] <- ifcoded(x, facets[[i]])
+    for (i in seq_along(facets)) x[[facets[[i]]]] <- as_factor(x[[ facets[[i]] ]])
   }
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(groups)) {
-    x[[groups]] <- ifcoded(x, groups)
+    x[[groups]] <- as_factor(x[[groups]])
     groups <- as.formula(paste('~',groups))
   }
   densityplot(

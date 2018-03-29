@@ -209,8 +209,8 @@ categorical_data_frame <- function(
     bivariate <- FALSE
   }
   # groups now assigned, and yvar is singular
-   y[[yvar]] <- ifcoded(y, yvar)
-   y[[xvar]] <- ifcoded(y, xvar)
+   y[[yvar]] <- as_factor(y[[yvar]])
+   y[[xvar]] <- as_factor(y[[xvar]])
 
   if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
   if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols, pch = 22, points=any(as.logical(tiles)),lines=any(as.logical(lines)))
@@ -255,13 +255,13 @@ categorical_data_frame <- function(
   if(is.function(xlab)) xlab <- xlab(y, var = xvar, ...)
 
   # if (is.null(groups)) # cannot be null at this point
-  y[[groups]] <- ifcoded(y, groups)
+  y[[groups]] <- as_factor(y[[groups]])
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
 
   groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
-    for (i in seq_along(facets)) y[[facets[[i]]]] <- ifcoded(y, facets[[i]])
+    for (i in seq_along(facets)) y[[facets[[i]]]] <- as_factor(y[[ facets[[i]] ]])
   }
 
   if(!is.null(tiles)) tiles <- as.numeric(tiles)

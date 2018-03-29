@@ -102,7 +102,7 @@ unpack.data.frame <- function(x, meta = getOption('meta','meta'), position = 1L,
   stopifnot(!meta %in% names(x))
   stopifnot(position %in% 1:4)
   stopifnot(is.character(ignore))
-  y <- data.frame(x[0,],stringsAsFactors = FALSE)
+  y <- data.frame(x[0,,drop=FALSE],stringsAsFactors = FALSE)
   y[] <- lapply(y, as.character)
   y <- data.frame(t(y),stringsAsFactors = FALSE) # transpose
   for(col in names(x)){
