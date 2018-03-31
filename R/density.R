@@ -36,6 +36,8 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @family densplot
 #' @family metaplot
 #' @import lattice
+#' @import ggformula
+#' @importFrom scales log_trans
 #' @export
 #' @examples
 #' densplot_data_frame(Theoph, 'conc', grid = TRUE)
@@ -83,7 +85,7 @@ densplot_data_frame<- function(
   if(is.function(ref)) ref <- ref(x = x, var = xvar, log = log, ...)
   ref <- as.numeric(ref)
   ref <- ref[is.defined(ref)]
-  if(log){
+  if(log & !gg){  # ggplot handles reference rescaling implicitly
     ref <- ref[ref > 0]
     ref <- log(ref)
   }
@@ -108,7 +110,37 @@ densplot_data_frame<- function(
     groups <- as.formula(paste('~',groups))
   }
 
-  if(gg)return(ggplot())
+if(gg){
+  # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
+  base_breaks <- function(n = 20){
+    function(x) {
+      axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = 20)
+    }
+  }
+  plot <- gf_dens(
+      formula,
+      data = x,
+      color = groups,
+      xlab = xlab,
+      title = main,
+      subtitle = sub,
+      ...
+    ) +
+    geom_vline(
+      xintercept = ref,
+      color = ref.col,
+      linetype = ref.lty,
+      alpha = ref.alpha
+    ) +
+    theme(aspect.ratio = aspect)
+
+   if(log) plot <- plot + scale_x_continuous(
+     trans = log_trans(),
+     breaks = base_breaks()
+   )
+   return(plot)
+}
+
   densityplot(
     formula,
     data = x,

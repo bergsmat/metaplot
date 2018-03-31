@@ -26,7 +26,8 @@ Imports:
  rlang,
  grid,
  ggformula,
- ggplot2
+ ggplot2,
+ scales
 Suggests:
  csv,
  nlme
