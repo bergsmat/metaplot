@@ -4,8 +4,9 @@
 \alias{corsplom_panel_scatter}
 \title{Scatter Panel Function for Metaplot Corsplom}
 \usage{
-corsplom_panel_scatter(x, y, col, loess.col = getOption("metaplot_loess.col",
-  col), loess.lty = getOption("metaplot_loess.lty", "solid"),
+corsplom_panel_scatter(x, y, col = "#0080ff",
+  loess.col = getOption("metaplot_loess.col", col),
+  loess.lty = getOption("metaplot_loess.lty", "solid"),
   loess.alpha = getOption("metaplot_loess.alpha", 1), ...)
 }
 \arguments{
