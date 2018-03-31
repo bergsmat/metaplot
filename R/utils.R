@@ -61,7 +61,7 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 corsplom_panel_scatter = function(
   x,
   y,
-  col = getOption('metaplot_corsplom_point_col','blue'),
+  col = getOption('metaplot_corsplom_point_col','#0080ff'),
   loess.col = getOption('metaplot_loess.col',col),
   loess.lty = getOption('metaplot_loess.lty','solid'),
   loess.alpha = getOption('metaplot_loess.alpha',1),
