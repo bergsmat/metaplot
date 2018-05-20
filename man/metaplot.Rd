@@ -81,6 +81,7 @@ library(dplyr)
 library(csv)
 x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
+# options(metaplot_gg = TRUE)
 # sample plots
 x \%>\% metaplot(sres)
 x \%>\% metaplot(site)

@@ -8,10 +8,8 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   ylab = getOption("metaplot_lab", axislabel),
   xlab = getOption("metaplot_lab", axislabel),
   na.rm = getOption("metaplot_na.rm", TRUE),
-  aspect = getOption("metaplot_aspect", 1),
-  auto.key = getOption("metaplot_auto.key", NULL),
-  keycols = getOption("metaplot_keycols", NULL),
-  as.table = getOption("metaplot_categorical_as.table", TRUE),
+  aspect = getOption("metaplot_aspect", 1), key = getOption("metaplot_key",
+  "right"), as.table = getOption("metaplot_categorical_as.table", TRUE),
   prepanel = getOption("metaplot_categorical_prepanel", function(...)
   list(xlim = 0:1, ylim = 0:1)),
   scales = getOption("metaplot_categorical_scales", NULL),
@@ -47,9 +45,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{auto.key}{passed to \code{\link[lattice]{xyplot}}}
-
-\item{keycols}{number of auto.key columns}
+\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
@@ -57,7 +53,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{scales}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
 
-\item{panel}{name or definition of panel function}
+\item{panel}{name or definition of panel function for lattice}
 
 \item{colors}{replacements for default colors in group order}
 
@@ -90,7 +86,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 \item{...}{passed to \code{\link{region}}}
 }
 \description{
-Categorical function for class 'data.frame'. Default panel function implements a simple mosaic plot.
+Categorical function for class 'data.frame'. Implements a simple mosaic plot.
 }
 \examples{
 
@@ -100,12 +96,21 @@ library(csv)
 x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
 x \%>\% metaplot(site)
+x \%>\% metaplot(site, gg = T)
 x \%>\% metaplot(arm, site)
+x \%>\% metaplot(arm, site, gg = T)
 x \%>\% metaplot(arm, site, cohort)
+x \%>\% metaplot(arm, site, cohort, gg = T)
 x \%>\% metaplot(arm, site, , cohort)
+x \%>\% metaplot(arm, site, , cohort, gg = T)
 x \%>\% metaplot(arm, site, , cohort, rot = c(0,90))
+x \%>\% metaplot(arm, site, , cohort, rot = c(0,90), gg = T)
 x \%>\% metaplot(arm, site, , cohort, rot = c(45, 45))
 x \%>\% metaplot(subject,cohort,arm, site, lines = F, rot = c(45,45))
+x \%>\% metaplot(subject,cohort,arm, site, lines = F, rot = c(45,45), gg=T)
+# panel-specific axis not well-supported for gg version
+x \%>\% metaplot(subject,cohort,,arm, site)
+x \%>\% metaplot(subject,cohort,,arm, site, gg=T)
 }
 \seealso{
 \code{\link{categorical_panel}}

@@ -14,8 +14,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   1.3), aspect = getOption("metaplot_aspect", 1),
   scales = getOption("metaplot_dens.scales", NULL),
   panel = getOption("metaplot_dens.panel", dens_panel),
-  auto.key = getOption("metaplot_auto.key", NULL),
-  keycols = getOption("metaplot_keycols", NULL),
+  key = getOption("metaplot_key", "right"),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
   NULL), gg = getOption("metaplot_gg", FALSE), ...)
 }
@@ -48,9 +47,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{auto.key}{passed to \code{\link[lattice]{densityplot}}}
-
-\item{keycols}{number of auto.key columns}
+\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
 
 \item{main}{character, or a function of x, xvar, groups, facets, and log}
 

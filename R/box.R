@@ -12,7 +12,7 @@ NULL
 #' @param facets optional conditioning variables
 #' @param log whether to log transform numeric variable (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value
-#' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric
+#' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if var[[2]] is numeric
 #' @param scales passed to \code{\link[lattice]{xyplot}}; can be function(x = x, horizontal, log,...)
 #' @param panel panel function
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
@@ -132,7 +132,7 @@ boxplot_data_frame <- function(
     warning(con, ' must be positive for log scale')
     log <- FALSE
   }
-  if(log){
+  if(log & !gg){
     ref <- ref[ref > 0]
     if(length(ref)) ref <- log10(ref)
     if(!length(ref)) ref <- NULL
@@ -177,7 +177,52 @@ boxplot_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
 
-  if(gg)return(ggplot())
+  if(gg){
+    # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
+    base_breaks <- function(n = 10){
+      function(x) {
+        axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
+      }
+    }
+    plot <- ggplot(data = x, aes_string(cat, con))
+    plot <- plot  +
+      geom_boxplot() +
+      xlab(catlab) +
+      ylab(numlab) +
+      ggtitle(main, subtitle = sub)
+    if(length(ref)) plot <- plot +
+      geom_hline(
+        yintercept = ref,
+        color = ref.col,
+        linetype = ref.lty,
+        alpha = ref.alpha
+      )
+    plot <- plot +
+      theme(
+        # legend.position = key, not applicable for boxplot
+        aspect.ratio = aspect
+      )
+
+    if(log) plot <- plot + scale_y_continuous(
+      trans = log_trans(),
+      breaks = base_breaks()
+    )
+    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+    if(length(facets) >  1) plot <- plot +
+      facet_grid(
+        as.formula(
+          paste(
+            sep='~',
+            facets[[1]],
+            facets[[2]]
+          )
+        )
+      )
+    if(horizontal) plot <- plot + coord_flip()
+    return(plot)
+  }
+
+
   bwplot(
     formula,
     data = y,
@@ -243,11 +288,19 @@ boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col,
 #' Theoph %<>% mutate(site = ifelse(as.numeric(Subject) > 6, 'Site A','Site B'))
 #' boxplot(Theoph,'Subject','conc')
 #' boxplot(Theoph,Subject,conc)
+#' boxplot(Theoph,Subject,conc, gg = T)
 #' boxplot(Theoph,conc,Subject)
+#' boxplot(Theoph,conc,Subject, gg = T)
 #' boxplot(Theoph,conc,Subject,site)
+#' boxplot(Theoph,conc,Subject,site, gg = T)
 #' attr(Theoph,'title') <- 'Theophylline'
 #' boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
+#' boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'), gg = T)
 #' boxplot(Theoph, Subject, conc, sub= function(x,...)attr(x,'title'))
+#' boxplot(Theoph, Subject, conc, sub= function(x,...)attr(x,'title'), gg = T)
+#' boxplot(Theoph %>% filter(conc > 0),Subject,conc, log = T)
+#' boxplot(Theoph %>% filter(conc > 0),Subject,conc, log = T, gg = T)
+
 boxplot.data.frame <- function(
   x,
   ...,

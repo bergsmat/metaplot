@@ -8,7 +8,6 @@ globalVariables('metaplot_values')
 #' @param x object
 #' @param ... passed arguments
 #' @import ggplot2
-#' @import ggformula
 #' @export
 #' @family generic functions
 #' @family scatter
@@ -39,8 +38,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param iso plot line of unity (auto-selected if NA)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param auto.key passed to \code{\link[lattice]{xyplot}}
-#' @param keycols number of auto.key columns
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
@@ -113,8 +111,7 @@ scatter_data_frame <- function(
   iso = getOption('metaplot_iso',FALSE),
   na.rm = getOption('metaplot_na.rm',TRUE),
   aspect = getOption('metaplot_aspect',1),
-  auto.key = getOption('metaplot_auto.key',NULL),
-  keycols = getOption('metaplot_keycols',NULL),
+  key = getOption('metaplot_key','right'),
   as.table = getOption('metaplot_scatter_as.table',TRUE),
   prepanel = getOption('metaplot_scatter_prepanel', NULL),
   scales = getOption('metaplot_scatter_scales',NULL),
@@ -213,8 +210,9 @@ scatter_data_frame <- function(
   if(is.na(iso)) iso <- FALSE
   if(iso)if(is.null(prepanel))prepanel <- iso_prepanel
 
-  if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(as.logical(points)),lines=any(as.logical(lines)))
+#  if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
+#  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(as.logical(points)),lines=any(as.logical(lines)))
+  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
   if(na.rm) {
     #y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
     foo <- y
@@ -246,8 +244,8 @@ scatter_data_frame <- function(
     xlog <- FALSE
   }
 
-  if(ylog) yref <- log10(yref[yref > 0])
-  if(xlog) xref <- log10(xref[xref > 0])
+  if(ylog & !gg) yref <- log10(yref[yref > 0])
+  if(xlog & !gg) xref <- log10(xref[xref > 0])
 
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
@@ -266,7 +264,7 @@ scatter_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
 
-  groups <- as.formula(paste('~',groups))
+  if(!gg) groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[ facets[[i]] ]] <- as_factor(y[[ facets[[i]] ]])
   }
@@ -290,7 +288,63 @@ scatter_data_frame <- function(
   )
   pars <- pars[sapply(pars, function(i)length(i) > 0 )]
 
-  if(gg)return(ggplot())
+  if(gg){
+    base_breaks <- function(n = 10){
+      function(x) {
+        axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
+      }
+    }
+    plot <- ggplot(data = x) +
+      geom_points(mapping = aes_string(x = xvar,color = groups)) +
+      xlab(xlab) +
+      ylab(ylab) +
+      ggtitle(main, subtitle = sub)
+    if(length(xref)) plot <- plot +
+      geom_vline(
+        xintercept = xref,
+        color = ref.col,
+        linetype = ref.lty,
+        alpha = ref.alpha
+      )
+    if(length(yref)) plot <- plot +
+      geom_hline(
+        yintercept = yref,
+        color = ref.col,
+        linetype = ref.lty,
+        alpha = ref.alpha
+      )
+    plot <- plot +
+      theme(aspect.ratio = aspect, legend.position = key)
+
+    if(xlog) plot <- plot + scale_x_continuous(
+      trans = log_trans(),
+      breaks = base_breaks()
+    )
+    if(ylog) plot <- plot + scale_y_continuous(
+      trans = log_trans(),
+      breaks = base_breaks()
+    )
+    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+    if(length(facets) >  1) plot <- plot +
+      facet_grid(
+        as.formula(
+          paste(
+            sep='~',
+            facets[[1]],
+            facets[[2]]
+          )
+        )
+      )
+    # need linear fit
+    # need smooth
+    # need isometric scales
+    # need symbols, colors, points, lines
+    # need global
+    # need loc, msg
+
+
+    return(plot)
+  }
 
   xyplot(
     formula,

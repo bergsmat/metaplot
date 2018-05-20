@@ -5,7 +5,7 @@
 \title{Draw a Tile}
 \usage{
 panel_tile(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha,
-  col, col.line, loc, msg, .src, alpha, cex, tex, ...)
+  col, col.line, loc, msg, .src, alpha, cex, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -36,9 +36,9 @@ panel_tile(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha,
 
 \item{cex}{expansion for msg text; passed to msg}
 
-\item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
-
 \item{...}{passed arguments}
+
+\item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
 }
 \description{
 Draws a tile in a mosaic.

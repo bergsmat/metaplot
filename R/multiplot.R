@@ -1,11 +1,12 @@
-#' Arrange Multiple Plots in a Grid
+#' Arrange Multiple Trellis Plots in a Grid
 #'
-#' Arranges mutiple trellis plots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
+#' Arranges mutiple trellis plots or ggpots (all of the same type) in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
 #'
 #' @export
 #' @param ... trellis objects
 #' @param nrow number of rows of plots
 #' @param ncol number of columns of plots
+#' @importFrom gridExtra grid.arrange
 #' @examples
 #' library(lattice)
 #' a <- xyplot(
@@ -30,7 +31,8 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   len <- length(x)
   nms <- seq_along(x)
   class <- unique(sapply(x,class))
-  if(!is.null(class))stopifnot(all(sapply(x,inherits,'trellis')))
+  if(!is.null(class))stopifnot(all(sapply(x,inherits,'trellis')) | all(sapply(x,inherits,'ggplot')))
+  gg <- inherits(x[[1]],'ggplot')
   root <- sqrt(len)
   if(!is.null(nrow)){
     if(is.null(ncol)) {
@@ -44,6 +46,9 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   # now ncol is defined for sure
   if(is.null(nrow)) nrow <- ceiling(len/ncol)
   # now nrow is defined for sure
+
+  if(gg)do.call(grid.arrange, c(x,list(ncol = ncol)))
+
   y <- expand.grid(
     run = seq_len(ncol),
     rise = seq_len(nrow)

@@ -38,7 +38,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{crit}{if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value}
 
-\item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if (var[[2]] is numeric}
+\item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if var[[2]] is numeric}
 
 \item{scales}{passed to \code{\link[lattice]{xyplot}}; can be function(x = x, horizontal, log,...)}
 

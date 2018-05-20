@@ -1,3 +1,4 @@
+# bug: splom labels are NA if symbol missing
 #' Correlated Splom
 #'
 #' Scatterplot matrix with correlations.
@@ -37,6 +38,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}}
 #' @export
 #' @importFrom rlang UQS
+#' @importFrom GGally ggpairs
 #' @family multivariate plots
 #' @family corsplom
 #' @family metaplot
@@ -75,8 +77,36 @@ corsplom_data_frame <- function(
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
   x <- x[,xvar,drop=FALSE]
 
-  if(gg)return(ggplot())
-  splom(
+  # https://stackoverflow.com/questions/35085261/how-to-use-loess-method-in-ggallyggpairs-using-wrap-function
+  my_fn <- function(data, mapping, pts=list(), smt=list(), ...){
+    ggplot(data = data, mapping = mapping, ...) +
+      do.call(geom_point, pts) +
+      do.call(geom_smooth, smt)
+  }
+# ggpairs(swiss[1:4],
+#           lower = list(continuous =
+#                          wrap(my_fn,
+#                               pts=list(size=2, colour="red"),
+#                               smt=list(method="lm", se=F, size=5, colour="blue"))))
+  if(gg)return(
+    ggpairs(
+      head(x,nrow(x)), # head strips attributes
+      lower = list(
+        continuous = wrap(
+          my_fn,
+          smt = list(
+            method = 'loess',
+            se = F,
+            colour = loess.col,
+            alpha = loess.alpha,
+            linetype = loess.lty
+          )
+        )
+      )
+    ) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  )
+
+    splom(
     x,
     upper.panel = upper.panel,
     lower.panel = lower.panel,

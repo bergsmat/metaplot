@@ -26,8 +26,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
-#' @param auto.key  passed to \code{\link[lattice]{densityplot}}
-#' @param keycols number of auto.key columns
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
@@ -36,7 +35,6 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @family densplot
 #' @family metaplot
 #' @import lattice
-#' @import ggformula
 #' @importFrom scales log_trans
 #' @export
 #' @examples
@@ -58,8 +56,7 @@ densplot_data_frame<- function(
   aspect = getOption('metaplot_aspect',1),
   scales = getOption('metaplot_dens.scales',NULL),
   panel = getOption('metaplot_dens.panel',dens_panel),
-  auto.key = getOption('metaplot_auto.key',NULL),
-  keycols = getOption('metaplot_keycols',NULL),
+  key = getOption('metaplot_key','right'),
   main = getOption('metaplot_main',NULL),
   sub = getOption('metaplot_sub',NULL),
   gg = getOption('metaplot_gg',FALSE),
@@ -93,8 +90,9 @@ densplot_data_frame<- function(
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
   if(is.function(xlab)) xlab <- xlab(x = x, var = xvar, log = log, ...)
 
-  if(is.null(keycols))if(!is.null(groups))keycols <- min(3, length(unique(x[[groups]])))
-  if(is.null(auto.key))if(!is.null(groups))if(length(unique(x[[groups]])) > 1) auto.key = list(columns = keycols,lines=TRUE)
+  #if(is.null(keycols))if(!is.null(groups))keycols <- min(3, length(unique(x[[groups]])))
+  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
+  #if(is.null(auto.key))if(!is.null(groups))if(length(unique(x[[groups]])) > 1) auto.key = list(columns = keycols,lines=TRUE)
 
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
@@ -107,58 +105,66 @@ densplot_data_frame<- function(
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(groups)) {
     x[[groups]] <- as_factor(x[[groups]])
-    groups <- as.formula(paste('~',groups))
+    if(!gg) groups <- as.formula(paste('~',groups))
   }
 
 if(gg){
   # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
-  base_breaks <- function(n = 20){
+  base_breaks <- function(n = 10){
     function(x) {
-      axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = 20)
+      axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
     }
   }
-  plot <- gf_dens(
-      formula,
-      data = x,
-      color = groups,
-      xlab = xlab,
-      title = main,
-      subtitle = sub,
-      ...
-    ) +
-    geom_vline(
-      xintercept = ref,
-      color = ref.col,
-      linetype = ref.lty,
-      alpha = ref.alpha
-    ) +
-    theme(aspect.ratio = aspect)
+  plot <- ggplot(data = x) +
+  geom_density(mapping = aes_string(x = xvar,color = groups)) +
+  xlab(xlab) +
+  ggtitle(main, subtitle = sub)
+  if(length(ref)) plot <- plot +
+  geom_vline(
+    xintercept = ref,
+    color = ref.col,
+    linetype = ref.lty,
+    alpha = ref.alpha
+  )
+  plot <- plot +
+  theme(aspect.ratio = aspect, legend.position = key)
 
-   if(log) plot <- plot + scale_x_continuous(
-     trans = log_trans(),
-     breaks = base_breaks()
-   )
-   return(plot)
+ if(log) plot <- plot + scale_x_continuous(
+   trans = log_trans(),
+   breaks = base_breaks()
+ )
+  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+  if(length(facets) >  1) plot <- plot +
+    facet_grid(
+      as.formula(
+        paste(
+          sep='~',
+          facets[[1]],
+          facets[[2]]
+        )
+      )
+    )
+  return(plot)
 }
 
-  densityplot(
-    formula,
-    data = x,
-    groups = groups,
-    xlab = xlab,
-    ref = ref,
-    ref.col = ref.col,
-    ref.lty = ref.lty,
-    ref.alpha = ref.alpha,
-    log = log,
-    aspect = aspect,
-    scales = scales,
-    panel = panel,
-    auto.key = auto.key,
-    main = main,
-    sub = sub,
-    ...
-  )
+densityplot(
+  formula,
+  data = x,
+  groups = groups,
+  xlab = xlab,
+  ref = ref,
+  ref.col = ref.col,
+  ref.lty = ref.lty,
+  ref.alpha = ref.alpha,
+  log = log,
+  aspect = aspect,
+  scales = scales,
+  panel = panel,
+  auto.key = key,
+  main = main,
+  sub = sub,
+  ...
+)
 }
 
 #' Panel Function for Metaplot Density Plot

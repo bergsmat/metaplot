@@ -1,7 +1,7 @@
 Package: metaplot
 Type: Package
 Title: Data-Driven Diagnostic Plots
-Version: 0.5.0
+Version: 0.5.2
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Designs plots in terms of core structure.  See 'example(metaplot)'.
@@ -25,8 +25,9 @@ Imports:
  tidyr,
  rlang,
  grid,
- ggformula,
+ gridExtra,
  ggplot2,
+ GGally,
  scales
 Suggests:
  csv,
