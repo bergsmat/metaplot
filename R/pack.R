@@ -62,7 +62,8 @@ pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, at
   if(any(duplicated(y$meta)))stop('found duplicate metadata names')
   for(attr in y$meta){
     for(col in names(x)){
-      attr(x[[col]], attr) <- y[y$meta == attr, col]
+      val <- y[y$meta == attr, col]
+      if(!is.na(val)) attr(x[[col]], attr) <- val
     }
   }
   if(attributes)for(at in names(a))attr(x,at) <- a[[at]]

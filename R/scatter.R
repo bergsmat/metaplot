@@ -63,7 +63,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param fit.alpha fit alpha
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE
 #' @param conf.alpha alpha transparency for confidence region
-#' @param loc where to print statistics on a panel; suppressed for grouped plots
+#' @param loc where to print statistics on a panel; suppressed for grouped plots an facetted ggplots
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link{region}}
@@ -151,10 +151,12 @@ scatter_data_frame <- function(
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
   stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
+  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
+
   if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
       stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
   if(length(yvar) > 1){
-    if(is.null(keycols))if(length(yvar) > 1)keycols <- 1
+    #if(is.null(keycols))if(length(yvar) > 1)keycols <- 1
     suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar))
     groups <- 'metaplot_groups'
     labs <- sapply(yvar, function(col){
@@ -162,6 +164,7 @@ scatter_data_frame <- function(
       if(is.null(a)) a <- ''
       a
     })
+
     if(!any(labs == '')){
       attr(y[['metaplot_groups']],'guide') <- encode(yvar,labs)
     } else {
@@ -182,6 +185,8 @@ scatter_data_frame <- function(
   }
 
   # groups now assigned, and yvar is singular
+  if(length(unique(y[[groups]])) == 1)key = if(gg)'none' else FALSE
+
   # yref
   yref
   if(is.character(yref)) yref <- match.fun(yref)
@@ -271,6 +276,7 @@ scatter_data_frame <- function(
 
   if(!is.null(points)) points <- as.numeric(points)
   if(!is.null(lines)) lines <- as.numeric(lines)
+
   sym <- list(
     col = colors,
     alpha = points,
@@ -294,36 +300,104 @@ scatter_data_frame <- function(
         axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
       }
     }
-    plot <- ggplot(data = x) +
-      geom_points(mapping = aes_string(x = xvar,color = groups)) +
+    xrange <- range(y[[xvar]], na.rm = TRUE)
+    yrange <- range(y[[yvar]], na.rm = TRUE)
+    lo <- min(xrange[[1]], yrange[[1]])
+    hi <- max(xrange[[2]], yrange[[2]])
+    isorange <- c(lo, hi)
+    xpos <- if(sum(loc)) xpos(loc, xrange) else NA
+    ypos <- if(sum(loc)) ypos(loc, yrange) else NA
+    msg <- if(is.null(groups) & is.null(facets)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
+    plot <- ggplot(data = y, mapping = aes_string(x = xvar,y = yvar, color = groups) ) +
+      geom_point() +
+      geom_line() +
       xlab(xlab) +
       ylab(ylab) +
       ggtitle(main, subtitle = sub)
-    if(length(xref)) plot <- plot +
-      geom_vline(
+    if(ysmooth) plot <- plot + geom_smooth(
+      alpha = smooth.alpha,
+      linetype = smooth.lty,
+      method = 'loess',
+      se = FALSE,
+      color = if(global) global.col else NULL,
+      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      show.legend = FALSE
+    )
+    if(xsmooth) plot <- plot + geom_smooth(
+      alpha = smooth.alpha,
+      linetype = smooth.lty,
+      method = 'loess',
+      se = FALSE,
+      color = if(global) global.col else NULL,
+      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      show.legend = FALSE,
+      formula = x ~ y
+    )
+    if(conf) plot <- plot + geom_smooth(
+      alpha = conf.alpha,
+      linetype = none,
+      method = 'lm',
+      se = TRUE,
+      color = if(global) global.col else NULL,
+      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      show.legend = FALSE,
+      level = conf
+    )
+    if(fit) plot <- plot + geom_smooth(
+      alpha = fit.alpha,
+      linetype = fit.lty,
+      method = 'lm',
+      color = if(global) global.col else NULL,
+      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      se = FALSE,
+      show.legend = FALSE
+    )
+    if(length(xref)) plot <- plot + geom_vline(
         xintercept = xref,
         color = ref.col,
         linetype = ref.lty,
         alpha = ref.alpha
       )
-    if(length(yref)) plot <- plot +
-      geom_hline(
+    if(length(yref)) plot <- plot + geom_hline(
         yintercept = yref,
         color = ref.col,
         linetype = ref.lty,
         alpha = ref.alpha
       )
+    if(iso){
+      plot <- plot + geom_abline(slope = 1, intercept = 0)
+      lo <- min(min(y[[yvar]], na.rm=T), min(y[[xvar]], na.rm=T), na.rm=T)
+      hi <- max(max(y[[yvar]], na.rm=T), max(y[[xvar]], na.rm=T), na.rm=T)
+      plot <- plot + scale_y_continuous(limits = c(lo, hi))
+      plot <- plot + scale_x_continuous(limits = c(lo, hi))
+    }
     plot <- plot +
       theme(aspect.ratio = aspect, legend.position = key)
 
     if(xlog) plot <- plot + scale_x_continuous(
       trans = log_trans(),
-      breaks = base_breaks()
+      breaks = base_breaks(),
+      limits = if(iso)c(lo,hi) else NULL
     )
     if(ylog) plot <- plot + scale_y_continuous(
       trans = log_trans(),
-      breaks = base_breaks()
+      breaks = base_breaks(),
+      limits = if(iso)c(lo,hi) else NULL
     )
+
+    levs <- length(unique(y[[groups]]))
+    if(is.null(colors)) colors <- hue_pal()(levs)
+    lines <- rep(lines, length.out = levs)
+    if(is.null(symbols)) symbols <- 16
+    symbols <- rep(symbols, length.out = levs)
+    plot <- plot + scale_color_manual(values = alpha(colors, lines))
+    plot <- plot + scale_shape_manual(values = symbols)
+    if(is.null(groups) & is.null(facets) & sum(loc)) plot <- plot + geom_text(
+      x = xpos,
+      y = ypos,
+      label = msg
+    )
+
     if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
     if(length(facets) >  1) plot <- plot +
       facet_grid(
@@ -335,14 +409,6 @@ scatter_data_frame <- function(
           )
         )
       )
-    # need linear fit
-    # need smooth
-    # need isometric scales
-    # need symbols, colors, points, lines
-    # need global
-    # need loc, msg
-
-
     return(plot)
   }
 
@@ -350,7 +416,7 @@ scatter_data_frame <- function(
     formula,
     data = y,
     groups = groups,
-    auto.key = auto.key,
+    auto.key = key,
     as.table = as.table,
     aspect = aspect,
     scales = scales,
