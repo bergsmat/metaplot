@@ -44,7 +44,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function
 #' @param colors replacements for default colors in group order
-#' @param symbols replacements for default symbols in group order
+#' @param symbols replacements for default symbols in group order (for ggplots use filled symbols 21 - 25)
 #' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
@@ -153,12 +153,17 @@ scatter_data_frame <- function(
   stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
   if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
 
+  if(!is.null(groups))if(!is.factor(y[[groups]])){
+    y[[groups]] <- factor(y[[groups]])
+    for(at in names(attributes(x[[groups]])))if(! at %in% c('levels','class'))attr(y[[groups]], at) <- attr(x[[groups]], at)
+  }
+  # now groups is factor if supplied
   if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
       stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
   if(length(yvar) > 1){
     #if(is.null(keycols))if(length(yvar) > 1)keycols <- 1
-    suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar))
-    groups <- 'metaplot_groups'
+    suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar, factor_key = TRUE))
+    groups <- 'metaplot_groups' # groups is factor if derived
     labs <- sapply(yvar, function(col){
       a <- attr(x[[col]], 'label')
       if(is.null(a)) a <- ''
@@ -180,11 +185,12 @@ scatter_data_frame <- function(
     yvar <- 'metaplot_values'
   }
   if(is.null(groups)){
-    y$metaplot_groups <- TRUE
+    y$metaplot_groups <- factor(0)
     groups <- 'metaplot_groups'
   }
+  # groups is factor if imputed
 
-  # groups now assigned, and yvar is singular
+  # groups now assigned and is factor; and yvar is singular
   if(length(unique(y[[groups]])) == 1)key = if(gg)'none' else FALSE
 
   # yref
@@ -200,8 +206,6 @@ scatter_data_frame <- function(
   xref <- as.numeric(xref)
   xref <- xref[is.defined(xref)]
 
-
-  iso
   if(is.null(iso)) iso <- FALSE # same as default
   if(is.na(iso)){
     left <- attr(y[[yvar]],'guide')
@@ -265,7 +269,7 @@ scatter_data_frame <- function(
   if(is.function(xlab)) xlab <- xlab(y, var = xvar, log = xlog, ...)
 
   # if (is.null(groups)) # cannot be null at this point
-  y[[groups]] <- as_factor(y[[groups]])
+  y[[groups]] <- as_factor(y[[groups]]) # blends with guide, if present
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
 
@@ -300,6 +304,20 @@ scatter_data_frame <- function(
         axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
       }
     }
+
+    levs <- length(levels(y[[groups]]))
+    if(is.null(colors)) colors <- hue_pal()(levs)
+    points <- rep(points, length.out = levs)
+    lines <- rep(lines, length.out = levs)
+    if(is.null(symbols)) symbols <- 21
+    symbols <- rep(symbols, length.out = levs)
+    # plot <- plot + scale_color_manual(values = alpha(colors, lines))
+    # plot <- plot + scale_fill_manual(values = alpha(colors, points))
+    # plot <- plot + scale_shape_manual(values = symbols)
+
+    y$metaplot_points_alpha <- points[as.numeric(y[[groups]])]
+    y$metaplot_lines_alpha <- lines[as.numeric(y[[groups]])]
+
     xrange <- range(y[[xvar]], na.rm = TRUE)
     yrange <- range(y[[yvar]], na.rm = TRUE)
     lo <- min(xrange[[1]], yrange[[1]])
@@ -308,9 +326,12 @@ scatter_data_frame <- function(
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
     msg <- if(is.null(groups) & is.null(facets)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
-    plot <- ggplot(data = y, mapping = aes_string(x = xvar,y = yvar, color = groups) ) +
-      geom_point() +
-      geom_line() +
+    plot <- ggplot(data = y, mapping = aes_string(x = xvar,y = yvar, color = groups, fill = groups) ) +
+      geom_point(mapping = aes(alpha = metaplot_points_alpha)) +
+      geom_line(mapping = aes(alpha = metaplot_lines_alpha)) +
+      guides(alpha = FALSE) +
+      scale_alpha_identity() +
+      scale_shape_manual(values = symbols) +
       xlab(xlab) +
       ylab(ylab) +
       ggtitle(main, subtitle = sub)
@@ -335,7 +356,7 @@ scatter_data_frame <- function(
     )
     if(conf) plot <- plot + geom_smooth(
       alpha = conf.alpha,
-      linetype = none,
+      linetype = 'none',
       method = 'lm',
       se = TRUE,
       color = if(global) global.col else NULL,
@@ -385,14 +406,7 @@ scatter_data_frame <- function(
       limits = if(iso)c(lo,hi) else NULL
     )
 
-    levs <- length(unique(y[[groups]]))
-    if(is.null(colors)) colors <- hue_pal()(levs)
-    lines <- rep(lines, length.out = levs)
-    if(is.null(symbols)) symbols <- 16
-    symbols <- rep(symbols, length.out = levs)
-    plot <- plot + scale_color_manual(values = alpha(colors, lines))
-    plot <- plot + scale_shape_manual(values = symbols)
-    if(is.null(groups) & is.null(facets) & sum(loc)) plot <- plot + geom_text(
+    if(length(groups) == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
       x = xpos,
       y = ypos,
       label = msg
@@ -491,6 +505,7 @@ iso_prepanel <- function(x,y,...){
 #' attr(Theoph$Time,'label') <- 'time'
 #' attr(Theoph$Time,'guide') <- 'h'
 #' attr(Theoph$Subject,'guide') <- '////'
+#' # options(metaplot_gg = T)
 #' scatter(Theoph,conc, Time)
 #' scatter(Theoph, conc, Time, Subject) # Subject as groups
 #' scatter(Theoph, conc, Time, , Subject) # Subject as facet
