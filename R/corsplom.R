@@ -7,6 +7,8 @@
 #' @export
 #' @family generic functions
 #' @family corsplom
+#' @importFrom GGally ggpairs
+#' @importFrom GGally ggpairs wrap
 corsplom <- function(x,...)UseMethod('corsplom')
 
 #' Correlated Scatterplot Matrix Function for Data Frame

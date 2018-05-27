@@ -15,10 +15,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   xsmooth = getOption("metaplot_xsmooth", FALSE),
   iso = getOption("metaplot_iso", FALSE),
   na.rm = getOption("metaplot_na.rm", TRUE),
-  aspect = getOption("metaplot_aspect", 1),
-  auto.key = getOption("metaplot_auto.key", NULL),
-  keycols = getOption("metaplot_keycols", NULL),
-  as.table = getOption("metaplot_scatter_as.table", TRUE),
+  aspect = getOption("metaplot_aspect", 1), key = getOption("metaplot_key",
+  "right"), as.table = getOption("metaplot_scatter_as.table", TRUE),
   prepanel = getOption("metaplot_scatter_prepanel", NULL),
   scales = getOption("metaplot_scatter_scales", NULL),
   panel = getOption("metaplot_scatter_panel", scatter_panel),
@@ -80,9 +78,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{auto.key}{passed to \code{\link[lattice]{xyplot}}}
-
-\item{keycols}{number of auto.key columns}
+\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
@@ -94,7 +90,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{colors}{replacements for default colors in group order}
 
-\item{symbols}{replacements for default symbols in group order}
+\item{symbols}{replacements for default symbols in group order (for ggplots use filled symbols 21 - 25)}
 
 \item{points}{whether to plot points for each group: logical, or alpha values between 0 and 1}
 
@@ -128,7 +124,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{conf.alpha}{alpha transparency for confidence region}
 
-\item{loc}{where to print statistics on a panel; suppressed for grouped plots}
+\item{loc}{where to print statistics on a panel; suppressed for grouped plots an facetted ggplots}
 
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
 

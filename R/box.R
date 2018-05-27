@@ -184,7 +184,7 @@ boxplot_data_frame <- function(
         axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
       }
     }
-    plot <- ggplot(data = x, aes_string(cat, con))
+    plot <- ggplot(data = y, aes_string(cat, con))
     plot <- plot  +
       geom_boxplot() +
       xlab(catlab) +

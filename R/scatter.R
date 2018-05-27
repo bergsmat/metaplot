@@ -325,7 +325,7 @@ scatter_data_frame <- function(
     isorange <- c(lo, hi)
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
-    msg <- if(is.null(groups) & is.null(facets)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
+    msg <- if(length(groups) == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
     plot <- ggplot(data = y, mapping = aes_string(x = xvar,y = yvar, color = groups, fill = groups) ) +
       geom_point(mapping = aes(alpha = metaplot_points_alpha)) +
       geom_line(mapping = aes(alpha = metaplot_lines_alpha)) +
@@ -335,41 +335,75 @@ scatter_data_frame <- function(
       xlab(xlab) +
       ylab(ylab) +
       ggtitle(main, subtitle = sub)
-    if(ysmooth) plot <- plot + geom_smooth(
+    if(ysmooth & global) plot <- plot + geom_smooth(
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
       se = FALSE,
-      color = if(global) global.col else NULL,
-      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      color = global.col,
+      mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
     )
-    if(xsmooth) plot <- plot + geom_smooth(
+    if(ysmooth & !global) plot <- plot + geom_smooth(
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
       se = FALSE,
-      color = if(global) global.col else NULL,
-      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      mapping = aes_string(x = xvar,y = yvar, color = groups),
+      show.legend = FALSE
+    )
+    if(xsmooth & global) plot <- plot + geom_smooth(
+      alpha = smooth.alpha,
+      linetype = smooth.lty,
+      method = 'loess',
+      se = FALSE,
+      color = global.col,
+      mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
       formula = x ~ y
     )
-    if(conf) plot <- plot + geom_smooth(
+    if(xsmooth & !global) plot <- plot + geom_smooth(
+      alpha = smooth.alpha,
+      linetype = smooth.lty,
+      method = 'loess',
+      se = FALSE,
+      mapping = aes_string(x = xvar,y = yvar, color = groups),
+      show.legend = FALSE,
+      formula = x ~ y
+    )
+    if(conf & global) plot <- plot + geom_smooth(
       alpha = conf.alpha,
-      linetype = 'none',
+      linetype = 'blank',
       method = 'lm',
       se = TRUE,
-      color = if(global) global.col else NULL,
-      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      color = global.col,
+      mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
-      level = conf
+      level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
-    if(fit) plot <- plot + geom_smooth(
+    if(conf & !global) plot <- plot + geom_smooth(
+      alpha = conf.alpha,
+      linetype = 'blank',
+      method = 'lm',
+      se = TRUE,
+      mapping = if(global) aes_string(x = xvar,y = yvar, color = groups),
+      show.legend = FALSE,
+      level = if(is.logical(conf))0.95 else as.numeric(conf)
+    )
+    if(fit & global) plot <- plot + geom_smooth(
       alpha = fit.alpha,
       linetype = fit.lty,
       method = 'lm',
-      color = if(global) global.col else NULL,
-      mapping = if(global) aes_string(x = xvar,y = yvar) else NULL,
+      color = global.col,
+      mapping = aes_string(x = xvar,y = yvar),
+      se = FALSE,
+      show.legend = FALSE
+    )
+    if(fit & !global) plot <- plot + geom_smooth(
+      alpha = fit.alpha,
+      linetype = fit.lty,
+      method = 'lm',
+      mapping = if(global) aes_string(x = xvar,y = yvar, color = groups),
       se = FALSE,
       show.legend = FALSE
     )
@@ -394,6 +428,7 @@ scatter_data_frame <- function(
     }
     plot <- plot +
       theme(aspect.ratio = aspect, legend.position = key)
+    if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
 
     if(xlog) plot <- plot + scale_x_continuous(
       trans = log_trans(),
@@ -411,6 +446,10 @@ scatter_data_frame <- function(
       y = ypos,
       label = msg
     )
+
+    plot <- plot +
+      scale_color_manual(values = colors) +
+      scale_fill_manual(values = colors)
 
     if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
     if(length(facets) >  1) plot <- plot +

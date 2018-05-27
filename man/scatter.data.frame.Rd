@@ -25,6 +25,7 @@ attr(Theoph$conc,'guide') <- 'mg/L'
 attr(Theoph$Time,'label') <- 'time'
 attr(Theoph$Time,'guide') <- 'h'
 attr(Theoph$Subject,'guide') <- '////'
+# options(metaplot_gg = T)
 scatter(Theoph,conc, Time)
 scatter(Theoph, conc, Time, Subject) # Subject as groups
 scatter(Theoph, conc, Time, , Subject) # Subject as facet
