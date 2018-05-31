@@ -7,7 +7,7 @@
 multiplot(..., nrow = NULL, ncol = NULL)
 }
 \arguments{
-\item{...}{trellis objects}
+\item{...}{trellis or ggplot objects}
 
 \item{nrow}{number of rows of plots}
 

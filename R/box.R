@@ -1,6 +1,7 @@
 #' Boxplots
 #'
 #' @name boxplot
+#' @keywords internal
 NULL
 
 #' Boxplot Function for Data Frame

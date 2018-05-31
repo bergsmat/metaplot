@@ -3,7 +3,7 @@
 #' Arranges mutiple trellis plots or ggplots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
 #'
 #' @export
-#' @param ... trellis objects
+#' @param ... trellis or ggplot objects
 #' @param nrow number of rows of plots
 #' @param ncol number of columns of plots
 #' @importFrom gridExtra grid.arrange

@@ -45,7 +45,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
+\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} (legend.postion)}
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 

@@ -6,3 +6,4 @@
 \description{
 Boxplots
 }
+\keyword{internal}

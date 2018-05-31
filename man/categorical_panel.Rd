@@ -35,7 +35,7 @@ categorical_panel(x, y, groups, bivariate = TRUE,
 
 \item{subscripts}{subscripts of the original data for this panel}
 
-\item{...}{passed to \code{link[lattice]{panel.superpose}}}
+\item{...}{passed to \code{\link[lattice]{panel.superpose}}}
 }
 \description{
 Default panel function for categorical_data_frame. Implements a simple mosaic plot.

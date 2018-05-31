@@ -5,7 +5,7 @@
 \title{Capture Scalar Column Metadata as Column Attributes}
 \usage{
 \method{pack}{data.frame}(x, meta = getOption("meta", "meta"), as.is = TRUE,
-  attributes = TRUE, ...)
+  attributes = TRUE, na.rm = TRUE, ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -15,6 +15,8 @@
 \item{as.is}{passed to \code{\link[utils]{type.convert}}}
 
 \item{attributes}{preserve non-standard attributes (ignores names, row.names, class)}
+
+\item{na.rm}{if TRUE, NA values (presumably structural) will not be assigned as column attributes.}
 
 \item{...}{ignored arguments}
 }

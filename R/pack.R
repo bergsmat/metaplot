@@ -18,6 +18,7 @@ pack <- function(x,...)UseMethod('pack')
 #' @param meta column in x giving names of attributes
 #' @param as.is passed to \code{\link[utils]{type.convert}}
 #' @param attributes preserve non-standard attributes (ignores names, row.names, class)
+#' @param na.rm if TRUE, NA values (presumably structural) will not be assigned as column attributes.
 #' @param ... ignored arguments
 #' @export
 #' @importFrom utils type.convert
@@ -43,7 +44,7 @@ pack <- function(x,...)UseMethod('pack')
 #' bar <- unpack(foo)
 #' pack(bar)
 #' attributes(pack(bar)$Subject)
-pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, attributes = TRUE, ...){
+pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, attributes = TRUE, na.rm = TRUE, ...){
   stopifnot(meta %in% names(x))
   a <- attributes(x)
   a$row.names <- NULL
@@ -63,7 +64,7 @@ pack.data.frame <- function(x, meta = getOption('meta','meta'), as.is = TRUE, at
   for(attr in y$meta){
     for(col in names(x)){
       val <- y[y$meta == attr, col]
-      if(!is.na(val)) attr(x[[col]], attr) <- val
+      if(!(is.na(val) && na.rm)) attr(x[[col]], attr) <- val
     }
   }
   if(attributes)for(at in names(a))attr(x,at) <- a[[at]]

@@ -122,7 +122,7 @@ categorical.data.frame <- function(
 #' @param xlab x axis label; can be function(x = x, var = xvar, ..)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} (legend.postion)
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
@@ -409,7 +409,7 @@ categorical_data_frame <- function(
 #' @param pch symbol character for legend
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param subscripts subscripts of the original data for this panel
-#' @param ... passed to \code{link[lattice]{panel.superpose}}
+#' @param ... passed to \code{\link[lattice]{panel.superpose}}
 #' @family panel functions
 #' @family categorical
 #' @import grid
