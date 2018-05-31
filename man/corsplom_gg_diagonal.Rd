@@ -11,7 +11,8 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
   pin.alpha = getOption("metaplot_pin.alpha", 1),
   dens.col = getOption("metaplot_dens.col", "grey"),
   dens.scale = getOption("metaplot_dens.scale", 0.2),
-  dens.alpha = getOption("metaplot_dens.alpha", 0.5), ...)
+  dens.alpha = getOption("metaplot_dens.alpha", 0.5),
+  varname.cex = getOption("metaplot_corsplom_varname_cex", 1), ...)
 }
 \arguments{
 \item{data}{data}
@@ -35,6 +36,8 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 \item{dens.scale}{inflation factor for height of density smooth}
 
 \item{dens.alpha}{alpha transparency for density region}
+
+\item{varname.cex}{text size multiplier}
 
 \item{...}{passed arguments}
 }

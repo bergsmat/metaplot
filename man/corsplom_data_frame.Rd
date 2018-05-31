@@ -42,7 +42,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{xlab}{can be function(x = x, var = xvar, ...)}
 
-\item{varname.cex}{passed to splom}
+\item{varname.cex}{text size multiplier}
 
 \item{main}{character, or a function of x, xvar}
 

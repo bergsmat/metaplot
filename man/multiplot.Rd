@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiplot.R
 \name{multiplot}
 \alias{multiplot}
-\title{Arrange Multiple Trellis Plots in a Grid}
+\title{Arrange Multiple Trellis or GG Plots in a Grid}
 \usage{
 multiplot(..., nrow = NULL, ncol = NULL)
 }
@@ -14,7 +14,7 @@ multiplot(..., nrow = NULL, ncol = NULL)
 \item{ncol}{number of columns of plots}
 }
 \description{
-Arranges mutiple trellis plots or ggpots (all of the same type) in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
+Arranges mutiple trellis plots or ggplots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
 }
 \examples{
 library(lattice)

@@ -4,13 +4,28 @@
 \alias{corsplom_gg_correlation}
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
-corsplom_gg_correlation(...)
+corsplom_gg_correlation(data, mapping, col = "blue", loess.col, loess.lty,
+  loess.alpha, ...)
 }
 \arguments{
-\item{...}{passed arguments}
+\item{data}{data}
+
+\item{mapping}{mapping}
+
+\item{col}{text color}
+
+\item{loess.col}{ignored}
+
+\item{loess.lty}{ignored}
+
+\item{loess.alpha}{ignored}
+
+\item{...}{ignored}
 }
 \description{
-Default lower panel function for corsplom_data_frame with \code{gg = TRUE}. Plots Pearson correlation coefficient.
+Default lower panel function for corsplom_data_frame() with \code{gg = TRUE}. Plots Pearson correlation coefficient.
+corsplom_data_frame() typically supplies loess aesthetics in case smooth is desired; loess arguments are defined to
+suppress corresponding warnings.
 }
 \seealso{
 Other panel functions: \code{\link{boxplot_panel}},
