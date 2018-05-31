@@ -2,7 +2,9 @@ globalVariables(c(
 'group_by','g','summarize', 'n','tf',
 'ff','mutate','sf','n','frac','prev','ungroup',
 'at',  'arrange','at','fd','ff','fh','fl','lag','left_join','n',
-'select','sf','sh','sl','summarize','tf','th','tl','ungroup','width'
+'select','sf','sh','sl','summarize','tf','th','tl','ungroup','width',
+'left','right','top','bottom',
+'tot', 'y', 'f1', 'f2'
 ))
 
 #' Categorical Plot
@@ -120,7 +122,7 @@ categorical.data.frame <- function(
 #' @param xlab x axis label; can be function(x = x, var = xvar, ..)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
@@ -506,14 +508,13 @@ panel.axis(
 #' @param msg ignored
 #' @param .src data source for which subscripts give x, y, msg,  and tile limits
 #' @param alpha ignored
-#' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param cex expansion for msg text; passed to msg
 #' @param ... passed arguments
 #' @family panel functions
 #' @family categorical
 #'
 #'
-panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha, col, col.line, loc, msg, .src, alpha,cex, ...){ # tex
+panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha, col, col.line, loc, msg, .src, alpha,cex,...){ #  tex
   line.alpha <- rep(line.alpha, length.out = group.number) # maybe not distributed by superpose
   line.alpha <- rev(line.alpha)[[1]]
   for(i in subscripts)one_rect(
@@ -529,7 +530,7 @@ panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, 
     loc = loc,
     msg = .src$msg[i],
     cex = cex,
-    #tex = tex,
+   # tex = tex,
     ...
   )
 }
@@ -639,7 +640,7 @@ tilestats <- function(x, y, ...)as.character(length(x))
 #' @importFrom dplyr bind_cols
 #' @seealso \code{\link{categorical_panel}}
 #'
-tiles <- function(x, ...,  tex = 0.9, msg = 'tilestats'){
+tiles <- function(x, ...,  tex = 0.9, msg = 'tilestats'){ # y f1, f2, tot
   stopifnot(all(c('x','y','g') %in% names(x)))
   if(!'f1' %in% names(x)) x$f1 <- 1
   if(!'f2' %in% names(x)) x$f2 <- 1

@@ -1,5 +1,7 @@
 globalVariables('metaplot_groups')
 globalVariables('metaplot_values')
+globalVariables('metaplot_points_alpha')
+globalVariables('metaplot_lines_alpha')
 
 #' Scatterplot
 #'
@@ -38,7 +40,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param iso plot line of unity (auto-selected if NA)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)

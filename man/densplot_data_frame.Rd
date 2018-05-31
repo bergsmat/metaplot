@@ -47,7 +47,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
+\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
 
 \item{main}{character, or a function of x, xvar, groups, facets, and log}
 

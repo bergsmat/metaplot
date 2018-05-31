@@ -26,7 +26,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{auto.key}} or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}

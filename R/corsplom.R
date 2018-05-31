@@ -1,3 +1,7 @@
+globalVariables(c(
+  'z1'
+))
+
 #' Correlated Splom
 #'
 #' Scatterplot matrix with correlations.
@@ -9,6 +13,7 @@
 #' @importFrom GGally ggpairs
 #' @importFrom GGally wrap
 #' @importFrom GGally ggally_cor
+#' @importFrom utils head
 corsplom <- function(x,...)UseMethod('corsplom')
 
 #' Correlated Scatterplot Matrix Function for Data Frame
