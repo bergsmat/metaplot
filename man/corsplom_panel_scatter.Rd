@@ -30,6 +30,9 @@ Default upper panel function for corsplom_data_frame. Plots data with loess smoo
 \seealso{
 Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{categorical_panel}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_diagonal}},
+  \code{\link{corsplom_gg_scatter}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},

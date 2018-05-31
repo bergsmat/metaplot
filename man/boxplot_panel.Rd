@@ -27,6 +27,9 @@ Panel function for metaplot boxplot. Calls, \code{\link[lattice]{panel.bwplot}} 
 }
 \seealso{
 Other panel functions: \code{\link{categorical_panel}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_diagonal}},
+  \code{\link{corsplom_gg_scatter}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},

@@ -47,7 +47,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   if(is.null(nrow)) nrow <- ceiling(len/ncol)
   # now nrow is defined for sure
 
-  if(gg)do.call(grid.arrange, c(x,list(ncol = ncol)))
+  if(gg)return(do.call(grid.arrange, c(x,list(ncol = ncol))))
 
   y <- expand.grid(
     run = seq_len(ncol),

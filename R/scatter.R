@@ -341,6 +341,7 @@ scatter_data_frame <- function(
       method = 'loess',
       se = FALSE,
       color = global.col,
+      inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
     )
@@ -349,7 +350,7 @@ scatter_data_frame <- function(
       linetype = smooth.lty,
       method = 'loess',
       se = FALSE,
-      mapping = aes_string(x = xvar,y = yvar, color = groups),
+      # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE
     )
     if(xsmooth & global) plot <- plot + geom_smooth(
@@ -358,6 +359,7 @@ scatter_data_frame <- function(
       method = 'loess',
       se = FALSE,
       color = global.col,
+      inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
       formula = x ~ y
@@ -367,7 +369,7 @@ scatter_data_frame <- function(
       linetype = smooth.lty,
       method = 'loess',
       se = FALSE,
-      mapping = aes_string(x = xvar,y = yvar, color = groups),
+      # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE,
       formula = x ~ y
     )
@@ -377,6 +379,7 @@ scatter_data_frame <- function(
       method = 'lm',
       se = TRUE,
       color = global.col,
+      inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
@@ -386,7 +389,7 @@ scatter_data_frame <- function(
       linetype = 'blank',
       method = 'lm',
       se = TRUE,
-      mapping = if(global) aes_string(x = xvar,y = yvar, color = groups),
+      # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
@@ -395,6 +398,7 @@ scatter_data_frame <- function(
       linetype = fit.lty,
       method = 'lm',
       color = global.col,
+      inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       se = FALSE,
       show.legend = FALSE
@@ -403,7 +407,7 @@ scatter_data_frame <- function(
       alpha = fit.alpha,
       linetype = fit.lty,
       method = 'lm',
-      mapping = if(global) aes_string(x = xvar,y = yvar, color = groups),
+      # mapping = aes_string(x = xvar,y = yvar, color = groups),
       se = FALSE,
       show.legend = FALSE
     )

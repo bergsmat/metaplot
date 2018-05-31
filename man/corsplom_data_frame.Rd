@@ -5,10 +5,12 @@
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
 corsplom_data_frame(x, xvar = names(x),
-  upper.panel = getOption("metaplot_upper.panel", corsplom_panel_scatter),
-  lower.panel = getOption("metaplot_lower.panel", corsplom_panel_correlation),
-  diag.panel = getOption("metaplot_diag.panel", corsplom_panel_diagonal),
-  pscales = getOption("metaplot_pscales", 0),
+  upper.panel = getOption("metaplot_upper.panel", if (gg) corsplom_gg_scatter
+  else corsplom_panel_scatter),
+  lower.panel = getOption("metaplot_lower.panel", if (gg)
+  corsplom_gg_correlation else corsplom_panel_correlation),
+  diag.panel = getOption("metaplot_diag.panel", if (gg) corsplom_gg_diagonal
+  else corsplom_panel_diagonal), pscales = getOption("metaplot_pscales", 0),
   xlab = getOption("metaplot_corsplom_xlab", NULL),
   varname.cex = getOption("metaplot_varname.cex", 1),
   main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
@@ -30,15 +32,15 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{xvar}{variables to plot}
 
-\item{upper.panel}{passed to splom}
+\item{upper.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'upper')}
 
-\item{lower.panel}{passed to splom}
+\item{lower.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'lower')}
 
-\item{diag.panel}{passed to splom}
+\item{diag.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'diagonal')}
 
-\item{pscales}{passed to splom}
+\item{pscales}{passed to \code{\link[lattice]{splom}}}
 
-\item{xlab}{passed to splom, can be function(x = x, var = xvar, ...)}
+\item{xlab}{can be function(x = x, var = xvar, ...)}
 
 \item{varname.cex}{passed to splom}
 
@@ -72,10 +74,25 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
-\item{...}{extra arguments passed to \code{\link[lattice]{splom}}}
+\item{...}{extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)}
 }
 \description{
 Creates a scatterplot matrix with correlations in lower panel, by default.
+}
+\examples{
+
+library(magrittr)
+library(dplyr)
+library(csv)
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+x \%<>\% pack
+# options(metaplot_gg = TRUE)
+x \%>\% metaplot(lKe, lKa, lCl)
+x \%>\% metaplot(
+  lKe, lKa, lCl,
+  col = 'black',loess.col = 'red', pin.col = 'red',
+  dens.col='blue',dens.alpha = 0.1
+)
 }
 \seealso{
 Other multivariate plots: \code{\link{corsplom.data.frame}},

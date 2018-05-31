@@ -24,6 +24,9 @@ Calculates pin placement in the density region, inside margin of diagonal panels
 \seealso{
 Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{categorical_panel}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_diagonal}},
+  \code{\link{corsplom_gg_scatter}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},

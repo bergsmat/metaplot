@@ -112,7 +112,7 @@ globalVariables('axisTicks')
 #' x %>% metaplot(conc, pred, ipred, time)
 #' x %>% metaplot(conc, pred, ipred, time, subject)
 #' x %>% metaplot(conc, pred, ipred, time, subject,
-#' colors = c('black','blue','magenta'),
+#' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
 #' lines = c(F,T,T))
 #' x %>% metaplot(conc, ipred, time, site, arm)

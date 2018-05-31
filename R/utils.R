@@ -85,7 +85,7 @@ corsplom_panel_correlation = function(x, y, ...) {
   y1 <- range(y,na.rm = T)
   x0 <- min(x1)+(max(x1)-min(x1))/2
   y0 <- min(y1)+(max(y1)-min(y1))/2
-  panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y),2) ))
+  panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y),3) ))
 }
 
 #' Diagonal Panel Function for Metaplot Corsplom
@@ -143,7 +143,7 @@ corsplom_panel_diagonal <- function(
     )
     lpolygon(
       y = x1,
-      x = y1,
+      x = z1,
       col = dens.col,
       border = NA,
       alpha = dens.alpha
@@ -162,8 +162,8 @@ corsplom_panel_diagonal <- function(
       lsegments(y0 = y0, y1 = y1, x0 = x0, x1 = x1, col = pin.col, alpha = pin.alpha)
       y0 = ref
       y1 = ref
-      x0 = rep(lo, length(ref))
-      x1 = rep(lo + len * dens.scale, length(ref))
+      x0 = rep(hi, length(ref))
+      x1 = rep(hi - len * dens.scale, length(ref))
       lsegments(x0 = x0, x1 = x1, y0 = y0,y1 = y1, col = pin.col ,alpha = pin.alpha)
     }
   }

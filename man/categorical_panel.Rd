@@ -46,6 +46,9 @@ Default panel function for categorical_data_frame. Implements a simple mosaic pl
 \code{\link{categorical.data.frame}}
 
 Other panel functions: \code{\link{boxplot_panel}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_diagonal}},
+  \code{\link{corsplom_gg_scatter}},
   \code{\link{corsplom_panel_correlation}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},
