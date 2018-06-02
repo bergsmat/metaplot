@@ -18,7 +18,8 @@ Generic axis label, with method for 'data.frame'.
 Other generic functions: \code{\link{categorical}},
   \code{\link{corsplom}}, \code{\link{densplot}},
   \code{\link{metaplot}}, \code{\link{pack}},
-  \code{\link{scatter}}, \code{\link{unpack}}
+  \code{\link{scatter}}, \code{\link{test_metaplot}},
+  \code{\link{unpack}}
 
 Other axislabel: \code{\link{axislabel.data.frame}}
 }

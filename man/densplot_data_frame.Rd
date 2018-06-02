@@ -76,5 +76,6 @@ Other densplot: \code{\link{densplot.data.frame}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
+  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{test_metaplot}}
 }

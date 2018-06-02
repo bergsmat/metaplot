@@ -7,6 +7,7 @@
 #' @param nrow number of rows of plots
 #' @param ncol number of columns of plots
 #' @importFrom gridExtra grid.arrange
+#' @seealso \code{\link[gridExtra]{grid.arrange}}
 #' @examples
 #' library(lattice)
 #' a <- xyplot(
@@ -31,7 +32,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   len <- length(x)
   nms <- seq_along(x)
   class <- unique(sapply(x,class))
-  if(!is.null(class))stopifnot(sapply(x,inherits,'trellis') | sapply(x,inherits,'ggplot'))
+  # if(!is.null(class))stopifnot(sapply(x,inherits,'trellis') | sapply(x,inherits,'ggplot'))
   #gg <- inherits(x[[1]],'ggplot')
   root <- sqrt(len)
   if(!is.null(nrow)){

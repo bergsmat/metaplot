@@ -122,5 +122,6 @@ Other categorical: \code{\link{categorical.data.frame}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
+  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{test_metaplot}}
 }

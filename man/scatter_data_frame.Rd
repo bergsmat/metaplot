@@ -166,7 +166,8 @@ Other bivariate plots: \code{\link{iso_prepanel}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}}, \code{\link{metaplot}}
+  \code{\link{densplot_data_frame}},
+  \code{\link{metaplot}}, \code{\link{test_metaplot}}
 
 Other scatter: \code{\link{scatter.data.frame}},
   \code{\link{scatter_panel}}, \code{\link{scatter}}

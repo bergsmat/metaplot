@@ -21,5 +21,6 @@ Other pack: \code{\link{pack.data.frame}},
 Other generic functions: \code{\link{axislabel}},
   \code{\link{categorical}}, \code{\link{corsplom}},
   \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{pack}}, \code{\link{scatter}}
+  \code{\link{pack}}, \code{\link{scatter}},
+  \code{\link{test_metaplot}}
 }

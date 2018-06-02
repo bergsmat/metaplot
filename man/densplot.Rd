@@ -18,7 +18,8 @@ Creates a density plot.
 Other generic functions: \code{\link{axislabel}},
   \code{\link{categorical}}, \code{\link{corsplom}},
   \code{\link{metaplot}}, \code{\link{pack}},
-  \code{\link{scatter}}, \code{\link{unpack}}
+  \code{\link{scatter}}, \code{\link{test_metaplot}},
+  \code{\link{unpack}}
 
 Other univariate plots: \code{\link{dens_panel}},
   \code{\link{densplot.data.frame}},

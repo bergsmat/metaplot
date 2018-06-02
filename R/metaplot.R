@@ -109,13 +109,13 @@ globalVariables('axisTicks')
 #'   col = 'black',loess.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1
 #' )
-#' x %>% metaplot(conc, pred, ipred, time)
-#' x %>% metaplot(conc, pred, ipred, time, subject)
+#' x %>% metaplot(conc, pred, ipred, time, key = 'top')
+#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top')
 #' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
-#' lines = c(F,T,T))
-#' x %>% metaplot(conc, ipred, time, site, arm)
+#' lines = c(F,T,T), key = 'top')
+#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top')
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
@@ -338,4 +338,162 @@ metaplot.data.frame <- function(
   return(do.call(match.fun(bivariate),args))
 }
 
+#' Test Metaplot Variants
+#'
+#' Tests metaplot variants by example.  Returns null. Use \code{example(test_metaplot)}.
+#'
+#' @export
+#' @family generic functions
+#' @family metaplot
+#' @return NULL
+#' @examples
+#'
+#' library(magrittr)
+#' library(dplyr)
+#' library(csv)
+
+#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+#' x %<>% pack
+
+#' multiplot(
+#' x %>% metaplot(sres, gg = F),
+#' x %>% metaplot(sres, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(site, gg = F),
+#' x %>% metaplot(site, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, arm, gg = F),
+#' x %>% metaplot(conc, arm, gg = T)
+#' )
+#' multiplot(
+#' x %>% densplot(conc, arm, gg = F),
+#' x %>% densplot(conc, arm, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(arm, conc, gg = F),
+#' x %>% metaplot(arm, conc, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, arm, site, gg = F),
+#' x %>% metaplot(conc, arm, site, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, site, arm, gg = F),
+#' x %>% metaplot(conc, site, arm, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, time, gg = F),
+#' x %>% metaplot(conc, time, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(arm, site, gg = F),
+#' x %>% metaplot(arm, site, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(arm, site, cohort, gg = F),
+#' x %>% metaplot(arm, site, cohort, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(arm, site, , cohort, gg = F),
+#' x %>% metaplot(arm, site, , cohort, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, time, subject, gg = F),
+#' x %>% metaplot(conc, time, subject, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, time, , subject, gg = F),
+#' x %>% metaplot(conc, time, , subject, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, time, subject, site, gg = F),
+#' x %>% metaplot(conc, time, subject, site, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, time, subject, site, arm, gg = F),
+#' x %>% metaplot(conc, time, subject, site, arm, gg = T)
+#' )
+#' # Currently can't multiplot a ggmatrix
+#' x %>% metaplot(lKe, lKa, lCl, gg = F)
+#' x %>% metaplot(lKe, lKa, lCl, gg = T)
+
+#' x %>% metaplot(
+#'   lKe, lKa, lCl,
+#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   dens.col = 'blue', dens.alpha = 0.1, gg = F
+#' )
+#' x %>% metaplot(
+#'   lKe, lKa, lCl,
+#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   dens.col='blue',dens.alpha = 0.1, gg = T
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, pred, ipred, time, key = 'top', gg = F),
+#' x %>% metaplot(conc, pred, ipred, time, key = 'top', gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top', gg = F),
+#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top', gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, pred, ipred, time, subject,
+#' colors = c('black','blue','orange'),
+#' points = c(0.9,0, 0.4),
+#' lines = c(F,T,T),
+#' key = 'top', gg = F),
+#' x %>% metaplot(conc, pred, ipred, time, subject,
+#' colors = c('black','blue','orange'),
+#' points = c(0.9,0, 0.4),
+#' lines = c(F,T,T),
+#' key = 'top', gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top', gg = F),
+#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top', gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = F),
+#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = F),
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = F),
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = T)
+#' )
+#' multiplot(
+#' x %>% metaplot(subject,conc, gg = F),
+#' x %>% metaplot(subject,conc, gg = T)
+#' )
+#'
+#' # manage metadata
+#' attr(x$arm, 'guide') # //1/Arm A//2/Arm B//
+#' multiplot(
+#' x %>% metaplot(conc, arm, gg = F),
+#' x %>% metaplot(conc, arm, gg = T)
+#' ) # default
+#'
+#' multiplot(
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//2/Arm B//1/Arm A//')) %>%
+#' metaplot(conc, arm, gg = F),
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//2/Arm B//1/Arm A//')) %>%
+#' metaplot(conc, arm, gg = T) # different presentation order
+#' )
+#'
+#' multiplot(
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//1/Both Arms//2/Both Arms//')) %>%
+#' metaplot(conc, arm, gg = F),
+#' x %>% mutate(arm = arm %>%
+#' structure(guide = '//1/Both Arms//2/Both Arms//')) %>%
+#' metaplot(conc, arm, gg = T) # collapse cases
+#' )
+#'
+test_metaplot <- function()NULL
 
