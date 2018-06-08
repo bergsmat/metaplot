@@ -24,7 +24,8 @@ Other generic functions: \code{\link{axislabel}},
 Other univariate plots: \code{\link{dens_panel}},
   \code{\link{densplot.data.frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot.data.frame}}
+  \code{\link{metaplot.data.frame}},
+  \code{\link{panel.meta_densityplot}}
 
 Other densplot: \code{\link{densplot.data.frame}},
   \code{\link{densplot_data_frame}}

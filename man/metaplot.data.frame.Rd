@@ -150,7 +150,9 @@ Other methods: \code{\link{axislabel.data.frame}},
 
 Other univariate plots: \code{\link{dens_panel}},
   \code{\link{densplot.data.frame}},
-  \code{\link{densplot_data_frame}}, \code{\link{densplot}}
+  \code{\link{densplot_data_frame}},
+  \code{\link{densplot}},
+  \code{\link{panel.meta_densityplot}}
 
 Other bivariate plots: \code{\link{iso_prepanel}},
   \code{\link{scatter.data.frame}},

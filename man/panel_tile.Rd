@@ -4,8 +4,8 @@
 \alias{panel_tile}
 \title{Draw a Tile}
 \usage{
-panel_tile(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha,
-  col, col.line, loc, msg, .src, alpha, cex, ...)
+panel_tile(x, y, subscripts, group.number, group.value, col, alpha, border, loc,
+  msg, .src, cex, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -18,21 +18,17 @@ panel_tile(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha,
 
 \item{group.value}{group value}
 
-\item{fill.alpha}{alpha transparency for fill}
-
-\item{line.alpha}{alpha transparency for line}
-
 \item{col}{fill color}
 
-\item{col.line}{border color}
+\item{alpha}{alpha transparency for fill}
+
+\item{border}{border color}
 
 \item{loc}{location for output of msg}
 
 \item{msg}{ignored}
 
 \item{.src}{data source for which subscripts give x, y, msg,  and tile limits}
-
-\item{alpha}{ignored}
 
 \item{cex}{expansion for msg text; passed to msg}
 
@@ -52,7 +48,8 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},
   \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_ref}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
+  \code{\link{panel.meta_densityplot}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 

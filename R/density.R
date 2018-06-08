@@ -26,9 +26,17 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param aspect passed to \code{\link[lattice]{densityplot}}
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param colors replacements for default colors in group order
+#' @param symbols replacements for default symbols in group order
+#' @param points logical or alpha, same length as groups
+#' @param lines logical or alpha, same length as groups
+#' @param fill logical or alpha, same length as groups
+#' @param space location of key (right, left, top, bottom)
+#' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
+#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link[lattice]{densityplot}}
 #' @family univariate plots
@@ -40,31 +48,47 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @examples
 #' densplot_data_frame(Theoph, 'conc', grid = TRUE)
 #' densplot_data_frame(Theoph, 'conc', 'Subject')
+#' densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal')
+#' densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
 #' densplot_data_frame(Theoph, 'conc', , 'Subject')
 densplot_data_frame<- function(
   x,
   xvar,
   groups = NULL,
   facets = NULL,
-  xlab = getOption('metaplot_lab',axislabel),
-  ref = getOption('metaplot_ref',metaplot_ref),
-  ref.col = getOption('metaplot_ref.col','grey'),
-  ref.lty = getOption('metaplot_ref.lty','solid'),
-  ref.alpha = getOption('metaplot_ref.alpha',1),
-  log = getOption('metaplot_log',FALSE),
-  crit = getOption('metaplot_crit',1.3),
-  aspect = getOption('metaplot_aspect',1),
-  scales = getOption('metaplot_dens.scales',NULL),
-  panel = getOption('metaplot_dens.panel',dens_panel),
-  key = getOption('metaplot_key','right'),
-  main = getOption('metaplot_main',NULL),
-  sub = getOption('metaplot_sub',NULL),
-  gg = getOption('metaplot_gg',FALSE),
+  xlab = getOption('metaplot_dens_lab',axislabel),
+  ref = getOption('metaplot_dens_ref',metaplot_ref),
+  ref.col = getOption('metaplot_dens_ref_col','grey'),
+  ref.lty = getOption('metaplot__dens_ref_lty','solid'),
+  ref.alpha = getOption('metaplot_dens_ref_alpha',1),
+  log = getOption('metaplot_dens_log',FALSE),
+  crit = getOption('metaplot__dens_crit',1.3),
+  aspect = getOption('metaplot_dens_aspect',1),
+  scales = getOption('metaplot_dens_scales',NULL),
+  panel = getOption('metaplot_dens_panel',dens_panel),
+  colors = getOption('metaplot_dens_colors',NULL),
+  symbols = getOption('metaplot_dens_symbols',NULL),
+  points = getOption('metaplot_dens_points',TRUE),
+  lines = getOption('metaplot_dens_lines',TRUE),
+  fill = getOption('metaplot_dens_fill',FALSE),
+  space = getOption('metaplot_dens_space','right'),
+  key = getOption('metaplot_dens_key','metaplot_key'),
+  main = getOption('metaplot_dens_main',NULL),
+  sub = getOption('metaplot_dens_sub',NULL),
+  par.settings = getOption('metaplot_dens_par_settings',NULL),
+  padding = getOption('metaplot_dens_padding', 1),
+  gg = getOption('metaplot_dens_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(xvar) == 1)
   stopifnot(is.character(xvar))
+  stopifnot(is.numeric(padding))
+  padding <- rep(padding, length.out = 4)
+  par.settings = parintegrate(par.settings, padding)
+  if(gg)padding <- unit(padding * 5.5, 'pt')
+
+
   if(is.null(log))log <- FALSE # same as default
   if(is.na(log)){
     if(any(x[[xvar]] <= 0, na.rm = TRUE)){
@@ -90,10 +114,6 @@ densplot_data_frame<- function(
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
   if(is.function(xlab)) xlab <- xlab(x = x, var = xvar, log = log, ...)
 
-  #if(is.null(keycols))if(!is.null(groups))keycols <- min(3, length(unique(x[[groups]])))
-  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
-  #if(is.null(auto.key))if(!is.null(groups))if(length(unique(x[[groups]])) > 1) auto.key = list(columns = keycols,lines=TRUE)
-
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
@@ -103,22 +123,74 @@ densplot_data_frame<- function(
   }
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, groups = groups, facets = facets, log = log, ...)
-  if(!is.null(groups)) {
-    x[[groups]] <- as_factor(x[[groups]])
-    if(!gg) groups <- as.formula(paste('~',groups))
+  if(!is.null(groups)) x[[groups]] <- as_factor(x[[groups]])
+  # if(!gg) groups <- as.formula(paste('~',groups))
+  if(is.null(groups)){
+    x$metaplot_groups <- factor(0)
+    groups <- 'metaplot_groups'
   }
+  # groups is factor if imputed
+  # groups now assigned and is factor
+  nlev <- length(levels(x[[groups]]))
+  levs <- levels(x[[groups]])
+  if(is.null(colors)) colors <- trellis.par.get()$superpose.symbol$col
+  if(is.null(symbols)) symbols <- trellis.par.get()$superpose.symbol$pch
+  if(is.null(fill)) fill <- FALSE # same as default
+  if(is.null(lines)) lines <- TRUE # same as default
+  if(is.null(points)) points <- TRUE # same as default
+  fill <- as.numeric(fill)
+  lines <- as.numeric(lines)
+  points <- as.numeric(points)
+  colors <- rep(colors, length.out = nlev)
+  symbols <- rep(symbols, length.out = nlev)
+  fill <- rep(fill, length.out = nlev)
+  fill[fill == 0] <- 0.000000001 # key borders are not drawn if fill == 0
+  lines <- rep(lines, length.out = nlev)
+  points <- rep(points, length.out = nlev)
+  # par.settings is defined
+  poly <- list(
+    col = alpha(colors, fill),
+    alpha = 1,
+    border = alpha(colors,lines)
+  )
+  sym <- list(
+    col = alpha(colors, points),
+    alpha = 1,
+    pch = symbols,
+    fill = alpha(colors, points)
+  )
+  line <- list(
+    col = alpha(colors, lines),
+    alpha = 1
+  )
+  if(is.null(par.settings$superpose.polygon)) par.settings$superpose.polygon <- poly
+  if(is.null(par.settings$superpose.symbol)) par.settings$superpose.symbol <- sym
+  if(is.null(par.settings$superpose.line)) par.settings$superpose.line <- line
+
+  if(is.character(key)) key <- match.fun(key)
+  if(is.function(key)) key <- key(groups = groups, levels = levs, points = points, lines = lines, fill = fill, space = space, gg = gg, type = 'density', ...)
 
 if(gg){
-  # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
-  base_breaks <- function(n = 10){
-    function(x) {
-      axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
-    }
-  }
-  plot <- ggplot(data = x) +
-  geom_density(mapping = aes_string(x = xvar,color = groups)) +
-  xlab(xlab) +
-  ggtitle(main, subtitle = sub)
+  x$metaplot_points_alpha <- points[as.numeric(x[[groups]])]
+  # x$metaplot_lines_alpha <- lines[as.numeric(x[[groups]])]
+  # x$metaplot_fill_alpha <- fill[as.numeric(x[[groups]])]
+
+
+
+  plot <- ggplot(data = x, aes_string(x = xvar))
+  plot <- plot + geom_density(mapping = aes_string(color = groups, fill = groups))
+  # plot <- plot + geom_density(mapping = aes_string(fill = groups,  alpha = 'metaplot_fill_alpha'), color = 'transparent')
+  plot <- plot + geom_jitter( mapping = aes_string(y = 0, color = groups, shape = groups, alpha = 'metaplot_points_alpha'),height = 0.1)
+  plot <- plot + scale_shape_manual(values = symbols)
+  plot <- plot + scale_color_manual(values = alpha(colors, lines))
+  plot <- plot + scale_fill_manual(values = alpha(colors, fill))
+  plot <- plot + guides(alpha = FALSE)
+  # plot <- plot + guides(fill = FALSE)
+  plot <- plot + scale_alpha_identity()
+
+  plot <- plot + xlab(xlab)
+  plot <- plot +  ggtitle(main, subtitle = sub)
+
   if(length(ref)) plot <- plot +
   geom_vline(
     xintercept = ref,
@@ -126,8 +198,8 @@ if(gg){
     linetype = ref.lty,
     alpha = ref.alpha
   )
-  plot <- plot +
-  theme(aspect.ratio = aspect, legend.position = key)
+  plot <- plot + theme(aspect.ratio = aspect, plot.margin = padding)
+  plot <- plot + do.call(theme, key)
 
  if(log) plot <- plot + scale_x_continuous(
    trans = log_trans(),
@@ -150,7 +222,9 @@ if(gg){
 densityplot(
   formula,
   data = x,
-  groups = groups,
+  from = min(x[[xvar]], na.rm = TRUE),
+  to = max(x[[xvar]], na.rm = TRUE),
+  groups = if(is.null(groups)) NULL else as.formula(paste('~',groups)),
   xlab = xlab,
   ref = ref,
   ref.col = ref.col,
@@ -163,6 +237,7 @@ densityplot(
   auto.key = key,
   main = main,
   sub = sub,
+  par.settings = par.settings,
   ...
 )
 }
@@ -179,7 +254,7 @@ densityplot(
 #' @param ref.lty passed to \code{\link[lattice]{panel.abline}} as lty
 #' @param ref.alpha passed to \code{\link[lattice]{panel.abline}} as alpha
 dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.alpha, ...){
-  panel.densityplot(...)
+  panel.meta_densityplot(...)
   if(length(ref))panel.abline(v = ref, col=ref.col, lty = ref.lty, alpha = ref.alpha)
 }
 #' Densplot Method for Data Frame
@@ -196,6 +271,7 @@ dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.alpha, ...){
 #' @family methods
 #' @examples
 #' densplot(Theoph, conc, grid = TRUE )
+#' densplot(Theoph, conc, grid = TRUE, gg = TRUE )
 #' densplot(Theoph, conc, Subject )
 #' densplot(Theoph, conc, , Subject )
 #' attr(Theoph,'title') <- 'Theophylline'
@@ -226,3 +302,88 @@ densplot.data.frame<- function(
   do.call(fun, args)
 }
 
+#' Panel Function for Metaplot Density
+#'
+#' Variant of panel.densityplot that supports filled area and alpha points.
+#'
+#' @export
+#' @family panel functions
+#' @family univariate plots
+#' @keywords internal
+#' @param x see \code{link[lattice]{panel.densityplot}}
+#' @param darg see \code{link[lattice]{panel.densityplot}}
+#' @param plot.points see \code{link[lattice]{panel.densityplot}}
+#' @param ref see \code{link[lattice]{panel.densityplot}}
+#' @param groups see \code{link[lattice]{panel.densityplot}}
+#' @param weights see \code{link[lattice]{panel.densityplot}}
+#' @param jitter.amount see \code{link[lattice]{panel.densityplot}}
+#' @param type see \code{link[lattice]{panel.densityplot}}
+#' @param ... see \code{link[lattice]{panel.densityplot}}
+#' @param identifier see \code{link[lattice]{panel.densityplot}}
+
+
+panel.meta_densityplot <- function (
+  x, darg = list(n = 512), plot.points = "jitter", ref = FALSE,
+    groups = NULL, weights = NULL, jitter.amount = 0.01 * diff(current.panel.limits()$ylim),
+    type = "p", ..., identifier = "density", group.number
+)
+{
+    if (ref) {
+        reference.line <- trellis.par.get("reference.line")
+        panel.abline(h = 0, col = reference.line$col, lty = reference.line$lty,
+            lwd = reference.line$lwd, identifier = paste(identifier,
+                "abline"))
+    }
+    if (!is.null(groups)) {
+        panel.superpose(x, darg = darg, plot.points = plot.points,
+            ref = FALSE, groups = groups, weights = weights,
+            panel.groups = panel.meta_densityplot, jitter.amount = jitter.amount,
+            type = type, ...)
+    }
+    else {
+        switch(
+          as.character(plot.points),
+          `TRUE` = panel.xyplot(
+            x = x,
+            y = rep(0, length(x)),
+            type = type,
+            ...,
+            identifier = identifier
+          ),
+          rug = panel.rug(
+            x = x,
+            start = 0,
+            end = 0,
+            x.units = c("npc","native"),
+            type = type,
+            ...,
+            identifier = paste(identifier,"rug")
+          ),
+          jitter = panel.xyplot(
+            x = x,
+            y = jitter(rep(0,length(x)), amount = jitter.amount),
+            type = type,
+            ...,
+            identifier = identifier
+          )
+        )
+        density.fun <- function(x, weights, subscripts = TRUE, darg, ...) {
+            do.call("density", c(list(x = x, weights = weights[subscripts]),darg))
+        }
+        if (sum(!is.na(x)) > 1) {
+            h <- density.fun(x = x, weights = weights, ..., darg = darg)
+            lim <- current.panel.limits()$xlim
+            id <- h$x > min(lim) & h$x < max(lim)
+            panel.lines(x = h$x[id], y = h$y[id], ..., identifier = identifier)
+            hx <- h$x[id]
+            hy <- h$y[id]
+            # for polygon, drop endpoints to axis
+            hx <- c(min(hx), hx, max(hx))
+            hy <- c(0, hy, 0)
+            col <- trellis.par.get()$superpose.polygon$col
+            col <- rep(col, length.out = group.number)
+            col <- rev(col)[[1]]
+            panel.polygon(border = NA, x = hx, y = hy, col = col, identifier = paste(identifier,'fill'))
+        }
+    }
+}

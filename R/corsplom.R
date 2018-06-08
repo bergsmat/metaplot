@@ -41,6 +41,8 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param dens.col color for density region
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
+#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)
 #' @export
@@ -70,33 +72,39 @@ corsplom <- function(x,...)UseMethod('corsplom')
 corsplom_data_frame <- function(
   x,
   xvar = names(x),
-  upper.panel = getOption('metaplot_upper.panel',if(gg) corsplom_gg_scatter else corsplom_panel_scatter),
-  lower.panel= getOption('metaplot_lower.panel',if(gg) corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = getOption('metaplot_diag.panel',if(gg) corsplom_gg_diagonal else corsplom_panel_diagonal),
-  pscales= getOption('metaplot_pscales',0),
+  upper.panel = getOption('metaplot_corsplom_upper_panel',if(gg) corsplom_gg_scatter else corsplom_panel_scatter),
+  lower.panel= getOption('metaplot_corsplom_lower_panel',if(gg) corsplom_gg_correlation else corsplom_panel_correlation),
+  diag.panel = getOption('metaplot_corsplom_diag_panel',if(gg) corsplom_gg_diagonal else corsplom_panel_diagonal),
+  pscales= getOption('metaplot_corsplom_pscales',0),
   xlab = getOption('metaplot_corsplom_xlab',NULL),
-  varname.cex = getOption('metaplot_varname.cex',1),
-  main = getOption('metaplot_main',NULL),
-  sub = getOption('metaplot_sub',NULL),
+  varname.cex = getOption('metaplot_corsplom_varname_cex',1),
+  main = getOption('metaplot_corsplom_main',NULL),
+  sub = getOption('metaplot_corsplom_sub',NULL),
   col = getOption('metaplot_corsplom_point_col','blue'),
-  loess.col = getOption('metaplot_loess.col',col),
-  loess.lty = getOption('metaplot_loess.lty','solid'),
-  loess.alpha = getOption('metaplot_loess.alpha',1),
-  density = TRUE,
-  diag.label = getOption('metaplot_diag.label',diag_label),
-  pin = getOption('metaplot_pin',diag_pin),
-  pin.col = getOption('metaplot_pin.col','darkgrey'),
-  pin.alpha = getOption('metaplot_pin.alpha',1),
-  dens.col = getOption('metaplot_dens.col','grey'),
-  dens.scale = getOption('metaplot_dens.scale',0.2),
-  dens.alpha = getOption('metaplot_dens.alpha',0.5),
-  gg = getOption('metaplot_gg',FALSE),
+  loess.col = getOption('metaplot_corsplom_loess_col',col),
+  loess.lty = getOption('metaplot_corsplom_loess_lty','solid'),
+  loess.alpha = getOption('metaplot_corsplom_loess_alpha',1),
+  density = getOption('metaplot_corsplom_density',TRUE),
+  diag.label = getOption('metaplot_corsplom_diag_label',diag_label),
+  pin = getOption('metaplot_corsplom_pin',diag_pin),
+  pin.col = getOption('metaplot_corsplom_pin_col','darkgrey'),
+  pin.alpha = getOption('metaplot_corsplom_pin_alpha',1),
+  dens.col = getOption('metaplotcorsplom_dens_col','grey'),
+  dens.scale = getOption('metaplot_corsplom_dens_scale',0.2),
+  dens.alpha = getOption('metaplot_corsplom_dens_alpha',0.5),
+  par.settings = getOption('metaplot_corsplom_par_settings',NULL),
+  padding = getOption('metaplot_corsplom_padding', 1),
+  gg = getOption('metaplot_corsplom_gg',FALSE),
   ...
 ){
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
   if(is.function(xlab)) xlab <- xlab(x, xvar, ...)
   if(is.null(xlab)) xlab <- ''
 
+  stopifnot(is.numeric(padding))
+  padding <- rep(padding, length.out = 4)
+  par.settings = parintegrate(par.settings, padding)
+  if(gg)padding <- unit(padding * 5.5, 'pt')
   stopifnot(inherits(x, 'data.frame'))
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, xvar = xvar, ...)
@@ -145,7 +153,7 @@ corsplom_data_frame <- function(
       ),
       # showStrips = FALSE,
       axisLabels = 'none'
-    )  + theme(aspect.ratio = 1)
+    )  + theme(aspect.ratio = 1, plot.margin = padding)
        + theme(
       strip.background = element_blank(),
       strip.text.x = element_blank(),
@@ -178,6 +186,7 @@ corsplom_data_frame <- function(
     dens.scale = dens.scale,
     dens.alpha = dens.alpha,
     as.matrix = TRUE,
+    par.settings = par.settings,
     ...
   )
 }

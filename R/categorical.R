@@ -122,20 +122,21 @@ categorical.data.frame <- function(
 #' @param xlab x axis label; can be function(x = x, var = xvar, ..)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} (legend.postion)
+#' @param space location of key (right, left, top, bottom)
+#' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, fill, lines, space, gg, type ('categorical'), and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function for lattice
 #' @param colors replacements for default colors in group order
-#' @param tiles whether to fill rectangles for each group: logical, or alpha values between 0 and 1
+#' @param fill whether to fill rectangles for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot borders for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets
 #' @param sub character, or a function of x, yvar, xvar, groups, facets
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if null)
+#' @param padding if true (and par.settings is not supplied), lattice padding will be tweaked to mimic simple ggplot layout
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
-#' @param pch symbol character for legend
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param loc where to print statistics in a tile
 #' @param msg a function of x and y to print text in a tile
@@ -162,6 +163,7 @@ categorical.data.frame <- function(
 #' x %>% metaplot(arm, site, gg = T)
 #' x %>% metaplot(arm, site, cohort)
 #' x %>% metaplot(arm, site, cohort, gg = T)
+#' x %>% metaplot(arm, site, cohort, space = 'top')
 #' x %>% metaplot(arm, site, , cohort)
 #' x %>% metaplot(arm, site, , cohort, gg = T)
 #' x %>% metaplot(arm, site, , cohort, rot = c(0,90))
@@ -181,29 +183,30 @@ categorical_data_frame <- function(
   xvar,
   groups = NULL,
   facets = NULL,
-  ylab = getOption('metaplot_lab',axislabel),
-  xlab = getOption('metaplot_lab',axislabel),
-  na.rm = getOption('metaplot_na.rm',TRUE),
-  aspect = getOption('metaplot_aspect',1),
-  key = getOption('metaplot_key','right'),
-  as.table = getOption('metaplot_categorical_as.table',TRUE),
+  ylab = getOption('metaplot_categorical_xlab',axislabel),
+  xlab = getOption('metaplot_categorical_ylab',axislabel),
+  na.rm = getOption('metaplot_categorical_na_rm',TRUE),
+  aspect = getOption('metaplot_categorical_aspect',1),
+  space = getOption('metaplot_categorical_space','right'),
+  key = getOption('metaplot_categorical_key','metaplot_key'),
+  as.table = getOption('metaplot_categorical_as_table',TRUE),
   prepanel = getOption('metaplot_categorical_prepanel', function(...)list(xlim=0:1,ylim=0:1)),
   scales = getOption('metaplot_categorical_scales',NULL),
   panel = getOption('metaplot_categorical_panel',categorical_panel),
-  colors = getOption('metaplot_colors',NULL),
-  tiles = getOption('metaplot_tiles',0.5),
-  lines = getOption('metaplot_lines',TRUE),
-  main = getOption('metaplot_main',NULL),
-  sub = getOption('metaplot_sub',NULL),
-  tex = getOption('metaplot_tex', 0.9),
-  pch = getOption('metaplot_categorical_pch',22),
+  colors = getOption('metaplot_categorical_colors',NULL),
+  fill = getOption('metaplot_categorical_fill',0.5),
+  lines = getOption('metaplot_categorical_lines',TRUE),
+  main = getOption('metaplot_categorical_main',NULL),
+  sub = getOption('metaplot_categorical_sub',NULL),
+  tex = getOption('metaplot_categorical_tex', 0.9),
   rot = getOption('metaplot_categorical_rot',c(90,0)),
-  subscripts = TRUE,
-  par.settings = NULL,
-  loc = getOption('metaplot_loc',5),
+  subscripts = getOption('metaplot_categorical_subscripts',TRUE),
+  par.settings = getOption('metaplot_categorical_par_settings',NULL),
+  padding = getOption('metaplot_categorical_padding', 1),
+  loc = getOption('metaplot_categorical_loc',5),
   msg = getOption('metaplot_categorical_msg','tilestats'),
   cex = getOption('metaplot_categorical_panel_cex',1),
-  gg = getOption('metaplot_gg',FALSE),
+  gg = getOption('metaplot_categorical_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
@@ -212,6 +215,10 @@ categorical_data_frame <- function(
   stopifnot(is.character(xvar))
   stopifnot(length(xvar) == 1, length(yvar) <= 1)
   stopifnot(length(tex) == 1, is.numeric(tex), tex <= 1)
+  stopifnot(is.numeric(padding))
+  padding <- rep(padding, length.out = 4)
+  par.settings = parintegrate(par.settings, padding)
+  if(gg)padding <- unit(padding * 5.5, 'pt')
 
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
@@ -221,7 +228,7 @@ categorical_data_frame <- function(
   if(is.null(groups)){
     y$metaplot_groups <- TRUE
     groups <- 'metaplot_groups'
-    key = if(gg)'none' else FALSE
+    #key = if(gg)'none' else FALSE
   }
   bivariate <- TRUE
   if(is.null(yvar)){
@@ -234,7 +241,7 @@ categorical_data_frame <- function(
    y[[xvar]] <- as_factor(y[[xvar]])
 
   #if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-   if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key, pch = 22, points=any(as.logical(tiles)),lines=any(as.logical(lines)))
+  #if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key, pch = 22, points=any(as.logical(tiles)),lines=any(as.logical(lines)))
   if(na.rm) {
     foo <- y
     y <- y[is.defined(y[[yvar]]) & is.defined(y[[xvar]]),]
@@ -280,31 +287,40 @@ categorical_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
 
-  if(!gg)groups <- as.formula(paste('~',groups))
+  #if(!gg)groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[facets[[i]]]] <- as_factor(y[[ facets[[i]] ]])
   }
-  if(is.null(tiles)) tiles <- 0.5 # same as default
+  nlev <- length(levels(y[[groups]]))
+  levs <- levels(y[[groups]])
+  if(is.null(colors)) colors <- trellis.par.get()$superpose.symbol$col
+  if(is.null(fill)) fill <- 0.5 # same as default
   if(is.null(lines)) lines <- TRUE # same as default
-  tiles <- as.numeric(tiles)
+  fill <- as.numeric(fill)
   lines <- as.numeric(lines)
-  sym <- list(
-    col = colors,
-    alpha = tiles,
-    pch = pch
+  colors <- rep(colors, length.out = nlev)
+  fill <- rep(fill, length.out = nlev)
+  fill[fill == 0] <- 0.000000001 # key borders are not drawn if fill == 0
+  lines <- rep(lines, length.out = nlev)
+  # par.settings is defined
+  poly <- list(
+    col = alpha(colors, fill),
+    alpha = 1,
+    border = alpha(colors,lines)
   )
-  line <- list(
-    col = colors,
-    alpha = lines
-  )
-  sym <- sym[sapply(sym,function(i)!is.null(i))]
-  line <- line[sapply(line,function(i)!is.null(i))]
-  pars <- list(
-    superpose.symbol = sym,
-    superpose.line = line
-  )
-  pars <- pars[sapply(pars, function(i)length(i) > 0 )]
+  if(is.null(par.settings$superpose.polygon)) par.settings$superpose.polygon <- poly
   if(gg)if(length(facets) > 2) facets <- facets[1:2]
+  if(is.character(key)) key <- match.fun(key)
+  if(is.function(key)) key <- key(
+    groups = groups,
+    levels = levs,
+    fill = fill,
+    lines = lines,
+    space = space,
+    gg = gg,
+    type = 'categorical',
+    ...
+  )
 
   if(gg){
     nms <- c(xvar, yvar, groups, facets)
@@ -332,11 +348,12 @@ categorical_data_frame <- function(
     ggtitle(main, subtitle = sub) +
     theme_bw() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-    theme(aspect.ratio = aspect, legend.position = key) + labs(color = groups, fill = groups) +
+    theme(aspect.ratio = aspect, plot.margin = padding) + labs(color = groups, fill = groups) +
     geom_text(mapping = aes(x = xpos(loc, lo = left, hi = right), y = ypos(loc, lo = bottom, hi = top), label = msg)) +
     theme(axis.ticks.y = element_blank(), axis.ticks.x = element_blank()) +
     scale_x_continuous(name = xlab, labels = xax$val, breaks = xax$at) +
     theme(axis.text.x = element_text(angle = rot[[2]]))
+    plot <- plot + do.call(theme, key)
     if(bivariate) {
       plot <- plot + scale_y_continuous(name = ylab, labels = yax$val, breaks = yax$at)
       plot <- plot + theme(axis.text.y = element_text(angle = rot[[1]]))
@@ -345,11 +362,11 @@ categorical_data_frame <- function(
     }
     levs <- length(unique(dat$g))
     if(is.null(colors)) colors <- hue_pal()(levs)
-    tiles <- rep(tiles, length.out = levs)
-    lines <- rep(lines, length.out = levs)
+    # fill <- rep(fill, length.out = levs) # see above
+    # lines <- rep(lines, length.out = levs) # see above
     plot <- plot +
-      scale_color_manual(values = alpha(colors, lines)) +
-      scale_fill_manual(values = alpha(colors, tiles))
+      scale_color_manual(values = alpha(colors, lines)) + # i.e. "border"
+      scale_fill_manual(values = alpha(colors, fill))
 
   if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
   if(length(facets) >  1) plot <- plot +
@@ -368,7 +385,7 @@ categorical_data_frame <- function(
   xyplot(
     formula,
     data = y,
-    groups = groups,
+    groups = as.formula(paste('~',groups)),
     auto.key = key,
     as.table = as.table,
     aspect = aspect,
@@ -378,12 +395,11 @@ categorical_data_frame <- function(
     xlab = xlab,
     panel = panel,
     subscripts = subscripts,
-    par.settings = if(is.null(par.settings)) pars else par.settings,
+    par.settings = par.settings,
     main = main,
     sub = sub,
     .data = y,
     tex = tex,
-    pch = pch,
     rot = rot,
     bivariate = bivariate,
     loc = loc,
@@ -406,7 +422,6 @@ categorical_data_frame <- function(
 #' @param msg a function of x and y to print text in a tile
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param cex expansion for msg text
-#' @param pch symbol character for legend
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param subscripts subscripts of the original data for this panel
 #' @param ... passed to \code{\link[lattice]{panel.superpose}}
@@ -421,11 +436,10 @@ categorical_panel <- function(
   y,
   groups,
   bivariate = TRUE,
-  loc = getOption('metaplot_loc',5),
+  loc = getOption('metaplot_categorical_loc',5),
   msg = getOption('metaplot_categorical_msg','tilestats'),
-  tex = getOption('metaplot_tex', 0.9),
+  tex = getOption('metaplot_categorical_tex', 0.9),
   cex = getOption('metaplot_categorical_panel_cex',1),
-  pch = getOption('metaplot_categorical_pch',22),
   rot = getOption('metaplot_categorical_rot',c(90,0)),
   subscripts,
   ...
@@ -438,25 +452,25 @@ categorical_panel <- function(
 
   tiles <- tiles(data.frame(x = x, y = y, g = groups[subscripts]), tex = tex, msg = msg)
 
-  superpose.line <- trellis.par.get()$superpose.line
-  superpose.symbol <- trellis.par.get()$superpose.symbol
+  superpose.polygon <- trellis.par.get()$superpose.polygon
   panel.superpose(
     x = tiles$x,
     y = tiles$y,
     groups = tiles$g,
     .src = tiles,
     panel.groups = panel_tile,
-    fill.alpha = superpose.symbol$alpha,
-    line.alpha = superpose.line$alpha,
+    col = superpose.polygon$col, # superpose.symbol$col,
+    alpha = superpose.polygon$alpha,
+    border = superpose.polygon$border,
+    # line.alpha = 1, #superpose.$alpha,
     #border = superpose.line$col,
-    col = superpose.symbol$col,
-    col.symbol = superpose.symbol$col,
-    col.line = superpose.line$col,
+    # col.symbol = superpose.symbol$col,
+    # col.line = superpose.line$col,
     loc = loc,
     msg = msg,
     #tex = 1,  tex used to be passed to panel_tile
     cex = cex,
-    pch = pch,
+    #pch = pch,
     rot = rot,
     subscripts = seq_along(tiles$x),
     ...
@@ -500,23 +514,28 @@ panel.axis(
 #' @param subscripts subscripts
 #' @param group.number group number
 #' @param group.value group value
-#' @param fill.alpha alpha transparency for fill
-#' @param line.alpha alpha transparency for line
-#' @param col.line border color
 #' @param col fill color
+#' @param alpha alpha transparency for fill
+#' @param border border color
 #' @param loc location for output of msg
 #' @param msg ignored
 #' @param .src data source for which subscripts give x, y, msg,  and tile limits
-#' @param alpha ignored
 #' @param cex expansion for msg text; passed to msg
 #' @param ... passed arguments
 #' @family panel functions
 #' @family categorical
 #'
 #'
-panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, line.alpha, col, col.line, loc, msg, .src, alpha,cex,...){ #  tex
-  line.alpha <- rep(line.alpha, length.out = group.number) # maybe not distributed by superpose
-  line.alpha <- rev(line.alpha)[[1]]
+panel_tile <- function(
+  x, y, subscripts, group.number, group.value,
+  col,
+  alpha, #fill.alpha,
+  border, #line.alpha,
+  # col.line,
+  loc, msg, .src,cex,...){ #  tex
+  # next two lines still necessary?
+  # line.alpha <- rep(line.alpha, length.out = group.number) # maybe not distributed by superpose
+  # line.alpha <- rev(line.alpha)[[1]] # take group.numberth value
   for(i in subscripts)one_rect(
     x = x[i],
     y = y[i],
@@ -524,9 +543,9 @@ panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, 
     right=.src$right[i],
     bottom=.src$bottom[i],
     top=.src$top[i],
-    fill.alpha = fill.alpha,
-    line.alpha = line.alpha,
     col = col,
+    alpha = alpha, # fill.alpha = fill.alpha,
+    border = border[[group.number]], # line.alpha = line.alpha,
     loc = loc,
     msg = .src$msg[i],
     cex = cex,
@@ -538,7 +557,8 @@ panel_tile <- function(x, y, subscripts, group.number, group.value, fill.alpha, 
 
 one_rect <- function(
   x, y, left, right, bottom, top, # tex
-  fill.alpha, line.alpha, col,
+#  fill.alpha, line.alpha, col,
+  col, alpha, border,
   msg=NA, loc, cex,
   ...
 ){
@@ -553,15 +573,15 @@ one_rect <- function(
     xright = right,
     ybottom = bottom,
     ytop = top,
-    alpha = fill.alpha,
-    border = 'transparent',
+    alpha = alpha,
+    border = border, #'transparent',
     col = col
   )
-  poly <- data.frame(
-    x = c(left, right, right,left,left),
-    y= c(bottom, bottom, top, top, bottom)
-  )
- panel.lines(x = poly$x, y = poly$y, alpha = line.alpha, col = col)
+ #  poly <- data.frame(
+ #    x = c(left, right, right,left,left),
+ #    y= c(bottom, bottom, top, top, bottom)
+ #  )
+ # panel.lines(x = poly$x, y = poly$y, alpha = line.alpha, col = col)
  if(!is.na(msg)) panel.text(
    x = xpos(loc, lo = left, hi = right),
    y = ypos(loc, lo = bottom, hi = top),

@@ -28,13 +28,17 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{corsplom_panel_diagonal}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{diag_label}}, \code{\link{diag_pin}},
-  \code{\link{iso_prepanel}}, \code{\link{metaplot_ref}},
+  \code{\link{iso_prepanel}}, \code{\link{metaplot_key}},
+  \code{\link{metaplot_ref}},
+  \code{\link{panel.meta_densityplot}},
   \code{\link{panel_tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 
 Other univariate plots: \code{\link{densplot.data.frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
+  \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{panel.meta_densityplot}}
 }
 \keyword{internal}

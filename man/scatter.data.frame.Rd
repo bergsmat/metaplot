@@ -50,7 +50,8 @@ Other bivariate plots: \code{\link{iso_prepanel}},
   \code{\link{metaplot.data.frame}},
   \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 
-Other scatter: \code{\link{scatter_data_frame}},
+Other scatter: \code{\link{metaplot_key}},
+  \code{\link{scatter_data_frame}},
   \code{\link{scatter_panel}}, \code{\link{scatter}}
 
 Other methods: \code{\link{axislabel.data.frame}},

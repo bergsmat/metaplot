@@ -5,25 +5,31 @@
 \title{Boxplot Function for Data Frame}
 \usage{
 boxplot_data_frame(x, yvar, xvar, facets = NULL,
-  log = getOption("metaplot_log", FALSE), crit = getOption("metaplot_crit",
-  1.3), horizontal = getOption("metaplot_horizontal", NULL),
+  log = getOption("metaplot_boxplot_log", FALSE),
+  crit = getOption("metaplot_boxplot_crit", 1.3),
+  horizontal = getOption("metaplot_boxplot_horizontal", NULL),
   scales = getOption("metaplot_boxplot_scales", NULL),
   panel = getOption("metaplot_boxplot_panel", boxplot_panel),
-  ref = getOption("metaplot_ref", metaplot_ref),
-  ref.col = getOption("metaplot_ref.col", "grey"),
-  ref.lty = getOption("metaplot_ref.lty", "solid"),
-  ref.alpha = getOption("metaplot_ref.alpha", 1),
-  nobs = getOption("metaplot_nobs", FALSE),
-  na.rm = getOption("metaplot_na.rm", TRUE), xlab = NULL, ylab = NULL,
-  numlab = getOption("metaplot_lab", axislabel),
-  catlab = getOption("metaplot_lab", axislabel),
-  aspect = getOption("metaplot_aspect", 1),
-  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), par.settings = standard.theme("pdf", color = FALSE),
+  ref = getOption("metaplot_boxplot_ref", metaplot_ref),
+  ref.col = getOption("metaplot_boxplot_ref_col", "grey"),
+  ref.lty = getOption("metaplot_boxplot_ref_lty", "solid"),
+  ref.alpha = getOption("metaplot_boxplot_ref_alpha", 1),
+  nobs = getOption("metaplot_boxplot_nobs", FALSE),
+  na.rm = getOption("metaplot_boxplot_na_rm", TRUE),
+  xlab = getOption("metaplot_boxplot_xlab", NULL),
+  ylab = getOption("metaplot_boxplot_ylab", NULL),
+  numlab = getOption("metaplot_boxplot_numlab", axislabel),
+  catlab = getOption("metaplot_boxplot_catlab", axislabel),
+  aspect = getOption("metaplot_boxplot_aspect", 1),
+  main = getOption("metaplot_boxplot_main", NULL),
+  sub = getOption("metaplot_boxplot_sub", NULL),
+  par.settings = getOption("metaplot_boxplot_par_settings",
+  standard.theme("pdf", color = FALSE)),
+  padding = getOption("metaplot_boxplot_padding", 1),
   reverse = getOption("metaplot_boxplot_reverse", TRUE),
   pch = getOption("metaplot_boxplot_pch", "|"),
   notch = getOption("metaplot_boxplot_notch", FALSE),
-  gg = getOption("metaplot_gg", FALSE), ...)
+  gg = getOption("metaplot_boxplot_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -72,6 +78,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{par.settings}{default parameter settings}
 
+\item{padding}{if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout}
+
 \item{reverse}{if y is categorical, present levels in reverse order (first at top)}
 
 \item{pch}{special character for box median: passed to \code{\link[lattice]{panel.bwplot}}}
@@ -101,6 +109,7 @@ Other boxplot: \code{\link{boxplot.data.frame}}
 Other metaplot: \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{scatter_data_frame}},
   \code{\link{test_metaplot}}
 }

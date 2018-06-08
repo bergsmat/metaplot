@@ -5,27 +5,32 @@
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
 corsplom_data_frame(x, xvar = names(x),
-  upper.panel = getOption("metaplot_upper.panel", if (gg) corsplom_gg_scatter
-  else corsplom_panel_scatter),
-  lower.panel = getOption("metaplot_lower.panel", if (gg)
+  upper.panel = getOption("metaplot_corsplom_upper_panel", if (gg)
+  corsplom_gg_scatter else corsplom_panel_scatter),
+  lower.panel = getOption("metaplot_corsplom_lower_panel", if (gg)
   corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = getOption("metaplot_diag.panel", if (gg) corsplom_gg_diagonal
-  else corsplom_panel_diagonal), pscales = getOption("metaplot_pscales", 0),
+  diag.panel = getOption("metaplot_corsplom_diag_panel", if (gg)
+  corsplom_gg_diagonal else corsplom_panel_diagonal),
+  pscales = getOption("metaplot_corsplom_pscales", 0),
   xlab = getOption("metaplot_corsplom_xlab", NULL),
-  varname.cex = getOption("metaplot_varname.cex", 1),
-  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), col = getOption("metaplot_corsplom_point_col", "blue"),
-  loess.col = getOption("metaplot_loess.col", col),
-  loess.lty = getOption("metaplot_loess.lty", "solid"),
-  loess.alpha = getOption("metaplot_loess.alpha", 1), density = TRUE,
-  diag.label = getOption("metaplot_diag.label", diag_label),
-  pin = getOption("metaplot_pin", diag_pin),
-  pin.col = getOption("metaplot_pin.col", "darkgrey"),
-  pin.alpha = getOption("metaplot_pin.alpha", 1),
-  dens.col = getOption("metaplot_dens.col", "grey"),
-  dens.scale = getOption("metaplot_dens.scale", 0.2),
-  dens.alpha = getOption("metaplot_dens.alpha", 0.5),
-  gg = getOption("metaplot_gg", FALSE), ...)
+  varname.cex = getOption("metaplot_corsplom_varname_cex", 1),
+  main = getOption("metaplot_corsplom_main", NULL),
+  sub = getOption("metaplot_corsplom_sub", NULL),
+  col = getOption("metaplot_corsplom_point_col", "blue"),
+  loess.col = getOption("metaplot_corsplom_loess_col", col),
+  loess.lty = getOption("metaplot_corsplom_loess_lty", "solid"),
+  loess.alpha = getOption("metaplot_corsplom_loess_alpha", 1),
+  density = getOption("metaplot_corsplom_density", TRUE),
+  diag.label = getOption("metaplot_corsplom_diag_label", diag_label),
+  pin = getOption("metaplot_corsplom_pin", diag_pin),
+  pin.col = getOption("metaplot_corsplom_pin_col", "darkgrey"),
+  pin.alpha = getOption("metaplot_corsplom_pin_alpha", 1),
+  dens.col = getOption("metaplotcorsplom_dens_col", "grey"),
+  dens.scale = getOption("metaplot_corsplom_dens_scale", 0.2),
+  dens.alpha = getOption("metaplot_corsplom_dens_alpha", 0.5),
+  par.settings = getOption("metaplot_corsplom_par_settings", NULL),
+  padding = getOption("metaplot_corsplom_padding", 1),
+  gg = getOption("metaplot_corsplom_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -72,6 +77,10 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{dens.alpha}{alpha transparency for density region}
 
+\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+
+\item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
+
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)}
@@ -104,6 +113,7 @@ Other corsplom: \code{\link{corsplom.data.frame}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{scatter_data_frame}},
   \code{\link{test_metaplot}}
 }

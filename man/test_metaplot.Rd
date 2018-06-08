@@ -9,6 +9,202 @@ test_metaplot()
 \description{
 Tests metaplot variants by example.  Returns null. Use \code{example(test_metaplot)}.
 }
+\examples{
+
+library(magrittr)
+library(dplyr)
+library(csv)
+x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+x \%<>\% pack
+multiplot(
+x \%>\% metaplot(sres, gg = F),
+x \%>\% metaplot(sres, gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(site, gg = F),
+x \%>\% metaplot(site, gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(conc, arm, gg = F),
+x \%>\% metaplot(conc, arm, gg = T, padding = 4)
+)
+multiplot(
+x \%>\% densplot(conc, arm, gg = F),
+x \%>\% densplot(conc, arm, gg = T, padding = 8)
+)
+multiplot(
+x \%>\% densplot(
+  conc, arm, gg = F, space = 'top',
+  columns = 2,
+  legend.direction = 'horizontal' # ignored
+),
+x \%>\% densplot(conc, arm, gg = T, space = 'top',
+  columns = 2, # ignored
+  legend.direction = 'horizontal' , padding = 3
+))
+multiplot(
+x \%>\% metaplot(arm, conc, gg = F),
+x \%>\% metaplot(arm, conc, gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(conc, arm, site, gg = F),
+x \%>\% metaplot(conc, arm, site, gg = T, padding = 5)
+)
+multiplot(
+x \%>\% metaplot(conc, site, arm, gg = F),
+x \%>\% metaplot(conc, site, arm, gg = T, padding = 5)
+)
+multiplot(
+x \%>\% metaplot(conc, time, gg = F),
+x \%>\% metaplot(conc, time, gg = T, padding = 5)
+)
+multiplot(
+x \%>\% metaplot(arm, site, gg = F),
+x \%>\% metaplot(arm, site, gg = T, padding = 3)
+)
+multiplot(
+x \%>\% metaplot(arm, site, cohort, gg = F),
+x \%>\% metaplot(arm, site, cohort, gg = T, padding = 5)
+)
+multiplot(
+x \%>\% metaplot(arm, site, cohort, gg = F, space = 'top', columns = 2, padding = c(5,1,1,1)),
+x \%>\% metaplot(arm, site, cohort, gg = T, space = 'top', legend.direction = 'horizontal', padding = 2)
+)
+multiplot(
+x \%>\% metaplot(arm, site, , cohort, gg = F),
+x \%>\% metaplot(arm, site, , cohort, gg = T, padding = 4)
+)
+multiplot(
+x \%>\% metaplot(conc, time, subject, gg = F),
+x \%>\% metaplot(conc, time, subject, gg = T, padding = 3)
+)
+multiplot(
+x \%>\% metaplot(conc, time, , subject, gg = F),
+x \%>\% metaplot(conc, time, , subject, gg = T, padding = 5)
+)
+multiplot( ncol = 2,
+x \%>\% metaplot(conc, time, subject, site, gg = F),
+x \%>\% metaplot(conc, time, subject, site, gg = T, padding = 4)
+)
+multiplot(
+x \%>\% metaplot(conc, time, subject, site, arm, gg = F, padding = 2),
+x \%>\% metaplot(conc, time, subject, site, arm, gg = T)
+)
+# Currently can't multiplot a ggmatrix
+x \%>\% metaplot(lKe, lKa, lCl, gg = F)
+x \%>\% metaplot(lKe, lKa, lCl, gg = T)
+x \%>\% metaplot(
+  lKe, lKa, lCl,
+  col = 'black',loess.col = 'red', pin.col = 'red',
+  dens.col = 'blue', dens.alpha = 0.1, gg = F
+)
+x \%>\% metaplot(
+  lKe, lKa, lCl,
+  col = 'black',loess.col = 'red', pin.col = 'red',
+  dens.col='blue',dens.alpha = 0.1, gg = T
+)
+multiplot(
+x \%>\% metaplot(conc, pred, ipred, time, space = 'top', gg = F),
+x \%>\% metaplot(conc, pred, ipred, time, space = 'top', gg = T, padding = 3)
+)
+multiplot(
+x \%>\% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = F),
+x \%>\% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = T, padding = 5)
+)
+multiplot(
+x \%>\% metaplot(conc, pred, ipred, time, subject,
+colors = c('black','blue','orange'),
+points = c(0.9,0, 0.4),
+lines = c(F,T,T),
+space = 'top', gg = F),
+x \%>\% metaplot(conc, pred, ipred, time, subject,
+colors = c('black','blue','orange'),
+points = c(0.9,0, 0.4),
+lines = c(F,T,T),
+space = 'top', gg = T, padding = 4)
+)
+multiplot(
+x \%>\% metaplot(conc, ipred, time, site, arm, space = 'top', gg = F),
+x \%>\% metaplot(conc, ipred, time, site, arm, space = 'top', gg = T)
+)
+multiplot(
+x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = F),
+x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = F),
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = F),
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = T, padding = 3.5)
+)
+multiplot(
+x \%>\% metaplot(subject,conc, gg = F),
+x \%>\% metaplot(subject,conc, gg = T, padding = 3.5)
+)
+
+# manage metadata
+attr(x$arm, 'guide') # //1/Arm A//2/Arm B//
+multiplot(
+x \%>\% metaplot(conc, arm, gg = F),
+x \%>\% metaplot(conc, arm, gg = T, padding = 4)
+) # default
+
+multiplot(
+x \%>\% mutate(arm = arm \%>\%
+structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
+metaplot(conc, arm, gg = F),
+x \%>\% mutate(arm = arm \%>\%
+structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
+metaplot(conc, arm, gg = T, padding = 4) # different presentation order
+)
+
+multiplot(
+x \%>\% mutate(arm = arm \%>\%
+structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
+metaplot(conc, arm, gg = F),
+x \%>\% mutate(arm = arm \%>\%
+structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
+metaplot(conc, arm, gg = T, padding = 4) # collapse cases
+)
+
+x \%>\% densplot(
+ sres, subject,
+ ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+ log = F,
+ aspect = 1/2,
+ colors = c('red','blue','darkgreen'),
+ symbols = c(21, 22, 23),
+ points = 0.1,
+ lines = .5,
+ fill = 0.1,
+ space = 'left',
+ main = 'density plot',
+ sub = 'with options',
+ padding = c(1,2,3,4),
+ gg = F
+)
+x \%>\% densplot(
+ sres, subject,
+ ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+ log = F,
+ aspect = 1/2,
+ colors = c('red','blue','darkgreen'),
+ symbols = c(21, 22, 23),
+ points = 1,
+ lines = 0.1,
+ fill = 0,
+ space = 'left',
+ main = 'density plot',
+ sub = 'with options',
+ padding = c(1,2,3,4),
+ gg = T
+)
+
+
+
+}
 \seealso{
 Other generic functions: \code{\link{axislabel}},
   \code{\link{categorical}}, \code{\link{corsplom}},
@@ -20,5 +216,6 @@ Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}}
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{scatter_data_frame}}
 }

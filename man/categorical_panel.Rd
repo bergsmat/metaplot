@@ -5,11 +5,10 @@
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
 categorical_panel(x, y, groups, bivariate = TRUE,
-  loc = getOption("metaplot_loc", 5),
+  loc = getOption("metaplot_categorical_loc", 5),
   msg = getOption("metaplot_categorical_msg", "tilestats"),
-  tex = getOption("metaplot_tex", 0.9),
+  tex = getOption("metaplot_categorical_tex", 0.9),
   cex = getOption("metaplot_categorical_panel_cex", 1),
-  pch = getOption("metaplot_categorical_pch", 22),
   rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts, ...)
 }
 \arguments{
@@ -28,8 +27,6 @@ categorical_panel(x, y, groups, bivariate = TRUE,
 \item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
 
 \item{cex}{expansion for msg text}
-
-\item{pch}{symbol character for legend}
 
 \item{rot}{rotation for axis labels; can be length 2 for y and x axes, respectively}
 
@@ -54,7 +51,9 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},
   \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_ref}}, \code{\link{panel_tile}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
+  \code{\link{panel.meta_densityplot}},
+  \code{\link{panel_tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
 

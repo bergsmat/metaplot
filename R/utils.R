@@ -460,3 +460,52 @@ as_factor <- function(x){
   x <- factor(x)
   x
 }
+
+lattice_padding <- function()list(
+  axis.components = list(
+    left = list(
+      pad2 = 1 # 2
+    ),
+    top = list(
+      pad1 = 0, # 1,
+      pad2 = 0  # 2
+    ),
+    right = list(
+      pad1 = 0, # 1,
+      pad2 = 0 # 2
+    ),
+    bottom = list(
+      pad1 = 0.5, # 1,
+      pad2 = 0  # 1
+    )
+  ),
+  layout.heights = list(
+    top.padding = .5, # 1,
+    main.key.padding = .5, # 1,
+    key.sub.padding = 0, # 1
+    bottom.padding = 0.5 # 1
+  ),
+  layout.widths = list(
+    left.padding = .5, # 1,
+    ylab.axis.padding = 0, # 1,
+    axis.key.padding = 0 #, # 1,
+  )
+)
+
+parintegrate <- function(par.settings, padding){
+  res <- list()
+  if(!is.null(par.settings)) res <- par.settings
+  stopifnot(length(padding) == 4)
+  res$layout.heights$top.padding <- padding[[1]]
+  res$layout.widths$right.padding <- padding[[2]]
+  res$layout.heights$bottom.padding <- padding[[3]]
+  res$layout.widths$left.padding <- padding[[4]]
+  res
+}
+
+# https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
+base_breaks <- function(n = 10){
+  function(x) {
+    axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
+  }
+}

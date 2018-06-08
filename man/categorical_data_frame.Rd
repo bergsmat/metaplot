@@ -5,26 +5,31 @@
 \title{Categorical Function for Data Frame}
 \usage{
 categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
-  ylab = getOption("metaplot_lab", axislabel),
-  xlab = getOption("metaplot_lab", axislabel),
-  na.rm = getOption("metaplot_na.rm", TRUE),
-  aspect = getOption("metaplot_aspect", 1), key = getOption("metaplot_key",
-  "right"), as.table = getOption("metaplot_categorical_as.table", TRUE),
+  ylab = getOption("metaplot_categorical_xlab", axislabel),
+  xlab = getOption("metaplot_categorical_ylab", axislabel),
+  na.rm = getOption("metaplot_categorical_na_rm", TRUE),
+  aspect = getOption("metaplot_categorical_aspect", 1),
+  space = getOption("metaplot_categorical_space", "right"),
+  key = getOption("metaplot_categorical_key", "metaplot_key"),
+  as.table = getOption("metaplot_categorical_as_table", TRUE),
   prepanel = getOption("metaplot_categorical_prepanel", function(...)
   list(xlim = 0:1, ylim = 0:1)),
   scales = getOption("metaplot_categorical_scales", NULL),
   panel = getOption("metaplot_categorical_panel", categorical_panel),
-  colors = getOption("metaplot_colors", NULL),
-  tiles = getOption("metaplot_tiles", 0.5),
-  lines = getOption("metaplot_lines", TRUE),
-  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), tex = getOption("metaplot_tex", 0.9),
-  pch = getOption("metaplot_categorical_pch", 22),
-  rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts = TRUE,
-  par.settings = NULL, loc = getOption("metaplot_loc", 5),
+  colors = getOption("metaplot_categorical_colors", NULL),
+  fill = getOption("metaplot_categorical_fill", 0.5),
+  lines = getOption("metaplot_categorical_lines", TRUE),
+  main = getOption("metaplot_categorical_main", NULL),
+  sub = getOption("metaplot_categorical_sub", NULL),
+  tex = getOption("metaplot_categorical_tex", 0.9),
+  rot = getOption("metaplot_categorical_rot", c(90, 0)),
+  subscripts = getOption("metaplot_categorical_subscripts", TRUE),
+  par.settings = getOption("metaplot_categorical_par_settings", NULL),
+  padding = getOption("metaplot_categorical_padding", 1),
+  loc = getOption("metaplot_categorical_loc", 5),
   msg = getOption("metaplot_categorical_msg", "tilestats"),
   cex = getOption("metaplot_categorical_panel_cex", 1),
-  gg = getOption("metaplot_gg", FALSE), ...)
+  gg = getOption("metaplot_categorical_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -45,7 +50,9 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} (legend.postion)}
+\item{space}{location of key (right, left, top, bottom)}
+
+\item{key}{list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, fill, lines, space, gg, type ('categorical'), and \dots .  See \code{\link{metaplot_key}}.}
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
@@ -57,7 +64,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{colors}{replacements for default colors in group order}
 
-\item{tiles}{whether to fill rectangles for each group: logical, or alpha values between 0 and 1}
+\item{fill}{whether to fill rectangles for each group: logical, or alpha values between 0 and 1}
 
 \item{lines}{whether to plot borders for each group: logical, or alpha values between 0 and 1}
 
@@ -67,13 +74,13 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{tex}{tile expansion: scale factor for reducing each tile size relative to full size (<= 1)}
 
-\item{pch}{symbol character for legend}
-
 \item{rot}{rotation for axis labels; can be length 2 for y and x axes, respectively}
 
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
+
+\item{padding}{if true (and par.settings is not supplied), lattice padding will be tweaked to mimic simple ggplot layout}
 
 \item{loc}{where to print statistics in a tile}
 
@@ -101,6 +108,7 @@ x \%>\% metaplot(arm, site)
 x \%>\% metaplot(arm, site, gg = T)
 x \%>\% metaplot(arm, site, cohort)
 x \%>\% metaplot(arm, site, cohort, gg = T)
+x \%>\% metaplot(arm, site, cohort, space = 'top')
 x \%>\% metaplot(arm, site, , cohort)
 x \%>\% metaplot(arm, site, , cohort, gg = T)
 x \%>\% metaplot(arm, site, , cohort, rot = c(0,90))
@@ -122,6 +130,7 @@ Other categorical: \code{\link{categorical.data.frame}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{scatter_data_frame}},
   \code{\link{test_metaplot}}
 }

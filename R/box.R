@@ -30,6 +30,7 @@ NULL
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param par.settings default parameter settings
+#' @param padding if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout
 #' @param reverse if y is categorical, present levels in reverse order (first at top)
 #' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
 #' @param notch whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}
@@ -55,35 +56,41 @@ boxplot_data_frame <- function(
   yvar,
   xvar,
   facets = NULL,
-  log = getOption('metaplot_log',FALSE),
-  crit = getOption('metaplot_crit',1.3),
-  horizontal = getOption('metaplot_horizontal',NULL),
+  log = getOption('metaplot_boxplot_log',FALSE),
+  crit = getOption('metaplot_boxplot_crit',1.3),
+  horizontal = getOption('metaplot_boxplot_horizontal',NULL),
   scales = getOption('metaplot_boxplot_scales',NULL),
   panel = getOption('metaplot_boxplot_panel',boxplot_panel),
-  ref = getOption('metaplot_ref',metaplot_ref),
-  ref.col = getOption('metaplot_ref.col','grey'),
-  ref.lty = getOption('metaplot_ref.lty','solid'),
-  ref.alpha = getOption('metaplot_ref.alpha',1),
-  nobs = getOption('metaplot_nobs',FALSE),
-  na.rm = getOption('metaplot_na.rm',TRUE),
-  xlab = NULL,
-  ylab = NULL,
-  numlab = getOption('metaplot_lab',axislabel),
-  catlab = getOption('metaplot_lab',axislabel),
-  aspect = getOption('metaplot_aspect',1),
-  main = getOption('metaplot_main',NULL),
-  sub = getOption('metaplot_sub',NULL),
-  par.settings = standard.theme('pdf',color = FALSE),
+  ref = getOption('metaplot_boxplot_ref',metaplot_ref),
+  ref.col = getOption('metaplot_boxplot_ref_col','grey'),
+  ref.lty = getOption('metaplot_boxplot_ref_lty','solid'),
+  ref.alpha = getOption('metaplot_boxplot_ref_alpha',1),
+  nobs = getOption('metaplot_boxplot_nobs',FALSE),
+  na.rm = getOption('metaplot_boxplot_na_rm',TRUE),
+  xlab = getOption('metaplot_boxplot_xlab',NULL),
+  ylab = getOption('metaplot_boxplot_ylab',NULL),
+  numlab = getOption('metaplot_boxplot_numlab',axislabel),
+  catlab = getOption('metaplot_boxplot_catlab',axislabel),
+  aspect = getOption('metaplot_boxplot_aspect',1),
+  main = getOption('metaplot_boxplot_main',NULL),
+  sub = getOption('metaplot_boxplot_sub',NULL),
+  par.settings = getOption('metaplot_boxplot_par_settings',standard.theme('pdf',color = FALSE)),
+  padding = getOption('metaplot_boxplot_padding', 1),
   reverse = getOption('metaplot_boxplot_reverse',TRUE),
   pch = getOption('metaplot_boxplot_pch','|'),
   notch = getOption('metaplot_boxplot_notch',FALSE),
-  gg = getOption('metaplot_gg',FALSE),
+  gg = getOption('metaplot_boxplot_gg',FALSE),
   ...
 ){
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(is.character(xvar))
   stopifnot(is.character(yvar))
   if(!is.null(facets))stopifnot(is.character(facets))
+  stopifnot(is.numeric(padding))
+  padding <- rep(padding, length.out = 4)
+  par.settings = parintegrate(par.settings, padding)
+  if(gg)padding <- unit(padding * 5.5, 'pt')
+
   y <- x
   stopifnot(all(c(xvar,yvar,facets) %in% names(y)))
 
@@ -179,12 +186,6 @@ boxplot_data_frame <- function(
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
 
   if(gg){
-    # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
-    base_breaks <- function(n = 10){
-      function(x) {
-        axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
-      }
-    }
     plot <- ggplot(data = y, aes_string(cat, con))
     plot <- plot  +
       geom_boxplot() +
@@ -201,7 +202,7 @@ boxplot_data_frame <- function(
     plot <- plot +
       theme(
         # legend.position = key, not applicable for boxplot
-        aspect.ratio = aspect
+        aspect.ratio = aspect, plot.margin = padding
       )
 
     if(log) plot <- plot + scale_y_continuous(

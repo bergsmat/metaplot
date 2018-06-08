@@ -95,9 +95,9 @@ globalVariables('axisTicks')
 #' x %>% metaplot(conc, arm, site)
 #' x %>% metaplot(conc, site, arm)
 #' x %>% metaplot(conc, time)
-#' # x %>% metaplot(conc, time, panel = panel.smoothScatter)
 #' x %>% metaplot(arm, site)
 #' x %>% metaplot(arm, site, cohort)
+#' x %>% metaplot(arm, site, cohort, space = 'top')
 #' x %>% metaplot(arm, site, , cohort)
 #' x %>% metaplot(conc, time, subject)
 #' x %>% metaplot(conc, time, , subject)
@@ -109,13 +109,13 @@ globalVariables('axisTicks')
 #'   col = 'black',loess.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1
 #' )
-#' x %>% metaplot(conc, pred, ipred, time, key = 'top')
-#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top')
+#' x %>% metaplot(conc, pred, ipred, time, space = 'top')
+#' x %>% metaplot(conc, pred, ipred, time, subject, space = 'top')
 #' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
-#' lines = c(F,T,T), key = 'top')
-#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top')
+#' lines = c(F,T,T), space = 'top')
+#' x %>% metaplot(conc, ipred, time, site, arm, space = 'top')
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red')
@@ -357,62 +357,76 @@ metaplot.data.frame <- function(
 
 #' multiplot(
 #' x %>% metaplot(sres, gg = F),
-#' x %>% metaplot(sres, gg = T)
+#' x %>% metaplot(sres, gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(site, gg = F),
-#' x %>% metaplot(site, gg = T)
+#' x %>% metaplot(site, gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, arm, gg = F),
-#' x %>% metaplot(conc, arm, gg = T)
+#' x %>% metaplot(conc, arm, gg = T, padding = 4)
 #' )
 #' multiplot(
 #' x %>% densplot(conc, arm, gg = F),
-#' x %>% densplot(conc, arm, gg = T)
+#' x %>% densplot(conc, arm, gg = T, padding = 8)
 #' )
 #' multiplot(
+#' x %>% densplot(
+#'   conc, arm, gg = F, space = 'top',
+#'   columns = 2,
+#'   legend.direction = 'horizontal' # ignored
+#' ),
+#' x %>% densplot(conc, arm, gg = T, space = 'top',
+#'   columns = 2, # ignored
+#'   legend.direction = 'horizontal' , padding = 3
+#' ))
+#' multiplot(
 #' x %>% metaplot(arm, conc, gg = F),
-#' x %>% metaplot(arm, conc, gg = T)
+#' x %>% metaplot(arm, conc, gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, arm, site, gg = F),
-#' x %>% metaplot(conc, arm, site, gg = T)
+#' x %>% metaplot(conc, arm, site, gg = T, padding = 5)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, site, arm, gg = F),
-#' x %>% metaplot(conc, site, arm, gg = T)
+#' x %>% metaplot(conc, site, arm, gg = T, padding = 5)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, time, gg = F),
-#' x %>% metaplot(conc, time, gg = T)
+#' x %>% metaplot(conc, time, gg = T, padding = 5)
 #' )
 #' multiplot(
 #' x %>% metaplot(arm, site, gg = F),
-#' x %>% metaplot(arm, site, gg = T)
+#' x %>% metaplot(arm, site, gg = T, padding = 3)
 #' )
 #' multiplot(
 #' x %>% metaplot(arm, site, cohort, gg = F),
-#' x %>% metaplot(arm, site, cohort, gg = T)
+#' x %>% metaplot(arm, site, cohort, gg = T, padding = 5)
+#' )
+#' multiplot(
+#' x %>% metaplot(arm, site, cohort, gg = F, space = 'top', columns = 2, padding = c(5,1,1,1)),
+#' x %>% metaplot(arm, site, cohort, gg = T, space = 'top', legend.direction = 'horizontal', padding = 2)
 #' )
 #' multiplot(
 #' x %>% metaplot(arm, site, , cohort, gg = F),
-#' x %>% metaplot(arm, site, , cohort, gg = T)
+#' x %>% metaplot(arm, site, , cohort, gg = T, padding = 4)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, time, subject, gg = F),
-#' x %>% metaplot(conc, time, subject, gg = T)
+#' x %>% metaplot(conc, time, subject, gg = T, padding = 3)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, time, , subject, gg = F),
-#' x %>% metaplot(conc, time, , subject, gg = T)
+#' x %>% metaplot(conc, time, , subject, gg = T, padding = 5)
 #' )
-#' multiplot(
+#' multiplot( ncol = 2,
 #' x %>% metaplot(conc, time, subject, site, gg = F),
-#' x %>% metaplot(conc, time, subject, site, gg = T)
+#' x %>% metaplot(conc, time, subject, site, gg = T, padding = 4)
 #' )
 #' multiplot(
-#' x %>% metaplot(conc, time, subject, site, arm, gg = F),
+#' x %>% metaplot(conc, time, subject, site, arm, gg = F, padding = 2),
 #' x %>% metaplot(conc, time, subject, site, arm, gg = T)
 #' )
 #' # Currently can't multiplot a ggmatrix
@@ -430,51 +444,51 @@ metaplot.data.frame <- function(
 #'   dens.col='blue',dens.alpha = 0.1, gg = T
 #' )
 #' multiplot(
-#' x %>% metaplot(conc, pred, ipred, time, key = 'top', gg = F),
-#' x %>% metaplot(conc, pred, ipred, time, key = 'top', gg = T)
+#' x %>% metaplot(conc, pred, ipred, time, space = 'top', gg = F),
+#' x %>% metaplot(conc, pred, ipred, time, space = 'top', gg = T, padding = 3)
 #' )
 #' multiplot(
-#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top', gg = F),
-#' x %>% metaplot(conc, pred, ipred, time, subject, key = 'top', gg = T)
+#' x %>% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = F),
+#' x %>% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = T, padding = 5)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
 #' lines = c(F,T,T),
-#' key = 'top', gg = F),
+#' space = 'top', gg = F),
 #' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
 #' lines = c(F,T,T),
-#' key = 'top', gg = T)
+#' space = 'top', gg = T, padding = 4)
 #' )
 #' multiplot(
-#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top', gg = F),
-#' x %>% metaplot(conc, ipred, time, site, arm, key = 'top', gg = T)
+#' x %>% metaplot(conc, ipred, time, site, arm, space = 'top', gg = F),
+#' x %>% metaplot(conc, ipred, time, site, arm, space = 'top', gg = T)
 #' )
 #' multiplot(
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = F),
-#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = T)
+#' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1, gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = F),
-#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T)
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = F),
-#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = T)
+#' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = T, padding = 3.5)
 #' )
 #' multiplot(
 #' x %>% metaplot(subject,conc, gg = F),
-#' x %>% metaplot(subject,conc, gg = T)
+#' x %>% metaplot(subject,conc, gg = T, padding = 3.5)
 #' )
 #'
 #' # manage metadata
 #' attr(x$arm, 'guide') # //1/Arm A//2/Arm B//
 #' multiplot(
 #' x %>% metaplot(conc, arm, gg = F),
-#' x %>% metaplot(conc, arm, gg = T)
+#' x %>% metaplot(conc, arm, gg = T, padding = 4)
 #' ) # default
 #'
 #' multiplot(
@@ -483,7 +497,7 @@ metaplot.data.frame <- function(
 #' metaplot(conc, arm, gg = F),
 #' x %>% mutate(arm = arm %>%
 #' structure(guide = '//2/Arm B//1/Arm A//')) %>%
-#' metaplot(conc, arm, gg = T) # different presentation order
+#' metaplot(conc, arm, gg = T, padding = 4) # different presentation order
 #' )
 #'
 #' multiplot(
@@ -492,8 +506,43 @@ metaplot.data.frame <- function(
 #' metaplot(conc, arm, gg = F),
 #' x %>% mutate(arm = arm %>%
 #' structure(guide = '//1/Both Arms//2/Both Arms//')) %>%
-#' metaplot(conc, arm, gg = T) # collapse cases
+#' metaplot(conc, arm, gg = T, padding = 4) # collapse cases
 #' )
+#'
+#'x %>% densplot(
+#'  sres, subject,
+#'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+#'  log = F,
+#'  aspect = 1/2,
+#'  colors = c('red','blue','darkgreen'),
+#'  symbols = c(21, 22, 23),
+#'  points = 0.3,
+#'  lines = .5,
+#'  fill = 0.1,
+#'  space = 'left',
+#'  main = 'density plot',
+#'  sub = 'with options',
+#'  padding = c(1,2,3,4),
+#'  gg = F
+#')
+#'x %>% densplot(
+#'  sres, subject,
+#'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+#'  log = F,
+#'  aspect = 1/2,
+#'  colors = c('red','blue','darkgreen'),
+#'  symbols = c(21, 22, 23),
+#'  points = 0.3,
+#'  lines = 0.5,
+#'  fill = 0.1,
+#'  space = 'left',
+#'  main = 'density plot',
+#'  sub = 'with options',
+#'  padding = c(1,2,3,4),
+#'  gg = T
+#')
+#'
+#'
 #'
 test_metaplot <- function()NULL
 

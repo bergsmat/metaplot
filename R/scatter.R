@@ -40,19 +40,21 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param iso plot line of unity (auto-selected if NA)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{xyplot}}
-#' @param key location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto) or \code{\link[ggplot2]{theme}} as \code{legend.postion}
+#' @param space location of key (right, left, top, bottom)
+#' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function
 #' @param colors replacements for default colors in group order
-#' @param symbols replacements for default symbols in group order (for ggplots use filled symbols 21 - 25)
+#' @param symbols replacements for default symbols in group order
 #' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param ref.col reference line color
 #' @param ref.lty reference line type
 #' @param ref.alpha reference line alpha
@@ -73,6 +75,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @export
 #' @import lattice
 #' @importFrom tidyr gather
+#' @importFrom scales alpha
 #' @family bivariate plots
 #' @family metaplot
 #' @family scatter
@@ -100,47 +103,49 @@ scatter_data_frame <- function(
   xvar,
   groups = NULL,
   facets = NULL,
-  log = getOption('metaplot_log',FALSE),
-  ylog = getOption('metaplot_ylog',log),
-  xlog = getOption('metaplot_xlog',log),
-  crit = getOption('metaplot_crit',1.3),
-  yref = getOption('metaplot_ref',metaplot_ref),
-  xref = getOption('metaplot_ref',metaplot_ref),
-  ylab = getOption('metaplot_lab',axislabel),
-  xlab = getOption('metaplot_lab',axislabel),
-  ysmooth = getOption('metaplot_ysmooth',FALSE),
-  xsmooth = getOption('metaplot_xsmooth',FALSE),
-  iso = getOption('metaplot_iso',FALSE),
-  na.rm = getOption('metaplot_na.rm',TRUE),
-  aspect = getOption('metaplot_aspect',1),
-  key = getOption('metaplot_key','right'),
-  as.table = getOption('metaplot_scatter_as.table',TRUE),
+  log = getOption('metaplot_scatter_log',FALSE),
+  ylog = getOption('metaplot_scatter_ylog',log),
+  xlog = getOption('metaplot_scatter_xlog',log),
+  crit = getOption('metaplot_scatter_crit',1.3),
+  yref = getOption('metaplot_scatter_yref',metaplot_ref),
+  xref = getOption('metaplot_scatter_xref',metaplot_ref),
+  ylab = getOption('metaplot_scatter_ylab',axislabel),
+  xlab = getOption('metaplot_scatter_xlab',axislabel),
+  ysmooth = getOption('metaplot_scatter_ysmooth',FALSE),
+  xsmooth = getOption('metaplot_scatter_xsmooth',FALSE),
+  iso = getOption('metaplot_scatter_iso',FALSE),
+  na.rm = getOption('metaplot_scatter_na_rm',TRUE),
+  aspect = getOption('metaplot_scatter_aspect',1),
+  space = getOption('metaplot_scatter_space','right'),
+  key = getOption('metaplot_scatter_key','metaplot_key'),
+  as.table = getOption('metaplot_scatter_as_table',TRUE),
   prepanel = getOption('metaplot_scatter_prepanel', NULL),
   scales = getOption('metaplot_scatter_scales',NULL),
   panel = getOption('metaplot_scatter_panel',scatter_panel),
-  colors = getOption('metaplot_colors',NULL),
-  symbols = getOption('metaplot_symbols',NULL),
-  points = getOption('metaplot_points',TRUE),
-  lines = getOption('metaplot_lines',FALSE),
-  main = getOption('metaplot_main',NULL),
-  sub = getOption('metaplot_sub',NULL),
-  subscripts = TRUE,
-  par.settings = NULL,
-  ref.col = getOption('metaplot_ref.col','grey'),
-  ref.lty = getOption('metaplot_ref.lty','solid'),
-  ref.alpha = getOption('metaplot_ref.alpha',1),
-  smooth.lty = getOption('metaplot_smooth.lty','dashed'),
-  smooth.alpha = getOption('metaplot_smooth.alpha',1),
-  fit = getOption('metaplot_fit',conf),
-  fit.lty = getOption('metaplot_fit.lty','solid'),
-  fit.alpha = getOption('metaplot_fit.alpha',1),
-  conf = getOption('metaplot_conf',FALSE),
-  conf.alpha = getOption('metaplot_conf.alpha',0.3),
-  loc = getOption('metaplot_loc',0),
-  global = getOption('metaplot_global',FALSE),
-  global.col = getOption('metaplot_global.col','grey'),
+  colors = getOption('metaplot_scatter_colors',NULL),
+  symbols = getOption('metaplot_scatter_symbols',NULL),
+  points = getOption('metaplot_scatter_points',TRUE),
+  lines = getOption('metaplot_scatter_lines',FALSE),
+  main = getOption('metaplot_scatter_main',NULL),
+  sub = getOption('metaplot_scatter_sub',NULL),
+  subscripts = getOption('metaplot_scatter_subscripts',TRUE),
+  par.settings = getOption('metaplot_scatter_par_settings',NULL),
+  padding = getOption('metaplot_scatter_padding', 1),
+  ref.col = getOption('metaplot_scatter_ref_col','grey'),
+  ref.lty = getOption('metaplot__scatter_ref_lty','solid'),
+  ref.alpha = getOption('metaplot_scatter_ref_alpha',1),
+  smooth.lty = getOption('metaplot_scatter_smooth_lty','dashed'),
+  smooth.alpha = getOption('metaplot_scatter_smooth_alpha',1),
+  fit = getOption('metaplot_scatter_fit',conf),
+  fit.lty = getOption('metaplot_scatter_fit_lty','solid'),
+  fit.alpha = getOption('metaplot_scatter_fit_alpha',1),
+  conf = getOption('metaplot_scatter_conf',FALSE),
+  conf.alpha = getOption('metaplot_scatter_conf_alpha',0.3),
+  loc = getOption('metaplot_scatter_loc',0),
+  global = getOption('metaplot_scatter_global',FALSE),
+  global.col = getOption('metaplot_scatter_global_col','grey'),
   msg = getOption('metaplot_scatter_msg','metastats'),
-  gg = getOption('metaplot_gg',FALSE),
+  gg = getOption('metaplot_scatter_gg',FALSE),
   ...
 ){
 
@@ -149,12 +154,14 @@ scatter_data_frame <- function(
   stopifnot(is.character(yvar))
   stopifnot(is.character(xvar))
   stopifnot(length(xvar) == 1)
+  stopifnot(is.numeric(padding))
+  padding <- rep(padding, length.out = 4)
+  par.settings = parintegrate(par.settings, padding)
+  if(gg)padding <- unit(padding * 5.5, 'pt')
 
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x
   stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
-  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
-
   if(!is.null(groups))if(!is.factor(y[[groups]])){
     y[[groups]] <- factor(y[[groups]])
     for(at in names(attributes(x[[groups]])))if(! at %in% c('levels','class'))attr(y[[groups]], at) <- attr(x[[groups]], at)
@@ -163,7 +170,6 @@ scatter_data_frame <- function(
   if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
       stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
   if(length(yvar) > 1){
-    #if(is.null(keycols))if(length(yvar) > 1)keycols <- 1
     suppressWarnings(y %<>% gather(metaplot_groups, metaplot_values, !!!yvar, factor_key = TRUE))
     groups <- 'metaplot_groups' # groups is factor if derived
     labs <- sapply(yvar, function(col){
@@ -193,7 +199,6 @@ scatter_data_frame <- function(
   # groups is factor if imputed
 
   # groups now assigned and is factor; and yvar is singular
-  if(length(unique(y[[groups]])) == 1)key = if(gg)'none' else FALSE
 
   # yref
   yref
@@ -221,9 +226,6 @@ scatter_data_frame <- function(
   if(is.na(iso)) iso <- FALSE
   if(iso)if(is.null(prepanel))prepanel <- iso_prepanel
 
-#  if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
-#  if(is.null(auto.key))if(length(unique(y[[groups]])) > 1) auto.key <- list(columns = keycols,points=any(as.logical(points)),lines=any(as.logical(lines)))
-  if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key)
   if(na.rm) {
     #y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
     foo <- y
@@ -275,7 +277,7 @@ scatter_data_frame <- function(
   if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
 
-  if(!gg) groups <- as.formula(paste('~',groups))
+  #groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
     for (i in seq_along(facets)) y[[ facets[[i]] ]] <- as_factor(y[[ facets[[i]] ]])
   }
@@ -294,25 +296,24 @@ scatter_data_frame <- function(
   )
   sym <- sym[sapply(sym,function(i)!is.null(i))]
   line <- line[sapply(line,function(i)!is.null(i))]
-  pars <- list(
-    superpose.symbol = sym,
-    superpose.line = line
-  )
-  pars <- pars[sapply(pars, function(i)length(i) > 0 )]
+  #par.settings is defined
+  if(is.null(par.settings$superpose.symbol)) par.settings$superpose.symbol <- sym
+  if(is.null(par.settings$superpose.line)) par.settings$superpose.line <- line
+ # pars <- pars[sapply(pars, function(i)length(i) > 0 )]
+
+  nlev <- length(levels(y[[groups]]))
+  levs <- levels(y[[groups]])
+  points <- rep(points, length.out = nlev)
+  lines <- rep(lines, length.out = nlev)
+  if(is.character(key)) key <- match.fun(key)
+  if(is.function(key)) key <- key(groups = groups, levels = levs, points = points, lines = lines, space = space, gg = gg, type = 'scatter', ...)
+
 
   if(gg){
-    base_breaks <- function(n = 10){
-      function(x) {
-        axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
-      }
-    }
 
-    levs <- length(levels(y[[groups]]))
-    if(is.null(colors)) colors <- hue_pal()(levs)
-    points <- rep(points, length.out = levs)
-    lines <- rep(lines, length.out = levs)
+    if(is.null(colors)) colors <- hue_pal()(nlev)
     if(is.null(symbols)) symbols <- 21
-    symbols <- rep(symbols, length.out = levs)
+    symbols <- rep(symbols, length.out = nlev)
     # plot <- plot + scale_color_manual(values = alpha(colors, lines))
     # plot <- plot + scale_fill_manual(values = alpha(colors, points))
     # plot <- plot + scale_shape_manual(values = symbols)
@@ -432,8 +433,8 @@ scatter_data_frame <- function(
       plot <- plot + scale_y_continuous(limits = c(lo, hi))
       plot <- plot + scale_x_continuous(limits = c(lo, hi))
     }
-    plot <- plot +
-      theme(aspect.ratio = aspect, legend.position = key)
+    plot <- plot + theme(aspect.ratio = aspect, plot.margin = padding)
+    plot <- plot + do.call(theme, key)
     if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
 
     if(xlog) plot <- plot + scale_x_continuous(
@@ -474,7 +475,7 @@ scatter_data_frame <- function(
   xyplot(
     formula,
     data = y,
-    groups = groups,
+    groups = as.formula(paste('~',groups)),
     auto.key = key,
     as.table = as.table,
     aspect = aspect,
@@ -489,7 +490,7 @@ scatter_data_frame <- function(
     iso = iso,
     panel = panel,
     subscripts = subscripts,
-    par.settings = if(is.null(par.settings)) pars else par.settings,
+    par.settings = par.settings,
     main = main,
     sub = sub,
     .data = y,
@@ -804,5 +805,64 @@ ypos <- function(loc, range = 0:1, lo = range[[1]], hi = range[[2]]){
   # hi <- current.panel.limits()$ylim[[2]]
   ypos <- lo + y * (hi - lo)
   ypos
+}
+
+#' Default Key
+#'
+#' Default key function for constructing scatterplot legends.
+#'
+#' @export
+#' @return list, or possibly logical if gg is FALSE
+#' @family metaplot
+#' @family scatter
+#' @family panel functions
+#' @param groups name of the grouping variable
+#' @param levels the (unique) levels of the grouping variable
+#' @param points logical or alpha, same length as groups
+#' @param lines logical or alpha, same length as groups
+#' @param fill logical or alpha, same length as groups
+#' @param space character: left, right, top, or bottom
+#' @param gg logical: whether to to return a list of arguments for \code{\link[ggplot2]{theme}} instead of for \code{auto.key} as in \code{\link[lattice]{xyplot}}
+#' @param type typically one of 'categorical','density', or 'scatter'
+#' @param ... ignored
+#'
+metaplot_key <- function(
+  groups,
+  levels,
+  points = rep(FALSE, length.out = length(levels)),
+  lines = rep(FALSE, length.out = length(levels)),
+  fill = rep(FALSE, length.out = length(levels)),
+  space = 'right',
+  gg = FALSE,
+  type = 'scatter',
+  ...
+){
+  nlev <- length(levels)
+  stopifnot(space %in% c('left','right','top','bottom','none'))
+  stopifnot(length(points) == nlev)
+  stopifnot(length(levels) == nlev)
+  stopifnot(length(type) == 1, is.character(type))
+  if(type == 'categorical') lines = rep(FALSE, length.out = length(levels)) # coerce to default in this implementation
+  key = list()
+  if( gg) key$legend.direction <- 'vertical' # esp. for gg top bottom, overrides default to match lattice
+  if( gg) key$legend.position <- space
+  if(!gg) key$space <- space
+  if(!gg) key$points <- any(as.logical(points))
+  if(!gg) key$lines <- any(as.logical(lines))
+  if(!gg) key$rectangles <- any(as.logical(fill))
+  if(!gg) key$lines <- FALSE
+  # for density plot, show only fill or lines
+  # if(!gg) if(type == 'density'){
+  #   showFill <- any(as.numeric(fill) > 0.00000001) # cf categorical nominal value of 0.000000001
+  #   key$lines <- !showFill
+  #   key$rectangles <- showFill
+  # }
+  extras <- list(...)
+  nms <- names(extras)
+  if(gg) nms <- intersect(nms, names(formals(ggplot2::theme)))
+  for(i in nms) key[[i]] <- extras[[i]]
+  # no key for imputed grouping
+  if(nlev == 1 && groups == 'metaplot_groups')key <- if(gg)list(legend.position = 'none') else FALSE # no legend if one level
+  key
 }
 

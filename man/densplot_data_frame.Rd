@@ -5,18 +5,28 @@
 \title{Density Function for Data Frame}
 \usage{
 densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
-  xlab = getOption("metaplot_lab", axislabel),
-  ref = getOption("metaplot_ref", metaplot_ref),
-  ref.col = getOption("metaplot_ref.col", "grey"),
-  ref.lty = getOption("metaplot_ref.lty", "solid"),
-  ref.alpha = getOption("metaplot_ref.alpha", 1),
-  log = getOption("metaplot_log", FALSE), crit = getOption("metaplot_crit",
-  1.3), aspect = getOption("metaplot_aspect", 1),
-  scales = getOption("metaplot_dens.scales", NULL),
-  panel = getOption("metaplot_dens.panel", dens_panel),
-  key = getOption("metaplot_key", "right"),
-  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), gg = getOption("metaplot_gg", FALSE), ...)
+  xlab = getOption("metaplot_dens_lab", axislabel),
+  ref = getOption("metaplot_dens_ref", metaplot_ref),
+  ref.col = getOption("metaplot_dens_ref_col", "grey"),
+  ref.lty = getOption("metaplot__dens_ref_lty", "solid"),
+  ref.alpha = getOption("metaplot_dens_ref_alpha", 1),
+  log = getOption("metaplot_dens_log", FALSE),
+  crit = getOption("metaplot__dens_crit", 1.3),
+  aspect = getOption("metaplot_dens_aspect", 1),
+  scales = getOption("metaplot_dens_scales", NULL),
+  panel = getOption("metaplot_dens_panel", dens_panel),
+  colors = getOption("metaplot_dens_colors", NULL),
+  symbols = getOption("metaplot_dens_symbols", NULL),
+  points = getOption("metaplot_dens_points", TRUE),
+  lines = getOption("metaplot_dens_lines", TRUE),
+  fill = getOption("metaplot_dens_fill", FALSE),
+  space = getOption("metaplot_dens_space", "right"),
+  key = getOption("metaplot_dens_key", "metaplot_key"),
+  main = getOption("metaplot_dens_main", NULL),
+  sub = getOption("metaplot_dens_sub", NULL),
+  par.settings = getOption("metaplot_dens_par_settings", NULL),
+  padding = getOption("metaplot_dens_padding", 1),
+  gg = getOption("metaplot_dens_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -47,11 +57,27 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto.key) or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
+\item{colors}{replacements for default colors in group order}
+
+\item{symbols}{replacements for default symbols in group order}
+
+\item{points}{logical or alpha, same length as groups}
+
+\item{lines}{logical or alpha, same length as groups}
+
+\item{fill}{logical or alpha, same length as groups}
+
+\item{space}{location of key (right, left, top, bottom)}
+
+\item{key}{list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.}
 
 \item{main}{character, or a function of x, xvar, groups, facets, and log}
 
 \item{sub}{character, or a function of x, xvar, groups, facets, and log}
+
+\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+
+\item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
@@ -63,12 +89,16 @@ Plot density for object of class 'data.frame' using \code{dens_panel} by default
 \examples{
 densplot_data_frame(Theoph, 'conc', grid = TRUE)
 densplot_data_frame(Theoph, 'conc', 'Subject')
+densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal')
+densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
 densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
 Other univariate plots: \code{\link{dens_panel}},
   \code{\link{densplot.data.frame}},
-  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
+  \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{panel.meta_densityplot}}
 
 Other densplot: \code{\link{densplot.data.frame}},
   \code{\link{densplot}}
@@ -76,6 +106,7 @@ Other densplot: \code{\link{densplot.data.frame}},
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{scatter_data_frame}},
   \code{\link{test_metaplot}}
 }

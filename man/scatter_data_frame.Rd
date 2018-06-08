@@ -5,41 +5,49 @@
 \title{Scatterplot Function for Data Frame}
 \usage{
 scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
-  log = getOption("metaplot_log", FALSE), ylog = getOption("metaplot_ylog",
-  log), xlog = getOption("metaplot_xlog", log),
-  crit = getOption("metaplot_crit", 1.3), yref = getOption("metaplot_ref",
-  metaplot_ref), xref = getOption("metaplot_ref", metaplot_ref),
-  ylab = getOption("metaplot_lab", axislabel),
-  xlab = getOption("metaplot_lab", axislabel),
-  ysmooth = getOption("metaplot_ysmooth", FALSE),
-  xsmooth = getOption("metaplot_xsmooth", FALSE),
-  iso = getOption("metaplot_iso", FALSE),
-  na.rm = getOption("metaplot_na.rm", TRUE),
-  aspect = getOption("metaplot_aspect", 1), key = getOption("metaplot_key",
-  "right"), as.table = getOption("metaplot_scatter_as.table", TRUE),
+  log = getOption("metaplot_scatter_log", FALSE),
+  ylog = getOption("metaplot_scatter_ylog", log),
+  xlog = getOption("metaplot_scatter_xlog", log),
+  crit = getOption("metaplot_scatter_crit", 1.3),
+  yref = getOption("metaplot_scatter_yref", metaplot_ref),
+  xref = getOption("metaplot_scatter_xref", metaplot_ref),
+  ylab = getOption("metaplot_scatter_ylab", axislabel),
+  xlab = getOption("metaplot_scatter_xlab", axislabel),
+  ysmooth = getOption("metaplot_scatter_ysmooth", FALSE),
+  xsmooth = getOption("metaplot_scatter_xsmooth", FALSE),
+  iso = getOption("metaplot_scatter_iso", FALSE),
+  na.rm = getOption("metaplot_scatter_na_rm", TRUE),
+  aspect = getOption("metaplot_scatter_aspect", 1),
+  space = getOption("metaplot_scatter_space", "right"),
+  key = getOption("metaplot_scatter_key", "metaplot_key"),
+  as.table = getOption("metaplot_scatter_as_table", TRUE),
   prepanel = getOption("metaplot_scatter_prepanel", NULL),
   scales = getOption("metaplot_scatter_scales", NULL),
   panel = getOption("metaplot_scatter_panel", scatter_panel),
-  colors = getOption("metaplot_colors", NULL),
-  symbols = getOption("metaplot_symbols", NULL),
-  points = getOption("metaplot_points", TRUE),
-  lines = getOption("metaplot_lines", FALSE),
-  main = getOption("metaplot_main", NULL), sub = getOption("metaplot_sub",
-  NULL), subscripts = TRUE, par.settings = NULL,
-  ref.col = getOption("metaplot_ref.col", "grey"),
-  ref.lty = getOption("metaplot_ref.lty", "solid"),
-  ref.alpha = getOption("metaplot_ref.alpha", 1),
-  smooth.lty = getOption("metaplot_smooth.lty", "dashed"),
-  smooth.alpha = getOption("metaplot_smooth.alpha", 1),
-  fit = getOption("metaplot_fit", conf),
-  fit.lty = getOption("metaplot_fit.lty", "solid"),
-  fit.alpha = getOption("metaplot_fit.alpha", 1),
-  conf = getOption("metaplot_conf", FALSE),
-  conf.alpha = getOption("metaplot_conf.alpha", 0.3),
-  loc = getOption("metaplot_loc", 0), global = getOption("metaplot_global",
-  FALSE), global.col = getOption("metaplot_global.col", "grey"),
+  colors = getOption("metaplot_scatter_colors", NULL),
+  symbols = getOption("metaplot_scatter_symbols", NULL),
+  points = getOption("metaplot_scatter_points", TRUE),
+  lines = getOption("metaplot_scatter_lines", FALSE),
+  main = getOption("metaplot_scatter_main", NULL),
+  sub = getOption("metaplot_scatter_sub", NULL),
+  subscripts = getOption("metaplot_scatter_subscripts", TRUE),
+  par.settings = getOption("metaplot_scatter_par_settings", NULL),
+  padding = getOption("metaplot_scatter_padding", 1),
+  ref.col = getOption("metaplot_scatter_ref_col", "grey"),
+  ref.lty = getOption("metaplot__scatter_ref_lty", "solid"),
+  ref.alpha = getOption("metaplot_scatter_ref_alpha", 1),
+  smooth.lty = getOption("metaplot_scatter_smooth_lty", "dashed"),
+  smooth.alpha = getOption("metaplot_scatter_smooth_alpha", 1),
+  fit = getOption("metaplot_scatter_fit", conf),
+  fit.lty = getOption("metaplot_scatter_fit_lty", "solid"),
+  fit.alpha = getOption("metaplot_scatter_fit_alpha", 1),
+  conf = getOption("metaplot_scatter_conf", FALSE),
+  conf.alpha = getOption("metaplot_scatter_conf_alpha", 0.3),
+  loc = getOption("metaplot_scatter_loc", 0),
+  global = getOption("metaplot_scatter_global", FALSE),
+  global.col = getOption("metaplot_scatter_global_col", "grey"),
   msg = getOption("metaplot_scatter_msg", "metastats"),
-  gg = getOption("metaplot_gg", FALSE), ...)
+  gg = getOption("metaplot_scatter_gg", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -78,7 +86,9 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{aspect}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{key}{location of key (right, left, top, bottom) or something to pass to \code{\link[lattice]{xyplot}} (auto) or \code{\link[ggplot2]{theme}} as \code{legend.postion}}
+\item{space}{location of key (right, left, top, bottom)}
+
+\item{key}{list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.}
 
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
@@ -90,7 +100,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{colors}{replacements for default colors in group order}
 
-\item{symbols}{replacements for default symbols in group order (for ggplots use filled symbols 21 - 25)}
+\item{symbols}{replacements for default symbols in group order}
 
 \item{points}{whether to plot points for each group: logical, or alpha values between 0 and 1}
 
@@ -103,6 +113,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+
+\item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
 \item{ref.col}{reference line color}
 
@@ -167,8 +179,10 @@ Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
   \code{\link{corsplom_data_frame}},
   \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{test_metaplot}}
+  \code{\link{metaplot_key}}, \code{\link{metaplot}},
+  \code{\link{test_metaplot}}
 
-Other scatter: \code{\link{scatter.data.frame}},
+Other scatter: \code{\link{metaplot_key}},
+  \code{\link{scatter.data.frame}},
   \code{\link{scatter_panel}}, \code{\link{scatter}}
 }

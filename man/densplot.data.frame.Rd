@@ -19,6 +19,7 @@ Plot density for object of class 'data.frame'. Parses arguments and generates th
 }
 \examples{
 densplot(Theoph, conc, grid = TRUE )
+densplot(Theoph, conc, grid = TRUE, gg = TRUE )
 densplot(Theoph, conc, Subject )
 densplot(Theoph, conc, , Subject )
 attr(Theoph,'title') <- 'Theophylline'
@@ -28,7 +29,9 @@ densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))
 \seealso{
 Other univariate plots: \code{\link{dens_panel}},
   \code{\link{densplot_data_frame}},
-  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
+  \code{\link{densplot}},
+  \code{\link{metaplot.data.frame}},
+  \code{\link{panel.meta_densityplot}}
 
 Other densplot: \code{\link{densplot_data_frame}},
   \code{\link{densplot}}

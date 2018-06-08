@@ -90,9 +90,11 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{corsplom_panel_scatter}},
   \code{\link{dens_panel}}, \code{\link{diag_label}},
   \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_ref}}, \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}}
+  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
+  \code{\link{panel.meta_densityplot}},
+  \code{\link{panel_tile}}, \code{\link{scatter_panel_ref}}
 
-Other scatter: \code{\link{scatter.data.frame}},
+Other scatter: \code{\link{metaplot_key}},
+  \code{\link{scatter.data.frame}},
   \code{\link{scatter_data_frame}}, \code{\link{scatter}}
 }
