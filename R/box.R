@@ -188,7 +188,7 @@ boxplot_data_frame <- function(
   if(gg){
     plot <- ggplot(data = y, aes_string(cat, con))
     plot <- plot  +
-      geom_boxplot() +
+      geom_boxplot(notch = notch) +
       xlab(catlab) +
       ylab(numlab) +
       ggtitle(main, subtitle = sub)

@@ -338,7 +338,8 @@ scatter_data_frame <- function(
       xlab(xlab) +
       ylab(ylab) +
       ggtitle(main, subtitle = sub)
-    if(ysmooth & global) plot <- plot + geom_smooth(
+    if(ysmooth & global) plot <- plot + geom_line(
+      stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
@@ -348,7 +349,8 @@ scatter_data_frame <- function(
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
     )
-    if(ysmooth & !global) plot <- plot + geom_smooth(
+    if(ysmooth & !global) plot <- plot + geom_line(
+      stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
@@ -356,7 +358,8 @@ scatter_data_frame <- function(
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE
     )
-    if(xsmooth & global) plot <- plot + geom_smooth(
+    if(xsmooth & global) plot <- plot + geom_line(
+      stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
@@ -367,7 +370,8 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       formula = x ~ y
     )
-    if(xsmooth & !global) plot <- plot + geom_smooth(
+    if(xsmooth & !global) plot <- plot + geom_line(
+      stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
       method = 'loess',
@@ -382,6 +386,7 @@ scatter_data_frame <- function(
       method = 'lm',
       se = TRUE,
       color = global.col,
+      fill = global.col,
       inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
@@ -396,7 +401,8 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
-    if(fit & global) plot <- plot + geom_smooth(
+    if(fit & global) plot <- plot + geom_line( # https://stackoverflow.com/questions/19474552/adjust-transparency-alpha-of-stat-smooth-lines-not-just-transparency-of-confi
+      stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
       method = 'lm',
@@ -406,7 +412,8 @@ scatter_data_frame <- function(
       se = FALSE,
       show.legend = FALSE
     )
-    if(fit & !global) plot <- plot + geom_smooth(
+    if(fit & !global) plot <- plot + geom_line(
+      stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
       method = 'lm',

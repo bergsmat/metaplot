@@ -172,20 +172,14 @@ densplot_data_frame<- function(
 
 if(gg){
   x$metaplot_points_alpha <- points[as.numeric(x[[groups]])]
-  # x$metaplot_lines_alpha <- lines[as.numeric(x[[groups]])]
-  # x$metaplot_fill_alpha <- fill[as.numeric(x[[groups]])]
-
-
-
   plot <- ggplot(data = x, aes_string(x = xvar))
   plot <- plot + geom_density(mapping = aes_string(color = groups, fill = groups))
-  # plot <- plot + geom_density(mapping = aes_string(fill = groups,  alpha = 'metaplot_fill_alpha'), color = 'transparent')
-  plot <- plot + geom_jitter( mapping = aes_string(y = 0, color = groups, shape = groups, alpha = 'metaplot_points_alpha'),height = 0.1)
+  lim <- max(na.rm = TRUE, ggplot_build(plot)$data[[1]]$y)
+  plot <- plot + geom_jitter( mapping = aes_string(y = 0, color = groups, shape = groups, alpha = 'metaplot_points_alpha'),height = 0.02 * lim)
   plot <- plot + scale_shape_manual(values = symbols)
   plot <- plot + scale_color_manual(values = alpha(colors, lines))
   plot <- plot + scale_fill_manual(values = alpha(colors, fill))
   plot <- plot + guides(alpha = FALSE)
-  # plot <- plot + guides(fill = FALSE)
   plot <- plot + scale_alpha_identity()
 
   plot <- plot + xlab(xlab)

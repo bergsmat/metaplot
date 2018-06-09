@@ -219,6 +219,8 @@ categorical_data_frame <- function(
   padding <- rep(padding, length.out = 4)
   par.settings = parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
+  stopifnot(is.numeric(rot))
+  rot <- rep(rot, length.out = 2)
 
   if(!is.null(facets))stopifnot(is.character(facets))
   y <- x

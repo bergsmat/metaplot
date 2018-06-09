@@ -510,6 +510,9 @@ metaplot.data.frame <- function(
 #' )
 #'
 #'x %>% densplot(
+#'  main = 'Density Plot',
+#'  sub = 'using lattice',
+#'  gg = F,
 #'  sres, subject,
 #'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
 #'  log = F,
@@ -520,12 +523,13 @@ metaplot.data.frame <- function(
 #'  lines = .5,
 #'  fill = 0.1,
 #'  space = 'left',
-#'  main = 'density plot',
-#'  sub = 'with options',
 #'  padding = c(1,2,3,4),
-#'  gg = F
+#'  other = 'none'
 #')
 #'x %>% densplot(
+#'  main = 'Density Plot',
+#'  sub = 'using ggplot',
+#'  gg = T,
 #'  sres, subject,
 #'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
 #'  log = F,
@@ -536,13 +540,147 @@ metaplot.data.frame <- function(
 #'  lines = 0.5,
 #'  fill = 0.1,
 #'  space = 'left',
-#'  main = 'density plot',
-#'  sub = 'with options',
-#'  padding = c(1,2,3,4),
-#'  gg = T
+#'  padding = 1:4,
+#'  other = 'none'
+#')
+#'x %>% filter(conc > 0) %>% metaplot(
+#'  main = 'Box Plot',
+#'  sub = 'using lattice',
+#'  gg = F,
+#'  arm, conc,
+#'  log = T,
+#'  ref = 4, ref.col = 'red', ref.lty = 'dashed',
+#'  nobs = T,
+#'  padding = 1:4,
+#'  reverse = FALSE,
+#'  pch = 20,
+#'  notch = TRUE,
+#'  other = 'none'
 #')
 #'
+#'x %>% filter(conc > 0) %>% metaplot(
+#'  main = 'Box Plot',
+#'  sub = 'using ggplot',
+#'  gg = T,
+#'  arm, conc,
+#'  log = T,
+#'  ref = 4, ref.col = 'red', ref.lty = 'dashed',
+#'  nobs = T,
+#'  padding = 1:4,
+#'  reverse = FALSE,
+#'  pch = 20,
+#'  notch = TRUE,
+#'  other = 'none'
+#')
+#'x %>% metaplot(
+#'  main = 'Categorical Plot',
+#'  sub = 'using lattice',
+#'  gg = F,
+#'  arm, site, cohort,
+#'  aspect = .7, space = 'top',
+#'  as.table = FALSE,
+#'  colors = c('red','blue','green'),
+#'  fill = c(0.3, 0.5, 0.7),
+#'  lines = c(0.7, 0.5, 0.3),
+#'  tex = 0.8, rot = 45,
+#'  padding = 1:4, loc = 1,
+#'  cex = .5,
+#'  other = 'none'
+#')
 #'
-#'
+#'x %>% metaplot(
+#'  main = 'Categorical Plot',
+#'  sub = 'using ggplot2',
+#'  gg = T,
+#'  arm, site, cohort,
+#'  aspect = .7, space = 'top',
+#'  as.table = FALSE,
+#'  colors = c('red','blue','green'),
+#'  fill = c(0.3, 0.5, 0.7),
+#'  lines = c(0.7, 0.5, 0.3),
+#'  tex = 0.8, rot = 45,
+#'  padding = 1:4, loc = 1,
+#'  cex = .5,
+#'  other = 'none'
+#')
+#' x %>% metaplot(
+#'   main = 'Correlation Splom',
+#'   sub = 'using lattice',
+#'   gg = F,
+#'   lKe, lKa, lCl,
+#'   varname.cex = 2,
+#'   col = 'purple',
+#'   loess.col = 'orange', loess.lty = 'dashed', loess.alpha = 0.9,
+#'   pin.col = 'orange', pin.alpha = 0.9,
+#'   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
+#'   padding = 1:4,
+#'   other = 'none'
+#' )
+#' x %>% metaplot(
+#'   main = 'Correlation Splom',
+#'   sub = 'using ggplot',
+#'   gg = T,
+#'   lKe, lKa, lCl,
+#'   varname.cex = 2,
+#'   col = 'purple',
+#'   loess.col = 'orange', loess.lty = 'dashed', loess.alpha = 0.9,
+#'   pin.col = 'orange', pin.alpha = 0.9,
+#'   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
+#'   padding = 1:4,
+#'   other = 'none'
+#' )
+#' x %>% metaplot(
+#'   main = 'Scatterplot',
+#'   sub = 'using lattice',
+#'   gg = F,
+#'   res, conc,
+#'   yref = 0, ysmooth = T,
+#'   smooth.lty = 'dotted', smooth.alpha = 1,
+#'   aspect = 0.8,
+#'   space = 'bottom',
+#'   colors = c('purple','darkgreen','peach'),
+#'   symbols = 21:23,
+#'   points = c(0.3, 0.5, 0.7),
+#'   lines = F,
+#'   padding = 1:4,
+#'   ref.col = 'blue',
+#'   ref.lty = 'dashed',
+#'   ref.alpha = 0.5,
+#'   conf = .99999,
+#'   fit.lty = 'dashed',
+#'   fit.alpha = 0.5,
+#'   conf.alpha = 0.2,
+#'   global = T,
+#'   global.col = 'darkgreen',
+#'   grid = T, loc = 1,
+#'   other = 'none'
+#'  )
+#' x %>% metaplot(
+#'   main = 'Scatterplot',
+#'   sub = 'using ggplot',
+#'   gg = T,
+#'   res, conc,
+#'   yref = 0, ysmooth = T,
+#'   smooth.lty = 'dotted', smooth.alpha = 1,
+#'   aspect = 0.8,
+#'   space = 'bottom',
+#'   colors = c('purple','darkgreen','peach'),
+#'   symbols = 21:23,
+#'   points = c(0.3, 0.5, 0.7),
+#'   lines = F,
+#'   padding = 1:4,
+#'   ref.col = 'blue',
+#'   ref.lty = 'dashed',
+#'   ref.alpha = 0.5,
+#'   conf = .99999,
+#'   fit.lty = 'dashed',
+#'   fit.alpha = 0.5,
+#'   conf.alpha = 0.2,
+#'   global = T,
+#'   global.col = 'darkgreen',
+#'   grid = T, loc = 1,
+#'   other = 'none'
+#'  )
+
 test_metaplot <- function()NULL
 
