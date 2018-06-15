@@ -12,7 +12,9 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
   dens.col = getOption("metaplot_dens.col", "grey"),
   dens.scale = getOption("metaplot_dens.scale", 0.2),
   dens.alpha = getOption("metaplot_dens.alpha", 0.5),
-  varname.cex = getOption("metaplot_corsplom_varname_cex", 1), ...)
+  varname.cex = getOption("metaplot_corsplom_varname_cex", 1),
+  as.table = getOption("metaplot_corsplom_as_table", TRUE),
+  upper = getOption("metaplot_corsplom_margin", TRUE), ...)
 }
 \arguments{
 \item{data}{data}
@@ -21,7 +23,7 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 
 \item{.data}{copy of original dataset}
 
-\item{density}{whether to plot density polygons}
+\item{density}{whether to plot density polygons; can be a length 4 vector for top, right, bottom, left}
 
 \item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
 
@@ -38,6 +40,10 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 \item{dens.alpha}{alpha transparency for density region}
 
 \item{varname.cex}{text size multiplier}
+
+\item{as.table}{diagonal arranged top-left to bottom-right}
+
+\item{upper}{whether density plots should face the upper triangle (or lower, if FALSE)}
 
 \item{...}{passed arguments}
 }

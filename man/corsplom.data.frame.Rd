@@ -22,7 +22,9 @@ Other multivariate plots: \code{\link{corsplom_data_frame}},
   \code{\link{metaplot.data.frame}}
 
 Other corsplom: \code{\link{corsplom_data_frame}},
-  \code{\link{corsplom}}
+  \code{\link{corsplom}},
+  \code{\link{plot.metaplot_gtable}},
+  \code{\link{print.metaplot_gtable}}
 
 Other methods: \code{\link{axislabel.data.frame}},
   \code{\link{boxplot.data.frame}},
@@ -30,6 +32,8 @@ Other methods: \code{\link{axislabel.data.frame}},
   \code{\link{densplot.data.frame}},
   \code{\link{metaplot.data.frame}},
   \code{\link{pack.data.frame}},
+  \code{\link{plot.metaplot_gtable}},
+  \code{\link{print.metaplot_gtable}},
   \code{\link{scatter.data.frame}},
   \code{\link{unpack.data.frame}}
 }

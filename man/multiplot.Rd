@@ -35,6 +35,7 @@ multiplot(a,a,a,a,a,a,a,a, nrow = 2)
 multiplot(a,a,a,a,a,a,a,a, ncol = 4)
 multiplot(a,a,a,a,a,a,a,a, ncol = 2)
 multiplot(a,a,a,a,a,a,a,a, ncol = 4, nrow = 3)
+multiplot(multiplot(a,a), a)
 }
 \seealso{
 \code{\link[gridExtra]{grid.arrange}}

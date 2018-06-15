@@ -30,6 +30,8 @@ Other methods: \code{\link{boxplot.data.frame}},
   \code{\link{densplot.data.frame}},
   \code{\link{metaplot.data.frame}},
   \code{\link{pack.data.frame}},
+  \code{\link{plot.metaplot_gtable}},
+  \code{\link{print.metaplot_gtable}},
   \code{\link{scatter.data.frame}},
   \code{\link{unpack.data.frame}}
 }

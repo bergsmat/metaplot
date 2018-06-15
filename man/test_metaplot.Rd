@@ -90,9 +90,10 @@ multiplot(
 x \%>\% metaplot(conc, time, subject, site, arm, gg = F, padding = 2),
 x \%>\% metaplot(conc, time, subject, site, arm, gg = T)
 )
-# Currently can't multiplot a ggmatrix
-x \%>\% metaplot(lKe, lKa, lCl, gg = F)
-x \%>\% metaplot(lKe, lKa, lCl, gg = T)
+multiplot(
+x \%>\% metaplot(lKe, lKa, lCl, gg = F),
+x \%>\% metaplot(lKe, lKa, lCl, gg = T, padding = 3)
+)
 x \%>\% metaplot(
   lKe, lKa, lCl,
   col = 'black',loess.col = 'red', pin.col = 'red',

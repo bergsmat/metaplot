@@ -27,6 +27,7 @@
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 4)
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 2)
 #' multiplot(a,a,a,a,a,a,a,a, ncol = 4, nrow = 3)
+#' multiplot(multiplot(a,a), a)
 multiplot <- function(..., nrow = NULL, ncol = NULL){
   x <- list(...)
   len <- length(x)
@@ -49,7 +50,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   # now nrow is defined for sure
 
   #if(gg)return(do.call(grid.arrange, c(x,list(ncol = ncol))))
-  return(do.call(grid.arrange, c(x,list(ncol = ncol))))
+  return(do.call(grid.arrange, c(x,list(ncol = ncol, nrow = nrow))))
 #
 #   y <- expand.grid(
 #     run = seq_len(ncol),

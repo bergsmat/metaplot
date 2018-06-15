@@ -30,6 +30,8 @@ corsplom_data_frame(x, xvar = names(x),
   dens.alpha = getOption("metaplot_corsplom_dens_alpha", 0.5),
   par.settings = getOption("metaplot_corsplom_par_settings", NULL),
   padding = getOption("metaplot_corsplom_padding", 1),
+  as.table = getOption("metaplot_corsplom_as_table", FALSE),
+  upper = getOption("metaplot_corsplom_upper", TRUE),
   gg = getOption("metaplot_corsplom_gg", FALSE), ...)
 }
 \arguments{
@@ -81,9 +83,16 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
+\item{as.table}{diagonal arranged top-left to bottom-right}
+
+\item{upper}{whether density plots in diagonal should face the upper triangle vs. lower}
+
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)}
+}
+\value{
+trellis or grob
 }
 \description{
 Creates a scatterplot matrix with correlations in lower panel, by default.
@@ -108,7 +117,9 @@ Other multivariate plots: \code{\link{corsplom.data.frame}},
   \code{\link{metaplot.data.frame}}
 
 Other corsplom: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom}}
+  \code{\link{corsplom}},
+  \code{\link{plot.metaplot_gtable}},
+  \code{\link{print.metaplot_gtable}}
 
 Other metaplot: \code{\link{boxplot_data_frame}},
   \code{\link{categorical_data_frame}},
