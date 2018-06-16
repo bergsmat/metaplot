@@ -61,10 +61,10 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 corsplom_panel_scatter = function(
   x,
   y,
-  col = getOption('metaplot_corsplom_point_col','#0080ff'),
-  loess.col = getOption('metaplot_loess.col',col),
-  loess.lty = getOption('metaplot_loess.lty','solid'),
-  loess.alpha = getOption('metaplot_loess.alpha',1),
+  col = getOption('metaplot_point_col_corsplom_panel','#0080ff'),
+  loess.col = getOption('metaplot_loess_col_corsplom_panel',col),
+  loess.lty = getOption('metaplot_loess_lty_corspom_panel','solid'),
+  loess.alpha = getOption('metaplot_loess_alpha_corsplom_panel',1),
   ...
 ){
   panel.xyplot(x,y,col = col, ...)
@@ -103,7 +103,7 @@ corsplom_panel_correlation = function(x, y, ...) {
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
 #' @param as.table diagonal arranged top-left to bottom-right
-#' @param upper whether density plots should face the upper triangle (or lower, if FALSE)
+#' @param dens.up whether density plots should face the upper triangle (or lower, if FALSE)
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -114,15 +114,15 @@ corsplom_panel_diagonal <- function(
   varname,
   .data,
   density = TRUE,
-  diag.label = getOption('metaplot_diag.label',diag_label),
-  pin = getOption('metaplot_pin',diag_pin),
-  pin.col = getOption('metaplot_pin.col','darkgrey'),
-  pin.alpha = getOption('metaplot_pin.alpha',1),
-  dens.col = getOption('metaplot_dens.col','grey'),
-  dens.scale = getOption('metaplot_dens.scale',0.2),
-  dens.alpha = getOption('metaplot_dens.alpha',0.5),
-  as_table = getOption('metaplot_corsplom_as_table', FALSE),
-  upper = getOption('metaplot_corsplom_margin',TRUE),
+  diag.label = getOption('metaplot_diag_label_corsplom_panel',diag_label),
+  pin = getOption('metaplot_pin_loc_corsplom_panel',diag_pin),
+  pin.col = getOption('metaplot_pin_col_corsplom_panel','darkgrey'),
+  pin.alpha = getOption('metaplot_pin_alpha_corsplom_panel',1),
+  dens.col = getOption('metaplot_dens_col_corsplom_panel','grey'),
+  dens.scale = getOption('metaplot_dens_scale_corsplom_panel',0.2),
+  dens.alpha = getOption('metaplot_dens_alpha_corsplom_panel',0.5),
+  as_table = getOption('metaplot_astable_corsplom_panel', FALSE),
+  dens.up = getOption('metaplot_densup_corsplom_panel',TRUE),
   ...
 ){
   as.table <- as_table
@@ -133,19 +133,19 @@ corsplom_panel_diagonal <- function(
   right <- FALSE
   bottom <- FALSE
   left <- FALSE
-  if(as.table & upper){
+  if(as.table & dens.up){
     top  <-  i != 1
     right <- i != ncol
   }
-  if(!as.table & upper){
+  if(!as.table & dens.up){
     top   <- i != ncol
     left  <- i != 1
   }
-  if(as.table & !upper){
+  if(as.table & !dens.up){
     bottom <- i != ncol
     left <- i != 1
   }
-  if(!as.table & !upper){
+  if(!as.table & !dens.up){
     bottom <- i != 1
     right  <- i != ncol
   }
@@ -614,3 +614,52 @@ base_breaks <- function(n = 10){
     axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
   }
 }
+#' Get Option with Partial Matching
+#'
+#' Gets an option value.  Selects the longest among all leading partial matches.
+#' (Ties are broken by sorting and taking the first.)
+#' This allows multiple options to be set simultaneously, and allows a subset of these to be overridden.
+#' The intended effect is similar to cascading style sheets.
+#'
+#' @param x a character string holding an option name
+#' @param default the value returned if option is not set
+#' @export
+#' @seealso \code{\link{getOption}}
+#' @examples
+#'
+#' library(magrittr)
+#' library(dplyr)
+#' library(csv)
+
+#' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
+#' x %<>% pack
+#'
+
+#' multiplot(
+#' x %>% metaplot(conc, gg = F),
+#' x %>% metaplot(conc, time, gg = F),
+#' x %>% metaplot(conc, arm, gg = F),
+#' x %>% metaplot(conc, arm,  gg = T)
+#' )
+#'
+#' # Add a reference line at 9 mg/L
+#' x$conc %<>% structure(reference = 9)
+#'
+#' # Make the reference line green universally.
+#' setOption(metaplot_ref_col = 'green')
+#'
+#' # Make the reference line orange for gg density plots
+#' setOption(metaplot_ref_col_dens = 'orange')
+
+metOption <- function(x, default = NULL){
+  nms <- names(options())
+  nms <- nms[startsWith(x,nms)]
+  if(!length(nms)) return(default)
+  len <- nchar(nms)
+  max <- max(len)
+  nms <- nms[len == max]
+  nms <- sort(nms)
+  nm <- nms[[1]]
+  nm
+}
+
