@@ -39,11 +39,11 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{xvar}{variables to plot}
 
-\item{upper.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'upper')}
+\item{upper.panel}{passed to \code{\link[lattice]{splom}} or ggplot}
 
-\item{lower.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'lower')}
+\item{lower.panel}{passed to \code{\link[lattice]{splom}} or ggplot}
 
-\item{diag.panel}{passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'diagonal')}
+\item{diag.panel}{passed to \code{\link[lattice]{splom}} or ggplot}
 
 \item{pscales}{passed to \code{\link[lattice]{splom}}}
 
@@ -89,7 +89,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 
-\item{...}{extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)}
+\item{...}{extra arguments passed to \code{\link[lattice]{splom}} and ggplot}
 }
 \value{
 trellis or grob

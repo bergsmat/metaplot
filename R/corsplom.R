@@ -1,5 +1,5 @@
 globalVariables(c(
-  'z1'
+  'z1','plot', 'x0', 'x1', 'y0', 'y1', 'z0'
 ))
 
 #' Correlated Splom
@@ -10,9 +10,6 @@ globalVariables(c(
 #' @export
 #' @family generic functions
 #' @family corsplom
-#' @importFrom GGally ggpairs
-#' @importFrom GGally wrap
-#' @importFrom GGally ggally_cor
 #' @importFrom utils head
 corsplom <- function(x,...)UseMethod('corsplom')
 
@@ -21,9 +18,9 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' Creates a scatterplot matrix with correlations in lower panel, by default.
 #' @param x data.frame
 #' @param xvar variables to plot
-#' @param upper.panel passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'upper')
-#' @param lower.panel passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'lower')
-#' @param diag.panel passed to \code{\link[lattice]{splom}} or (if gg=T) \code{\link[GGally]{ggpairs}} (as 'diagonal')
+#' @param upper.panel passed to \code{\link[lattice]{splom}} or ggplot
+#' @param lower.panel passed to \code{\link[lattice]{splom}} or ggplot
+#' @param diag.panel passed to \code{\link[lattice]{splom}} or ggplot
 #' @param pscales passed to \code{\link[lattice]{splom}}
 #' @param xlab can be function(x = x, var = xvar, ...)
 #' @param varname.cex text size multiplier
@@ -46,11 +43,13 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param as.table diagonal arranged top-left to bottom-right
 #' @param upper whether density plots in diagonal should face the upper triangle vs. lower
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
-#' @param ... extra arguments passed to \code{\link[lattice]{splom}} and \code{\link[GGally]{ggpairs}} (including upper,lower, and diag)
+#' @param ... extra arguments passed to \code{\link[lattice]{splom}} and ggplot
 #' @export
 #' @return trellis or grob
 #' @importFrom rlang UQS
 #' @importFrom gtable gtable_add_padding
+#' @importFrom gridExtra arrangeGrob
+#' @importFrom gridExtra grid.arrange
 #' @family multivariate plots
 #' @family corsplom
 #' @family metaplot
@@ -209,7 +208,9 @@ corsplom_data_frame <- function(
         res,
         ncol = ncol,
         nrow = ncol,
-        respect = TRUE
+        respect = TRUE,
+        top = main,
+        bottom = sub
       )
     )
     m <- gtable_add_padding(m, padding)
@@ -242,6 +243,7 @@ corsplom_data_frame <- function(
     dens.scale = dens.scale,
     dens.alpha = dens.alpha,
     as.matrix = as.table,
+    as_table = as.table,
     par.settings = par.settings,
     ...
   )
@@ -290,16 +292,37 @@ corsplom.data.frame <- function(
 corsplom_gg_correlation = function(
   data, mapping, col = 'blue',
   loess.col, loess.lty, loess.alpha, ...
-)ggally_cor(
-  data = data,
-  mapping = mapping,
-  colour = col,
-  ...
-) + theme(
-  panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(),
-  panel.border = element_rect(fill = NA)
-)
+){
+  x <- as.character(mapping$x)
+  x <- data[[x]]
+  y <- as.character(mapping$y)
+  y <- data[[y]]
+  x1 <- range(x,na.rm = T)
+  y1 <- range(y,na.rm = T)
+  x0 <- min(x1)+(max(x1)-min(x1))/2
+  y0 <- min(y1)+(max(y1)-min(y1))/2
+  # panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y, na.rm = T),3) ))
+  p <- ggplot(
+   data = data,
+   mapping = mapping,
+   colour = col
+  )
+  p <- p + xlim(x1[[1]], x1[[2]])
+  p <- p + ylim(y1[[1]], y1[[2]])
+  p <- p + annotate(
+    'text',
+    x = x0,
+    y = y0,
+    label = paste('r =',round(cor(x,y),3))
+  )
+  p <- p + theme(
+    aspect.ratio = 1,
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank() #,
+    # panel.border = element_rect(fill = NA)
+  )
+  p
+}
 
 #' Scatter GG Function for Metaplot Corsplom
 #'
@@ -314,7 +337,6 @@ corsplom_gg_correlation = function(
 #' @keywords internal
 #' @export
 #' @family panel functions
-# https://stackoverflow.com/questions/35085261/how-to-use-loess-method-in-ggallyggpairs-using-wrap-function
 corsplom_gg_scatter = function(
   data,
   mapping,
@@ -445,7 +467,7 @@ corsplom_gg_diagonal <- function(
   ref <- pin
   ref <- as.numeric(ref)
   ref <- ref[is.defined(ref)]
-  if(length(ref)){
+  if(length(ref) && any(density)){
     bottom <- data.frame(
       x0 = ref,
       x1 = ref,

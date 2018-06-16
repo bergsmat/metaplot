@@ -102,6 +102,8 @@ corsplom_panel_correlation = function(x, y, ...) {
 #' @param dens.col color for density region
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
+#' @param as.table diagonal arranged top-left to bottom-right
+#' @param upper whether density plots should face the upper triangle (or lower, if FALSE)
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -119,53 +121,156 @@ corsplom_panel_diagonal <- function(
   dens.col = getOption('metaplot_dens.col','grey'),
   dens.scale = getOption('metaplot_dens.scale',0.2),
   dens.alpha = getOption('metaplot_dens.alpha',0.5),
+  as_table = getOption('metaplot_corsplom_as_table', FALSE),
+  upper = getOption('metaplot_corsplom_margin',TRUE),
   ...
 ){
-  if(density){
-    d <- density(x,na.rm=TRUE)
-    lim <- current.panel.limits()$x
-    lo <- lim[[1]]
-    hi <- lim[[2]]
-    len <- hi - lo
+  as.table <- as_table
+  i <- match(varname,names(.data))
+  ncol <- length(names(.data))
 
-    x1 <- d$x
-    y1 <- d$y
-    y1 <- y1 / max(y1,na.rm = TRUE)
-    y1 <- y1 * len * dens.scale
-    z1 <- hi - y1
-    y1 <- y1 + lo
-    lpolygon(
-      x = x1,
-      y = z1,
-      col = dens.col,
-      border = NA,
-      alpha = dens.alpha
+  top <- FALSE
+  right <- FALSE
+  bottom <- FALSE
+  left <- FALSE
+  if(as.table & upper){
+    top  <-  i != 1
+    right <- i != ncol
+  }
+  if(!as.table & upper){
+    top   <- i != ncol
+    left  <- i != 1
+  }
+  if(as.table & !upper){
+    bottom <- i != ncol
+    left <- i != 1
+  }
+  if(!as.table & !upper){
+    bottom <- i != 1
+    right  <- i != ncol
+  }
+
+  mask <- c(top, right, bottom, left)
+  names(mask) <- c('top','right','bottom','left')
+  stopifnot(is.logical(density))
+  density <- rep(density, length.out = 4)
+  names(density) <- c('top','right','bottom','left')
+
+  density <- mask & density
+
+  #x <- as.character(mapping$x)
+  #data$x <- data[[x]]
+  #lim <- range(data$x,na.rm = TRUE)
+  lim <- current.panel.limits()$x
+  lo <- lim[[1]]
+  hi <- lim[[2]]
+  len <- hi - lo
+  me <- hi/2 + lo/2
+  d <- density(x,na.rm=TRUE, from = lo, to = hi)
+  #d <- density(x,na.rm=TRUE)
+  d <- data.frame(x1 = d$x, y1 = d$y)
+  # ensure start and end points are minima
+  bottom <- rbind(
+    data.frame(x1 = d$x1[[1]], y1 = min(d$y1)),
+    d,
+    data.frame(x1 = d$x1[[nrow(d)]], y1 = min(d$y1))
+  )
+  bottom %<>% mutate(y1 = y1 / max(y1, na.rm = TRUE)) # normalized
+  bottom %<>% mutate(y1 = y1 * len * dens.scale)      # scaled
+  bottom %<>% mutate(y1 = y1 + lo)                    # offset
+  top <- bottom %>% mutate(y1 = hi - y1 + lo)              # inverted
+  left <- bottom %>% mutate(z1 = y1, y1 = x1, x1 = z1)         # rotated
+  right <- left %>% mutate(x1 = hi - x1 + lo)              # inverted
+
+  if(density[['top']])lpolygon(
+    x = top$x1,
+    y = top$y1,
+    col = dens.col,
+    border = NA,
+    alpha = dens.alpha
+  )
+  if(density[['right']])lpolygon(
+    x = right$x1,
+    y = right$y1,
+    col = dens.col,
+    border = NA,
+    alpha = dens.alpha
+  )
+  if(density[['bottom']])lpolygon(
+    x = bottom$x1,
+    y = bottom$y1,
+    col = dens.col,
+    border = NA,
+    alpha = dens.alpha
+  )
+  if(density[['left']])lpolygon(
+    x = left$x1,
+    y = left$y1,
+    col = dens.col,
+    border = NA,
+    alpha = dens.alpha
+  )
+
+  if(is.character(pin))pin <- match.fun(pin)
+  if(is.function(pin)) pin <- pin(x = x, varname = varname, .data = .data, ...)
+  ref <- pin
+  ref <- as.numeric(ref)
+  ref <- ref[is.defined(ref)]
+  if(length(ref) && any(density)){
+    bottom <- data.frame(
+      x0 = ref,
+      x1 = ref,
+      y0 = rep(lo, length(ref)),
+      y1 = rep(lo + len * dens.scale, length(ref))
     )
-    lpolygon(
-      y = x1,
-      x = z1,
-      col = dens.col,
-      border = NA,
-      alpha = dens.alpha
+    top <- bottom %>% mutate(
+      y0 = hi - y0 + lo,
+      y1 = hi - y1 + lo
+    )
+    left <- bottom %>% mutate(
+      z0 = x0, x0 = y0, z1 = x1, x1 = y1, y0 = z0, y1 = z1
+    )
+    right <- left %>% mutate(
+      x0 = hi - x0 + lo,
+      x1 = hi - x1 + lo
     )
 
-    if(is.character(pin))pin <- match.fun(pin)
-    if(is.function(pin)) pin <- pin(x = x, varname = varname, .data = .data, ...)
-    ref <- pin
-    ref <- as.numeric(ref)
-    ref <- ref[is.defined(ref)]
-    if(length(ref)){
-      x0 = ref
-      x1 = ref
-      y0 = rep(hi, length(ref))
-      y1 = rep(hi - len * dens.scale, length(ref))
-      lsegments(y0 = y0, y1 = y1, x0 = x0, x1 = x1, col = pin.col, alpha = pin.alpha)
-      y0 = ref
-      y1 = ref
-      x0 = rep(hi, length(ref))
-      x1 = rep(hi - len * dens.scale, length(ref))
-      lsegments(x0 = x0, x1 = x1, y0 = y0,y1 = y1, col = pin.col ,alpha = pin.alpha)
-    }
+    # x0 = ref
+    # x1 = ref
+    # y0 = rep(hi, length(ref))
+    # y1 = rep(hi - len * dens.scale, length(ref))
+    if(density[['top']])lsegments(
+      y0 = top$y0,
+      y1 = top$y1,
+      x0 = top$x0,
+      x1 = top$x1,
+      col = pin.col,
+      alpha = pin.alpha
+    )
+    if(density[['right']])lsegments(
+      y0 = right$y0,
+      y1 = right$y1,
+      x0 = right$x0,
+      x1 = right$x1,
+      col = pin.col,
+      alpha = pin.alpha
+    )
+    if(density[['bottom']])lsegments(
+      y0 = bottom$y0,
+      y1 = bottom$y1,
+      x0 = bottom$x0,
+      x1 = bottom$x1,
+      col = pin.col,
+      alpha = pin.alpha
+    )
+    if(density[['left']])lsegments(
+      y0 = left$y0,
+      y1 = left$y1,
+      x0 = left$x0,
+      x1 = left$x1,
+      col = pin.col,
+      alpha = pin.alpha
+    )
   }
   if(is.character(diag.label))diag.label <- match.fun(diag.label)
   if(is.function(diag.label))diag.label <- diag.label(varname = varname, .data = .data, ...)

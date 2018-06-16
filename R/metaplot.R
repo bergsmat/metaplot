@@ -433,15 +433,17 @@ metaplot.data.frame <- function(
 #' x %>% metaplot(lKe, lKa, lCl, gg = F),
 #' x %>% metaplot(lKe, lKa, lCl, gg = T, padding = 2)
 #' )
+#' multiplot(
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
 #'   col = 'black',loess.col = 'red', pin.col = 'red',
 #'   dens.col = 'blue', dens.alpha = 0.1, gg = F
-#' )
+#' ),
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
 #'   col = 'black',loess.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1, gg = T
+#' )
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, pred, ipred, time, space = 'top', gg = F),

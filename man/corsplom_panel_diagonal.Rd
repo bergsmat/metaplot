@@ -11,7 +11,9 @@ corsplom_panel_diagonal(x, varname, .data, density = TRUE,
   pin.alpha = getOption("metaplot_pin.alpha", 1),
   dens.col = getOption("metaplot_dens.col", "grey"),
   dens.scale = getOption("metaplot_dens.scale", 0.2),
-  dens.alpha = getOption("metaplot_dens.alpha", 0.5), ...)
+  dens.alpha = getOption("metaplot_dens.alpha", 0.5),
+  as_table = getOption("metaplot_corsplom_as_table", FALSE),
+  upper = getOption("metaplot_corsplom_margin", TRUE), ...)
 }
 \arguments{
 \item{x}{numeric}
@@ -36,7 +38,11 @@ corsplom_panel_diagonal(x, varname, .data, density = TRUE,
 
 \item{dens.alpha}{alpha transparency for density region}
 
+\item{upper}{whether density plots should face the upper triangle (or lower, if FALSE)}
+
 \item{...}{passed arguments}
+
+\item{as.table}{diagonal arranged top-left to bottom-right}
 }
 \description{
 Default diagonal panel function for corsplom_data_frame. Plots a density smooth against the corresponding axis from within the diagonal panel.  Plots a grey pin at each axis zero.
