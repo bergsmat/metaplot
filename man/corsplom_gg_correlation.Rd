@@ -4,8 +4,9 @@
 \alias{corsplom_gg_correlation}
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
-corsplom_gg_correlation(data, mapping, col = "blue", loess.col, loess.lty,
-  loess.alpha, ...)
+corsplom_gg_correlation(data, mapping,
+  col = metOption("metaplot_point_col_corsplom_gg", "blue"), loess.col,
+  loess.lty, loess.alpha, ...)
 }
 \arguments{
 \item{data}{data}

@@ -5,16 +5,16 @@
 \title{Diagonal GG Function for Metaplot Corsplom}
 \usage{
 corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
-  diag.label = getOption("metaplot_diag.label", diag_label),
-  pin = getOption("metaplot_pin", diag_pin),
-  pin.col = getOption("metaplot_pin.col", "darkgrey"),
-  pin.alpha = getOption("metaplot_pin.alpha", 1),
-  dens.col = getOption("metaplot_dens.col", "grey"),
-  dens.scale = getOption("metaplot_dens.scale", 0.2),
-  dens.alpha = getOption("metaplot_dens.alpha", 0.5),
-  varname.cex = getOption("metaplot_corsplom_varname_cex", 1),
-  as.table = getOption("metaplot_corsplom_as_table", TRUE),
-  upper = getOption("metaplot_corsplom_margin", TRUE), ...)
+  diag.label = metOption("metaplot_diag_label_corsplom_gg", diag_label),
+  pin = metOption("metaplot_pin_loc_corsplom_gg", diag_pin),
+  pin.col = metOption("metaplot_pin_col_corsplom_gg", "darkgrey"),
+  pin.alpha = metOption("metaplot_pin_alpha_corsplom_gg", 1),
+  dens.col = metOption("metaplot_dens_col_corsplom_gg", "grey"),
+  dens.scale = metOption("metaplot_dens_scale_corsplom_gg", 0.2),
+  dens.alpha = metOption("metaplot_dens_alpha_corsplom_gg", 0.5),
+  varname.cex = metOption("metaplot_varname_cex_corsplom_gg", 1),
+  as.table = metOption("metaplot_astable_corsplom_gg", TRUE),
+  dens.up = metOption("metaplot_densup_corsplom_gg", TRUE), ...)
 }
 \arguments{
 \item{data}{data}
@@ -43,7 +43,7 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 
 \item{as.table}{diagonal arranged top-left to bottom-right}
 
-\item{upper}{whether density plots should face the upper triangle (or lower, if FALSE)}
+\item{dens.up}{whether density plots should face the upper triangle (or lower, if FALSE)}
 
 \item{...}{passed arguments}
 }

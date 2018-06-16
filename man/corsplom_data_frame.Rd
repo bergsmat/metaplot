@@ -5,34 +5,34 @@
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
 corsplom_data_frame(x, xvar = names(x),
-  upper.panel = getOption("metaplot_corsplom_upper_panel", if (gg)
+  upper.panel = metOption("metaplot_upperpanel_corsplom", if (gg)
   corsplom_gg_scatter else corsplom_panel_scatter),
-  lower.panel = getOption("metaplot_corsplom_lower_panel", if (gg)
+  lower.panel = metOption("metaplot_lowerpanel_corsplom", if (gg)
   corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = getOption("metaplot_corsplom_diag_panel", if (gg)
+  diag.panel = metOption("metaplot_diagpanel_corsplom", if (gg)
   corsplom_gg_diagonal else corsplom_panel_diagonal),
-  pscales = getOption("metaplot_corsplom_pscales", 0),
-  xlab = getOption("metaplot_corsplom_xlab", NULL),
-  varname.cex = getOption("metaplot_corsplom_varname_cex", 1),
-  main = getOption("metaplot_corsplom_main", NULL),
-  sub = getOption("metaplot_corsplom_sub", NULL),
-  col = getOption("metaplot_corsplom_point_col", "blue"),
-  loess.col = getOption("metaplot_corsplom_loess_col", col),
-  loess.lty = getOption("metaplot_corsplom_loess_lty", "solid"),
-  loess.alpha = getOption("metaplot_corsplom_loess_alpha", 1),
-  density = getOption("metaplot_corsplom_density", TRUE),
-  diag.label = getOption("metaplot_corsplom_diag_label", diag_label),
-  pin = getOption("metaplot_corsplom_pin", diag_pin),
-  pin.col = getOption("metaplot_corsplom_pin_col", "darkgrey"),
-  pin.alpha = getOption("metaplot_corsplom_pin_alpha", 1),
-  dens.col = getOption("metaplotcorsplom_dens_col", "grey"),
-  dens.scale = getOption("metaplot_corsplom_dens_scale", 0.2),
-  dens.alpha = getOption("metaplot_corsplom_dens_alpha", 0.5),
-  par.settings = getOption("metaplot_corsplom_par_settings", NULL),
-  padding = getOption("metaplot_corsplom_padding", 1),
-  as.table = getOption("metaplot_corsplom_as_table", FALSE),
-  upper = getOption("metaplot_corsplom_upper", TRUE),
-  gg = getOption("metaplot_corsplom_gg", FALSE), ...)
+  pscales = metOption("metaplot_pscales_corsplom", 0),
+  xlab = metOption("metaplot_xlab_corsplom", NULL),
+  varname.cex = metOption("metaplot_varname_cex_corsplom", 1),
+  main = metOption("metaplot_main_corsplom", NULL),
+  sub = metOption("metaplot_sub_corsplom", NULL),
+  col = metOption("metaplot_point_col_corsplom", "blue"),
+  loess.col = metOption("metaplot_loess_col_corsplom", col),
+  loess.lty = metOption("metaplot_loess_lty_corsplom", "solid"),
+  loess.alpha = metOption("metaplot_loess_alpha_corsplom", 1),
+  density = metOption("metaplot_density_corsplom", TRUE),
+  diag.label = metOption("metaplot_diag_label_corsplom", diag_label),
+  pin = metOption("metaplot_pin_loc_corsplom", diag_pin),
+  pin.col = metOption("metaplot_pin_col_corsplom", "darkgrey"),
+  pin.alpha = metOption("metaplot_pin_alpha_corsplom", 1),
+  dens.col = metOption("metaplot_dens_col_corsplom", "grey"),
+  dens.scale = metOption("metaplot_dens_scale_corsplom", 0.2),
+  dens.alpha = metOption("metaplot_dens_alpha_corsplom", 0.5),
+  par.settings = metOption("metaplot_parsettings_corsplom", NULL),
+  padding = metOption("metaplot_padding_corsplom", 1),
+  as.table = metOption("metaplot_astable_corsplom", FALSE),
+  dens.up = metOption("metaplot_updens_corsplom", TRUE),
+  gg = metOption("metaplot_gg_corsplom", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -85,7 +85,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{as.table}{diagonal arranged top-left to bottom-right}
 
-\item{upper}{whether density plots in diagonal should face the upper triangle vs. lower}
+\item{dens.up}{whether density plots in diagonal should face the upper triangle vs. lower}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
 

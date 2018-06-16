@@ -4,7 +4,7 @@
 \alias{densplot.data.frame}
 \title{Densplot Method for Data Frame}
 \usage{
-\method{densplot}{data.frame}(x, ..., fun = getOption("metaplot_dens",
+\method{densplot}{data.frame}(x, ..., fun = getOption("metaplot_densplot",
   "densplot_data_frame"))
 }
 \arguments{

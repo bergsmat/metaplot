@@ -4,24 +4,26 @@
 \alias{scatter_panel}
 \title{Panel Function for Metaplot Scatterplot}
 \usage{
-scatter_panel(x, y, groups, xref = getOption("scatter_panel_ref",
-  scatter_panel_ref), yref = getOption("scatter_panel_ref",
-  scatter_panel_ref), ref.col = getOption("metaplot_ref.col", "grey"),
-  ref.lty = getOption("metaplot_ref.lty", "solid"),
-  ref.alpha = getOption("metaplot_ref.alpha", 1),
-  ysmooth = getOption("metaplot_ysmooth", FALSE),
-  xsmooth = getOption("metaplot_xsmooth", FALSE),
-  smooth.lty = getOption("metaplot_smooth.lty", "dashed"),
-  smooth.alpha = getOption("metaplot_smooth.alpha", 1),
-  fit = getOption("metaplot_fit", conf),
-  fit.lty = getOption("metaplot_fit.lty", "solid"),
-  fit.alpha = getOption("metaplot_fit.alpha", 1),
-  conf = getOption("metaplot_conf", FALSE),
-  conf.alpha = getOption("metaplot_conf.alpha", 0.3),
-  loc = getOption("metaplot_loc", 0), iso = getOption("metaplot_iso",
-  FALSE), global = getOption("metaplot_global", FALSE),
-  global.col = getOption("metaplot_global.col", "grey"),
-  msg = getOption("metaplot_scatter_msg", "metastats"), type, ...)
+scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
+  scatter_panel_ref), yref = metOption("metaplot_ref_y_scatter_panel",
+  scatter_panel_ref), ref.col = metOption("metaplot_ref_col_scatter_panel",
+  "grey"), ref.lty = metOption("metaplot_ref_lty_scatter_panel", "solid"),
+  ref.alpha = metOption("metaplot_ref_alpha_scatter_panel", 1),
+  ysmooth = metOption("metaplot_smooth_y_scatter_panel", FALSE),
+  xsmooth = metOption("metaplot_smooth_x_scatter_panel", FALSE),
+  smooth.lty = metOption("metaplot_smooth_lty_scatter_panel", "dashed"),
+  smooth.alpha = metOption("metaplot_smooth_alpha_scatter_panel", 1),
+  fit = metOption("metaplot_fit_plot_scatter_panel", conf),
+  fit.lty = metOption("metaplot_fit_lty_scatter_panel", "solid"),
+  fit.alpha = metOption("metaplot_fit_alpha_scatter_panel", 1),
+  conf = metOption("metaplot_conf_plot_scatter_panel", FALSE),
+  conf.alpha = metOption("metaplot_conf_alpha_scatter_panel", 0.3),
+  loc = metOption("metaplot_msg_loc_scatter_panel", 0),
+  iso = metOption("metaplot_iso_scatter_panel", FALSE),
+  global = metOption("metaplot_global_aes_scatter_panel", FALSE),
+  global.col = metOption("metaplot_global_col_scatter_panel", "grey"),
+  msg = metOption("metaplot_msg_format_scatter_panel", "metastats"), type,
+  ...)
 }
 \arguments{
 \item{x}{x values}

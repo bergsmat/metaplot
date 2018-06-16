@@ -61,10 +61,10 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 corsplom_panel_scatter = function(
   x,
   y,
-  col = getOption('metaplot_point_col_corsplom_panel','#0080ff'),
-  loess.col = getOption('metaplot_loess_col_corsplom_panel',col),
-  loess.lty = getOption('metaplot_loess_lty_corspom_panel','solid'),
-  loess.alpha = getOption('metaplot_loess_alpha_corsplom_panel',1),
+  col = metOption('metaplot_point_col_corsplom_panel','#0080ff'),
+  loess.col = metOption('metaplot_loess_col_corsplom_panel',col),
+  loess.lty = metOption('metaplot_loess_lty_corspom_panel','solid'),
+  loess.alpha = metOption('metaplot_loess_alpha_corsplom_panel',1),
   ...
 ){
   panel.xyplot(x,y,col = col, ...)
@@ -114,15 +114,15 @@ corsplom_panel_diagonal <- function(
   varname,
   .data,
   density = TRUE,
-  diag.label = getOption('metaplot_diag_label_corsplom_panel',diag_label),
-  pin = getOption('metaplot_pin_loc_corsplom_panel',diag_pin),
-  pin.col = getOption('metaplot_pin_col_corsplom_panel','darkgrey'),
-  pin.alpha = getOption('metaplot_pin_alpha_corsplom_panel',1),
-  dens.col = getOption('metaplot_dens_col_corsplom_panel','grey'),
-  dens.scale = getOption('metaplot_dens_scale_corsplom_panel',0.2),
-  dens.alpha = getOption('metaplot_dens_alpha_corsplom_panel',0.5),
-  as_table = getOption('metaplot_astable_corsplom_panel', FALSE),
-  dens.up = getOption('metaplot_densup_corsplom_panel',TRUE),
+  diag.label = metOption('metaplot_diag_label_corsplom_panel',diag_label),
+  pin = metOption('metaplot_pin_loc_corsplom_panel',diag_pin),
+  pin.col = metOption('metaplot_pin_col_corsplom_panel','darkgrey'),
+  pin.alpha = metOption('metaplot_pin_alpha_corsplom_panel',1),
+  dens.col = metOption('metaplot_dens_col_corsplom_panel','grey'),
+  dens.scale = metOption('metaplot_dens_scale_corsplom_panel',0.2),
+  dens.alpha = metOption('metaplot_dens_alpha_corsplom_panel',0.5),
+  as_table = metOption('metaplot_astable_corsplom_panel', FALSE),
+  dens.up = metOption('metaplot_densup_corsplom_panel',TRUE),
   ...
 ){
   as.table <- as_table
@@ -342,9 +342,9 @@ scatter_panel_ref <- function(a, b, ...){
 #' @param ... ignored
 #'
 diag_label <- function(varname, .data,
-diag_label_simple = getOption('metaplot_diag_label_simple',FALSE),
-diag_label_split = getOption('metaplot_diag_label_split',TRUE),
-diag_symbol_format = getOption('metaplot_diag_symbol_format','wikisym2plotmath'),
+diag_label_simple = metOption('metaplot_diag_label_simple',FALSE),
+diag_label_split = metOption('metaplot_diag_label_split',TRUE),
+diag_symbol_format = metOption('metaplot_diag_symbol_format','wikisym2plotmath'),
 ...){
   stopifnot(length(varname) == 1)
   stopifnot(is.data.frame(.data))
@@ -646,10 +646,22 @@ base_breaks <- function(n = 10){
 #' x$conc %<>% structure(reference = 9)
 #'
 #' # Make the reference line green universally.
-#' setOption(metaplot_ref_col = 'green')
+#' options(metaplot_ref_col = 'green')
 #'
-#' # Make the reference line orange for gg density plots
-#' setOption(metaplot_ref_col_dens = 'orange')
+#' # Make the reference line orange for density plots
+#' options(metaplot_ref_col_dens = 'orange')
+#'
+#' multiplot(
+#' x %>% metaplot(conc, gg = F),
+#' x %>% metaplot(conc, time, gg = F),
+#' x %>% metaplot(conc, arm, gg = F),
+#' x %>% metaplot(conc, arm,  gg = T)
+#' )
+#'
+#' # Restore defaults
+#' options(metaplot_ref_col = NULL)
+#' options(metaplot_ref_col_dens = NULL)
+
 
 metOption <- function(x, default = NULL){
   nms <- names(options())
@@ -660,6 +672,6 @@ metOption <- function(x, default = NULL){
   nms <- nms[len == max]
   nms <- sort(nms)
   nm <- nms[[1]]
-  nm
+  getOption(nm, default = default)
 }
 

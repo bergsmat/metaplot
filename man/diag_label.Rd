@@ -5,9 +5,9 @@
 \title{Format a Diagonal Label}
 \usage{
 diag_label(varname, .data,
-  diag_label_simple = getOption("metaplot_diag_label_simple", FALSE),
-  diag_label_split = getOption("metaplot_diag_label_split", TRUE),
-  diag_symbol_format = getOption("metaplot_diag_symbol_format",
+  diag_label_simple = metOption("metaplot_diag_label_simple", FALSE),
+  diag_label_split = metOption("metaplot_diag_label_split", TRUE),
+  diag_symbol_format = metOption("metaplot_diag_symbol_format",
   "wikisym2plotmath"), ...)
 }
 \arguments{

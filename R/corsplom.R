@@ -74,31 +74,31 @@ corsplom <- function(x,...)UseMethod('corsplom')
 corsplom_data_frame <- function(
   x,
   xvar = names(x),
-  upper.panel = getOption('metaplot_upperpanel_corsplom',if(gg) corsplom_gg_scatter else corsplom_panel_scatter),
-  lower.panel= getOption('metaplot_lowerpanel_corsplom',if(gg) corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = getOption('metaplot_diagpanel_corsplom',if(gg) corsplom_gg_diagonal else corsplom_panel_diagonal),
-  pscales= getOption('metaplot_pscales_corsplom',0),
-  xlab = getOption('metaplot_xlab_corsplom',NULL),
-  varname.cex = getOption('metaplot_varname_cex_corsplom',1),
-  main = getOption('metaplot_main_corsplom',NULL),
-  sub = getOption('metaplot_sub_corsplom',NULL),
-  col = getOption('metaplot_point_col_corsplom','blue'),
-  loess.col = getOption('metaplot_loess_col_corsplom',col),
-  loess.lty = getOption('metaplot_loess_lty_corsplom','solid'),
-  loess.alpha = getOption('metaplot_loess_alpha_corsplom',1),
-  density = getOption('metaplot_density_corsplom',TRUE),
-  diag.label = getOption('metaplot_diag_label_corsplom',diag_label),
-  pin = getOption('metaplot_pin_loc_corsplom',diag_pin),
-  pin.col = getOption('metaplot_pin_col_corsplom','darkgrey'),
-  pin.alpha = getOption('metaplot_pin_alpha_corsplom',1),
-  dens.col = getOption('metaplot_dens_col_corsplom','grey'),
-  dens.scale = getOption('metaplot_dens_scale_corsplom',0.2),
-  dens.alpha = getOption('metaplot_dens_alpha_corsplom',0.5),
-  par.settings = getOption('metaplot_parsettings_corsplom',NULL),
-  padding = getOption('metaplot_padding_corsplom', 1),
-  as.table = getOption('metaplot_astable_corsplom', FALSE),
-  dens.up = getOption('metaplot_updens_corsplom', TRUE), # must not partial match metaplot_densplot or metaplot_upper
-  gg = getOption('metaplot_gg_corsplom',FALSE),
+  upper.panel = metOption('metaplot_upperpanel_corsplom',if(gg) corsplom_gg_scatter else corsplom_panel_scatter),
+  lower.panel= metOption('metaplot_lowerpanel_corsplom',if(gg) corsplom_gg_correlation else corsplom_panel_correlation),
+  diag.panel = metOption('metaplot_diagpanel_corsplom',if(gg) corsplom_gg_diagonal else corsplom_panel_diagonal),
+  pscales= metOption('metaplot_pscales_corsplom',0),
+  xlab = metOption('metaplot_xlab_corsplom',NULL),
+  varname.cex = metOption('metaplot_varname_cex_corsplom',1),
+  main = metOption('metaplot_main_corsplom',NULL),
+  sub = metOption('metaplot_sub_corsplom',NULL),
+  col = metOption('metaplot_point_col_corsplom','blue'),
+  loess.col = metOption('metaplot_loess_col_corsplom',col),
+  loess.lty = metOption('metaplot_loess_lty_corsplom','solid'),
+  loess.alpha = metOption('metaplot_loess_alpha_corsplom',1),
+  density = metOption('metaplot_density_corsplom',TRUE),
+  diag.label = metOption('metaplot_diag_label_corsplom',diag_label),
+  pin = metOption('metaplot_pin_loc_corsplom',diag_pin),
+  pin.col = metOption('metaplot_pin_col_corsplom','darkgrey'),
+  pin.alpha = metOption('metaplot_pin_alpha_corsplom',1),
+  dens.col = metOption('metaplot_dens_col_corsplom','grey'),
+  dens.scale = metOption('metaplot_dens_scale_corsplom',0.2),
+  dens.alpha = metOption('metaplot_dens_alpha_corsplom',0.5),
+  par.settings = metOption('metaplot_parsettings_corsplom',NULL),
+  padding = metOption('metaplot_padding_corsplom', 1),
+  as.table = metOption('metaplot_astable_corsplom', FALSE),
+  dens.up = metOption('metaplot_updens_corsplom', TRUE), # must not partial match metaplot_densplot or metaplot_upper
+  gg = metOption('metaplot_gg_corsplom',FALSE),
   ...
 ){
   stopifnot(length(as.table) == 1, is.logical(as.table))
@@ -291,7 +291,7 @@ corsplom.data.frame <- function(
 #' @export
 #' @family panel functions
 corsplom_gg_correlation = function(
-  data, mapping, col = getOption('metaplot_point_col_corsplom_gg','blue'),
+  data, mapping, col = metOption('metaplot_point_col_corsplom_gg','blue'),
   loess.col, loess.lty, loess.alpha, ...
 ){
   x <- as.character(mapping$x)
@@ -343,10 +343,10 @@ corsplom_gg_scatter = function(
   mapping,
   method = 'loess',
   se = F,
-  col = getOption('metaplot_point_col_corsplom_gg','blue'),
-  loess.col = getOption('metaplot_loess_col_corsplom_gg','blue'),
-  loess.alpha = getOption('metaplot_loess_alpha_corsplom_gg',1),
-  loess.lty = getOption('metaplot_loess_lty_corsplom_gg','solid'),
+  col = metOption('metaplot_point_col_corsplom_gg','blue'),
+  loess.col = metOption('metaplot_loess_col_corsplom_gg','blue'),
+  loess.alpha = metOption('metaplot_loess_alpha_corsplom_gg',1),
+  loess.lty = metOption('metaplot_loess_lty_corsplom_gg','solid'),
   ...
 ){
   x <- as.character(mapping$x)
@@ -397,16 +397,16 @@ corsplom_gg_diagonal <- function(
   mapping,
   .data,
   density = TRUE,
-  diag.label = getOption('metaplot_diag_label_corsplom_gg',diag_label),
-  pin = getOption('metaplot_pin_loc_corsplom_gg',diag_pin),
-  pin.col = getOption('metaplot_pin_col_corsplom_gg','darkgrey'),
-  pin.alpha = getOption('metaplot_pin_alpha_corsplom_gg',1),
-  dens.col = getOption('metaplot_dens_col_corsplom_gg','grey'),
-  dens.scale = getOption('metaplot_dens_scale_corsplom_gg',0.2),
-  dens.alpha = getOption('metaplot_dens_alpha_corsplom_gg',0.5),
-  varname.cex = getOption('metaplot_varname_cex_corsplom_gg', 1),
-  as.table = getOption('metaplot_astable_corsplom_gg', TRUE),
-  dens.up = getOption('metaplot_densup_corsplom_gg',TRUE),
+  diag.label = metOption('metaplot_diag_label_corsplom_gg',diag_label),
+  pin = metOption('metaplot_pin_loc_corsplom_gg',diag_pin),
+  pin.col = metOption('metaplot_pin_col_corsplom_gg','darkgrey'),
+  pin.alpha = metOption('metaplot_pin_alpha_corsplom_gg',1),
+  dens.col = metOption('metaplot_dens_col_corsplom_gg','grey'),
+  dens.scale = metOption('metaplot_dens_scale_corsplom_gg',0.2),
+  dens.alpha = metOption('metaplot_dens_alpha_corsplom_gg',0.5),
+  varname.cex = metOption('metaplot_varname_cex_corsplom_gg', 1),
+  as.table = metOption('metaplot_astable_corsplom_gg', TRUE),
+  dens.up = metOption('metaplot_densup_corsplom_gg',TRUE),
   ...
 ){
   stopifnot(is.logical(density))

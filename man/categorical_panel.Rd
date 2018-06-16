@@ -5,11 +5,12 @@
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
 categorical_panel(x, y, groups, bivariate = TRUE,
-  loc = getOption("metaplot_categorical_loc", 5),
-  msg = getOption("metaplot_categorical_msg", "tilestats"),
-  tex = getOption("metaplot_categorical_tex", 0.9),
-  cex = getOption("metaplot_categorical_panel_cex", 1),
-  rot = getOption("metaplot_categorical_rot", c(90, 0)), subscripts, ...)
+  loc = metOption("metaplot_msg_loc_categorical_panel", 5),
+  msg = metOption("metaplot_msg_format_categorical_panel", "tilestats"),
+  tex = metOption("metaplot_tex_categorical_panel", 0.9),
+  cex = metOption("metaplot_cex_categorical_panel", 1),
+  rot = metOption("metaplot_rot_categorical_panel", c(90, 0)), subscripts,
+  ...)
 }
 \arguments{
 \item{x}{x values}

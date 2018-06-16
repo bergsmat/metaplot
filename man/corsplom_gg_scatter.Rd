@@ -4,8 +4,11 @@
 \alias{corsplom_gg_scatter}
 \title{Scatter GG Function for Metaplot Corsplom}
 \usage{
-corsplom_gg_scatter(data, mapping, method = "loess", se = F, col = "blue",
-  loess.col = "blue", loess.alpha = 1, loess.lty = "solid", ...)
+corsplom_gg_scatter(data, mapping, method = "loess", se = F,
+  col = metOption("metaplot_point_col_corsplom_gg", "blue"),
+  loess.col = metOption("metaplot_loess_col_corsplom_gg", "blue"),
+  loess.alpha = metOption("metaplot_loess_alpha_corsplom_gg", 1),
+  loess.lty = metOption("metaplot_loess_lty_corsplom_gg", "solid"), ...)
 }
 \arguments{
 \item{data}{data}

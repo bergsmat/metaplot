@@ -4,10 +4,11 @@
 \alias{corsplom_panel_scatter}
 \title{Scatter Panel Function for Metaplot Corsplom}
 \usage{
-corsplom_panel_scatter(x, y, col = getOption("metaplot_corsplom_point_col",
-  "#0080ff"), loess.col = getOption("metaplot_loess.col", col),
-  loess.lty = getOption("metaplot_loess.lty", "solid"),
-  loess.alpha = getOption("metaplot_loess.alpha", 1), ...)
+corsplom_panel_scatter(x, y,
+  col = metOption("metaplot_point_col_corsplom_panel", "#0080ff"),
+  loess.col = metOption("metaplot_loess_col_corsplom_panel", col),
+  loess.lty = metOption("metaplot_loess_lty_corspom_panel", "solid"),
+  loess.alpha = metOption("metaplot_loess_alpha_corsplom_panel", 1), ...)
 }
 \arguments{
 \item{x}{x values}
