@@ -19,6 +19,7 @@ NULL
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
 #' @param ref.col color for reference line(s)
 #' @param ref.lty line type for reference line(s)
+#' @param ref.lwd line size for reference line(s)
 #' @param ref.alpha transparency for reference line(s)
 #' @param nobs whether to include the number of observations under the category label
 #' @param na.rm whether to remove data points with one or more missing coordinates
@@ -26,10 +27,10 @@ NULL
 #' @param xlab x axis label
 #' @param numlab numeric axis label; can be function(x = x, var = numvar, log = ylog, ...)
 #' @param catlab categorical axis label; can be function(x = x, var = catvar, ...)
-#' @param aspect passed to \code{\link[lattice]{bwplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
-#' @param par.settings default parameter settings
+#' @param par.settings default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots
 #' @param padding if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout
 #' @param reverse if y is categorical, present levels in reverse order (first at top)
 #' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
@@ -64,6 +65,7 @@ boxplot_data_frame <- function(
   ref = metOption('metaplot_ref_x_boxplot',metaplot_ref),
   ref.col = metOption('metaplot_ref_col_boxplot','grey'),
   ref.lty = metOption('metaplot_ref_lty_boxplot','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_boxplot','solid'),
   ref.alpha = metOption('metaplot_ref_alpha_boxplot',1),
   nobs = metOption('metaplot_nobs_boxplot',FALSE),
   na.rm = metOption('metaplot_narm_boxplot',TRUE),
@@ -74,7 +76,7 @@ boxplot_data_frame <- function(
   aspect = metOption('metaplot_aspect_boxplot',1),
   main = metOption('metaplot_main_boxplot',NULL),
   sub = metOption('metaplot_sub_boxplot',NULL),
-  par.settings = metOption('metaplot_parsettings_boxplot',standard.theme('pdf',color = FALSE)),
+  par.settings = metOption('metaplot_parsettings_boxplot',NULL),
   padding = metOption('metaplot_padding_boxplot', 1),
   reverse = metOption('metaplot_reverse_boxplot',TRUE),
   pch = metOption('metaplot_pch_boxplot','|'),
@@ -82,6 +84,7 @@ boxplot_data_frame <- function(
   gg = metOption('metaplot_gg_boxplot',FALSE),
   ...
 ){
+  aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(is.character(xvar))
   stopifnot(is.character(yvar))
@@ -197,6 +200,7 @@ boxplot_data_frame <- function(
         yintercept = ref,
         color = ref.col,
         linetype = ref.lty,
+        size = ref.lwd,
         alpha = ref.alpha
       )
     plot <- plot +
@@ -240,6 +244,7 @@ boxplot_data_frame <- function(
     ref = ref,
     ref.col = ref.col,
     ref.lty = ref.lty,
+    ref.lwd = ref.lwd,
     ref.alpha = ref.alpha,
     pch = pch,
     notch = notch,
@@ -260,15 +265,16 @@ boxplot_data_frame <- function(
 #' @param notch passed to \code{\link[lattice]{panel.bwplot}}
 #' @param ref.col passed to \code{\link[lattice]{panel.abline}} as col
 #' @param ref.lty passed to \code{\link[lattice]{panel.abline}} as lty
+#' @param ref.lwd passed to \code{\link[lattice]{panel.abline}} as lwd
 #' @param ref.alpha passed to \code{\link[lattice]{panel.abline}} as alpha
 #'
-boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col, ref.lty, ref.alpha, ...){
+boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
   panel.bwplot(horizontal = horizontal, pch = pch, notch = notch, ...)
   if(length(ref)){
     if(horizontal) {
-      panel.abline(v = ref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
+      panel.abline(v = ref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
     }else{
-      panel.abline(h = ref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
+      panel.abline(h = ref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
     }
   }
 }

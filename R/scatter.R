@@ -37,9 +37,9 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
-#' @param iso plot line of unity (auto-selected if NA)
+#' @param iso plot line of unity (auto-selected if NA) using reference line aesthetics (see below)
 #' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param aspect passed to \code{\link[lattice]{xyplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
 #' @param space location of key (right, left, top, bottom)
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
@@ -47,8 +47,9 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param panel name or definition of panel function
 #' @param colors replacements for default colors in group order
+#' @param fill replacements for default symbol fill colors in group order (means something different for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}})
 #' @param symbols replacements for default symbols in group order
-#' @param points whether to plot points for each group: logical, or alpha values between 0 and 1
+#' @param points whether to plot points and fill for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
@@ -57,13 +58,16 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param ref.col reference line color
 #' @param ref.lty reference line type
+#' @param ref.lwd reference line size
 #' @param ref.alpha reference line alpha
 #' @param smooth.lty smooth line type
+#' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
 #' @param fit.lty fit line type
+#' @param fit.lwd fit line size
 #' @param fit.alpha fit alpha
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE
 #' @param conf.alpha alpha transparency for confidence region
@@ -123,6 +127,7 @@ scatter_data_frame <- function(
   scales = metOption('metaplot_scales_scatter',NULL),
   panel = metOption('metaplot_panel_scatter',scatter_panel),
   colors = metOption('metaplot_colors_scatter',NULL),
+  fill = metOption('metaplot_colors_fill_scatter',NULL),
   symbols = metOption('metaplot_symbols_scatter',NULL),
   points = metOption('metaplot_points_scatter',TRUE),
   lines = metOption('metaplot_lines_scatter',FALSE),
@@ -133,11 +138,14 @@ scatter_data_frame <- function(
   padding = metOption('metaplot_padding_scatter', 1),
   ref.col = metOption('metaplot_ref_col_scatter','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_scatter','solid'),
   ref.alpha = metOption('metaplot_ref_alpha_scatter',1),
   smooth.lty = metOption('metaplot_smooth_lty_scatter','dashed'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_scatter','dashed'),
   smooth.alpha = metOption('metaplot_smooth_alpha_scatter',1),
   fit = metOption('metaplot_fit_plot_scatter',conf),
   fit.lty = metOption('metaplot_fit_lty_scatter','solid'),
+  fit.lwd = metOption('metaplot_fit_lwd_scatter','solid'),
   fit.alpha = metOption('metaplot_fit_alpha_scatter',1),
   conf = metOption('metaplot_conf_plot_scatter',FALSE),
   conf.alpha = metOption('metaplot_conf_alpha_scatter',0.3),
@@ -148,7 +156,7 @@ scatter_data_frame <- function(
   gg = metOption('metaplot_gg_scatter',FALSE),
   ...
 ){
-
+  aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
   stopifnot(is.character(yvar))
@@ -284,16 +292,23 @@ scatter_data_frame <- function(
 
   if(!is.null(points)) points <- as.numeric(points)
   if(!is.null(lines)) lines <- as.numeric(lines)
-
-  sym <- list(
-    col = colors,
-    alpha = points,
-    pch = symbols
-  )
-  line <- list(
-    col = colors,
-    alpha = lines
-  )
+  sym <- trellis.par.get()$superpose.symbol
+  line <- trellis.par.get()$superpose.line
+  sym$col <- colors
+  sym$fill <- fill
+  sym$alpha <- points
+  sym$pch <- symbols # ok to set to NULL (default) because it will be stripped below
+  line$col <- colors
+  line$alpha <- lines
+  # sym <- list(
+  #   col = colors,
+  #   alpha = points,
+  #   pch = symbols
+  # )
+  # line <- list(
+  #   col = colors,
+  #   alpha = lines
+  # )
   sym <- sym[sapply(sym,function(i)!is.null(i))]
   line <- line[sapply(line,function(i)!is.null(i))]
   #par.settings is defined
@@ -311,8 +326,15 @@ scatter_data_frame <- function(
 
   if(gg){
 
-    if(is.null(colors)) colors <- hue_pal()(nlev)
-    if(is.null(symbols)) symbols <- 21
+    if(is.null(colors)){
+      colors <- hue_pal()(nlev)
+      if(nlev == 1) colors <- 'black'
+    }
+    if(is.null(fill)){
+      fill <- hue_pal()(nlev)
+      if(nlev == 1) fill <- 'white'
+    }
+    if(is.null(symbols)) symbols <- 16
     symbols <- rep(symbols, length.out = nlev)
     # plot <- plot + scale_color_manual(values = alpha(colors, lines))
     # plot <- plot + scale_fill_manual(values = alpha(colors, points))
@@ -329,7 +351,16 @@ scatter_data_frame <- function(
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
     msg <- if(length(groups) == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
-    plot <- ggplot(data = y, mapping = aes_string(x = xvar,y = yvar, color = groups, fill = groups) ) +
+    plot <- ggplot(
+      data = y,
+      mapping = aes_string(
+        x = xvar,
+        y = yvar,
+        color = groups,
+        fill = groups,
+        shape = groups
+      )
+    ) +
       geom_point(mapping = aes(alpha = metaplot_points_alpha)) +
       geom_line(mapping = aes(alpha = metaplot_lines_alpha)) +
       guides(alpha = FALSE) +
@@ -342,6 +373,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
+      size = smooth.lwd,
       method = 'loess',
       se = FALSE,
       color = global.col,
@@ -353,6 +385,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
+      size = smooth.lwd,
       method = 'loess',
       se = FALSE,
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
@@ -362,6 +395,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
+      size = smooth.lwd,
       method = 'loess',
       se = FALSE,
       color = global.col,
@@ -374,6 +408,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
+      size = smooth.lwd,
       method = 'loess',
       se = FALSE,
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
@@ -405,6 +440,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
+      size = fit.lwd,
       method = 'lm',
       color = global.col,
       inherit.aes = FALSE,
@@ -416,6 +452,7 @@ scatter_data_frame <- function(
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
+      size = fit.lwd,
       method = 'lm',
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
       se = FALSE,
@@ -425,16 +462,25 @@ scatter_data_frame <- function(
         xintercept = xref,
         color = ref.col,
         linetype = ref.lty,
+        size = ref.lwd,
         alpha = ref.alpha
       )
     if(length(yref)) plot <- plot + geom_hline(
         yintercept = yref,
         color = ref.col,
         linetype = ref.lty,
+        size = ref.lwd,
         alpha = ref.alpha
       )
     if(iso){
-      plot <- plot + geom_abline(slope = 1, intercept = 0)
+      plot <- plot + geom_abline(
+        slope = 1,
+        intercept = 0,
+        color = ref.col,
+        linetype = ref.lty,
+        size = ref.lwd,
+        alpha = ref.alpha
+      )
       lo <- min(min(y[[yvar]], na.rm=T), min(y[[xvar]], na.rm=T), na.rm=T)
       hi <- max(max(y[[yvar]], na.rm=T), max(y[[xvar]], na.rm=T), na.rm=T)
       plot <- plot + scale_y_continuous(limits = c(lo, hi))
@@ -455,15 +501,16 @@ scatter_data_frame <- function(
       limits = if(iso)c(lo,hi) else NULL
     )
 
+    plot <- plot +
+      scale_color_manual(values = colors) +
+      scale_fill_manual(values = fill)
+
     if(length(groups) == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
       x = xpos,
       y = ypos,
       label = msg
     )
 
-    plot <- plot +
-      scale_color_manual(values = colors) +
-      scale_fill_manual(values = colors)
 
     if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
     if(length(facets) >  1) plot <- plot +
@@ -503,13 +550,16 @@ scatter_data_frame <- function(
     .data = y,
     ref.col = ref.col,
     ref.lty = ref.lty,
+    ref.lwd = ref.lwd,
     ref.alpha = ref.alpha,
     smooth.lty = smooth.lty,
+    smooth.lwd = smooth.lwd,
     smooth.alpha = smooth.alpha,
     global = global,
     global.col = global.col,
     fit = fit,
     fit.lty = fit.lty,
+    fit.lwd = fit.lwd,
     fit.alpha = fit.alpha,
     conf = conf,
     conf.alpha = conf.alpha,
@@ -663,16 +713,19 @@ scatter.data.frame <- function(
 #' @param xref reference line from x axis; can be function(x, y, ...)
 #' @param ref.col reference line color
 #' @param ref.lty reference line type
+#' @param ref.lwd reference line size
 #' @param ref.alpha reference line alpha
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param smooth.lty smooth line type
+#' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
 #' @param iso use isometric axes with line of unity (auto-selected if NA)
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
 #' @param fit.lty fit line type
+#' @param fit.lwd fit line size
 #' @param fit.alpha fit alpha
 #' @param conf logical, or width for a confidence region around a linear fit; passed to \code{\link{region}}; \code{TRUE} defaults to 95 percent confidence interval; may not make sense if xlog is TRUE
 #' @param conf.alpha alpha transparency for confidence region
@@ -693,13 +746,16 @@ scatter_panel <- function(
   yref = metOption('metaplot_ref_y_scatter_panel',scatter_panel_ref),
   ref.col = metOption('metaplot_ref_col_scatter_panel','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter_panel','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_scatter_panel','solid'),
   ref.alpha = metOption('metaplot_ref_alpha_scatter_panel',1),
   ysmooth = metOption('metaplot_smooth_y_scatter_panel',FALSE),
   xsmooth = metOption('metaplot_smooth_x_scatter_panel',FALSE),
   smooth.lty = metOption('metaplot_smooth_lty_scatter_panel','dashed'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_scatter_panel','dashed'),
   smooth.alpha = metOption('metaplot_smooth_alpha_scatter_panel',1),
   fit = metOption('metaplot_fit_plot_scatter_panel',conf),
   fit.lty = metOption('metaplot_fit_lty_scatter_panel','solid'),
+  fit.lwd = metOption('metaplot_fit_lwd_scatter_panel','solid'),
   fit.alpha = metOption('metaplot_fit_alpha_scatter_panel',1),
   conf = metOption('metaplot_conf_plot_scatter_panel',FALSE),
   conf.alpha = metOption('metaplot_conf_alpha_scatter_panel',0.3),
@@ -714,20 +770,20 @@ scatter_panel <- function(
 {
   stopifnot(length(global) == 1, is.logical(global))
   # if(is.null(groups)) groups <- rep(TRUE,length(x)) # cannot be NULL
-  myxsmooth <- function(x,y,type,lty,col, col.symbol, col.line,...){
+  myxsmooth <- function(x,y,type,lty,lwd,col, col.symbol, col.line,...){
     bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
-    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = smooth.lty, alpha = smooth.alpha,type = 'l',col = col.line,...))
+    if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = smooth.lty,lwd = smooth.lwd, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }
   myysmooth <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
     foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
-    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = smooth.lty, alpha = smooth.alpha,type = 'l',col = col.line,...))
+    if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = smooth.lty, lwd = smooth.lwd, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }
-  myfit <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
+  myfit <- function(x,y,type,lty,lwd,col, col.symbol, col.line,alpha,...){
     f <- data.frame()
     f <- region(x, y, conf = conf, ...)
-    try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l',lty = fit.lty,alpha= fit.alpha, ...))
+    try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l',lty = fit.lty,lwd = fit.lwd, alpha= fit.alpha, ...))
   }
-  myconf <- function(x,y,type,lty,col, col.symbol, col.line, alpha, ...){
+  myconf <- function(x,y,type,lty,lwd, col, col.symbol, col.line, alpha, ...){
     f <- region(x, y, conf = conf, ...)
     try(panel.polygon(
       x = c(f$x, rev(f$x)),
@@ -784,10 +840,10 @@ scatter_panel <- function(
   xref <- as.numeric(xref)
   xref <- xref[is.defined(xref)]
 
-  if(length(yref))panel.abline(h = yref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
-  if(length(xref))panel.abline(v = xref, col = ref.col, lty = ref.lty, alpha = ref.alpha)
+  if(length(yref))panel.abline(h = yref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
+  if(length(xref))panel.abline(v = xref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
 
-  if(iso)panel.abline(0,1)
+  if(iso)panel.abline(0, 1, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
 }
 
 xpos <- function(loc, range = 0:1, lo = range[[1]], hi = range[[2]]){

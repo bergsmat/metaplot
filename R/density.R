@@ -20,17 +20,18 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param ref reference line; can be function(x = x, var = xvar, ...)
 #' @param ref.col color for reference line(s)
 #' @param ref.lty type for reference line(s)
+#' @param ref.lwd size for reference line(s)
 #' @param ref.alpha transparency for reference line(s)
 #' @param log whether to log-transform x axis (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)
-#' @param aspect passed to \code{\link[lattice]{densityplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
 #' @param colors replacements for default colors in group order
 #' @param symbols replacements for default symbols in group order
-#' @param points logical or alpha, same length as groups
-#' @param lines logical or alpha, same length as groups
-#' @param fill logical or alpha, same length as groups
+#' @param points whether to plot points: logical or alpha, same length as groups
+#' @param lines whether to plot lines: logical or alpha, same length as groups
+#' @param fill whether to fill curves: logical or alpha, same length as groups (symbol fill color is same as point color)
 #' @param space location of key (right, left, top, bottom)
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param main character, or a function of x, xvar, groups, facets, and log
@@ -48,8 +49,10 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @examples
 #' densplot_data_frame(Theoph, 'conc', grid = TRUE)
 #' densplot_data_frame(Theoph, 'conc', 'Subject')
-#' densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal')
-#' densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
+#' densplot_data_frame(Theoph, 'conc', 'Subject',
+#' space = 'top', columns = 4, legend.direction = 'horizontal')
+#' densplot_data_frame(Theoph, 'conc', 'Subject',
+#' space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
 #' densplot_data_frame(Theoph, 'conc', , 'Subject')
 densplot_data_frame<- function(
   x,
@@ -60,6 +63,7 @@ densplot_data_frame<- function(
   ref = metOption('metaplot_ref_x_dens',metaplot_ref),
   ref.col = metOption('metaplot_ref_col_dens','grey'),
   ref.lty = metOption('metaplot_ref_lty_dens','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_dens','solid'),
   ref.alpha = metOption('metaplot_ref_alpha_dens',1),
   log = metOption('metaplot_log_dens',FALSE),
   crit = metOption('metaplot_crit_dens',1.3),
@@ -80,6 +84,7 @@ densplot_data_frame<- function(
   gg = metOption('metaplot_gg_dens',FALSE),
   ...
 ){
+  aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(xvar) == 1)
   stopifnot(is.character(xvar))
@@ -133,8 +138,21 @@ densplot_data_frame<- function(
   # groups now assigned and is factor
   nlev <- length(levels(x[[groups]]))
   levs <- levels(x[[groups]])
-  if(is.null(colors)) colors <- trellis.par.get()$superpose.symbol$col
-  if(is.null(symbols)) symbols <- trellis.par.get()$superpose.symbol$pch
+  if(is.null(colors)){
+    if(gg){
+      colors <- hue_pal()(nlev)
+      if(nlev == 1) colors <- 'black'
+    } else{
+      colors <- trellis.par.get()$superpose.symbol$col
+    }
+  }
+  if(is.null(symbols)){
+    if(gg){
+      symbols <- 16
+    } else {
+      symbols <- trellis.par.get()$superpose.symbol$pch
+    }
+  }
   if(is.null(fill)) fill <- FALSE # same as default
   if(is.null(lines)) lines <- TRUE # same as default
   if(is.null(points)) points <- TRUE # same as default
@@ -148,21 +166,33 @@ densplot_data_frame<- function(
   lines <- rep(lines, length.out = nlev)
   points <- rep(points, length.out = nlev)
   # par.settings is defined
-  poly <- list(
-    col = alpha(colors, fill),
-    alpha = 1,
-    border = alpha(colors,lines)
-  )
-  sym <- list(
-    col = alpha(colors, points),
-    alpha = 1,
-    pch = symbols,
-    fill = alpha(colors, points)
-  )
-  line <- list(
-    col = alpha(colors, lines),
-    alpha = 1
-  )
+  sym <- trellis.par.get()$superpose.symbol
+  line <- trellis.par.get()$superpose.line
+  poly <- trellis.par.get()$superpose.polygon
+  sym$col <- alpha(colors, points)
+  sym$alpha <- 1
+  sym$pch <- symbols
+  sym$fill <- alpha(colors, lines)
+  line$col <- alpha(colors, lines)
+  line$alpha <- 1
+  poly$col <- alpha(colors, fill)
+  poly$alpha <- 1
+  poly$border <- alpha(colors, lines)
+  # poly <- list(
+  #   col = alpha(colors, fill),
+  #   alpha = 1,
+  #   border = alpha(colors,lines)
+  # )
+  # sym <- list(
+  #   col = alpha(colors, points),
+  #   alpha = 1,
+  #   pch = symbols,
+  #   fill = alpha(colors, points)
+  # )
+  # line <- list(
+  #   col = alpha(colors, lines),
+  #   alpha = 1
+  # )
   if(is.null(par.settings$superpose.polygon)) par.settings$superpose.polygon <- poly
   if(is.null(par.settings$superpose.symbol)) par.settings$superpose.symbol <- sym
   if(is.null(par.settings$superpose.line)) par.settings$superpose.line <- line
@@ -190,6 +220,7 @@ if(gg){
     xintercept = ref,
     color = ref.col,
     linetype = ref.lty,
+    size = ref.lwd,
     alpha = ref.alpha
   )
   plot <- plot + theme(aspect.ratio = aspect, plot.margin = padding)
@@ -223,6 +254,7 @@ densityplot(
   ref = ref,
   ref.col = ref.col,
   ref.lty = ref.lty,
+  ref.lwd = ref.lwd,
   ref.alpha = ref.alpha,
   log = log,
   aspect = aspect,
@@ -246,10 +278,11 @@ densityplot(
 #' @param ref numeric
 #' @param ref.col passed to \code{\link[lattice]{panel.abline}} as col
 #' @param ref.lty passed to \code{\link[lattice]{panel.abline}} as lty
+#' @param ref.lwd passed to \code{\link[lattice]{panel.abline}} as lwd
 #' @param ref.alpha passed to \code{\link[lattice]{panel.abline}} as alpha
-dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.alpha, ...){
+dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
   panel.meta_densityplot(...)
-  if(length(ref))panel.abline(v = ref, col=ref.col, lty = ref.lty, alpha = ref.alpha)
+  if(length(ref))panel.abline(v = ref, col=ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
 }
 #' Densplot Method for Data Frame
 #'
@@ -324,7 +357,7 @@ panel.meta_densityplot <- function (
 {
     if (ref) {
         reference.line <- trellis.par.get("reference.line")
-        panel.abline(h = 0, col = reference.line$col, lty = reference.line$lty,
+        panel.abline(h = 0, col = reference.line$col, lty = reference.line$lty, lwd = reference.line$lwd,
             lwd = reference.line$lwd, identifier = paste(identifier,
                 "abline"))
     }

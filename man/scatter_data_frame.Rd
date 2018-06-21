@@ -25,6 +25,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   scales = metOption("metaplot_scales_scatter", NULL),
   panel = metOption("metaplot_panel_scatter", scatter_panel),
   colors = metOption("metaplot_colors_scatter", NULL),
+  fill = metOption("metaplot_colors_fill_scatter", NULL),
   symbols = metOption("metaplot_symbols_scatter", NULL),
   points = metOption("metaplot_points_scatter", TRUE),
   lines = metOption("metaplot_lines_scatter", FALSE),
@@ -80,7 +81,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
-\item{iso}{plot line of unity (auto-selected if NA)}
+\item{iso}{plot line of unity (auto-selected if NA) using reference line aesthetics (see below)}
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
@@ -100,9 +101,11 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{colors}{replacements for default colors in group order}
 
+\item{fill}{replacements for default symbol fill colors in group order (means something different for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}})}
+
 \item{symbols}{replacements for default symbols in group order}
 
-\item{points}{whether to plot points for each group: logical, or alpha values between 0 and 1}
+\item{points}{whether to plot points and fill for each group: logical, or alpha values between 0 and 1}
 
 \item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1}
 

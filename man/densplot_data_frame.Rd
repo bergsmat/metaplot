@@ -61,11 +61,11 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{symbols}{replacements for default symbols in group order}
 
-\item{points}{logical or alpha, same length as groups}
+\item{points}{whether to plot points: logical or alpha, same length as groups}
 
-\item{lines}{logical or alpha, same length as groups}
+\item{lines}{whether to plot lines: logical or alpha, same length as groups}
 
-\item{fill}{logical or alpha, same length as groups}
+\item{fill}{whether to fill curves: logical or alpha, same length as groups (symbol fill color is same as point color)}
 
 \item{space}{location of key (right, left, top, bottom)}
 
@@ -89,8 +89,10 @@ Plot density for object of class 'data.frame' using \code{dens_panel} by default
 \examples{
 densplot_data_frame(Theoph, 'conc', grid = TRUE)
 densplot_data_frame(Theoph, 'conc', 'Subject')
-densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal')
-densplot_data_frame(Theoph, 'conc', 'Subject', space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
+densplot_data_frame(Theoph, 'conc', 'Subject',
+space = 'top', columns = 4, legend.direction = 'horizontal')
+densplot_data_frame(Theoph, 'conc', 'Subject',
+space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
 densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{

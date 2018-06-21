@@ -27,9 +27,10 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param main character, or a function of x, xvar
 #' @param sub character, or a function of x, xvar
 #' @param col point color
-#' @param loess.col loess color
-#' @param loess.lty loess line type
-#' @param loess.alpha loess alpha
+#' @param smooth.col smooth color
+#' @param smooth.lty smooth line type
+#' @param smooth.lwd smooth line size
+#' @param smooth.alpha smooth alpha
 #' @param density whether to plot density polygons
 #' @param diag.label label for the diagonal; can be a function of x, varname, .data
 #' @param pin location for a pin (reference line) in the density region; can be a function of x, varname, .data
@@ -67,7 +68,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' x %>% metaplot(lKe, lKa, lCl)
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
-#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   col = 'black',smooth.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1
 #' )
 
@@ -83,9 +84,10 @@ corsplom_data_frame <- function(
   main = metOption('metaplot_main_corsplom',NULL),
   sub = metOption('metaplot_sub_corsplom',NULL),
   col = metOption('metaplot_point_col_corsplom','blue'),
-  loess.col = metOption('metaplot_loess_col_corsplom',col),
-  loess.lty = metOption('metaplot_loess_lty_corsplom','solid'),
-  loess.alpha = metOption('metaplot_loess_alpha_corsplom',1),
+  smooth.col = metOption('metaplot_smooth_col_corsplom',col),
+  smooth.lty = metOption('metaplot_smooth_lty_corsplom','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom','solid'),
+  smooth.alpha = metOption('metaplot_smooth_alpha_corsplom',1),
   density = metOption('metaplot_density_corsplom',TRUE),
   diag.label = metOption('metaplot_diag_label_corsplom',diag_label),
   pin = metOption('metaplot_pin_loc_corsplom',diag_pin),
@@ -171,18 +173,19 @@ corsplom_data_frame <- function(
           data = x,
           mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
           col = col,
-          loess.col = loess.col,
-          loess.alpha = loess.alpha,
-          loess.lty = loess.lty,
+          smooth.col = smooth.col,
+          smooth.alpha = smooth.alpha,
+          smooth.lty = smooth.lty,
+          smooth.lwd = smooth.lwd,
           ...
         )
         if(i != j && xor(i > j, as.table)) p <- upper.panel(
           data = x,
           mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
           col = col,
-          loess.col = loess.col,
-          loess.alpha = loess.alpha,
-          loess.lty = loess.lty,
+          smooth.col = smooth.col,
+          smooth.alpha = smooth.alpha,
+          smooth.lwd = smooth.lwd,
           ...
         )
 
@@ -209,8 +212,21 @@ corsplom_data_frame <- function(
         ncol = ncol,
         nrow = ncol,
         respect = TRUE,
-        top = paste(sep='\n',main,sub),
+        top = sub,
         bottom = xlab
+      )
+    )
+    m <- do.call(
+      arrangeGrob,
+      list(
+        m,
+        top = textGrob(
+          main,
+          gp = gpar(
+            fontface = 'bold',
+            cex = 1.3
+          )
+        )
       )
     )
     m <- gtable_add_padding(m, padding)
@@ -231,9 +247,10 @@ corsplom_data_frame <- function(
     .data = x,
     split = split,
     col = col,
-    loess.col = loess.col,
-    loess.lty = loess.lty,
-    loess.alpha = loess.alpha,
+    smooth.col = smooth.col,
+    smooth.lty = smooth.lty,
+    smooth.lwd = smooth.lwd,
+    smooth.alpha = smooth.alpha,
     density = density,
     diag.label = diag.label,
     pin = pin,
@@ -278,21 +295,22 @@ corsplom.data.frame <- function(
 #' Correlation GG Function for GG Metaplot Corsplom
 #'
 #' Default lower panel function for corsplom_data_frame() with \code{gg = TRUE}. Plots Pearson correlation coefficient.
-#' corsplom_data_frame() typically supplies loess aesthetics in case smooth is desired; loess arguments are defined to
+#' corsplom_data_frame() typically supplies smooth aesthetics in case smooth is desired; smooth arguments are defined to
 #' suppress corresponding warnings.
 #' @param data data
 #' @param mapping mapping
 #' @param col text color
-#' @param loess.col ignored
-#' @param loess.lty ignored
-#' @param loess.alpha ignored
+#' @param smooth.col ignored
+#' @param smooth.lty ignored
+#' @param smooth.lwd ignored
+#' @param smooth.alpha ignored
 #' @param ... ignored
 #' @keywords internal
 #' @export
 #' @family panel functions
 corsplom_gg_correlation = function(
   data, mapping, col = metOption('metaplot_point_col_corsplom_gg','blue'),
-  loess.col, loess.lty, loess.alpha, ...
+  smooth.col, smooth.lty, smooth.lwd, smooth.alpha, ...
 ){
   x <- as.character(mapping$x)
   x <- data[[x]]
@@ -331,9 +349,10 @@ corsplom_gg_correlation = function(
 #' @param data data
 #' @param mapping mapping
 #' @param col point color
-#' @param loess.col loess color
-#' @param loess.lty loess line type
-#' @param loess.alpha loess alpha
+#' @param smooth.col smooth color
+#' @param smooth.lty smooth line type
+#' @param smooth.lwd smooth line size
+#' @param smooth.alpha smooth alpha
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -344,9 +363,10 @@ corsplom_gg_scatter = function(
   method = 'loess',
   se = F,
   col = metOption('metaplot_point_col_corsplom_gg','blue'),
-  loess.col = metOption('metaplot_loess_col_corsplom_gg','blue'),
-  loess.alpha = metOption('metaplot_loess_alpha_corsplom_gg',1),
-  loess.lty = metOption('metaplot_loess_lty_corsplom_gg','solid'),
+  smooth.col = metOption('metaplot_smooth_col_corsplom_gg','blue'),
+  smooth.alpha = metOption('metaplot_smooth_alpha_corsplom_gg',1),
+  smooth.lty = metOption('metaplot_smooth_lty_corsplom_gg','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom_gg','solid'),
   ...
 ){
   x <- as.character(mapping$x)
@@ -361,9 +381,10 @@ corsplom_gg_scatter = function(
     geom_smooth(
       method = method,
       se = se,
-      colour = loess.col,
-      alpha = loess.alpha,
-      linetype = loess.lty,
+      colour = smooth.col,
+      alpha = smooth.alpha,
+      linetype = smooth.lty,
+      size = smooth.lwd,
       ...
     )
 }

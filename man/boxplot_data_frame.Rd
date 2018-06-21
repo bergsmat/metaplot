@@ -21,8 +21,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   aspect = metOption("metaplot_aspect_boxplot", 1),
   main = metOption("metaplot_main_boxplot", NULL),
   sub = metOption("metaplot_sub_boxplot", NULL),
-  par.settings = metOption("metaplot_parsettings_boxplot",
-  standard.theme("pdf", color = FALSE)),
+  par.settings = metOption("metaplot_parsettings_boxplot", NULL),
   padding = metOption("metaplot_padding_boxplot", 1),
   reverse = metOption("metaplot_reverse_boxplot", TRUE),
   pch = metOption("metaplot_pch_boxplot", "|"),
@@ -74,7 +73,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{sub}{character, or a function of x, yvar, xvar, facets, and log}
 
-\item{par.settings}{default parameter settings}
+\item{par.settings}{default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots}
 
 \item{padding}{if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout}
 

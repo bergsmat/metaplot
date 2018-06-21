@@ -16,6 +16,7 @@ library(dplyr)
 library(csv)
 x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
+\donttest{
 multiplot(
 x \%>\% metaplot(sres, gg = F),
 x \%>\% metaplot(sres, gg = T, padding = 3.5)
@@ -67,8 +68,10 @@ x \%>\% metaplot(arm, site, cohort, gg = F),
 x \%>\% metaplot(arm, site, cohort, gg = T, padding = 5)
 )
 multiplot(
-x \%>\% metaplot(arm, site, cohort, gg = F, space = 'top', columns = 2, padding = c(5,1,1,1)),
-x \%>\% metaplot(arm, site, cohort, gg = T, space = 'top', legend.direction = 'horizontal', padding = 2)
+x \%>\% metaplot(arm, site, cohort, gg = F, space = 'top',
+columns = 2, padding = c(5,1,1,1)),
+x \%>\% metaplot(arm, site, cohort, gg = T, space = 'top',
+legend.direction = 'horizontal', padding = 2)
 )
 multiplot(
 x \%>\% metaplot(arm, site, , cohort, gg = F),
@@ -139,8 +142,10 @@ x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = F),
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T, padding = 3.5)
 )
 multiplot(
-x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = F),
-x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T, ref.col = 'red', gg = T, padding = 3.5)
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T,
+ref.col = 'red', gg = F),
+x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T,
+ref.col = 'red', gg = T, padding = 3.5)
 )
 multiplot(
 x \%>\% metaplot(subject,conc, gg = F),
@@ -277,7 +282,8 @@ x \%>\% metaplot(
   pin.col = 'orange', pin.alpha = 0.9,
   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
   padding = 1:4,
-  other = 'none'
+  other = 'none',
+  xlab = 'parameters'
 )
 x \%>\% metaplot(
   main = 'Correlation Splom',
@@ -290,7 +296,8 @@ x \%>\% metaplot(
   pin.col = 'orange', pin.alpha = 0.9,
   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
   padding = 1:4,
-  other = 'none'
+  other = 'none',
+  xlab = 'parameters'
 )
 x \%>\% metaplot(
   main = 'Scatterplot',
@@ -344,6 +351,7 @@ x \%>\% metaplot(
   grid = T, loc = 1,
   other = 'none'
  )
+}
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},

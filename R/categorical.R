@@ -121,7 +121,7 @@ categorical.data.frame <- function(
 #' @param ylab y axis label; can be function(x = x, var = yvar, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, ..)
 #' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param aspect passed to \code{\link[lattice]{xyplot}}
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
 #' @param space location of key (right, left, top, bottom)
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, fill, lines, space, gg, type ('categorical'), and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
@@ -209,6 +209,7 @@ categorical_data_frame <- function(
   gg = metOption('metaplot_gg_categorical',FALSE),
   ...
 ){
+  aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
   stopifnot(is.character(yvar) | length(yvar) == 0)
@@ -295,7 +296,14 @@ categorical_data_frame <- function(
   }
   nlev <- length(levels(y[[groups]]))
   levs <- levels(y[[groups]])
-  if(is.null(colors)) colors <- trellis.par.get()$superpose.symbol$col
+  if(is.null(colors)) {
+    if(gg){
+      colors <- hue_pal()(nlev)
+      if(nlev == 1) colors <- '#0080ff'
+    } else {
+      colors <- trellis.par.get()$superpose.symbol$col
+    }
+  }
   if(is.null(fill)) fill <- 0.5 # same as default
   if(is.null(lines)) lines <- TRUE # same as default
   fill <- as.numeric(fill)
@@ -305,11 +313,15 @@ categorical_data_frame <- function(
   fill[fill == 0] <- 0.000000001 # key borders are not drawn if fill == 0
   lines <- rep(lines, length.out = nlev)
   # par.settings is defined
-  poly <- list(
-    col = alpha(colors, fill),
-    alpha = 1,
-    border = alpha(colors,lines)
-  )
+  poly <- trellis.par.get()$superpose.polygon
+  poly$col <- alpha(colors, fill)
+  poly$alpha <- 1
+  poly$border <- alpha(colors, fill)
+  # poly <- list(
+  #   col = alpha(colors, fill),
+  #   alpha = 1,
+  #   border = alpha(colors,lines)
+  # )
   if(is.null(par.settings$superpose.polygon)) par.settings$superpose.polygon <- poly
   if(gg)if(length(facets) > 2) facets <- facets[1:2]
   if(is.character(key)) key <- match.fun(key)
@@ -363,7 +375,10 @@ categorical_data_frame <- function(
       plot <- plot + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
     }
     levs <- length(unique(dat$g))
-    if(is.null(colors)) colors <- hue_pal()(levs)
+    if(is.null(colors)) {
+      colors <- hue_pal()(levs)
+      if(levs == 1) colors <- 'black'
+    }
     # fill <- rep(fill, length.out = levs) # see above
     # lines <- rep(lines, length.out = levs) # see above
     plot <- plot +

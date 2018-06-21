@@ -51,9 +51,10 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 #' @param x x values
 #' @param y y values
 #' @param col point color
-#' @param loess.col loess color
-#' @param loess.lty loess line type
-#' @param loess.alpha loess alpha
+#' @param smooth.col smooth color
+#' @param smooth.lty smooth line type
+#' @param smooth.lwd smooth line size
+#' @param smooth.alpha smooth alpha
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -62,13 +63,14 @@ corsplom_panel_scatter = function(
   x,
   y,
   col = metOption('metaplot_point_col_corsplom_panel','#0080ff'),
-  loess.col = metOption('metaplot_loess_col_corsplom_panel',col),
-  loess.lty = metOption('metaplot_loess_lty_corspom_panel','solid'),
-  loess.alpha = metOption('metaplot_loess_alpha_corsplom_panel',1),
+  smooth.col = metOption('metaplot_smooth_col_corsplom_panel',col),
+  smooth.lty = metOption('metaplot_smooth_lty_corspom_panel','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corspom_panel','solid'),
+  smooth.alpha = metOption('metaplot_smooth_alpha_corsplom_panel',1),
   ...
 ){
   panel.xyplot(x,y,col = col, ...)
-  panel.loess(x,y,col = loess.col, lty = loess.lty, alpha = loess.alpha)
+  panel.loess(x,y,col = smooth.col, lty = smooth.lty, lwd = smooth.lwd, alpha = smooth.alpha)
 }
 
 #' Correlation Panel Function for Metaplot Corsplom
@@ -675,3 +677,12 @@ metOption <- function(x, default = NULL){
   getOption(nm, default = default)
 }
 
+metaplot_aspect <- function(aspect, gg){
+  # metaplot default is 1
+  # lattice default is 'fill'
+  # ggplot default is NA
+  # cross-translate:
+  if(is.na(aspect) && !gg) aspect <- 'fill'
+  if(!is.na(aspect) && aspect = 'fill' && gg) aspect <- NA
+  aspect
+}
