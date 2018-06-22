@@ -102,7 +102,7 @@ x \%>\% metaplot(conc, time, subject, site, arm)
 x \%>\% metaplot(lKe, lKa, lCl)
 x \%>\% metaplot(
   lKe, lKa, lCl,
-  col = 'black',loess.col = 'red', pin.col = 'red',
+  col = 'black',smooth.col = 'red', pin.col = 'red',
   dens.col='blue',dens.alpha = 0.1
 )
 x \%>\% metaplot(conc, pred, ipred, time, space = 'top')

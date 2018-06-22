@@ -9,6 +9,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   ref = metOption("metaplot_ref_x_dens", metaplot_ref),
   ref.col = metOption("metaplot_ref_col_dens", "grey"),
   ref.lty = metOption("metaplot_ref_lty_dens", "solid"),
+  ref.lwd = metOption("metaplot_ref_lwd_dens", 1),
   ref.alpha = metOption("metaplot_ref_alpha_dens", 1),
   log = metOption("metaplot_log_dens", FALSE),
   crit = metOption("metaplot_crit_dens", 1.3),
@@ -45,13 +46,15 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{ref.lty}{type for reference line(s)}
 
+\item{ref.lwd}{size for reference line(s)}
+
 \item{ref.alpha}{transparency for reference line(s)}
 
 \item{log}{whether to log-transform x axis (auto-selected if NA)}
 
 \item{crit}{if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)}
 
-\item{aspect}{passed to \code{\link[lattice]{densityplot}}}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
 
 \item{scales}{passed to \code{\link[lattice]{densityplot}}}
 

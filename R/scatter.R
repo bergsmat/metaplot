@@ -39,7 +39,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
 #' @param iso plot line of unity (auto-selected if NA) using reference line aesthetics (see below)
 #' @param na.rm whether to remove data points with one or more missing coordinates
-#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param space location of key (right, left, top, bottom)
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
@@ -138,14 +138,14 @@ scatter_data_frame <- function(
   padding = metOption('metaplot_padding_scatter', 1),
   ref.col = metOption('metaplot_ref_col_scatter','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter','solid'),
-  ref.lwd = metOption('metaplot_ref_lwd_scatter','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_scatter',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter',1),
   smooth.lty = metOption('metaplot_smooth_lty_scatter','dashed'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_scatter','dashed'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_scatter',1),
   smooth.alpha = metOption('metaplot_smooth_alpha_scatter',1),
   fit = metOption('metaplot_fit_plot_scatter',conf),
   fit.lty = metOption('metaplot_fit_lty_scatter','solid'),
-  fit.lwd = metOption('metaplot_fit_lwd_scatter','solid'),
+  fit.lwd = metOption('metaplot_fit_lwd_scatter',1),
   fit.alpha = metOption('metaplot_fit_alpha_scatter',1),
   conf = metOption('metaplot_conf_plot_scatter',FALSE),
   conf.alpha = metOption('metaplot_conf_alpha_scatter',0.3),
@@ -503,7 +503,7 @@ scatter_data_frame <- function(
 
     plot <- plot +
       scale_color_manual(values = colors) +
-      scale_fill_manual(values = fill)
+      scale_fill_manual(values = colors)
 
     if(length(groups) == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
       x = xpos,
@@ -746,16 +746,16 @@ scatter_panel <- function(
   yref = metOption('metaplot_ref_y_scatter_panel',scatter_panel_ref),
   ref.col = metOption('metaplot_ref_col_scatter_panel','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter_panel','solid'),
-  ref.lwd = metOption('metaplot_ref_lwd_scatter_panel','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_scatter_panel',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter_panel',1),
   ysmooth = metOption('metaplot_smooth_y_scatter_panel',FALSE),
   xsmooth = metOption('metaplot_smooth_x_scatter_panel',FALSE),
   smooth.lty = metOption('metaplot_smooth_lty_scatter_panel','dashed'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_scatter_panel','dashed'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_scatter_panel',1),
   smooth.alpha = metOption('metaplot_smooth_alpha_scatter_panel',1),
   fit = metOption('metaplot_fit_plot_scatter_panel',conf),
   fit.lty = metOption('metaplot_fit_lty_scatter_panel','solid'),
-  fit.lwd = metOption('metaplot_fit_lwd_scatter_panel','solid'),
+  fit.lwd = metOption('metaplot_fit_lwd_scatter_panel',1),
   fit.alpha = metOption('metaplot_fit_alpha_scatter_panel',1),
   conf = metOption('metaplot_conf_plot_scatter_panel',FALSE),
   conf.alpha = metOption('metaplot_conf_alpha_scatter_panel',0.3),
@@ -774,7 +774,7 @@ scatter_panel <- function(
     bar <- try(silent = TRUE, suppressWarnings(loess.smooth(y,x, family = 'gaussian')))
     if(xsmooth && !inherits(bar,'try-error'))try(panel.xyplot(bar$y,bar$x,lty = smooth.lty,lwd = smooth.lwd, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }
-  myysmooth <- function(x,y,type,lty,col, col.symbol, col.line,alpha,...){
+  myysmooth <- function(x,y,type,lty,lwd,col, col.symbol, col.line,alpha,...){
     foo <- try(silent = TRUE, suppressWarnings(loess.smooth(x,y, family = 'gaussian')))
     if(ysmooth && !inherits(foo,'try-error'))try(panel.xyplot(foo$x,foo$y,lty = smooth.lty, lwd = smooth.lwd, alpha = smooth.alpha,type = 'l',col = col.line,...))
   }

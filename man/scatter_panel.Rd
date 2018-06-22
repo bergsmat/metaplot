@@ -8,13 +8,16 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
   scatter_panel_ref), yref = metOption("metaplot_ref_y_scatter_panel",
   scatter_panel_ref), ref.col = metOption("metaplot_ref_col_scatter_panel",
   "grey"), ref.lty = metOption("metaplot_ref_lty_scatter_panel", "solid"),
+  ref.lwd = metOption("metaplot_ref_lwd_scatter_panel", 1),
   ref.alpha = metOption("metaplot_ref_alpha_scatter_panel", 1),
   ysmooth = metOption("metaplot_smooth_y_scatter_panel", FALSE),
   xsmooth = metOption("metaplot_smooth_x_scatter_panel", FALSE),
   smooth.lty = metOption("metaplot_smooth_lty_scatter_panel", "dashed"),
+  smooth.lwd = metOption("metaplot_smooth_lwd_scatter_panel", 1),
   smooth.alpha = metOption("metaplot_smooth_alpha_scatter_panel", 1),
   fit = metOption("metaplot_fit_plot_scatter_panel", conf),
   fit.lty = metOption("metaplot_fit_lty_scatter_panel", "solid"),
+  fit.lwd = metOption("metaplot_fit_lwd_scatter_panel", 1),
   fit.alpha = metOption("metaplot_fit_alpha_scatter_panel", 1),
   conf = metOption("metaplot_conf_plot_scatter_panel", FALSE),
   conf.alpha = metOption("metaplot_conf_alpha_scatter_panel", 0.3),
@@ -40,6 +43,8 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
 
 \item{ref.lty}{reference line type}
 
+\item{ref.lwd}{reference line size}
+
 \item{ref.alpha}{reference line alpha}
 
 \item{ysmooth}{supply loess smooth of y on x}
@@ -48,11 +53,15 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
 
 \item{smooth.lty}{smooth line type}
 
+\item{smooth.lwd}{smooth line size}
+
 \item{smooth.alpha}{smooth alpha}
 
 \item{fit}{draw a linear fit of y ~ x}
 
 \item{fit.lty}{fit line type}
+
+\item{fit.lwd}{fit line size}
 
 \item{fit.alpha}{fit alpha}
 

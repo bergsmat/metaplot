@@ -106,7 +106,7 @@ globalVariables('axisTicks')
 #' x %>% metaplot(lKe, lKa, lCl)
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
-#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   col = 'black',smooth.col = 'red', pin.col = 'red',
 #'   dens.col='blue',dens.alpha = 0.1
 #' )
 #' x %>% metaplot(conc, pred, ipred, time, space = 'top')
@@ -438,14 +438,13 @@ metaplot.data.frame <- function(
 #' multiplot(
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
-#'   col = 'black',loess.col = 'red', pin.col = 'red',
+#'   col = 'black',smooth.col = 'red', pin.col = 'red',
 #'   dens.col = 'blue', dens.alpha = 0.1, gg = F
 #' ),
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
-#'   col = 'black',loess.col = 'red', pin.col = 'red',
-#'   dens.col='blue',dens.alpha = 0.1, gg = T
-#' )
+#'   col = 'black',smooth.col = 'red', pin.col = 'red',
+#'   dens.col='blue',dens.alpha = 0.1, gg = T, padding = 2)
 #' )
 #' multiplot(
 #' x %>% metaplot(conc, pred, ipred, time, space = 'top', gg = F),
@@ -520,9 +519,10 @@ metaplot.data.frame <- function(
 #'  sub = 'using lattice',
 #'  gg = F,
 #'  sres, subject,
-#'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+#'  ref.col = 'red', ref.alpha = 0.5,
+#'  ref.lty = 'dashed', ref.lwd = 2,
 #'  log = F,
-#'  aspect = 1/2,
+#'  aspect = NULL,
 #'  colors = c('red','blue','darkgreen'),
 #'  symbols = c(21, 22, 23),
 #'  points = 0.3,
@@ -537,9 +537,10 @@ metaplot.data.frame <- function(
 #'  sub = 'using ggplot',
 #'  gg = T,
 #'  sres, subject,
-#'  ref.col = 'red', ref.lty = 'dashed', ref.alpha = 0.5,
+#'  ref.col = 'red', ref.alpha = 0.5,
+#'  ref.lty = 'dashed', ref.lwd = 2,
 #'  log = F,
-#'  aspect = 1/2,
+#'  aspect = NULL,
 #'  colors = c('red','blue','darkgreen'),
 #'  symbols = c(21, 22, 23),
 #'  points = 0.3,
@@ -555,12 +556,14 @@ metaplot.data.frame <- function(
 #'  gg = F,
 #'  arm, conc,
 #'  log = T,
-#'  ref = 4, ref.col = 'red', ref.lty = 'dashed',
+#'  ref = 4, ref.col = 'red',
+#'  ref.lty = 'dashed', ref.lwd = 2,
 #'  nobs = T,
 #'  padding = 1:4,
 #'  reverse = FALSE,
 #'  pch = 20,
 #'  notch = TRUE,
+#'  aspect = NA,
 #'  other = 'none'
 #')
 #'
@@ -570,12 +573,14 @@ metaplot.data.frame <- function(
 #'  gg = T,
 #'  arm, conc,
 #'  log = T,
-#'  ref = 4, ref.col = 'red', ref.lty = 'dashed',
+#'  ref = 4, ref.col = 'red',
+#'  ref.lty = 'dashed', ref.lwd = 2,
 #'  nobs = T,
 #'  padding = 1:4,
 #'  reverse = FALSE,
 #'  pch = 20,
 #'  notch = TRUE,
+#'  aspect = NA,
 #'  other = 'none'
 #')
 #'x %>% metaplot(
@@ -583,7 +588,7 @@ metaplot.data.frame <- function(
 #'  sub = 'using lattice',
 #'  gg = F,
 #'  arm, site, cohort,
-#'  aspect = .7, space = 'top',
+#'  aspect = 'fill', space = 'top',
 #'  as.table = FALSE,
 #'  colors = c('red','blue','green'),
 #'  fill = c(0.3, 0.5, 0.7),
@@ -599,7 +604,7 @@ metaplot.data.frame <- function(
 #'  sub = 'using ggplot2',
 #'  gg = T,
 #'  arm, site, cohort,
-#'  aspect = .7, space = 'top',
+#'  aspect = 'fill', space = 'top',
 #'  as.table = FALSE,
 #'  colors = c('red','blue','green'),
 #'  fill = c(0.3, 0.5, 0.7),
@@ -616,7 +621,8 @@ metaplot.data.frame <- function(
 #'   lKe, lKa, lCl,
 #'   varname.cex = 2,
 #'   col = 'purple',
-#'   loess.col = 'orange', loess.lty = 'dashed', loess.alpha = 0.9,
+#'   smooth.col = 'orange', smooth.alpha = 0.9,
+#'   smooth.lty = 'dashed', smooth.lwd = 2,
 #'   pin.col = 'orange', pin.alpha = 0.9,
 #'   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
 #'   padding = 1:4,
@@ -630,7 +636,8 @@ metaplot.data.frame <- function(
 #'   lKe, lKa, lCl,
 #'   varname.cex = 2,
 #'   col = 'purple',
-#'   loess.col = 'orange', loess.lty = 'dashed', loess.alpha = 0.9,
+#'   smooth.col = 'orange', smooth.alpha = 0.9,
+#'   smooth.lty = 'dashed', smooth.lwd = 2,
 #'   pin.col = 'orange', pin.alpha = 0.9,
 #'   dens.col = 'purple',dens.alpha = 0.2, dens.scale = 0.1,
 #'   padding = 1:4,
@@ -643,7 +650,8 @@ metaplot.data.frame <- function(
 #'   gg = F,
 #'   res, conc,
 #'   yref = 0, ysmooth = T,
-#'   smooth.lty = 'dotted', smooth.alpha = 1,
+#'   smooth.lty = 'dotted', smooth.lwd = 2,
+#'   smooth.alpha = 1,
 #'   aspect = 0.8,
 #'   space = 'bottom',
 #'   colors = c('purple','darkgreen','peach'),
@@ -652,10 +660,10 @@ metaplot.data.frame <- function(
 #'   lines = F,
 #'   padding = 1:4,
 #'   ref.col = 'blue',
-#'   ref.lty = 'dashed',
+#'   ref.lty = 'dashed', ref.lwd = 2,
 #'   ref.alpha = 0.5,
 #'   conf = .99999,
-#'   fit.lty = 'dashed',
+#'   fit.lty = 'dashed', fit.lwd = 2,
 #'   fit.alpha = 0.5,
 #'   conf.alpha = 0.2,
 #'   global = T,
@@ -669,7 +677,8 @@ metaplot.data.frame <- function(
 #'   gg = T,
 #'   res, conc,
 #'   yref = 0, ysmooth = T,
-#'   smooth.lty = 'dotted', smooth.alpha = 1,
+#'   smooth.lty = 'dotted', smooth.lwd = 2,
+#'   smooth.alpha = 1,
 #'   aspect = 0.8,
 #'   space = 'bottom',
 #'   colors = c('purple','darkgreen','peach'),
@@ -678,10 +687,10 @@ metaplot.data.frame <- function(
 #'   lines = F,
 #'   padding = 1:4,
 #'   ref.col = 'blue',
-#'   ref.lty = 'dashed',
+#'   ref.lty = 'dashed', ref.lwd = 2,
 #'   ref.alpha = 0.5,
 #'   conf = .99999,
-#'   fit.lty = 'dashed',
+#'   fit.lty = 'dashed', fit.lwd = 2,
 #'   fit.alpha = 0.5,
 #'   conf.alpha = 0.2,
 #'   global = T,

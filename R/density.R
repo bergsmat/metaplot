@@ -24,7 +24,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param ref.alpha transparency for reference line(s)
 #' @param log whether to log-transform x axis (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)
-#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param scales  passed to \code{\link[lattice]{densityplot}}
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
 #' @param colors replacements for default colors in group order
@@ -63,7 +63,7 @@ densplot_data_frame<- function(
   ref = metOption('metaplot_ref_x_dens',metaplot_ref),
   ref.col = metOption('metaplot_ref_col_dens','grey'),
   ref.lty = metOption('metaplot_ref_lty_dens','solid'),
-  ref.lwd = metOption('metaplot_ref_lwd_dens','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_dens',1),
   ref.alpha = metOption('metaplot_ref_alpha_dens',1),
   log = metOption('metaplot_log_dens',FALSE),
   crit = metOption('metaplot_crit_dens',1.3),
@@ -357,7 +357,7 @@ panel.meta_densityplot <- function (
 {
     if (ref) {
         reference.line <- trellis.par.get("reference.line")
-        panel.abline(h = 0, col = reference.line$col, lty = reference.line$lty, lwd = reference.line$lwd,
+        panel.abline(h = 0, col = reference.line$col, lty = reference.line$lty,
             lwd = reference.line$lwd, identifier = paste(identifier,
                 "abline"))
     }

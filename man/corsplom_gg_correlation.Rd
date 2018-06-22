@@ -5,8 +5,8 @@
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
 corsplom_gg_correlation(data, mapping,
-  col = metOption("metaplot_point_col_corsplom_gg", "blue"), loess.col,
-  loess.lty, loess.alpha, ...)
+  col = metOption("metaplot_point_col_corsplom_gg", "blue"), smooth.col,
+  smooth.lty, smooth.lwd, smooth.alpha, ...)
 }
 \arguments{
 \item{data}{data}
@@ -15,17 +15,19 @@ corsplom_gg_correlation(data, mapping,
 
 \item{col}{text color}
 
-\item{loess.col}{ignored}
+\item{smooth.col}{ignored}
 
-\item{loess.lty}{ignored}
+\item{smooth.lty}{ignored}
 
-\item{loess.alpha}{ignored}
+\item{smooth.lwd}{ignored}
+
+\item{smooth.alpha}{ignored}
 
 \item{...}{ignored}
 }
 \description{
 Default lower panel function for corsplom_data_frame() with \code{gg = TRUE}. Plots Pearson correlation coefficient.
-corsplom_data_frame() typically supplies loess aesthetics in case smooth is desired; loess arguments are defined to
+corsplom_data_frame() typically supplies smooth aesthetics in case smooth is desired; smooth arguments are defined to
 suppress corresponding warnings.
 }
 \seealso{

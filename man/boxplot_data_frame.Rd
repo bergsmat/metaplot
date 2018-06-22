@@ -13,6 +13,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   ref = metOption("metaplot_ref_x_boxplot", metaplot_ref),
   ref.col = metOption("metaplot_ref_col_boxplot", "grey"),
   ref.lty = metOption("metaplot_ref_lty_boxplot", "solid"),
+  ref.lwd = metOption("metaplot_ref_lwd_boxplot", 1),
   ref.alpha = metOption("metaplot_ref_alpha_boxplot", 1),
   nobs = metOption("metaplot_nobs_boxplot", FALSE),
   na.rm = metOption("metaplot_narm_boxplot", TRUE), xlab = NULL,
@@ -53,6 +54,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{ref.lty}{line type for reference line(s)}
 
+\item{ref.lwd}{line size for reference line(s)}
+
 \item{ref.alpha}{transparency for reference line(s)}
 
 \item{nobs}{whether to include the number of observations under the category label}
@@ -67,7 +70,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{catlab}{categorical axis label; can be function(x = x, var = catvar, ...)}
 
-\item{aspect}{passed to \code{\link[lattice]{bwplot}}}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
 
 \item{main}{character, or a function of x, yvar, xvar, facets, and log}
 

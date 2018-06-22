@@ -6,9 +6,10 @@
 \usage{
 corsplom_panel_scatter(x, y,
   col = metOption("metaplot_point_col_corsplom_panel", "#0080ff"),
-  loess.col = metOption("metaplot_loess_col_corsplom_panel", col),
-  loess.lty = metOption("metaplot_loess_lty_corspom_panel", "solid"),
-  loess.alpha = metOption("metaplot_loess_alpha_corsplom_panel", 1), ...)
+  smooth.col = metOption("metaplot_smooth_col_corsplom_panel", col),
+  smooth.lty = metOption("metaplot_smooth_lty_corspom_panel", "solid"),
+  smooth.lwd = metOption("metaplot_smooth_lwd_corspom_panel", 1),
+  smooth.alpha = metOption("metaplot_smooth_alpha_corsplom_panel", 1), ...)
 }
 \arguments{
 \item{x}{x values}
@@ -17,11 +18,13 @@ corsplom_panel_scatter(x, y,
 
 \item{col}{point color}
 
-\item{loess.col}{loess color}
+\item{smooth.col}{smooth color}
 
-\item{loess.lty}{loess line type}
+\item{smooth.lty}{smooth line type}
 
-\item{loess.alpha}{loess alpha}
+\item{smooth.lwd}{smooth line size}
+
+\item{smooth.alpha}{smooth alpha}
 
 \item{...}{passed arguments}
 }

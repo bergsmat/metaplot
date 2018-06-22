@@ -6,9 +6,10 @@
 \usage{
 corsplom_gg_scatter(data, mapping, method = "loess", se = F,
   col = metOption("metaplot_point_col_corsplom_gg", "blue"),
-  loess.col = metOption("metaplot_loess_col_corsplom_gg", "blue"),
-  loess.alpha = metOption("metaplot_loess_alpha_corsplom_gg", 1),
-  loess.lty = metOption("metaplot_loess_lty_corsplom_gg", "solid"), ...)
+  smooth.col = metOption("metaplot_smooth_col_corsplom_gg", "blue"),
+  smooth.alpha = metOption("metaplot_smooth_alpha_corsplom_gg", 1),
+  smooth.lty = metOption("metaplot_smooth_lty_corsplom_gg", "solid"),
+  smooth.lwd = metOption("metaplot_smooth_lwd_corsplom_gg", 1), ...)
 }
 \arguments{
 \item{data}{data}
@@ -17,11 +18,13 @@ corsplom_gg_scatter(data, mapping, method = "loess", se = F,
 
 \item{col}{point color}
 
-\item{loess.col}{loess color}
+\item{smooth.col}{smooth color}
 
-\item{loess.alpha}{loess alpha}
+\item{smooth.alpha}{smooth alpha}
 
-\item{loess.lty}{loess line type}
+\item{smooth.lty}{smooth line type}
+
+\item{smooth.lwd}{smooth line size}
 
 \item{...}{passed arguments}
 }

@@ -65,7 +65,7 @@ corsplom_panel_scatter = function(
   col = metOption('metaplot_point_col_corsplom_panel','#0080ff'),
   smooth.col = metOption('metaplot_smooth_col_corsplom_panel',col),
   smooth.lty = metOption('metaplot_smooth_lty_corspom_panel','solid'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_corspom_panel','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corspom_panel',1),
   smooth.alpha = metOption('metaplot_smooth_alpha_corsplom_panel',1),
   ...
 ){
@@ -680,9 +680,13 @@ metOption <- function(x, default = NULL){
 metaplot_aspect <- function(aspect, gg){
   # metaplot default is 1
   # lattice default is 'fill'
-  # ggplot default is NA
+  # ggplot default is NULL
   # cross-translate:
-  if(is.na(aspect) && !gg) aspect <- 'fill'
-  if(!is.na(aspect) && aspect = 'fill' && gg) aspect <- NA
+  empty <- FALSE
+  if(is.null(aspect)) empty <- TRUE
+  if(!is.null(aspect) && is.na(aspect)) empty <- TRUE
+  if(!is.null(aspect) && !is.na(aspect) && aspect == 'fill') empty <- TRUE
+  if(empty && !gg) aspect <- 'fill'
+  if(empty && gg) aspect <- NULL
   aspect
 }

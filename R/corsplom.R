@@ -86,7 +86,7 @@ corsplom_data_frame <- function(
   col = metOption('metaplot_point_col_corsplom','blue'),
   smooth.col = metOption('metaplot_smooth_col_corsplom',col),
   smooth.lty = metOption('metaplot_smooth_lty_corsplom','solid'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom',1),
   smooth.alpha = metOption('metaplot_smooth_alpha_corsplom',1),
   density = metOption('metaplot_density_corsplom',TRUE),
   diag.label = metOption('metaplot_diag_label_corsplom',diag_label),
@@ -366,7 +366,7 @@ corsplom_gg_scatter = function(
   smooth.col = metOption('metaplot_smooth_col_corsplom_gg','blue'),
   smooth.alpha = metOption('metaplot_smooth_alpha_corsplom_gg',1),
   smooth.lty = metOption('metaplot_smooth_lty_corsplom_gg','solid'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom_gg','solid'),
+  smooth.lwd = metOption('metaplot_smooth_lwd_corsplom_gg',1),
   ...
 ){
   x <- as.character(mapping$x)

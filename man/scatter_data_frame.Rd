@@ -36,11 +36,14 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   padding = metOption("metaplot_padding_scatter", 1),
   ref.col = metOption("metaplot_ref_col_scatter", "grey"),
   ref.lty = metOption("metaplot_ref_lty_scatter", "solid"),
+  ref.lwd = metOption("metaplot_ref_lwd_scatter", 1),
   ref.alpha = metOption("metaplot_ref_alpha_scatter", 1),
   smooth.lty = metOption("metaplot_smooth_lty_scatter", "dashed"),
+  smooth.lwd = metOption("metaplot_smooth_lwd_scatter", 1),
   smooth.alpha = metOption("metaplot_smooth_alpha_scatter", 1),
   fit = metOption("metaplot_fit_plot_scatter", conf),
   fit.lty = metOption("metaplot_fit_lty_scatter", "solid"),
+  fit.lwd = metOption("metaplot_fit_lwd_scatter", 1),
   fit.alpha = metOption("metaplot_fit_alpha_scatter", 1),
   conf = metOption("metaplot_conf_plot_scatter", FALSE),
   conf.alpha = metOption("metaplot_conf_alpha_scatter", 0.3),
@@ -85,7 +88,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
-\item{aspect}{passed to \code{\link[lattice]{xyplot}}}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
 
 \item{space}{location of key (right, left, top, bottom)}
 
@@ -123,15 +126,21 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{ref.lty}{reference line type}
 
+\item{ref.lwd}{reference line size}
+
 \item{ref.alpha}{reference line alpha}
 
 \item{smooth.lty}{smooth line type}
+
+\item{smooth.lwd}{smooth line size}
 
 \item{smooth.alpha}{smooth alpha}
 
 \item{fit}{draw a linear fit of y ~ x}
 
 \item{fit.lty}{fit line type}
+
+\item{fit.lwd}{fit line size}
 
 \item{fit.alpha}{fit alpha}
 

@@ -27,7 +27,7 @@ NULL
 #' @param xlab x axis label
 #' @param numlab numeric axis label; can be function(x = x, var = numvar, log = ylog, ...)
 #' @param catlab categorical axis label; can be function(x = x, var = catvar, ...)
-#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NA to calculate automatically
+#' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param par.settings default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots
@@ -65,7 +65,7 @@ boxplot_data_frame <- function(
   ref = metOption('metaplot_ref_x_boxplot',metaplot_ref),
   ref.col = metOption('metaplot_ref_col_boxplot','grey'),
   ref.lty = metOption('metaplot_ref_lty_boxplot','solid'),
-  ref.lwd = metOption('metaplot_ref_lwd_boxplot','solid'),
+  ref.lwd = metOption('metaplot_ref_lwd_boxplot',1),
   ref.alpha = metOption('metaplot_ref_alpha_boxplot',1),
   nobs = metOption('metaplot_nobs_boxplot',FALSE),
   na.rm = metOption('metaplot_narm_boxplot',TRUE),

@@ -17,9 +17,10 @@ corsplom_data_frame(x, xvar = names(x),
   main = metOption("metaplot_main_corsplom", NULL),
   sub = metOption("metaplot_sub_corsplom", NULL),
   col = metOption("metaplot_point_col_corsplom", "blue"),
-  loess.col = metOption("metaplot_loess_col_corsplom", col),
-  loess.lty = metOption("metaplot_loess_lty_corsplom", "solid"),
-  loess.alpha = metOption("metaplot_loess_alpha_corsplom", 1),
+  smooth.col = metOption("metaplot_smooth_col_corsplom", col),
+  smooth.lty = metOption("metaplot_smooth_lty_corsplom", "solid"),
+  smooth.lwd = metOption("metaplot_smooth_lwd_corsplom", 1),
+  smooth.alpha = metOption("metaplot_smooth_alpha_corsplom", 1),
   density = metOption("metaplot_density_corsplom", TRUE),
   diag.label = metOption("metaplot_diag_label_corsplom", diag_label),
   pin = metOption("metaplot_pin_loc_corsplom", diag_pin),
@@ -57,11 +58,13 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{col}{point color}
 
-\item{loess.col}{loess color}
+\item{smooth.col}{smooth color}
 
-\item{loess.lty}{loess line type}
+\item{smooth.lty}{smooth line type}
 
-\item{loess.alpha}{loess alpha}
+\item{smooth.lwd}{smooth line size}
+
+\item{smooth.alpha}{smooth alpha}
 
 \item{density}{whether to plot density polygons}
 
@@ -108,7 +111,7 @@ x \%<>\% pack
 x \%>\% metaplot(lKe, lKa, lCl)
 x \%>\% metaplot(
   lKe, lKa, lCl,
-  col = 'black',loess.col = 'red', pin.col = 'red',
+  col = 'black',smooth.col = 'red', pin.col = 'red',
   dens.col='blue',dens.alpha = 0.1
 )
 }

@@ -5,7 +5,7 @@
 \title{Panel Function for Metaplot Boxplot}
 \usage{
 boxplot_panel(ref = NULL, horizontal, pch = "|", notch = FALSE, ref.col,
-  ref.lty, ref.alpha, ...)
+  ref.lty, ref.lwd, ref.alpha, ...)
 }
 \arguments{
 \item{ref}{numeric}
@@ -19,6 +19,8 @@ boxplot_panel(ref = NULL, horizontal, pch = "|", notch = FALSE, ref.col,
 \item{ref.col}{passed to \code{\link[lattice]{panel.abline}} as col}
 
 \item{ref.lty}{passed to \code{\link[lattice]{panel.abline}} as lty}
+
+\item{ref.lwd}{passed to \code{\link[lattice]{panel.abline}} as lwd}
 
 \item{ref.alpha}{passed to \code{\link[lattice]{panel.abline}} as alpha}
 }

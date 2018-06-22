@@ -48,7 +48,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
-\item{aspect}{passed to \code{\link[lattice]{xyplot}}}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
 
 \item{space}{location of key (right, left, top, bottom)}
 
