@@ -14,7 +14,7 @@ NULL
 #' @param log whether to log transform numeric variable (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing values is greater than this value
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if var[[2]] is numeric
-#' @param scales passed to \code{\link[lattice]{xyplot}}; can be function(x = x, horizontal, log,...)
+#' @param scales passed to \code{\link[lattice]{xyplot}} (should be function(x = x, horizontal, log,...)) or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}}
 #' @param panel panel function
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
 #' @param ref.col color for reference line(s)
@@ -31,7 +31,7 @@ NULL
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param par.settings default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots
-#' @param padding if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout
+#' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param reverse if y is categorical, present levels in reverse order (first at top)
 #' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
 #' @param notch whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}
@@ -139,10 +139,14 @@ boxplot_data_frame <- function(
       log <- mean(y[[con]],na.rm = TRUE)/median(y[[con]],na.rm = TRUE) > crit
     }
   }
-  if(log)if(any(y[[con]] <= 0, na.rm = TRUE)){
-    warning(con, ' must be positive for log scale')
-    log <- FALSE
+
+  bad <- !is.na(y[[con]]) & y[[con]] <= 0
+  bad[is.na(bad)] <- FALSE
+  if(log && any(bad)){
+    warning('dropping ',sum(bad), ' non-positive records for log scale')
+    y <- y[!bad,]
   }
+
   if(log & !gg){
     ref <- ref[ref > 0]
     if(length(ref)) ref <- log10(ref)
@@ -170,6 +174,7 @@ boxplot_data_frame <- function(
     num <- sapply(lev,function(l)sum(na.rm = TRUE, y[[cat]] == l))
     levels(y[[cat]]) <- paste(lev,num,sep = '\n')
   }
+  if(is.null(scales) && gg) scales <- 'fixed'
   if(is.null(scales)) scales <- function(x = y, horizontal = horizontal, log = log, ...){
     s <- list(
       tck = c(1,0),
@@ -181,9 +186,9 @@ boxplot_data_frame <- function(
     )
     s
   }
-  if(is.character(scales)) scales <- match.fun(scales)
-  if(!is.function(scales)) stop('scales must be NULL, or function(x, horizontal, log,...), or the name of a function')
-  scales <- scales(x=x, horizontal = horizontal, log = log, ...)
+  if(is.character(scales) && !gg) scales <- match.fun(scales)
+  if(!is.function(scales) && !gg) stop('scales must be NULL, or function(x, horizontal, log,...), or the name of a function')
+  if(!gg) scales <- scales(x=x, horizontal = horizontal, log = log, ...)
 
   if(!is.null(main))if(is.function(main)) main <- main(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
   if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, facets = facets, log = log, ...)
@@ -213,7 +218,7 @@ boxplot_data_frame <- function(
       trans = log_trans(),
       breaks = base_breaks()
     )
-    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
     if(length(facets) >  1) plot <- plot +
       facet_grid(
         as.formula(
@@ -222,7 +227,8 @@ boxplot_data_frame <- function(
             facets[[1]],
             facets[[2]]
           )
-        )
+        ),
+        scales = scales
       )
     if(horizontal) plot <- plot + coord_flip()
     return(plot)
@@ -301,6 +307,7 @@ boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col,
 #' boxplot(Theoph,conc,Subject, gg = T)
 #' boxplot(Theoph,conc,Subject,site)
 #' boxplot(Theoph,conc,Subject,site, gg = T)
+#' boxplot(Theoph,conc,Subject,site, gg = T, scales = 'free_x')
 #' attr(Theoph,'title') <- 'Theophylline'
 #' boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
 #' boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'), gg = T)

@@ -44,7 +44,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{horizontal}{whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if var[[2]] is numeric}
 
-\item{scales}{passed to \code{\link[lattice]{xyplot}}; can be function(x = x, horizontal, log,...)}
+\item{scales}{passed to \code{\link[lattice]{xyplot}} (should be function(x = x, horizontal, log,...)) or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}}}
 
 \item{panel}{panel function}
 
@@ -70,7 +70,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{catlab}{categorical axis label; can be function(x = x, var = catvar, ...)}
 
-\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically}
 
 \item{main}{character, or a function of x, yvar, xvar, facets, and log}
 
@@ -78,7 +78,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{par.settings}{default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots}
 
-\item{padding}{if true (and par.settings is NULL), lattice padding will be tweaked to mimic simple ggplot layout}
+\item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
 \item{reverse}{if y is categorical, present levels in reverse order (first at top)}
 

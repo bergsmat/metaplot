@@ -106,8 +106,7 @@ x \%>\% metaplot(
 x \%>\% metaplot(
   lKe, lKa, lCl,
   col = 'black',smooth.col = 'red', pin.col = 'red',
-  dens.col='blue',dens.alpha = 0.1, gg = T
-)
+  dens.col='blue',dens.alpha = 0.1, gg = T, padding = 2)
 )
 multiplot(
 x \%>\% metaplot(conc, pred, ipred, time, space = 'top', gg = F),

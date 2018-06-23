@@ -44,11 +44,14 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
-#' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
+#' @param scales passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)
 #' @param panel name or definition of panel function
 #' @param colors replacements for default colors in group order
-#' @param fill replacements for default symbol fill colors in group order (means something different for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}})
-#' @param symbols replacements for default symbols in group order
+#' @param fill replacements for default fill colors in group order (means something different
+#' for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}}). Used for confidence
+#' regions and for filling symbols (pch 21:25).
+#' @param symbols replacements for default symbols in group order (i.e. values of pch)
+#' @param types replacements for default linetypes in group order
 #' @param points whether to plot points and fill for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
@@ -95,6 +98,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' scatter_data_frame(Theoph, 'conc','Time', 'Subject')
 #' scatter_data_frame(Theoph, 'conc','Time', facets = 'Subject')
 #' scatter_data_frame(Theoph %>% filter(conc > 0), 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
+#' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
 #' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE)
 #' scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE,global = TRUE)
 #' scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
@@ -129,6 +133,7 @@ scatter_data_frame <- function(
   colors = metOption('metaplot_colors_scatter',NULL),
   fill = metOption('metaplot_colors_fill_scatter',NULL),
   symbols = metOption('metaplot_symbols_scatter',NULL),
+  types = metOption('metaplot_types_scatter','solid'),
   points = metOption('metaplot_points_scatter',TRUE),
   lines = metOption('metaplot_lines_scatter',FALSE),
   main = metOption('metaplot_main_scatter',NULL),
@@ -256,13 +261,18 @@ scatter_data_frame <- function(
   if(is.na(ylog)) ylog <- default_log(y[[yvar]], crit)
   if(is.na(xlog)) xlog <- default_log(y[[xvar]], crit)
 
-  if(ylog)if(any(y[[yvar]] <= 0, na.rm = TRUE)){
-    warning(yvar, ' must be positive for log scale')
-    ylog <- FALSE
+  bady <- !is.na(y[[yvar]]) & y[[yvar]] <= 0
+  bady[is.na(bady)] <- FALSE
+  if(ylog && any(bady)){
+    warning('dropping ',sum(bady), ' non-positive records for log y scale')
+    y <- y[!bady,]
   }
-  if(xlog)if(any(y[[xvar]] <= 0, na.rm = TRUE)){
-    warning(xvar, ' must be positive for log scale')
-    xlog <- FALSE
+
+  badx <- !is.na(y[[xvar]]) & y[[xvar]] <= 0
+  badx[is.na(badx)] <- FALSE
+  if(xlog && any(badx)){
+    warning('dropping ',sum(badx), ' non-positive records for log x scale')
+    y <- y[!badx,]
   }
 
   if(ylog & !gg) yref <- log10(yref[yref > 0])
@@ -271,6 +281,7 @@ scatter_data_frame <- function(
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
 
+  if(is.null(scales) && gg) scales <- 'fixed'
   if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
 
   if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
@@ -290,55 +301,47 @@ scatter_data_frame <- function(
     for (i in seq_along(facets)) y[[ facets[[i]] ]] <- as_factor(y[[ facets[[i]] ]])
   }
 
-  if(!is.null(points)) points <- as.numeric(points)
-  if(!is.null(lines)) lines <- as.numeric(lines)
+  nlev <- length(levels(y[[groups]]))
+  levs <- levels(y[[groups]])
+  if(is.null(symbols) &&  gg) symbols <- 16
+  if(is.null(symbols) && !gg && nlev == 1) symbols <- trellis.par.get()$plot.symbol$pch
+  if(is.null(symbols) && !gg && nlev != 1) symbols <- trellis.par.get()$superpose.symbol$pch
+  if(is.null(types)) types <- 'solid' # same as default
+  if(is.null(points)) points <- TRUE # same as default
+  points <- as.numeric(points)
+  if(is.null(lines)) lines <- FALSE # same as default
+  lines <- as.numeric(lines)
+  if(is.null(colors) && nlev == 1 &  gg) colors <- 'black'
+  if(is.null(colors) && nlev == 1 & !gg) colors <- trellis.par.get()$plot.symbol$col
+  if(is.null(colors) && nlev != 1 &  gg) colors <- hue_pal()(nlev)
+  if(is.null(colors) && nlev != 1 & !gg) colors <- trellis.par.get()$superpose.symbol$col
+  if(is.null(fill)) fill <- colors
+  symbols <- rep(symbols, length.out = nlev)
+  types <- rep(types, length.out = nlev)
+  points <- rep(points, length.out = nlev)
+  lines <- rep(lines, length.out = nlev)
+  colors <- rep(colors, length.out = nlev)
+  fill <- rep(fill, length.out = nlev)
   sym <- trellis.par.get()$superpose.symbol
   line <- trellis.par.get()$superpose.line
   sym$col <- colors
   sym$fill <- fill
   sym$alpha <- points
-  sym$pch <- symbols # ok to set to NULL (default) because it will be stripped below
+  sym$pch <- symbols
   line$col <- colors
   line$alpha <- lines
-  # sym <- list(
-  #   col = colors,
-  #   alpha = points,
-  #   pch = symbols
-  # )
-  # line <- list(
-  #   col = colors,
-  #   alpha = lines
-  # )
-  sym <- sym[sapply(sym,function(i)!is.null(i))]
-  line <- line[sapply(line,function(i)!is.null(i))]
-  #par.settings is defined
+  line$lty <- types
+
+    #par.settings is defined
   if(is.null(par.settings$superpose.symbol)) par.settings$superpose.symbol <- sym
   if(is.null(par.settings$superpose.line)) par.settings$superpose.line <- line
  # pars <- pars[sapply(pars, function(i)length(i) > 0 )]
 
-  nlev <- length(levels(y[[groups]]))
-  levs <- levels(y[[groups]])
-  points <- rep(points, length.out = nlev)
-  lines <- rep(lines, length.out = nlev)
   if(is.character(key)) key <- match.fun(key)
   if(is.function(key)) key <- key(groups = groups, levels = levs, points = points, lines = lines, space = space, gg = gg, type = 'scatter', ...)
 
 
   if(gg){
-
-    if(is.null(colors)){
-      colors <- hue_pal()(nlev)
-      if(nlev == 1) colors <- 'black'
-    }
-    if(is.null(fill)){
-      fill <- hue_pal()(nlev)
-      if(nlev == 1) fill <- 'white'
-    }
-    if(is.null(symbols)) symbols <- 16
-    symbols <- rep(symbols, length.out = nlev)
-    # plot <- plot + scale_color_manual(values = alpha(colors, lines))
-    # plot <- plot + scale_fill_manual(values = alpha(colors, points))
-    # plot <- plot + scale_shape_manual(values = symbols)
 
     y$metaplot_points_alpha <- points[as.numeric(y[[groups]])]
     y$metaplot_lines_alpha <- lines[as.numeric(y[[groups]])]
@@ -358,7 +361,8 @@ scatter_data_frame <- function(
         y = yvar,
         color = groups,
         fill = groups,
-        shape = groups
+        shape = groups,
+        linetype = groups
       )
     ) +
       geom_point(mapping = aes(alpha = metaplot_points_alpha)) +
@@ -366,6 +370,7 @@ scatter_data_frame <- function(
       guides(alpha = FALSE) +
       scale_alpha_identity() +
       scale_shape_manual(values = symbols) +
+      scale_linetype_manual(values = types) +
       xlab(xlab) +
       ylab(ylab) +
       ggtitle(main, subtitle = sub)
@@ -503,7 +508,7 @@ scatter_data_frame <- function(
 
     plot <- plot +
       scale_color_manual(values = colors) +
-      scale_fill_manual(values = colors)
+      scale_fill_manual(values = fill)
 
     if(length(groups) == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
       x = xpos,
@@ -512,7 +517,7 @@ scatter_data_frame <- function(
     )
 
 
-    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
     if(length(facets) >  1) plot <- plot +
       facet_grid(
         as.formula(
@@ -521,7 +526,8 @@ scatter_data_frame <- function(
             facets[[1]],
             facets[[2]]
           )
-        )
+        ),
+        scales = scales
       )
     return(plot)
   }
@@ -612,6 +618,7 @@ iso_prepanel <- function(x,y,...){
 #' scatter(Theoph,conc, Time)
 #' scatter(Theoph, conc, Time, Subject) # Subject as groups
 #' scatter(Theoph, conc, Time, , Subject) # Subject as facet
+#' scatter(Theoph, conc, Time, , Subject, gg = TRUE, scales = 'free_y' )
 #' scatter(Theoph %>% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 5)
 #' scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 #' scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)

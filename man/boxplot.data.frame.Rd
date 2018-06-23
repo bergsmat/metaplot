@@ -28,6 +28,7 @@ boxplot(Theoph,conc,Subject)
 boxplot(Theoph,conc,Subject, gg = T)
 boxplot(Theoph,conc,Subject,site)
 boxplot(Theoph,conc,Subject,site, gg = T)
+boxplot(Theoph,conc,Subject,site, gg = T, scales = 'free_x')
 attr(Theoph,'title') <- 'Theophylline'
 boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'))
 boxplot(Theoph, Subject, conc, main = function(x,...)attr(x,'title'), gg = T)

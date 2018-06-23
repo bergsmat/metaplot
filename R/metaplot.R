@@ -111,10 +111,14 @@ globalVariables('axisTicks')
 #' )
 #' x %>% metaplot(conc, pred, ipred, time, space = 'top')
 #' x %>% metaplot(conc, pred, ipred, time, subject, space = 'top')
+
 #' x %>% metaplot(conc, pred, ipred, time, subject,
 #' colors = c('black','blue','orange'),
 #' points = c(0.9,0, 0.4),
-#' lines = c(F,T,T), space = 'top')
+#' lines = c(F,T,T),
+#' types = c('blank','dashed','solid'),
+#' space = 'top')
+#'
 #' x %>% metaplot(conc, ipred, time, site, arm, space = 'top')
 #' x %>% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T )

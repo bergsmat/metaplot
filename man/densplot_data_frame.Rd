@@ -54,9 +54,9 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{crit}{if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)}
 
-\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically}
 
-\item{scales}{passed to \code{\link[lattice]{densityplot}}}
+\item{scales}{passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)}
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 

@@ -25,7 +25,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param log whether to log-transform x axis (auto-selected if NA)
 #' @param crit if log is NA, log-transform if mean/median ratio for non-missing x is greater than this value (and no negative values)
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
-#' @param scales  passed to \code{\link[lattice]{densityplot}}
+#' @param scales passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)
 #' @param panel  passed to \code{\link[lattice]{densityplot}}
 #' @param colors replacements for default colors in group order
 #' @param symbols replacements for default symbols in group order
@@ -102,10 +102,15 @@ densplot_data_frame<- function(
       log <- mean(x[[xvar]],na.rm = TRUE)/median(x[[xvar]],na.rm = TRUE) > crit
     }
   }
-  if(log)if(any(x[[xvar]] <= 0, na.rm = TRUE)){
-    warning(xvar,' must be positive for log scale')
-    log <- FALSE
+
+  bad <- !is.na(x[[xvar]]) & x[[xvar]] <= 0
+  bad[is.na(bad)] <- FALSE
+  if(log && any(bad)){
+    warning('dropping ',sum(bad), ' non-positive records for log scale')
+    x <- x[!bad,]
   }
+
+  if(is.null(scales) && gg) scales <- 'fixed'
   if(is.null(scales)) scales <- list(tck = c(1,0),x = list(log = log,equispaced.log = FALSE))
   if(is.character(ref)) ref <- match.fun(ref)
   if(is.function(ref)) ref <- ref(x = x, var = xvar, log = log, ...)
@@ -230,7 +235,7 @@ if(gg){
    trans = log_trans(),
    breaks = base_breaks()
  )
-  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
   if(length(facets) >  1) plot <- plot +
     facet_grid(
       as.formula(
@@ -239,16 +244,23 @@ if(gg){
           facets[[1]],
           facets[[2]]
         )
-      )
+      ),
+      scales = scales
     )
   return(plot)
 }
 
+vals <- x[[xvar]]
+vals <- vals[!is.na(vals)]
+if(log) vals <- vals[vals > 0]
+if(log) vals <- log(vals)
+range <- range(vals)
+
 densityplot(
   formula,
   data = x,
-  from = min(x[[xvar]], na.rm = TRUE),
-  to = max(x[[xvar]], na.rm = TRUE),
+  from = range[[1]],
+  to = range[[2]],
   groups = if(is.null(groups)) NULL else as.formula(paste('~',groups)),
   xlab = xlab,
   ref = ref,
@@ -301,6 +313,7 @@ dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
 #' densplot(Theoph, conc, grid = TRUE, gg = TRUE )
 #' densplot(Theoph, conc, Subject )
 #' densplot(Theoph, conc, , Subject )
+#' densplot(Theoph, conc, , Subject, gg = TRUE, scales = 'free_y' )
 #' attr(Theoph,'title') <- 'Theophylline'
 #' densplot(Theoph, conc, main= function(x,...)attr(x,'title'))
 #' densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))

@@ -48,7 +48,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
-\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill' or NULL to calculate automatically}
+\item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically}
 
 \item{space}{location of key (right, left, top, bottom)}
 
@@ -58,7 +58,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{prepanel}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
 
-\item{scales}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
+\item{scales}{passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)}
 
 \item{panel}{name or definition of panel function for lattice}
 
@@ -80,7 +80,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
 
-\item{padding}{if true (and par.settings is not supplied), lattice padding will be tweaked to mimic simple ggplot layout}
+\item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
 \item{loc}{where to print statistics in a tile}
 

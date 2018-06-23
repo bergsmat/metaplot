@@ -126,7 +126,7 @@ categorical.data.frame <- function(
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, fill, lines, space, gg, type ('categorical'), and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
-#' @param scales passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
+#' @param scales passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)
 #' @param panel name or definition of panel function for lattice
 #' @param colors replacements for default colors in group order
 #' @param fill whether to fill rectangles for each group: logical, or alpha values between 0 and 1
@@ -135,7 +135,7 @@ categorical.data.frame <- function(
 #' @param sub character, or a function of x, yvar, xvar, groups, facets
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if null)
-#' @param padding if true (and par.settings is not supplied), lattice padding will be tweaked to mimic simple ggplot layout
+#' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param loc where to print statistics in a tile
@@ -261,6 +261,7 @@ categorical_data_frame <- function(
   ylev <- as.character(sort(unique(y[[yvar]])))
   if(yvar == 'metaplot_values') ylev <- ''
   xlev <- as.character(sort(unique(y[[xvar]])))
+  if(is.null(scales) && gg) scales <- 'free'
   if(is.null(scales)) scales <- list(
     relation = 'free',
     draw = TRUE,
@@ -385,7 +386,7 @@ categorical_data_frame <- function(
       scale_color_manual(values = alpha(colors, lines)) + # i.e. "border"
       scale_fill_manual(values = alpha(colors, fill))
 
-  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]])
+  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
   if(length(facets) >  1) plot <- plot +
     facet_grid(
       as.formula(
@@ -394,7 +395,8 @@ categorical_data_frame <- function(
           facets[[1]],
           facets[[2]]
         )
-      )
+      ),
+      scales = scales
     )
   return(plot)
   }
