@@ -29,7 +29,6 @@ attr(Theoph$Subject,'guide') <- '////'
 scatter(Theoph,conc, Time)
 scatter(Theoph, conc, Time, Subject) # Subject as groups
 scatter(Theoph, conc, Time, , Subject) # Subject as facet
-scatter(Theoph, conc, Time, , Subject, gg = TRUE, scales = 'free_y' )
 scatter(Theoph \%>\% filter(conc > 0), conc, Time, Subject, ylog = TRUE, yref = 5)
 scatter(Theoph, conc, Time, Subject, ysmooth = TRUE)
 scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6)

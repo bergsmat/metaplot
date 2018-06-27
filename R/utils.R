@@ -600,14 +600,22 @@ lattice_padding <- function()list(
 )
 
 parintegrate <- function(par.settings, padding){
-  res <- list()
-  if(!is.null(par.settings)) res <- par.settings
+  # res <- list()
+  # if(!is.null(par.settings)) res <- par.settings
   stopifnot(length(padding) == 4)
-  res$layout.heights$top.padding <- padding[[1]]
-  res$layout.widths$right.padding <- padding[[2]]
-  res$layout.heights$bottom.padding <- padding[[3]]
-  res$layout.widths$left.padding <- padding[[4]]
-  res
+  merge.list(
+    par.settings,
+    list(
+      layout.heights = list(
+        top.padding <- padding[[1]],
+        bottom.padding <- padding[[3]]
+      ),
+      layout.widths = list(
+        right.padding <- padding[[2]],
+        left.padding <- padding[[4]]
+      )
+    )
+  )
 }
 
 # https://stackoverflow.com/questions/14255533/pretty-ticks-for-log-normal-scale-using-ggplot2-dynamic-not-manual
@@ -690,3 +698,97 @@ metaplot_aspect <- function(aspect, gg){
   if(empty && gg) aspect <- NULL
   aspect
 }
+
+#' Merge Two Lists
+#'
+#' Merges two lists. Every named element in the second argument is added recursively at the corresponding
+#' position in the first argument by name, over-writing existing values as necessary.
+#' Every un-named argument is added if there is no named argument to over-write.
+#'
+#' @param x a list (coerced if not)
+#' @param y a list (coerced if not)
+#' @param ... ignored
+#' @export
+#' @keywords internal
+#' @examples
+#' foo <- list(
+#'   a = list(         # substituted by name
+#'     col = 'red',    # substituted by name
+#'     lty = 'dashed', # substituted by name
+#'     alpha = 1,      # preserved
+#'     8,              # preserved, since element 4 in replacement matches by name
+#'     9               # substituted by position
+#'   ),
+#'   letters[8:10],    # preserved, siince elment 2 in replacement matches by name
+#'   b = 3
+#' )
+#'
+#' bar <- list(
+#'   letters[11:13],  # ignored: position conflict with named element
+#'   b = 2,           # substituted by name
+#'   a = list(        # substituted by name
+#'     'blue',        # ignored: position conflict with named element
+#'     col = 'green', # substituted by name
+#'     lty = 'solid', # substituted by name
+#'     lwd = 2,       # added by name
+#'     3,             # substituted by postion
+#'     4,             # added by postion
+#'     hue = 5        # added by name
+#'   ),
+#'   'baz'            # added by postion
+#' )
+#'
+#' foo
+#' bar
+#' merge(foo,bar)
+#' merge(list(1), list(2,foo = 3)) # 3 is assigned and named
+#' merge(list(1), list(foo = 2,3)) # 3 is ignored since position 2 has been named by time of evaluation
+#' merge(list(foo = 1), list(2,foo = 3)) # 2 is ignored since position matches a named argument; 3 overwrites
+#' merge(list(foo = 1), list(2,3)) # 2 is ignored since position matches a named argument; 3 added
+
+merge.list <- function(x, y, ...){
+  x <- as.list(x) # in case method is invoked directly
+  y <- as.list(y)
+  if(length(y) == 0) return(x)
+  index <- seq_along(y)
+  ynms <- names(y)
+  xnms <- names(x)
+  if(is.null(ynms)) ynms <- rep('', length.out = length(y))
+  if(is.null(xnms)) xnms <- rep('', length.out = length(x))
+  # now we have y and ynms with same non-zero length, indexed by index
+  #
+  for(i in index){
+    yn <- ynms[[i]] # could be ''
+    byName <- yn != ''
+    yi <- if(byName) y[[yn]] else y[[i]] # the candidate value, whether by name or position
+    xi <- NULL # the target test value
+    xn <- ''
+    if(!byName && length(x) >= i){
+      xn <- xnms[[i]]
+      xi <- x[[i]]
+    }
+    if(byName && yn %in% xnms){
+      xn <- yn
+      xi <- x[[yn]]
+    }
+    if(byName && !yn %in% xnms){
+      xnms <- c(xnms, yn) # will be true soon
+    }
+
+    # don't assign by position if doing so knocks out a named argument
+    if(yn == '' && xn != ''){next}
+    # otherwise, assign y[[i]] to x[[i]], recursively if necessary
+    loc <- if(byName) yn else i
+    if(is.list(xi) && is.list(yi)) {
+      x[[loc]] <- merge.list(xi, yi)
+    } else {
+      #message(xi, ' becomes ', yi)
+      x[[loc]] <- yi
+    }
+  }
+  x
+}
+
+
+
+
