@@ -27,6 +27,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   colors = metOption("metaplot_colors_scatter", NULL),
   fill = metOption("metaplot_colors_fill_scatter", NULL),
   symbols = metOption("metaplot_symbols_scatter", NULL),
+  types = metOption("metaplot_types_scatter", "solid"),
   points = metOption("metaplot_points_scatter", TRUE),
   lines = metOption("metaplot_lines_scatter", FALSE),
   main = metOption("metaplot_main_scatter", NULL),
@@ -98,15 +99,19 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{prepanel}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
 
-\item{scales}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
+\item{scales}{passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)}
 
 \item{panel}{name or definition of panel function}
 
 \item{colors}{replacements for default colors in group order}
 
-\item{fill}{replacements for default symbol fill colors in group order (means something different for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}})}
+\item{fill}{replacements for default fill colors in group order (means something different
+for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}}). Used for confidence
+regions and for filling symbols (pch 21:25).}
 
-\item{symbols}{replacements for default symbols in group order}
+\item{symbols}{replacements for default symbols in group order (i.e. values of pch)}
+
+\item{types}{replacements for default linetypes in group order}
 
 \item{points}{whether to plot points and fill for each group: logical, or alpha values between 0 and 1}
 
@@ -175,6 +180,7 @@ scatter_data_frame(Theoph, 'conc', 'Time')
 scatter_data_frame(Theoph, 'conc','Time', 'Subject')
 scatter_data_frame(Theoph, 'conc','Time', facets = 'Subject')
 scatter_data_frame(Theoph \%>\% filter(conc > 0), 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
+scatter_data_frame(Theoph, 'conc','Time', 'Subject',ylog = TRUE, yref = 5)
 scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE)
 scatter_data_frame(Theoph, 'conc','Time', 'Subject',ysmooth = TRUE,global = TRUE)
 scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
