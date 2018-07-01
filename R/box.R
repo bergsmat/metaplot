@@ -16,7 +16,7 @@ NULL
 #' @param horizontal whether box/whisker axis should be horizontal (numeric x, categorical y); defaults TRUE if var[[2]] is numeric
 #' @param scales passed to \code{\link[lattice]{xyplot}} (should be function(x = x, horizontal, log,...)) or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}}
 #' @param panel panel function
-#' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)
+#' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...) or NULL to suppress
 #' @param ref.col color for reference line(s)
 #' @param ref.lty line type for reference line(s)
 #' @param ref.lwd line size for reference line(s)

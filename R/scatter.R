@@ -31,8 +31,8 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param ylog log transform y axis (auto-selected if NA)
 #' @param xlog log transform x axis (auto-selected if NA)
 #' @param crit if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit
-#' @param yref reference line from y axis; can be function(x = x, var = yvar, ...)
-#' @param xref reference line from x axis; can be function(x = x, var = xvar, ...)
+#' @param yref reference line from y axis; can be function(x = x, var = yvar, ...) or NULL to suppress
+#' @param xref reference line from x axis; can be function(x = x, var = xvar, ...) or NULL to suppress
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
@@ -265,14 +265,27 @@ scatter_data_frame <- function(
   bady[is.na(bady)] <- FALSE
   if(ylog && any(bady)){
     warning('dropping ',sum(bady), ' non-positive records for log y scale')
+    # y <- y[!bady,]
+    foo <- y
+    #y <- y[is.defined(y[[yvar]]) & is.defined(y[[xvar]]),]
     y <- y[!bady,]
+    for(col in names(foo))attributes(y[[col]]) <- attributes(foo[[col]])
+    at <- attributes(foo)
+    at$row.names <- NULL
+    for(a in names(at)) attr(y,a) <- attr(foo,a)
+
   }
 
   badx <- !is.na(y[[xvar]]) & y[[xvar]] <= 0
-  badx[is.na(badx)] <- FALSE
+  #badx[is.na(badx)] <- FALSE
   if(xlog && any(badx)){
     warning('dropping ',sum(badx), ' non-positive records for log x scale')
+    foo <- y
     y <- y[!badx,]
+    for(col in names(foo))attributes(y[[col]]) <- attributes(foo[[col]])
+    at <- attributes(foo)
+    at$row.names <- NULL
+    for(a in names(at)) attr(y,a) <- attr(foo,a)
   }
 
   if(ylog & !gg) yref <- log10(yref[yref > 0])
@@ -790,14 +803,14 @@ scatter_panel <- function(
     f <- region(x, y, conf = conf, ...)
     try(panel.xyplot(x=f$x, y=f$y, col= col.line, type='l',lty = fit.lty,lwd = fit.lwd, alpha= fit.alpha, ...))
   }
-  myconf <- function(x,y,type,lty,lwd, col, col.symbol, col.line, alpha, ...){
+  myconf <- function(x,y,type,lty,lwd, col, col.symbol, col.line, fill, alpha, ...){
     f <- region(x, y, conf = conf, ...)
     try(panel.polygon(
       x = c(f$x, rev(f$x)),
       y = c(f$lo, rev(f$hi)),
       border = FALSE,
       alpha = conf.alpha,
-      col=col.symbol
+      col=fill
     ))
   }
   superpose.line <- trellis.par.get()$superpose.line

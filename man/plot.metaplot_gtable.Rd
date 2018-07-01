@@ -37,6 +37,11 @@ Other methods: \code{\link{axislabel.data.frame}},
 
 Other corsplom: \code{\link{corsplom.data.frame}},
   \code{\link{corsplom_data_frame}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_diagonal}},
+  \code{\link{corsplom_gg_scatter}},
+  \code{\link{corsplom_panel_correlation}},
+  \code{\link{corsplom_panel_scatter}},
   \code{\link{corsplom}},
   \code{\link{print.metaplot_gtable}}
 }

@@ -59,6 +59,7 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @family corsplom
 corsplom_panel_scatter = function(
   x,
   y,
@@ -82,6 +83,7 @@ corsplom_panel_scatter = function(
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @family corsplom
 corsplom_panel_correlation = function(x, y, ...) {
   x1 <- range(x,na.rm = T)
   y1 <- range(y,na.rm = T)

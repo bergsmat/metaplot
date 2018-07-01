@@ -33,7 +33,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param smooth.alpha smooth alpha
 #' @param density whether to plot density polygons
 #' @param diag.label label for the diagonal; can be a function of x, varname, .data
-#' @param pin location for a pin (reference line) in the density region; can be a function of x, varname, .data
+#' @param pin location for a pin (reference line) in the density region; can be function(x, varname, .data) or NULL to suppress
 #' @param pin.col color of pin, if any
 #' @param pin.alpha alpha transparency of pin
 #' @param dens.col color for density region
@@ -308,6 +308,7 @@ corsplom.data.frame <- function(
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @family corsplom
 corsplom_gg_correlation = function(
   data, mapping, col = metOption('metaplot_point_col_corsplom_gg','blue'),
   smooth.col, smooth.lty, smooth.lwd, smooth.alpha, ...
@@ -357,6 +358,7 @@ corsplom_gg_correlation = function(
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @family corsplom
 corsplom_gg_scatter = function(
   data,
   mapping,
@@ -411,6 +413,7 @@ corsplom_gg_scatter = function(
 #' @keywords internal
 #' @export
 #' @family panel functions
+#' @family corsplom
 #' @seealso \code{\link{corsplom}}
 
 corsplom_gg_diagonal <- function(

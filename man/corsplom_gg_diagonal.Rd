@@ -67,5 +67,15 @@ Other panel functions: \code{\link{boxplot_panel}},
   \code{\link{panel_tile}},
   \code{\link{scatter_panel_ref}},
   \code{\link{scatter_panel}}
+
+Other corsplom: \code{\link{corsplom.data.frame}},
+  \code{\link{corsplom_data_frame}},
+  \code{\link{corsplom_gg_correlation}},
+  \code{\link{corsplom_gg_scatter}},
+  \code{\link{corsplom_panel_correlation}},
+  \code{\link{corsplom_panel_scatter}},
+  \code{\link{corsplom}},
+  \code{\link{plot.metaplot_gtable}},
+  \code{\link{print.metaplot_gtable}}
 }
 \keyword{internal}

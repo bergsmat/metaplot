@@ -17,7 +17,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param groups optional grouping variable
 #' @param facets optional conditioning variables
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = log, ...)
-#' @param ref reference line; can be function(x = x, var = xvar, ...)
+#' @param ref reference line; can be function(x = x, var = xvar, ...) or NULL to suppress
 #' @param ref.col color for reference line(s)
 #' @param ref.lty type for reference line(s)
 #' @param ref.lwd size for reference line(s)
