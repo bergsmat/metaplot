@@ -374,7 +374,8 @@ categorical_data_frame <- function(
       plot.margin = padding,
       axis.ticks.y = element_blank(),
       axis.ticks.x = element_blank(),
-      axis.text.x = element_text(angle = rot[[2]])
+      axis.text.x = element_text(angle = rot[[2]]),
+      legend.title = element_blank()
     )
     theme_settings <- merge(theme_settings, key)
     theme_extra <- settings[names(settings) %in% names(formals(theme))]

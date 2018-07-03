@@ -68,6 +68,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param smooth.alpha smooth alpha
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
+#' @param global.fill fill color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
 #' @param fit.lty fit line type
 #' @param fit.lwd fit line size
@@ -131,7 +132,7 @@ scatter_data_frame <- function(
   scales = metOption('metaplot_scales_scatter',NULL),
   panel = metOption('metaplot_panel_scatter',scatter_panel),
   colors = metOption('metaplot_colors_scatter',NULL),
-  fill = metOption('metaplot_colors_fill_scatter',NULL),
+  fill = metOption('metaplot_fill_scatter',NULL),
   symbols = metOption('metaplot_symbols_scatter',NULL),
   types = metOption('metaplot_types_scatter','solid'),
   points = metOption('metaplot_points_scatter',TRUE),
@@ -157,6 +158,7 @@ scatter_data_frame <- function(
   loc = metOption('metaplot_msg_loc_scatter',0),
   global = metOption('metaplot_global_aes_scatter',FALSE),
   global.col = metOption('metaplot_global_col_scatter','grey'),
+  global.fill = metOption('metaplot_global_fill_scatter','grey'),
   msg = metOption('metaplot_msg_format_scatter','metastats'),
   gg = metOption('metaplot_gg_scatter',FALSE),
   ...
@@ -398,6 +400,7 @@ scatter_data_frame <- function(
       method = 'loess',
       se = FALSE,
       color = global.col,
+      # fill = global.fill,
       inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
@@ -420,6 +423,7 @@ scatter_data_frame <- function(
       method = 'loess',
       se = FALSE,
       color = global.col,
+      # fill = global.fill,
       inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
@@ -442,7 +446,7 @@ scatter_data_frame <- function(
       method = 'lm',
       se = TRUE,
       color = global.col,
-      fill = global.col,
+      #fill = global.fill,
       inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE,
@@ -464,6 +468,7 @@ scatter_data_frame <- function(
       size = fit.lwd,
       method = 'lm',
       color = global.col,
+      #fill = global.fill,
       inherit.aes = FALSE,
       mapping = aes_string(x = xvar,y = yvar),
       se = FALSE,
@@ -512,7 +517,8 @@ scatter_data_frame <- function(
     theme_extra <- settings[names(settings) %in% names(formals(theme))]
     theme_settings <- merge(theme_settings, theme_extra)
     plot <- plot + do.call(theme, theme_settings)
-    if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
+    #if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
+    plot <- plot + theme(legend.title=element_blank())
 
     if(xlog) plot <- plot + scale_x_continuous(
       trans = log_trans(),
@@ -584,6 +590,7 @@ scatter_data_frame <- function(
     smooth.alpha = smooth.alpha,
     global = global,
     global.col = global.col,
+    global.fill = global.fill,
     fit = fit,
     fit.lty = fit.lty,
     fit.lwd = fit.lwd,
@@ -751,6 +758,7 @@ scatter.data.frame <- function(
 #' @param iso use isometric axes with line of unity (auto-selected if NA)
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
+#' @param global.fill fill color for global aesthetics
 #' @param fit draw a linear fit of y ~ x
 #' @param fit.lty fit line type
 #' @param fit.lwd fit line size
@@ -791,6 +799,7 @@ scatter_panel <- function(
   iso = metOption('metaplot_iso_scatter_panel',FALSE),
   global = metOption('metaplot_global_aes_scatter_panel',FALSE),
   global.col = metOption('metaplot_global_col_scatter_panel','grey'),
+  global.fill = metOption('metaplot_global_fill_scatter_panel','grey'),
   msg = metOption('metaplot_msg_format_scatter_panel','metastats'),
   type,
   ...
@@ -827,28 +836,28 @@ scatter_panel <- function(
   panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',alpha = superpose.symbol$alpha,...)
   if(conf){
     if(global){
-      myconf(x, y, col = global.col, col.symbol = global.col, col.line = global.col, alpha = conf.alpha, ...)
+      myconf(x, y, col = global.col, fill = global.fill, col.symbol = global.col, col.line = global.col, alpha = conf.alpha, ...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myconf, ...)
     }
   }
   if(fit){
     if(global){
-      myfit(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
+      myfit(x,y, col = global.col, fill = global.fill, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myfit, ...)
     }
   }
   if(ysmooth){
     if(global){
-      myysmooth(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
+      myysmooth(x,y, col = global.col, fill = global.fill,  col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myysmooth, ...)
     }
   }
   if(xsmooth){
     if(global){
-      myxsmooth(x,y, col = global.col, col.symbol = global.col, col.line = global.col,...)
+      myxsmooth(x,y, col = global.col, fill = global.fill, col.symbol = global.col, col.line = global.col,...)
     }else{
       panel.superpose(x = x, y = y, groups = groups, panel.groups = myxsmooth, ...)
     }

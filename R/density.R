@@ -232,7 +232,7 @@ if(gg){
     size = ref.lwd,
     alpha = ref.alpha
   )
-  theme_settings <- list(aspect.ratio = aspect, plot.margin = padding)
+  theme_settings <- list(aspect.ratio = aspect, plot.margin = padding, legend.title = element_blank())
   theme_settings <- merge(theme_settings, key)
   theme_extra <- settings[names(settings) %in% names(formals(theme))]
   theme_settings <- merge(theme_settings, theme_extra)

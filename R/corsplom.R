@@ -198,12 +198,11 @@ corsplom_data_frame <- function(
           strip.text.y = element_blank(),
           axis.title = element_blank(),
           axis.ticks = element_blank(),
-          axis.line=element_blank(),
-          axis.text.x=element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank(),
+          axis.line = element_blank(),
+          axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
           plot.margin = unit(c(0,0,0,0), 'pt')
         )
         theme_extra <- settings[names(settings) %in% names(formals(theme))]
