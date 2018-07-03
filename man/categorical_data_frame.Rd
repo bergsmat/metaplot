@@ -24,7 +24,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   tex = metOption("metaplot_tex_categorical", 0.9),
   rot = metOption("metaplot_rot_categorical", c(90, 0)),
   subscripts = metOption("metaplot_subscripts_categorical", TRUE),
-  par.settings = metOption("metaplot_parsettings_categorical", NULL),
+  settings = metOption("metaplot_settings_categorical", NULL),
   padding = metOption("metaplot_padding_categorical", 1),
   loc = metOption("metaplot_msg_loc_categorical", 5),
   msg = metOption("metaplot_msg_format_categorical", "tilestats"),
@@ -78,7 +78,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if null)}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

@@ -36,7 +36,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
-#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param ... passed to \code{\link[lattice]{densityplot}}
@@ -79,18 +79,22 @@ densplot_data_frame<- function(
   key = metOption('metaplot_key_dens',metaplot_key),
   main = metOption('metaplot_main_dens',NULL),
   sub = metOption('metaplot_sub_dens',NULL),
-  par.settings = metOption('metaplot_parsettings_dens',NULL),
+  settings = metOption('metaplot_settings_dens',NULL),
   padding = metOption('metaplot_padding_dens', 1),
   gg = metOption('metaplot_gg_dens',FALSE),
   ...
 ){
+  settings <- as.list(settings)
+  if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(xvar) == 1)
   stopifnot(is.character(xvar))
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
-  par.settings = parintegrate(par.settings, padding)
+  par.settings <- list()
+  par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
 
 
@@ -228,25 +232,32 @@ if(gg){
     size = ref.lwd,
     alpha = ref.alpha
   )
-  plot <- plot + theme(aspect.ratio = aspect, plot.margin = padding)
-  plot <- plot + do.call(theme, key)
+  theme_settings <- list(aspect.ratio = aspect, plot.margin = padding)
+  theme_settings <- merge(theme_settings, key)
+  theme_extra <- settings[names(settings) %in% names(formals(theme))]
+  theme_settings <- merge(theme_settings, theme_extra)
+  plot <- plot + do.call(theme, theme_settings)
 
- if(log) plot <- plot + scale_x_continuous(
+  if(log) plot <- plot + scale_x_continuous(
    trans = log_trans(),
    breaks = base_breaks()
  )
-  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
-  if(length(facets) >  1) plot <- plot +
-    facet_grid(
-      as.formula(
-        paste(
-          sep='~',
-          facets[[1]],
-          facets[[2]]
-        )
-      ),
-      scales = scales
+  facet_args <- list()
+  if(length(facets) == 1) facet_args[[1]] <- facets[[1]] #list(facets[[1]], scales = scales)
+  if(length(facets) > 1)  facet_args[[1]] <- as.formula(
+    paste(
+      sep='~',
+      facets[[1]],
+      facets[[2]]
     )
+  )
+  facet_args$scales <- scales
+  facet_extra <- list()
+  if(length(facets) == 1)facet_extra <- settings[names(settings) %in% names(formals(facet_wrap))]
+  if(length(facets) >  1)facet_extra <- settings[names(settings) %in% names(formals(facet_grid))]
+  facet_args <- merge(facet_args, facet_extra)
+  if(length(facets) == 1) plot <- plot + do.call(facet_wrap, facet_args)
+  if(length(facets) >  1) plot <- plot + do.call(facet_grid, facet_args)
   return(plot)
 }
 
@@ -256,7 +267,7 @@ if(log) vals <- vals[vals > 0]
 if(log) vals <- log(vals)
 range <- range(vals)
 
-densityplot(
+args <- list(
   formula,
   data = x,
   from = range[[1]],
@@ -275,9 +286,14 @@ densityplot(
   auto.key = key,
   main = main,
   sub = sub,
-  par.settings = par.settings,
-  ...
+  par.settings = par.settings
 )
+args <- c(args, list(...))
+if(all(c('ncol','nrow') %in% names(settings))){
+  layout <- c(settings$ncol, settings$nrow)
+  args <- c(args, list(layout = layout))
+}
+do.call(densityplot, args)
 }
 
 #' Panel Function for Metaplot Density Plot

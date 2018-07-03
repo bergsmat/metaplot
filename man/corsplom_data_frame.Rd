@@ -29,7 +29,7 @@ corsplom_data_frame(x, xvar = names(x),
   dens.col = metOption("metaplot_dens_col_corsplom", "grey"),
   dens.scale = metOption("metaplot_dens_scale_corsplom", 0.2),
   dens.alpha = metOption("metaplot_dens_alpha_corsplom", 0.5),
-  par.settings = metOption("metaplot_parsettings_corsplom", NULL),
+  settings = metOption("metaplot_settings_corsplom", NULL),
   padding = metOption("metaplot_padding_corsplom", 1),
   as.table = metOption("metaplot_astable_corsplom", FALSE),
   dens.up = metOption("metaplot_updens_corsplom", TRUE),
@@ -70,7 +70,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
 
-\item{pin}{location for a pin (reference line) in the density region; can be a function of x, varname, .data}
+\item{pin}{location for a pin (reference line) in the density region; can be function(x, varname, .data) or NULL to suppress}
 
 \item{pin.col}{color of pin, if any}
 
@@ -82,7 +82,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{dens.alpha}{alpha transparency for density region}
 
-\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

@@ -30,7 +30,7 @@ NULL
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
-#' @param par.settings default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param reverse if y is categorical, present levels in reverse order (first at top)
 #' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
@@ -76,7 +76,7 @@ boxplot_data_frame <- function(
   aspect = metOption('metaplot_aspect_boxplot',1),
   main = metOption('metaplot_main_boxplot',NULL),
   sub = metOption('metaplot_sub_boxplot',NULL),
-  par.settings = metOption('metaplot_parsettings_boxplot',NULL),
+  settings = metOption('metaplot_settings_boxplot',NULL),
   padding = metOption('metaplot_padding_boxplot', 1),
   reverse = metOption('metaplot_reverse_boxplot',TRUE),
   pch = metOption('metaplot_pch_boxplot','|'),
@@ -84,6 +84,8 @@ boxplot_data_frame <- function(
   gg = metOption('metaplot_gg_boxplot',FALSE),
   ...
 ){
+  settings <- as.list(settings)
+  if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(is.character(xvar))
@@ -91,7 +93,8 @@ boxplot_data_frame <- function(
   if(!is.null(facets))stopifnot(is.character(facets))
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
-  par.settings = parintegrate(par.settings, padding)
+  par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
 
   y <- x
@@ -208,34 +211,36 @@ boxplot_data_frame <- function(
         size = ref.lwd,
         alpha = ref.alpha
       )
-    plot <- plot +
-      theme(
-        # legend.position = key, not applicable for boxplot
-        aspect.ratio = aspect, plot.margin = padding
-      )
+    theme_settings <- list(aspect.ratio = aspect, plot.margin = padding)
+    theme_extra <- settings[names(settings) %in% names(formals(theme))]
+    theme_settings <- merge(theme_settings, theme_extra)
+    plot <- plot + do.call(theme, theme_settings)
 
     if(log) plot <- plot + scale_y_continuous(
       trans = log_trans(),
       breaks = base_breaks()
     )
-    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
-    if(length(facets) >  1) plot <- plot +
-      facet_grid(
-        as.formula(
+    facet_args <- list()
+    if(length(facets) ==1) facet_args[[1]] <- facets[[1]]
+    if(length(facets) > 1) facet_args[[1]] <- as.formula(
           paste(
             sep='~',
             facets[[1]],
             facets[[2]]
           )
-        ),
-        scales = scales
-      )
+        )
+    facet_args$scales <- scales
+    facet_extra <- list()
+    if(length(facets) == 1) facet_extra <- settings[names(settings) %in% names(formals(facet_wrap))]
+    if(length(facets) >  1) facet_extra <- settings[names(settings) %in% names(formals(facet_grid))]
+    facet_args <- merge(facet_args, facet_extra)
+    if(length(facets) == 1) plot <- plot + do.call(facet_wrap, facet_args)
+    if(length(facets) >  1) plot <- plot + do.call(facet_grid, facet_args)
     if(horizontal) plot <- plot + coord_flip()
     return(plot)
   }
 
-
-  bwplot(
+  args <- list(
     formula,
     data = y,
     aspect = aspect,
@@ -253,9 +258,15 @@ boxplot_data_frame <- function(
     ref.lwd = ref.lwd,
     ref.alpha = ref.alpha,
     pch = pch,
-    notch = notch,
-    ...
+    notch = notch
   )
+
+  args <- c(args, list(...))
+  if(all(c('ncol','nrow') %in% names(settings))){
+    layout <- c(settings$ncol, settings$nrow)
+    args <- c(args, list(layout = layout))
+  }
+  do.call(bwplot, args)
 }
 
 #' Panel Function for Metaplot Boxplot

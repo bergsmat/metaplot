@@ -25,7 +25,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   key = metOption("metaplot_key_dens", metaplot_key),
   main = metOption("metaplot_main_dens", NULL),
   sub = metOption("metaplot_sub_dens", NULL),
-  par.settings = metOption("metaplot_parsettings_dens", NULL),
+  settings = metOption("metaplot_settings_dens", NULL),
   padding = metOption("metaplot_padding_dens", 1),
   gg = metOption("metaplot_gg_dens", FALSE), ...)
 }
@@ -40,7 +40,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{xlab}{x axis label; can be function(x = x, var = xvar, log = log, ...)}
 
-\item{ref}{reference line; can be function(x = x, var = xvar, ...)}
+\item{ref}{reference line; can be function(x = x, var = xvar, ...) or NULL to suppress}
 
 \item{ref.col}{color for reference line(s)}
 
@@ -78,7 +78,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{sub}{character, or a function of x, xvar, groups, facets, and log}
 
-\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

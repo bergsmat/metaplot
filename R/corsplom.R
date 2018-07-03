@@ -39,7 +39,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param dens.col color for density region
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
-#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param as.table diagonal arranged top-left to bottom-right
 #' @param dens.up whether density plots in diagonal should face the upper triangle vs. lower
@@ -96,13 +96,15 @@ corsplom_data_frame <- function(
   dens.col = metOption('metaplot_dens_col_corsplom','grey'),
   dens.scale = metOption('metaplot_dens_scale_corsplom',0.2),
   dens.alpha = metOption('metaplot_dens_alpha_corsplom',0.5),
-  par.settings = metOption('metaplot_parsettings_corsplom',NULL),
+  settings = metOption('metaplot_settings_corsplom',NULL),
   padding = metOption('metaplot_padding_corsplom', 1),
   as.table = metOption('metaplot_astable_corsplom', FALSE),
   dens.up = metOption('metaplot_updens_corsplom', TRUE), # must not partial match metaplot_densplot or metaplot_upper
   gg = metOption('metaplot_gg_corsplom',FALSE),
   ...
 ){
+  settings <- as.list(settings)
+  if(is.null(names(settings))) names(settings) <- character(0)
   stopifnot(length(as.table) == 1, is.logical(as.table))
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
   if(is.function(xlab)) xlab <- xlab(x, xvar, ...)
@@ -110,7 +112,8 @@ corsplom_data_frame <- function(
 
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
-  par.settings = parintegrate(par.settings, padding)
+  par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
   stopifnot(inherits(x, 'data.frame'))
   if(!is.null(main))if(is.function(main)) main <- main(x = x, xvar = xvar, ...)
@@ -188,20 +191,24 @@ corsplom_data_frame <- function(
           smooth.lwd = smooth.lwd,
           ...
         )
-
-        p <- p + theme(aspect.ratio = 1)
-        p <- p + theme(strip.background = element_blank())
-        p <- p + theme(strip.text.x = element_blank())
-        p <- p + theme(strip.text.y = element_blank())
-        p <- p + theme(axis.title = element_blank())
-        p <- p + theme(axis.ticks = element_blank())
-        p <- p + theme(axis.line=element_blank())
-        p <- p + theme(axis.text.x=element_blank())
-        p <- p + theme(axis.text.y=element_blank())
-        p <- p + theme(axis.ticks=element_blank())
-        p <- p + theme(axis.title.x=element_blank())
-        p <- p + theme(axis.title.y=element_blank())
-        p <- p + theme(plot.margin = unit(c(0,0,0,0), 'pt'))
+        theme_settings <- list(
+          aspect.ratio = 1,
+          strip.background = element_blank(),
+          strip.text.x = element_blank(),
+          strip.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.ticks = element_blank(),
+          axis.line=element_blank(),
+          axis.text.x=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),
+          plot.margin = unit(c(0,0,0,0), 'pt')
+        )
+        theme_extra <- settings[names(settings) %in% names(formals(theme))]
+        theme_settings <- merge(theme_settings, theme_extra)
+        p <- p + do.call(theme, theme_settings)
         res[[length(res) + 1]] <- p
       }
     }

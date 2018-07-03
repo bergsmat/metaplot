@@ -69,9 +69,9 @@ x \%>\% metaplot(arm, site, cohort, gg = T, padding = 5)
 )
 multiplot(
 x \%>\% metaplot(arm, site, cohort, gg = F, space = 'top',
-columns = 2, padding = c(5,1,1,1)),
+  columns = 2, padding = c(5,1,1,1)),
 x \%>\% metaplot(arm, site, cohort, gg = T, space = 'top',
-legend.direction = 'horizontal', padding = 2)
+  legend.direction = 'horizontal', padding = 2)
 )
 multiplot(
 x \%>\% metaplot(arm, site, , cohort, gg = F),
@@ -117,17 +117,20 @@ x \%>\% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = F),
 x \%>\% metaplot(conc, pred, ipred, time, subject, space = 'top', gg = T, padding = 5)
 )
 multiplot(
-x \%>\% metaplot(conc, pred, ipred, time, subject,
-colors = c('black','blue','orange'),
-points = c(0.9,0, 0.4),
-lines = c(F,T,T),
-space = 'top', gg = F),
-x \%>\% metaplot(conc, pred, ipred, time, subject,
-colors = c('black','blue','orange'),
-points = c(0.9,0, 0.4),
-lines = c(F,T,T),
-space = 'top', gg = T, padding = 4)
-)
+x \%>\% metaplot(
+  conc, pred, ipred, time, subject,
+  colors = c('black','blue','orange'),
+  points = c(0.9,0, 0.4),
+  lines = c(F,T,T),
+  space = 'top', gg = F
+),
+x \%>\% metaplot(
+  conc, pred, ipred, time, subject,
+  colors = c('black','blue','orange'),
+  points = c(0.9,0, 0.4),
+  lines = c(F,T,T),
+  space = 'top', gg = T, padding = 4
+))
 multiplot(
 x \%>\% metaplot(conc, ipred, time, site, arm, space = 'top', gg = F),
 x \%>\% metaplot(conc, ipred, time, site, arm, space = 'top', gg = T)
@@ -140,11 +143,20 @@ multiplot(
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = F),
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T, padding = 3.5)
 )
+# Fill color can differ from point color but is the same for points and regions.
+# 'points' controls alpha of point and point fill independently of conf.fill.
+multiplot(
+x \%>\% metaplot(res, conc, arm, conf = T , gg = F, yref = NULL, points = 0.3,
+  symbols = 21:22, colors = c('blue','black'), fill = c('green','red')
+),
+x \%>\% metaplot(res, conc, arm, conf = T , gg = T, yref = NULL, points = 0.3, padding = 3.5,
+  symbols = 21:22, colors = c('blue','black'), fill = c('green','red')
+))
 multiplot(
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T,
-ref.col = 'red', gg = F),
+  ref.col = 'red', gg = F),
 x \%>\% metaplot(res, conc, arm, ysmooth = T, conf = T, global = T,
-ref.col = 'red', gg = T, padding = 3.5)
+  ref.col = 'red', gg = T, padding = 3.5)
 )
 multiplot(
 x \%>\% metaplot(subject,conc, gg = F),
@@ -160,20 +172,20 @@ x \%>\% metaplot(conc, arm, gg = T, padding = 4)
 
 multiplot(
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
-metaplot(conc, arm, gg = F),
+  structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
+  metaplot(conc, arm, gg = F),
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
-metaplot(conc, arm, gg = T, padding = 4) # different presentation order
+  structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
+  metaplot(conc, arm, gg = T, padding = 4) # different presentation order
 )
 
 multiplot(
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
-metaplot(conc, arm, gg = F),
+  structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
+  metaplot(conc, arm, gg = F),
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
-metaplot(conc, arm, gg = T, padding = 4) # collapse cases
+  structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
+  metaplot(conc, arm, gg = T, padding = 4) # collapse cases
 )
 
 x \%>\% densplot(

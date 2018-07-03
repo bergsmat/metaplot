@@ -745,7 +745,7 @@ metaplot_aspect <- function(aspect, gg){
 #' merge(foo,bar)
 #' merge(list(1), list(2,foo = 3)) # 3 is assigned and named
 #' merge(list(1), list(foo = 2,3)) # 3 is ignored since position 2 has been named by time of evaluation
-#' merge(list(foo = 1), list(2,foo = 3)) # 2 is ignored since position matches a named argument; 3 overwrites
+#' merge(list(foo = 1), list(2,foo = 3)) # 2 ignored since pos. matches named argument; 3 overwrites
 #' merge(list(foo = 1), list(2,3)) # 2 is ignored since position matches a named argument; 3 added
 
 merge.list <- function(x, y, ...){

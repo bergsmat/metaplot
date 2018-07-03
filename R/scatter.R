@@ -57,7 +57,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
-#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if NULL)
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param ref.col reference line color
 #' @param ref.lty reference line type
@@ -139,7 +139,7 @@ scatter_data_frame <- function(
   main = metOption('metaplot_main_scatter',NULL),
   sub = metOption('metaplot_sub_scatter',NULL),
   subscripts = metOption('metaplot_subscripts_scatter',TRUE),
-  par.settings = metOption('metaplot_parsettings_scatter',NULL),
+  settings = metOption('metaplot_settings_scatter',NULL),
   padding = metOption('metaplot_padding_scatter', 1),
   ref.col = metOption('metaplot_ref_col_scatter','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter','solid'),
@@ -161,6 +161,8 @@ scatter_data_frame <- function(
   gg = metOption('metaplot_gg_scatter',FALSE),
   ...
 ){
+  settings <- as.list(settings)
+  if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
@@ -169,7 +171,8 @@ scatter_data_frame <- function(
   stopifnot(length(xvar) == 1)
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
-  par.settings = parintegrate(par.settings, padding)
+  par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
 
   if(!is.null(facets))stopifnot(is.character(facets))
@@ -504,8 +507,11 @@ scatter_data_frame <- function(
       plot <- plot + scale_y_continuous(limits = c(lo, hi))
       plot <- plot + scale_x_continuous(limits = c(lo, hi))
     }
-    plot <- plot + theme(aspect.ratio = aspect, plot.margin = padding)
-    plot <- plot + do.call(theme, key)
+    theme_settings <- list(aspect.ratio = aspect, plot.margin = padding)
+    theme_settings <- merge(theme_settings, key)
+    theme_extra <- settings[names(settings) %in% names(formals(theme))]
+    theme_settings <- merge(theme_settings, theme_extra)
+    plot <- plot + do.call(theme, theme_settings)
     if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
 
     if(xlog) plot <- plot + scale_x_continuous(
@@ -528,20 +534,22 @@ scatter_data_frame <- function(
       y = ypos,
       label = msg
     )
-
-
-    if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
-    if(length(facets) >  1) plot <- plot +
-      facet_grid(
-        as.formula(
-          paste(
-            sep='~',
-            facets[[1]],
-            facets[[2]]
-          )
-        ),
-        scales = scales
+    facet_args <- list()
+    if(length(facets) ==1) facet_args[[1]] <- facets[[1]]
+    if(length(facets) > 1) facet_args[[1]] <- as.formula(
+      paste(
+        sep='~',
+        facets[[1]],
+        facets[[2]]
       )
+    )
+    facet_args$scales <- scales
+    facet_extra <- list()
+    if(length(facets) == 1) facet_extra <- settings[names(settings) %in% names(formals(facet_wrap))]
+    if(length(facets) >  1) facet_extra <- settings[names(settings) %in% names(formals(facet_grid))]
+    facet_args <- merge(facet_args, facet_extra)
+    if(length(facets) == 1) plot <- plot + do.call(facet_wrap, facet_args)
+    if(length(facets) >  1) plot <- plot + do.call(facet_grid, facet_args)
     return(plot)
   }
 

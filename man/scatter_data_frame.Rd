@@ -33,7 +33,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   main = metOption("metaplot_main_scatter", NULL),
   sub = metOption("metaplot_sub_scatter", NULL),
   subscripts = metOption("metaplot_subscripts_scatter", TRUE),
-  par.settings = metOption("metaplot_parsettings_scatter", NULL),
+  settings = metOption("metaplot_settings_scatter", NULL),
   padding = metOption("metaplot_padding_scatter", 1),
   ref.col = metOption("metaplot_ref_col_scatter", "grey"),
   ref.lty = metOption("metaplot_ref_lty_scatter", "solid"),
@@ -73,9 +73,9 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{crit}{if ylog or xlog missing, log transform if mean/median ratio for non-missing values is greater than crit}
 
-\item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...)}
+\item{yref}{reference line from y axis; can be function(x = x, var = yvar, ...) or NULL to suppress}
 
-\item{xref}{reference line from x axis; can be function(x = x, var = xvar, ...)}
+\item{xref}{reference line from x axis; can be function(x = x, var = xvar, ...) or NULL to suppress}
 
 \item{ylab}{y axis label; can be function(x = x, var = yvar, log = ylog, ..)}
 
@@ -123,7 +123,7 @@ regions and for filling symbols (pch 21:25).}
 
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{par.settings}{passed to \code{\link[lattice]{xyplot}} (calculated if NULL)}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

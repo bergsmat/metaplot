@@ -134,7 +134,7 @@ categorical.data.frame <- function(
 #' @param main character, or a function of x, yvar, xvar, groups, facets
 #' @param sub character, or a function of x, yvar, xvar, groups, facets
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
-#' @param par.settings passed to \code{\link[lattice]{xyplot}} (calculated if null)
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param tex tile expansion: scale factor for reducing each tile size relative to full size (<= 1)
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
@@ -201,7 +201,7 @@ categorical_data_frame <- function(
   tex = metOption('metaplot_tex_categorical', 0.9),
   rot = metOption('metaplot_rot_categorical',c(90,0)),
   subscripts = metOption('metaplot_subscripts_categorical',TRUE),
-  par.settings = metOption('metaplot_parsettings_categorical',NULL),
+  settings = metOption('metaplot_settings_categorical',NULL),
   padding = metOption('metaplot_padding_categorical', 1),
   loc = metOption('metaplot_msg_loc_categorical',5),
   msg = metOption('metaplot_msg_format_categorical','tilestats'),
@@ -209,6 +209,8 @@ categorical_data_frame <- function(
   gg = metOption('metaplot_gg_categorical',FALSE),
   ...
 ){
+  settings <- as.list(settings)
+  if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
@@ -218,7 +220,8 @@ categorical_data_frame <- function(
   stopifnot(length(tex) == 1, is.numeric(tex), tex <= 1)
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
-  par.settings = parintegrate(par.settings, padding)
+  par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
   stopifnot(is.numeric(rot))
   rot <- rep(rot, length.out = 2)
@@ -360,15 +363,23 @@ categorical_data_frame <- function(
         fill = g
       )
     ) +
-    ggtitle(main, subtitle = sub) +
-    theme_bw() +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-    theme(aspect.ratio = aspect, plot.margin = padding) + labs(color = groups, fill = groups) +
-    geom_text(mapping = aes(x = xpos(loc, lo = left, hi = right), y = ypos(loc, lo = bottom, hi = top), label = msg)) +
-    theme(axis.ticks.y = element_blank(), axis.ticks.x = element_blank()) +
-    scale_x_continuous(name = xlab, labels = xax$val, breaks = xax$at) +
-    theme(axis.text.x = element_text(angle = rot[[2]]))
-    plot <- plot + do.call(theme, key)
+    ggtitle(main, subtitle = sub) + theme_bw()
+    plot <- plot + scale_x_continuous(name = xlab, labels = xax$val, breaks = xax$at)
+    plot <- plot + labs(color = groups, fill = groups)
+    plot <- plot + geom_text(mapping = aes(x = xpos(loc, lo = left, hi = right), y = ypos(loc, lo = bottom, hi = top), label = msg))
+    theme_settings <- list(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      aspect.ratio = aspect,
+      plot.margin = padding,
+      axis.ticks.y = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.text.x = element_text(angle = rot[[2]])
+    )
+    theme_settings <- merge(theme_settings, key)
+    theme_extra <- settings[names(settings) %in% names(formals(theme))]
+    theme_settings <- merge(theme_settings, theme_extra)
+    plot <- plot + do.call(theme, theme_settings)
     if(bivariate) {
       plot <- plot + scale_y_continuous(name = ylab, labels = yax$val, breaks = yax$at)
       plot <- plot + theme(axis.text.y = element_text(angle = rot[[1]]))
@@ -385,23 +396,26 @@ categorical_data_frame <- function(
     plot <- plot +
       scale_color_manual(values = alpha(colors, lines)) + # i.e. "border"
       scale_fill_manual(values = alpha(colors, fill))
-
-  if(length(facets) == 1) plot <- plot + facet_wrap(facets[[1]], scales = scales)
-  if(length(facets) >  1) plot <- plot +
-    facet_grid(
-      as.formula(
-        paste(
-          sep='~',
-          facets[[1]],
-          facets[[2]]
-        )
-      ),
-      scales = scales
+  facet_args <- list()
+  if(length(facets) == 1) facet_args[[1]] <- facets[[1]] #list(facets[[1]], scales = scales)
+  if(length(facets) > 1)  facet_args[[1]] <- as.formula(
+    paste(
+      sep='~',
+      facets[[1]],
+      facets[[2]]
     )
+  )
+  facet_args$scales <- scales
+  facet_extra <- list()
+  if(length(facets) == 1) facet_extra <- settings[names(settings) %in% names(formals(facet_wrap))]
+  if(length(facets) >  1) facet_extra <- settings[names(settings) %in% names(formals(facet_grid))]
+  facet_args <- merge(facet_args, facet_extra)
+  if(length(facets) == 1) plot <- plot + do.call(facet_wrap, facet_args)
+  if(length(facets) >  1) plot <- plot + do.call(facet_grid, facet_args)
   return(plot)
   }
 
-  xyplot(
+  args <- list(
     formula,
     data = y,
     groups = as.formula(paste('~',groups)),
@@ -423,9 +437,14 @@ categorical_data_frame <- function(
     bivariate = bivariate,
     loc = loc,
     msg = msg,
-    cex = cex,
-    ...
+    cex = cex
   )
+ args <- c(args, list(...))
+ if(all(c('ncol','nrow') %in% names(settings))){
+   layout <- c(settings$ncol, settings$nrow)
+   args <- c(args, list(layout = layout))
+ }
+ do.call(xyplot, args)
 }
 
 #' Panel Function for Metaplot Categorical Plot

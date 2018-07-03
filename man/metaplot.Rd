@@ -108,11 +108,12 @@ x \%>\% metaplot(
 x \%>\% metaplot(conc, pred, ipred, time, space = 'top')
 x \%>\% metaplot(conc, pred, ipred, time, subject, space = 'top')
 x \%>\% metaplot(conc, pred, ipred, time, subject,
-colors = c('black','blue','orange'),
-points = c(0.9,0, 0.4),
-lines = c(F,T,T),
-types = c('blank','dashed','solid'),
-space = 'top')
+  colors = c('black','blue','orange'),
+  points = c(0.9,0, 0.4),
+  lines = c(F,T,T),
+  types = c('blank','dashed','solid'),
+  space = 'top'
+)
 
 x \%>\% metaplot(conc, ipred, time, site, arm, space = 'top')
 x \%>\% metaplot(res, conc, yref = 0, ysmooth = T, conf = T, grid = T, loc = 1)
@@ -122,15 +123,16 @@ x \%>\% metaplot(subject,conc)
 
 # manage metadata
 attr(x$arm, 'guide') # //1/Arm A//2/Arm B//
+
 x \%>\% metaplot(conc, arm) # default
 
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
-metaplot(conc, arm) # different presentation order
+  structure(guide = '//2/Arm B//1/Arm A//')) \%>\%
+  metaplot(conc, arm) # different presentation order
 
 x \%>\% mutate(arm = arm \%>\%
-structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
-metaplot(conc, arm) # collapse cases
+  structure(guide = '//1/Both Arms//2/Both Arms//')) \%>\%
+  metaplot(conc, arm) # collapse cases
 
 
 }

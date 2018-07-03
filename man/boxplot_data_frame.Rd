@@ -22,7 +22,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   aspect = metOption("metaplot_aspect_boxplot", 1),
   main = metOption("metaplot_main_boxplot", NULL),
   sub = metOption("metaplot_sub_boxplot", NULL),
-  par.settings = metOption("metaplot_parsettings_boxplot", NULL),
+  settings = metOption("metaplot_settings_boxplot", NULL),
   padding = metOption("metaplot_padding_boxplot", 1),
   reverse = metOption("metaplot_reverse_boxplot", TRUE),
   pch = metOption("metaplot_pch_boxplot", "|"),
@@ -48,7 +48,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{panel}{panel function}
 
-\item{ref}{optional reference line(s) on numeric axis; can be function(x = x, var = con, ...)}
+\item{ref}{optional reference line(s) on numeric axis; can be function(x = x, var = con, ...) or NULL to suppress}
 
 \item{ref.col}{color for reference line(s)}
 
@@ -76,7 +76,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{sub}{character, or a function of x, yvar, xvar, facets, and log}
 
-\item{par.settings}{default parameter settings; try \code{standard.theme('pdf', color = FALSE)} for black-and-white boxplots}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

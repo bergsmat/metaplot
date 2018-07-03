@@ -490,8 +490,8 @@ metaplot.data.frame <- function(
 #' x %>% metaplot(res, conc, arm, ysmooth = T, conf = T , gg = T, padding = 3.5)
 #' )
 
-#' Fill color can differ from point color but is the same for points and regions.
-#' 'points' controls alpha of point and point fill independently of conf.fill.
+#' # Fill color can differ from point color but is the same for points and regions.
+#' # 'points' controls alpha of point and point fill independently of conf.fill.
 #' multiplot(
 #' x %>% metaplot(res, conc, arm, conf = T , gg = F, yref = NULL, points = 0.3,
 #'   symbols = 21:22, colors = c('blue','black'), fill = c('green','red')
