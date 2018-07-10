@@ -10,6 +10,14 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
   "grey"), ref.lty = metOption("metaplot_ref_lty_scatter_panel", "solid"),
   ref.lwd = metOption("metaplot_ref_lwd_scatter_panel", 1),
   ref.alpha = metOption("metaplot_ref_alpha_scatter_panel", 1),
+  xref.col = metOption("metaplot_ref_col_x_scatter_panel", ref.col),
+  xref.lty = metOption("metaplot_ref_lty_x_scatter_panel", ref.lty),
+  xref.lwd = metOption("metaplot_ref_lwd_x_scatter_panel", ref.lwd),
+  xref.alpha = metOption("metaplot_ref_alpha_x_scatter_panel", ref.alpha),
+  yref.col = metOption("metaplot_ref_col_y_scatter_panel", ref.col),
+  yref.lty = metOption("metaplot_ref_lty_y_scatter_panel", ref.lty),
+  yref.lwd = metOption("metaplot_ref_lwd_Y-scatter_panel", ref.lwd),
+  yref.alpha = metOption("metaplot_ref_alpha_y_scatter_panel", ref.alpha),
   ysmooth = metOption("metaplot_smooth_y_scatter_panel", FALSE),
   xsmooth = metOption("metaplot_smooth_x_scatter_panel", FALSE),
   smooth.lty = metOption("metaplot_smooth_lty_scatter_panel", "dashed"),
@@ -25,6 +33,7 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
   iso = metOption("metaplot_iso_scatter_panel", FALSE),
   global = metOption("metaplot_global_aes_scatter_panel", FALSE),
   global.col = metOption("metaplot_global_col_scatter_panel", "grey"),
+  global.fill = metOption("metaplot_global_fill_scatter_panel", "grey"),
   msg = metOption("metaplot_msg_format_scatter_panel", "metastats"), type,
   ...)
 }
@@ -39,13 +48,29 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
 
 \item{yref}{reference line from y axis; can be function(y, x, ...)}
 
-\item{ref.col}{reference line color}
+\item{ref.col}{default shared by \code{xref.col} and \code{yref.col}}
 
-\item{ref.lty}{reference line type}
+\item{ref.lty}{default shared by \code{xref.lty} and \code{yref.lty}}
 
-\item{ref.lwd}{reference line size}
+\item{ref.lwd}{default shared by \code{xref.lwd} and \code{yref.lwd}}
 
-\item{ref.alpha}{reference line alpha}
+\item{ref.alpha}{default shared by \code{xref.alpha} and \code{yref.alpha}}
+
+\item{xref.col}{x reference line color (recycled)}
+
+\item{xref.lty}{x reference line type (recycled)}
+
+\item{xref.lwd}{x reference line size (recycled)}
+
+\item{xref.alpha}{x reference line alpha (recycled)}
+
+\item{yref.col}{y reference line color (recycled)}
+
+\item{yref.lty}{y reference line type (recycled)}
+
+\item{yref.lwd}{y reference line size (recycled)}
+
+\item{yref.alpha}{y reference line alpha (recycled)}
 
 \item{ysmooth}{supply loess smooth of y on x}
 
@@ -76,6 +101,8 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
 
 \item{global.col}{color for global aesthetics}
+
+\item{global.fill}{fill color for global aesthetics}
 
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 

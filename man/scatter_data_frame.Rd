@@ -25,7 +25,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   scales = metOption("metaplot_scales_scatter", NULL),
   panel = metOption("metaplot_panel_scatter", scatter_panel),
   colors = metOption("metaplot_colors_scatter", NULL),
-  fill = metOption("metaplot_colors_fill_scatter", NULL),
+  fill = metOption("metaplot_fill_scatter", NULL),
   symbols = metOption("metaplot_symbols_scatter", NULL),
   types = metOption("metaplot_types_scatter", "solid"),
   points = metOption("metaplot_points_scatter", TRUE),
@@ -39,6 +39,14 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   ref.lty = metOption("metaplot_ref_lty_scatter", "solid"),
   ref.lwd = metOption("metaplot_ref_lwd_scatter", 1),
   ref.alpha = metOption("metaplot_ref_alpha_scatter", 1),
+  xref.col = metOption("metaplot_ref_col_x_scatter", ref.col),
+  xref.lty = metOption("metaplot_ref_lty_x_scatter", ref.lty),
+  xref.lwd = metOption("metaplot_ref_lwd_x_scatter", ref.lwd),
+  xref.alpha = metOption("metaplot_ref_x_alpha_scatter", ref.alpha),
+  yref.col = metOption("metaplot_ref_col_y_scatter", ref.col),
+  yref.lty = metOption("metaplot_ref_lty_y_scatter", ref.lty),
+  yref.lwd = metOption("metaplot_ref_lwd_y_scatter", ref.lwd),
+  yref.alpha = metOption("metaplot_ref_alpha_y_scatter", ref.alpha),
   smooth.lty = metOption("metaplot_smooth_lty_scatter", "dashed"),
   smooth.lwd = metOption("metaplot_smooth_lwd_scatter", 1),
   smooth.alpha = metOption("metaplot_smooth_alpha_scatter", 1),
@@ -51,6 +59,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   loc = metOption("metaplot_msg_loc_scatter", 0),
   global = metOption("metaplot_global_aes_scatter", FALSE),
   global.col = metOption("metaplot_global_col_scatter", "grey"),
+  global.fill = metOption("metaplot_global_fill_scatter", "grey"),
   msg = metOption("metaplot_msg_format_scatter", "metastats"),
   gg = metOption("metaplot_gg_scatter", FALSE), ...)
 }
@@ -85,7 +94,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
-\item{iso}{plot line of unity (auto-selected if NA) using reference line aesthetics (see below)}
+\item{iso}{plot line of unity (auto-selected if NA) using global line aesthetics (see below)}
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
@@ -127,13 +136,29 @@ regions and for filling symbols (pch 21:25).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
-\item{ref.col}{reference line color}
+\item{ref.col}{default shared by \code{xref.col} and \code{yref.col}}
 
-\item{ref.lty}{reference line type}
+\item{ref.lty}{default shared by \code{xref.lty} and \code{yref.lty}}
 
-\item{ref.lwd}{reference line size}
+\item{ref.lwd}{default shared by \code{xref.lwd} and \code{yref.lwd}}
 
-\item{ref.alpha}{reference line alpha}
+\item{ref.alpha}{default shared by \code{xref.alpha} and \code{yref.alpha}}
+
+\item{xref.col}{x reference line color (recycled)}
+
+\item{xref.lty}{x reference line type (recycled)}
+
+\item{xref.lwd}{x reference line size (recycled)}
+
+\item{xref.alpha}{x reference line alpha (recycled)}
+
+\item{yref.col}{y reference line color (recycled)}
+
+\item{yref.lty}{y reference line type (recycled)}
+
+\item{yref.lwd}{y reference line size (recycled)}
+
+\item{yref.alpha}{y reference line alpha (recycled)}
 
 \item{smooth.lty}{smooth line type}
 
@@ -158,6 +183,8 @@ regions and for filling symbols (pch 21:25).}
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
 
 \item{global.col}{color for global aesthetics}
+
+\item{global.fill}{fill color for global aesthetics}
 
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 

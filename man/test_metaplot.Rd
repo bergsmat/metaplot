@@ -372,6 +372,60 @@ x \%>\% metaplot(
   grid = T, loc = 1,
   other = 'none'
  )
+
+ # vectorized reference aesthetics
+multiplot(
+  x \%>\% metaplot(
+   sres, gg = F,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted')
+  ),
+  x \%>\% metaplot(
+   sres, gg = T,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted'),
+   padding = 3.5
+  )
+)
+multiplot(
+  x \%>\% densplot(
+   sres, arm, gg = F,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted')
+  ),
+  x \%>\% densplot(
+   sres, arm, gg = T,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted'),
+   padding = 3.5
+  )
+)
+multiplot(
+  x \%>\% densplot(
+   sres,, arm, gg = F,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted')
+  ),
+  x \%>\% densplot(
+   sres,, arm, gg = T,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted'),
+   padding = 3.5
+ )
+)
+multiplot(
+  x \%>\% metaplot(
+   sres, time,, arm, gg = F,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted')
+  ),
+  x \%>\% metaplot(
+   sres, time,, arm, gg = T,
+   ref.col = c('blue','red'),
+   ref.lty = c('dashed','dotted'),
+   padding = 3.5
+ )
+)
 }
 }
 \seealso{

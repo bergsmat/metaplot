@@ -181,10 +181,12 @@ boxplot_data_frame <- function(
   if(is.null(scales)) scales <- function(x = y, horizontal = horizontal, log = log, ...){
     s <- list(
       tck = c(1,0),
+      alternating = FALSE,
       x = list(log = log,equispaced.log = FALSE)
     )
     if(!horizontal)s <- list(
       tck = c(1,0),
+      alternating = FALSE,
       y = list(log = log,equispaced.log = FALSE)
     )
     s
@@ -203,6 +205,21 @@ boxplot_data_frame <- function(
       xlab(catlab) +
       ylab(numlab) +
       ggtitle(main, subtitle = sub)
+
+    # scale aesthetics
+    panels <- nrow(unique(y[facets]))
+    if(!panels) panels <- 1
+
+    ref.col <- rep(ref.col, length.out = length(ref))
+    ref.lty <- rep(ref.lty, length.out = length(ref))
+    ref.lwd <- rep(ref.lwd, length.out = length(ref))
+    ref.alpha <- rep(ref.alpha, length.out = length(ref))
+
+    ref.col <- rep(ref.col, times = panels)
+    ref.lty <- rep(ref.lty, times = panels)
+    ref.lwd <- rep(ref.lwd, times = panels)
+    ref.alpha <- rep(ref.alpha, times = panels)
+
     if(length(ref)) plot <- plot +
       geom_hline(
         yintercept = ref,

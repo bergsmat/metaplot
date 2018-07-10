@@ -37,7 +37,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
-#' @param iso plot line of unity (auto-selected if NA) using reference line aesthetics (see below)
+#' @param iso plot line of unity (auto-selected if NA) using global line aesthetics (see below)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param space location of key (right, left, top, bottom)
@@ -59,10 +59,18 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
 #' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
-#' @param ref.col reference line color
-#' @param ref.lty reference line type
-#' @param ref.lwd reference line size
-#' @param ref.alpha reference line alpha
+#' @param ref.col default shared by \code{xref.col} and \code{yref.col}
+#' @param ref.lty default shared by \code{xref.lty} and \code{yref.lty}
+#' @param ref.lwd default shared by \code{xref.lwd} and \code{yref.lwd}
+#' @param ref.alpha default shared by \code{xref.alpha} and \code{yref.alpha}
+#' @param xref.col x reference line color (recycled)
+#' @param xref.lty x reference line type (recycled)
+#' @param xref.lwd x reference line size (recycled)
+#' @param xref.alpha x reference line alpha (recycled)
+#' @param yref.col y reference line color (recycled)
+#' @param yref.lty y reference line type (recycled)
+#' @param yref.lwd y reference line size (recycled)
+#' @param yref.alpha y reference line alpha (recycled)
 #' @param smooth.lty smooth line type
 #' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
@@ -142,10 +150,22 @@ scatter_data_frame <- function(
   subscripts = metOption('metaplot_subscripts_scatter',TRUE),
   settings = metOption('metaplot_settings_scatter',NULL),
   padding = metOption('metaplot_padding_scatter', 1),
+
   ref.col = metOption('metaplot_ref_col_scatter','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter','solid'),
   ref.lwd = metOption('metaplot_ref_lwd_scatter',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter',1),
+
+  xref.col = metOption('metaplot_ref_col_x_scatter',ref.col),
+  xref.lty = metOption('metaplot_ref_lty_x_scatter',ref.lty),
+  xref.lwd = metOption('metaplot_ref_lwd_x_scatter',ref.lwd),
+  xref.alpha = metOption('metaplot_ref_x_alpha_scatter',ref.alpha),
+
+  yref.col = metOption('metaplot_ref_col_y_scatter',ref.col),
+  yref.lty = metOption('metaplot_ref_lty_y_scatter',ref.lty),
+  yref.lwd = metOption('metaplot_ref_lwd_y_scatter',ref.lwd),
+  yref.alpha = metOption('metaplot_ref_alpha_y_scatter',ref.alpha),
+
   smooth.lty = metOption('metaplot_smooth_lty_scatter','dashed'),
   smooth.lwd = metOption('metaplot_smooth_lwd_scatter',1),
   smooth.alpha = metOption('metaplot_smooth_alpha_scatter',1),
@@ -241,6 +261,7 @@ scatter_data_frame <- function(
             if(!is.na(right))
               if(left == right)iso <- TRUE
   }
+
   if(is.na(iso)) iso <- FALSE
   if(iso)if(is.null(prepanel))prepanel <- iso_prepanel
 
@@ -484,25 +505,53 @@ scatter_data_frame <- function(
       se = FALSE,
       show.legend = FALSE
     )
-    if(length(xref)) plot <- plot + geom_vline(
-        xintercept = xref,
-        color = ref.col,
-        linetype = ref.lty,
-        size = ref.lwd,
-        alpha = ref.alpha
-      )
+
+    nxref <- length(xref)
+    nyref <- length(yref)
+
+    xref.col <- rep(xref.col,  length.out = nxref)
+    xref.lty <- rep(xref.lty,  length.out = nxref)
+    xref.lwd <- rep(xref.lwd,  length.out = nxref)
+    xref.alpha<-rep(xref.alpha,length.out = nxref)
+
+    yref.col <- rep(yref.col,  length.out = nyref)
+    yref.lty <- rep(yref.lty,  length.out = nyref)
+    yref.lwd <- rep(yref.lwd,  length.out = nyref)
+    yref.alpha<-rep(yref.alpha,length.out = nyref)
+
+    panels <- nrow(unique(x[facets]))
+    if(!panels) panels <- 1
+
+    xref.col <- rep(xref.col,  times = panels)
+    xref.lty <- rep(xref.lty,  times = panels)
+    xref.lwd <- rep(xref.lwd,  times = panels)
+    xref.alpha<-rep(xref.alpha,times = panels)
+
+    yref.col <- rep(yref.col,  times = panels)
+    yref.lty <- rep(yref.lty,  times = panels)
+    yref.lwd <- rep(yref.lwd,  times = panels)
+    yref.alpha<-rep(yref.alpha,times = panels)
+
+
     if(length(yref)) plot <- plot + geom_hline(
         yintercept = yref,
-        color = ref.col,
-        linetype = ref.lty,
-        size = ref.lwd,
-        alpha = ref.alpha
+        color = yref.col,
+        linetype = yref.lty,
+        size = yref.lwd,
+        alpha = yref.alpha
+      )
+    if(length(xref)) plot <- plot + geom_vline(
+        xintercept = xref,
+        color = xref.col,
+        linetype = xref.lty,
+        size = xref.lwd,
+        alpha = xref.alpha
       )
     if(iso){
       plot <- plot + geom_abline(
         slope = 1,
         intercept = 0,
-        color = ref.col,
+        color = global.col,
         linetype = ref.lty,
         size = ref.lwd,
         alpha = ref.alpha
@@ -585,6 +634,14 @@ scatter_data_frame <- function(
     ref.lty = ref.lty,
     ref.lwd = ref.lwd,
     ref.alpha = ref.alpha,
+    xref.col = xref.col,
+    xref.lty = xref.lty,
+    xref.lwd = xref.lwd,
+    xref.alpha = xref.alpha,
+    yref.col = yref.col,
+    yref.lty = yref.lty,
+    yref.lwd = yref.lwd,
+    yref.alpha = yref.alpha,
     smooth.lty = smooth.lty,
     smooth.lwd = smooth.lwd,
     smooth.alpha = smooth.alpha,
@@ -746,10 +803,18 @@ scatter.data.frame <- function(
 #' @param groups optional grouping item
 #' @param yref reference line from y axis; can be function(y, x, ...)
 #' @param xref reference line from x axis; can be function(x, y, ...)
-#' @param ref.col reference line color
-#' @param ref.lty reference line type
-#' @param ref.lwd reference line size
-#' @param ref.alpha reference line alpha
+#' @param ref.col default shared by \code{xref.col} and \code{yref.col}
+#' @param ref.lty default shared by \code{xref.lty} and \code{yref.lty}
+#' @param ref.lwd default shared by \code{xref.lwd} and \code{yref.lwd}
+#' @param ref.alpha default shared by \code{xref.alpha} and \code{yref.alpha}
+#' @param xref.col x reference line color (recycled)
+#' @param xref.lty x reference line type (recycled)
+#' @param xref.lwd x reference line size (recycled)
+#' @param xref.alpha x reference line alpha (recycled)
+#' @param yref.col y reference line color (recycled)
+#' @param yref.lty y reference line type (recycled)
+#' @param yref.lwd y reference line size (recycled)
+#' @param yref.alpha y reference line alpha (recycled)
 #' @param ysmooth supply loess smooth of y on x
 #' @param xsmooth supply loess smmoth of x on y
 #' @param smooth.lty smooth line type
@@ -780,10 +845,22 @@ scatter_panel <- function(
   groups,
   xref = metOption('metaplot_ref_x_scatter_panel',scatter_panel_ref),
   yref = metOption('metaplot_ref_y_scatter_panel',scatter_panel_ref),
+
   ref.col = metOption('metaplot_ref_col_scatter_panel','grey'),
   ref.lty = metOption('metaplot_ref_lty_scatter_panel','solid'),
   ref.lwd = metOption('metaplot_ref_lwd_scatter_panel',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter_panel',1),
+
+  xref.col = metOption('metaplot_ref_col_x_scatter_panel',ref.col),
+  xref.lty = metOption('metaplot_ref_lty_x_scatter_panel',ref.lty),
+  xref.lwd = metOption('metaplot_ref_lwd_x_scatter_panel',ref.lwd),
+  xref.alpha = metOption('metaplot_ref_alpha_x_scatter_panel',ref.alpha),
+
+  yref.col = metOption('metaplot_ref_col_y_scatter_panel',ref.col),
+  yref.lty = metOption('metaplot_ref_lty_y_scatter_panel',ref.lty),
+  yref.lwd = metOption('metaplot_ref_lwd_Y-scatter_panel',ref.lwd),
+  yref.alpha = metOption('metaplot_ref_alpha_y_scatter_panel',ref.alpha),
+
   ysmooth = metOption('metaplot_smooth_y_scatter_panel',FALSE),
   xsmooth = metOption('metaplot_smooth_x_scatter_panel',FALSE),
   smooth.lty = metOption('metaplot_smooth_lty_scatter_panel','dashed'),
@@ -805,6 +882,7 @@ scatter_panel <- function(
   ...
 )
 {
+
   stopifnot(length(global) == 1, is.logical(global))
   # if(is.null(groups)) groups <- rep(TRUE,length(x)) # cannot be NULL
   myxsmooth <- function(x,y,type,lty,lwd,col, col.symbol, col.line,...){
@@ -877,8 +955,21 @@ scatter_panel <- function(
   xref <- as.numeric(xref)
   xref <- xref[is.defined(xref)]
 
-  if(length(yref))panel.abline(h = yref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
-  if(length(xref))panel.abline(v = xref, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
+  nxref <- length(xref)
+  nyref <- length(yref)
+
+  xref.col <- rep(xref.col,  length.out = nxref)
+  xref.lty <- rep(xref.lty,  length.out = nxref)
+  xref.lwd <- rep(xref.lwd,  length.out = nxref)
+  xref.alpha<-rep(xref.alpha,length.out = nxref)
+
+  yref.col <- rep(yref.col,  length.out = nyref)
+  yref.lty <- rep(yref.lty,  length.out = nyref)
+  yref.lwd <- rep(yref.lwd,  length.out = nyref)
+  yref.alpha<-rep(yref.alpha,length.out = nyref)
+
+  if(length(yref))panel.abline(h = yref, col = yref.col, lty = yref.lty, lwd = yref.lwd, alpha = yref.alpha)
+  if(length(xref))panel.abline(v = xref, col = xref.col, lty = xref.lty, xlwd = ref.lwd, alpha = xref.alpha)
 
   if(iso)panel.abline(0, 1, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
 }
