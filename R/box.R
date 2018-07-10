@@ -28,6 +28,7 @@ NULL
 #' @param numlab numeric axis label; can be function(x = x, var = numvar, log = ylog, ...)
 #' @param catlab categorical axis label; can be function(x = x, var = catvar, ...)
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
+#' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param main character, or a function of x, yvar, xvar, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, facets, and log
 #' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
@@ -74,6 +75,7 @@ boxplot_data_frame <- function(
   numlab = metOption('metaplot_numlab_boxplot',axislabel),
   catlab = metOption('metaplot_catlab_boxplot',axislabel),
   aspect = metOption('metaplot_aspect_boxplot',1),
+  as.table = metOption('metaplot_astable_boxplot',TRUE),
   main = metOption('metaplot_main_boxplot',NULL),
   sub = metOption('metaplot_sub_boxplot',NULL),
   settings = metOption('metaplot_settings_boxplot',NULL),
@@ -266,6 +268,7 @@ boxplot_data_frame <- function(
     scales = scales,
     ylab = ylab,
     xlab = xlab,
+    as.table = as.table,
     main = main,
     sub = sub,
     panel = panel,

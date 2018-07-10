@@ -784,8 +784,19 @@ metaplot.data.frame <- function(
 #'    padding = 3.5
 #'  )
 #' )
-
-
+#' # use of settings
+#' multiplot(
+#'  x %>% metaplot(conc, ,subject, settings = list(ncol = 4, nrow = 3), gg = F),
+#'  x %>% metaplot(conc, ,subject, settings = list(ncol = 4), padding = 4, gg = T)
+#' )
+#' multiplot(
+#'  x %>% metaplot(conc, time,, subject, settings = list(ncol = 4, nrow = 3), gg = F),
+#'  x %>% metaplot(conc, time,, subject, settings = list(ncol = 4), padding = 4,  gg = T)
+#' )
+#' multiplot(
+#'  x %>% metaplot(conc, arm, site, settings = list(ncol = 1, nrow = 2), gg = F),
+#'  x %>% metaplot(conc, arm, site, settings = list(ncol = 1), padding = 4,  gg = T)
+#' )
 #'}
 test_metaplot <- function()NULL
 

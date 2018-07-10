@@ -608,7 +608,7 @@ scatter_data_frame <- function(
     return(plot)
   }
 
-  xyplot(
+  args <- list(
     formula,
     data = y,
     groups = as.formula(paste('~',groups)),
@@ -655,9 +655,14 @@ scatter_data_frame <- function(
     conf = conf,
     conf.alpha = conf.alpha,
     loc = loc,
-    msg = msg,
-    ...
+    msg = msg
   )
+  args <- c(args, list(...))
+  if(all(c('ncol','nrow') %in% names(settings))){
+    layout <- c(settings$ncol, settings$nrow)
+    args <- c(args, list(layout = layout))
+  }
+  do.call(xyplot, args)
 }
 
 #' Prepanel Function for Isometric Axes

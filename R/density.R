@@ -34,6 +34,7 @@ densplot <- function(x,...)UseMethod('densplot')
 #' @param fill whether to fill curves: logical or alpha, same length as groups (symbol fill color is same as point color)
 #' @param space location of key (right, left, top, bottom)
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
+#' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param main character, or a function of x, xvar, groups, facets, and log
 #' @param sub character, or a function of x, xvar, groups, facets, and log
 #' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
@@ -77,6 +78,7 @@ densplot_data_frame<- function(
   fill = metOption('metaplot_fill_dens',FALSE),
   space = metOption('metaplot_space_dens','right'),
   key = metOption('metaplot_key_dens',metaplot_key),
+  as.table = metOption('metaplot_astable_dens',TRUE),
   main = metOption('metaplot_main_dens',NULL),
   sub = metOption('metaplot_sub_dens',NULL),
   settings = metOption('metaplot_settings_dens',NULL),
@@ -298,6 +300,7 @@ args <- list(
   scales = scales,
   panel = panel,
   auto.key = key,
+  as.table = as.table,
   main = main,
   sub = sub,
   par.settings = par.settings

@@ -39,7 +39,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param dens.col color for density region
 #' @param dens.scale inflation factor for height of density smooth
 #' @param dens.alpha alpha transparency for density region
-#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param as.table diagonal arranged top-left to bottom-right
 #' @param dens.up whether density plots in diagonal should face the upper triangle vs. lower
