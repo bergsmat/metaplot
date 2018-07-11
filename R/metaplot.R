@@ -797,6 +797,17 @@ metaplot.data.frame <- function(
 #'  x %>% metaplot(conc, arm, site, settings = list(ncol = 1, nrow = 2), gg = F),
 #'  x %>% metaplot(conc, arm, site, settings = list(ncol = 1), padding = 4,  gg = T)
 #' )
+#'
+#' #iso aesthetics
+#' multiplot(
+#'  x %>% metaplot(conc, ipred, iso = NA, gg = F),
+#'  x %>% metaplot(conc, ipred, iso = NA, gg = T, padding = 4)
+#' )
+#' multiplot(
+#'  x %>% metaplot(conc, ipred, iso = list(lty = 'dashed'), gg = F),
+#'  x %>% metaplot(conc, ipred, iso = list(lty = 'dashed'), gg = T, padding = 4)
+#' )
+#'
 #'}
 test_metaplot <- function()NULL
 

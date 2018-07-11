@@ -20,6 +20,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   ylab = NULL, numlab = metOption("metaplot_numlab_boxplot", axislabel),
   catlab = metOption("metaplot_catlab_boxplot", axislabel),
   aspect = metOption("metaplot_aspect_boxplot", 1),
+  as.table = metOption("metaplot_astable_boxplot", TRUE),
   main = metOption("metaplot_main_boxplot", NULL),
   sub = metOption("metaplot_sub_boxplot", NULL),
   settings = metOption("metaplot_settings_boxplot", NULL),
@@ -71,6 +72,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 \item{catlab}{categorical axis label; can be function(x = x, var = catvar, ...)}
 
 \item{aspect}{passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically}
+
+\item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{main}{character, or a function of x, yvar, xvar, facets, and log}
 

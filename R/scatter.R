@@ -37,7 +37,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
-#' @param iso plot line of unity (auto-selected if NA) using global line aesthetics (see below)
+#' @param iso logical: plot line of unity (auto-selected if NA); can be list of aesthetics (col, lty, lwd, alpha)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param space location of key (right, left, top, bottom)
@@ -251,6 +251,11 @@ scatter_data_frame <- function(
   xref <- as.numeric(xref)
   xref <- xref[is.defined(xref)]
 
+  iso.aes <- list(col = 'black', lty = 'solid', lwd = 1, alpha = 1)
+  if(is.list(iso)){
+    iso.aes <- merge(iso.aes, iso)
+    iso <- TRUE
+  }
   if(is.null(iso)) iso <- FALSE # same as default
   if(is.na(iso)){
     left <- attr(y[[yvar]],'guide')
@@ -392,7 +397,7 @@ scatter_data_frame <- function(
     isorange <- c(lo, hi)
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
-    msg <- if(length(groups) == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
+    msg <- if(nlev == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
     plot <- ggplot(
       data = y,
       mapping = aes_string(
@@ -551,10 +556,10 @@ scatter_data_frame <- function(
       plot <- plot + geom_abline(
         slope = 1,
         intercept = 0,
-        color = global.col,
-        linetype = ref.lty,
-        size = ref.lwd,
-        alpha = ref.alpha
+        color = iso.aes$col,
+        linetype = iso.aes$lty,
+        size = iso.aes$lwd,
+        alpha = iso.aes$alpha
       )
       lo <- min(min(y[[yvar]], na.rm=T), min(y[[xvar]], na.rm=T), na.rm=T)
       hi <- max(max(y[[yvar]], na.rm=T), max(y[[xvar]], na.rm=T), na.rm=T)
@@ -584,7 +589,7 @@ scatter_data_frame <- function(
       scale_color_manual(values = colors) +
       scale_fill_manual(values = fill)
 
-    if(length(groups) == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
+    if(nlev == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
       x = xpos,
       y = ypos,
       label = msg
@@ -623,7 +628,7 @@ scatter_data_frame <- function(
     xsmooth = xsmooth,
     ylab = ylab,
     xlab = xlab,
-    iso = iso,
+    iso = iso.aes,
     panel = panel,
     subscripts = subscripts,
     par.settings = par.settings,
@@ -825,7 +830,7 @@ scatter.data.frame <- function(
 #' @param smooth.lty smooth line type
 #' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
-#' @param iso use isometric axes with line of unity (auto-selected if NA)
+#' @param iso logical: use isometric axes with line of unity (auto-selected if NA); can be list of aesthetics(col, lty, lwd, alpha)
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
 #' @param global.fill fill color for global aesthetics
@@ -976,7 +981,12 @@ scatter_panel <- function(
   if(length(yref))panel.abline(h = yref, col = yref.col, lty = yref.lty, lwd = yref.lwd, alpha = yref.alpha)
   if(length(xref))panel.abline(v = xref, col = xref.col, lty = xref.lty, xlwd = ref.lwd, alpha = xref.alpha)
 
-  if(iso)panel.abline(0, 1, col = ref.col, lty = ref.lty, lwd = ref.lwd, alpha = ref.alpha)
+  iso.aes <- list(col = 'black', lty = 'solid', lwd = 1, alpha = 1)
+  if(is.list(iso)){
+    iso.aes <- merge(iso.aes, iso)
+    iso <- TRUE
+  }
+  if(iso)panel.abline(0, 1, col = iso.aes$col, lty = iso.aes$lty, lwd = iso.aes$lwd, alpha = iso.aes$alpha)
 }
 
 xpos <- function(loc, range = 0:1, lo = range[[1]], hi = range[[2]]){

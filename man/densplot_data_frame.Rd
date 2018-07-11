@@ -23,6 +23,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
   fill = metOption("metaplot_fill_dens", FALSE),
   space = metOption("metaplot_space_dens", "right"),
   key = metOption("metaplot_key_dens", metaplot_key),
+  as.table = metOption("metaplot_astable_dens", TRUE),
   main = metOption("metaplot_main_dens", NULL),
   sub = metOption("metaplot_sub_dens", NULL),
   settings = metOption("metaplot_settings_dens", NULL),
@@ -73,6 +74,8 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 \item{space}{location of key (right, left, top, bottom)}
 
 \item{key}{list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.}
+
+\item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{main}{character, or a function of x, xvar, groups, facets, and log}
 

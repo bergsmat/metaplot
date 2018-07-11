@@ -82,7 +82,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{dens.alpha}{alpha transparency for density region}
 
-\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 

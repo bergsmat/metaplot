@@ -416,15 +416,34 @@ multiplot(
 multiplot(
   x \%>\% metaplot(
    sres, time,, arm, gg = F,
-   ref.col = c('blue','red'),
-   ref.lty = c('dashed','dotted')
+   yref = c(-4,0,4),
+   xref = c(5, 10, 15),
+   yref.col = c('blue','red'),
+   yref.lty = c('dashed','dotted'),
+   xref.col = c('green','orange')
   ),
   x \%>\% metaplot(
    sres, time,, arm, gg = T,
-   ref.col = c('blue','red'),
-   ref.lty = c('dashed','dotted'),
+   yref = c(-4,0,4),
+   xref = c(5, 10, 15),
+   yref.col = c('blue','red'),
+   yref.lty = c('dashed','dotted'),
+   xref.col = c('green','orange'),
    padding = 3.5
  )
+)
+# use of settings
+multiplot(
+ x \%>\% metaplot(conc, ,subject, settings = list(ncol = 4, nrow = 3), gg = F),
+ x \%>\% metaplot(conc, ,subject, settings = list(ncol = 4), padding = 4, gg = T)
+)
+multiplot(
+ x \%>\% metaplot(conc, time,, subject, settings = list(ncol = 4, nrow = 3), gg = F),
+ x \%>\% metaplot(conc, time,, subject, settings = list(ncol = 4), padding = 4,  gg = T)
+)
+multiplot(
+ x \%>\% metaplot(conc, arm, site, settings = list(ncol = 1, nrow = 2), gg = F),
+ x \%>\% metaplot(conc, arm, site, settings = list(ncol = 1), padding = 4,  gg = T)
 )
 }
 }

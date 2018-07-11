@@ -94,7 +94,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{xsmooth}{supply loess smmoth of x on y}
 
-\item{iso}{plot line of unity (auto-selected if NA) using global line aesthetics (see below)}
+\item{iso}{logical: plot line of unity (auto-selected if NA); can be list of aesthetics (col, lty, lwd, alpha)}
 
 \item{na.rm}{whether to remove data points with one or more missing coordinates}
 
