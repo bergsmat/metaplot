@@ -9,7 +9,8 @@
   mixedvariate = getOption("metaplot_mixedvariate", "boxplot"),
   bivariate = getOption("metaplot_bivariate", "scatter"),
   multivariate = getOption("metaplot_multivariate", "corsplom"),
-  categorical = getOption("metaplot_categorical", "categorical"))
+  categorical = getOption("metaplot_categorical", "categorical"),
+  verbose = getOption("metaplot_verbose", FALSE))
 }
 \arguments{
 \item{x}{object}
@@ -25,6 +26,8 @@
 \item{multivariate}{function for more than two numeric arguments}
 
 \item{categorical}{function for categorical arguments}
+
+\item{verbose}{logical: whether to explain internal choices}
 }
 \description{
 Creates a metaplot for class 'data.frame'.  Implements a rule to decided whether to make a density plot, a boxplot, a scatter plot, or a scatterplot matrix, given the supplied column names.

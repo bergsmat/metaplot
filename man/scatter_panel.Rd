@@ -96,7 +96,7 @@ scatter_panel(x, y, groups, xref = metOption("metaplot_ref_x_scatter_panel",
 
 \item{loc}{where to print statistics on a panel; suppressed for grouped plots}
 
-\item{iso}{logical: use isometric axes with line of unity (auto-selected if NA); can be list of aesthetics(col, lty, lwd, alpha)}
+\item{iso}{logical: use isometric axes with line of unity (auto-selected if NA); can be a (partial) list of aesthetics (col, lty, lwd, alpha)}
 
 \item{global}{if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise}
 

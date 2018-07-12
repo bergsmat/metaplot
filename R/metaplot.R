@@ -101,6 +101,7 @@ globalVariables('axisTicks')
 #' x %>% metaplot(arm, site, , cohort)
 #' x %>% metaplot(conc, time, subject)
 #' x %>% metaplot(conc, time, , subject)
+
 #' x %>% metaplot(conc, time, subject, site)
 #' x %>% metaplot(conc, time, subject, site, arm)
 #' x %>% metaplot(lKe, lKa, lCl)
@@ -155,6 +156,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' @param bivariate function for arguments that resolve to two numerics (see rules)
 #' @param multivariate function for more than two numeric arguments
 #' @param categorical function for categorical arguments
+#' @param verbose logical: whether to explain internal choices
 #' @param ... passed arguments
 #' @import encode
 #' @family methods
@@ -282,13 +284,16 @@ metaplot.data.frame <- function(
   mixedvariate = getOption('metaplot_mixedvariate','boxplot'),
   bivariate    = getOption('metaplot_bivariate','scatter'),
   multivariate = getOption('metaplot_multivariate','corsplom'),
-  categorical  = getOption('metaplot_categorical','categorical')
+  categorical  = getOption('metaplot_categorical','categorical'),
+  verbose      = getOption('metaplot_verbose',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
   vars <- args[names(args) == '']
   other <- args[names(args) != '']
   vars <- sapply(vars, as.character)
+  anon <- vars
+  if(verbose) message('found these anonymous arguments: ', paste(vars, collapse = ', '))
   # now x, vars, and other are passable
   args <- c(list(x = x),vars,other)
   # where to pass them depends only on properties of prime variables
@@ -303,6 +308,7 @@ metaplot.data.frame <- function(
   # test numeric
   stopifnot(all(vars %in% names(x)))
   num <- sapply(x[vars], is.numeric)
+  was <- num # store for messaging
 
   # but the definition of numeric depends partly on guide.
   guide <- lapply(x[vars], attr, 'guide')
@@ -317,32 +323,97 @@ metaplot.data.frame <- function(
   pos <- seq_along(num)
   can <- !num & pos > 2
   grp <- match(TRUE, can)
+  grpvar <- NA
+  if(is.defined(grp)) grpvar <- names(num)[grp]
   if(is.defined(grp)) num <- num[seq(length.out = grp - 1)]
 
   # now all num corresponds to prime vars (y if any, x)
   # the last of these is x
-
+  prime <- names(num)
+  facets <- setdiff(anon, c('',grpvar, prime))
+  xvar <- rev(prime)[[1]]
+  yvar <- setdiff(prime, xvar)
+  main <- vars
+  nativnum <- names(was)[was]
+  nativcat <- setdiff(vars, nativnum)
+  virtucat <- setdiff(vars, prime[num])
+    if(verbose){
+    message('detected these main variables: ',paste(main,collapse = ', '))
+    message('these are natively numeric: ', paste(collapse = ', ', nativnum))
+    if(length(nativcat))message('these are natively categorical: ', paste(collapse = ', ', nativcat))
+    if(length(virtucat))message('these are categorical by virtue of guide attribute: ', paste(collapse = ', ', virtucat))
+    if(length(yvar))message('y variable(s): ',paste(collapse = ', ',yvar))
+    message('x variable: ', xvar)
+    if(is.defined(missing)) message('grouping variable: explicitly missing')
+    if(is.defined(grp)) message('grouping variable: ',grpvar)
+    if(length(facets)) message('facet(s): ',paste(collapse = ', ', facets))
+  }
   stopifnot(length(num) > 0)
-  if(length(num) == 1 & !num[[1]])return(do.call(match.fun(categorical), args))
-  if(length(num) == 1 & num[[1]]) return(do.call(match.fun(univariate), args))
+  if(length(num) == 1 & !num[[1]]){
+    if(verbose){
+      message('only one main variable, and it is categorical')
+      if(is.character(categorical))message('calling ', categorical) else message('calling categorical')
+    }
+    return(do.call(match.fun(categorical), args))
+  }
+  if(length(num) == 1 & num[[1]]) {
+    if(verbose){
+      message('only one main variable and it is numeric')
+      if(is.character(univariate))message('calling ', univariate) else message('calling univariate')
+    }
+    return(do.call(match.fun(univariate), args))
+  }
   # now length num is at least 2
-  if(xor(num[[1]],num[[2]])) return(do.call(match.fun(mixedvariate),args))
-  if(!num[[1]] && !num[[2]]) return(do.call(match.fun(categorical),args))
+  if(xor(num[[1]],num[[2]])){
+    if(verbose){
+      message('two main variables and only one is numeric')
+      if(is.character(mixedvariate))message('calling ', mixedvariate) else message('calling mixedvariate')
+      if(is.defined(grpvar))message(grpvar, ' is effectively a facet')
+      if(is.character(univariate))message('consider also grouped ', univariate) else message('consider also grouped univariate')
+    }
+    return(do.call(match.fun(mixedvariate),args))
+  }
+  if(!num[[1]] && !num[[2]]) {
+    if(verbose){
+      message('two main variables and both are categorical')
+      if(is.character(categorical))message('calling ', categorical) else message('calling categorical')
+    }
+    return(do.call(match.fun(categorical),args))
+  }
   # now there are no categoricals in the first two positions
   # that means there are two numerics in first two positions
   # that means there is at least one y and at least one x
   # find x.
   xpos <- length(num)
   ypos <- 1:(xpos - 1)
+  # if(verbose) message('y variable(s): ', paste(collapse = ', ', names(num)[ypos]))
+  # if(verbose) message('x variable: ',rev(names(num))[[1]])
   yguide <- guide[ypos]
   xguide <- guide[xpos]
   # we only need to choose between multivariate and bivariate.
   # if all yguide identical and distinct from xguide, we collapse to bivariate overlay.
   overlay <- FALSE
-  if(length(unique(yguide)) == 1 &  paste(yguide[[1]]) != paste(xguide) ) overlay <- TRUE
-  if(length(ypos) > 1 & !overlay) return(do.call(match.fun(multivariate),args))
+  if(length(unique(yguide)) == 1 &  paste(yguide[[1]]) != paste(xguide) ) {
+    if(verbose && length(ypos) > 1) {
+      message('guides for y variables are identical (',unique(yguide),') and different from x guide (', xguide,')')
+      message('this will be an overlay (bivariate) plot rather than multivariate')
+    }
+    overlay <- TRUE
+  }
+  if(length(ypos) > 1 & !overlay) {
+    if(verbose){
+      message('there are multiple y variables; guides (if any) not different from x guide')
+      message('this will be a multivariate plot rather than bivariate')
+      if(is.character(multivariate))message('calling ', multivariate) else message('calling multivariate')
+    }
+    return(do.call(match.fun(multivariate),args))
+  }
   # now univariate, mixedvariate, and multivariate plots have been dismissed.
   # only bivariate remains
+  if(verbose){
+    if(is.character(bivariate))message('calling ', bivariate) else message('calling bivariate')
+    # if(length(ypos) > 1) message('there are multiple y variables')
+  }
   return(do.call(match.fun(bivariate),args))
 }
 

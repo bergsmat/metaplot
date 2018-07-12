@@ -37,7 +37,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param xsmooth supply loess smmoth of x on y
 #' @param ylab y axis label; can be function(x = x, var = yvar, log = ylog, ..)
 #' @param xlab x axis label; can be function(x = x, var = xvar, log = xlog, ..)
-#' @param iso logical: plot line of unity (auto-selected if NA); can be list of aesthetics (col, lty, lwd, alpha)
+#' @param iso logical: plot line of unity (auto-selected if NA); can be a (partial) list of aesthetics (col, lty, lwd, alpha)
 #' @param na.rm whether to remove data points with one or more missing coordinates
 #' @param aspect passed to \code{\link[lattice]{bwplot}} or ggplot; use 'fill', NA, or NULL to calculate automatically
 #' @param space location of key (right, left, top, bottom)
@@ -628,7 +628,7 @@ scatter_data_frame <- function(
     xsmooth = xsmooth,
     ylab = ylab,
     xlab = xlab,
-    iso = iso.aes,
+    iso = if(iso) iso.aes else FALSE,
     panel = panel,
     subscripts = subscripts,
     par.settings = par.settings,
@@ -830,7 +830,7 @@ scatter.data.frame <- function(
 #' @param smooth.lty smooth line type
 #' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
-#' @param iso logical: use isometric axes with line of unity (auto-selected if NA); can be list of aesthetics(col, lty, lwd, alpha)
+#' @param iso logical: use isometric axes with line of unity (auto-selected if NA); can be a (partial) list of aesthetics (col, lty, lwd, alpha)
 #' @param global if TRUE, xsmooth, ysmooth, fit, and conf are applied to all data rather than groupwise
 #' @param global.col color for global aesthetics
 #' @param global.fill fill color for global aesthetics
