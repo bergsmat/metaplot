@@ -23,6 +23,7 @@ categorical <- function(x, ...)UseMethod('categorical')
 #'
 #' @param x data.frame
 #' @param fun function to draw the plot
+#' @param verbose generate messages describing process
 #' @param ... other arguments
 #' @family categorical
 #' @family methods
@@ -33,7 +34,8 @@ categorical <- function(x, ...)UseMethod('categorical')
 categorical.data.frame <- function(
   x,
   ...,
-  fun = getOption('metaplot_categorical','categorical_data_frame')
+  fun = getOption('metaplot_categorical','categorical_data_frame'),
+  verbose = metOption('metaplot_verbose_categorical',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -105,6 +107,9 @@ categorical.data.frame <- function(
     facets = facets
   )
   args <- c(formal, other)
+  if(verbose){
+    if(is.character(fun))message('calling ', fun) else message('calling fun')
+  }
   do.call(match.fun(fun), args)
 }
 

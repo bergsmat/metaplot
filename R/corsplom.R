@@ -278,6 +278,7 @@ corsplom_data_frame <- function(
 #' @param x data.frame
 #' @param ... passed to fun
 #' @param fun function to do the actual plotting
+#' @param verbose generate messages describing process
 #' @export
 #' @importFrom rlang UQS quos
 #' @family multivariate plots
@@ -286,7 +287,8 @@ corsplom_data_frame <- function(
 corsplom.data.frame <- function(
   x,
   ...,
-  fun = getOption('metaplot_corsplom','corsplom_data_frame')
+  fun = getOption('metaplot_corsplom','corsplom_data_frame'),
+  verbose = metOption('metaplot_verbose_corsplom',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -295,6 +297,9 @@ corsplom.data.frame <- function(
   vars <- sapply(vars, as.character)
   prime <- list(x = x, xvar = vars)
   args <- c(prime, other)
+  if(verbose){
+    if(is.character(fun))message('calling ', fun) else message('calling fun')
+  }
   do.call(fun, args)
 }
 

@@ -335,6 +335,7 @@ dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
 #' @param x data.frame
 #' @param ... passed to fun
 #' @param fun plotting function
+#' @param verbose generate messages describing process
 #' @import lattice
 #' @export
 #' @importFrom rlang f_rhs quos
@@ -354,7 +355,8 @@ dens_panel <- function(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
 densplot.data.frame<- function(
   x,
   ...,
-  fun = getOption('metaplot_densplot','densplot_data_frame')
+  fun = getOption('metaplot_densplot','densplot_data_frame'),
+  verbose = metOption('metaplot_verbose_densplot',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -372,6 +374,9 @@ densplot.data.frame<- function(
 
   prime <- list(x = x, xvar = xvar, groups = groups, facets = facets)
   args <- c(prime, other)
+  if(verbose){
+    if(is.character(fun))message('calling ', fun) else message('calling fun')
+  }
   do.call(fun, args)
 }
 

@@ -694,6 +694,7 @@ iso_prepanel <- function(x,y,...){
 #' @param x data.frame
 #' @param ... passed to fun
 #' @param fun function to draw the plot
+#' @param verbose generate messages describing process
 #' @seealso \code{\link{scatter_data_frame}}
 #' @export
 #' @import lattice
@@ -730,7 +731,8 @@ iso_prepanel <- function(x,y,...){
 scatter.data.frame <- function(
   x,
   ...,
-  fun = getOption('metaplot_scatter','scatter_data_frame')
+  fun = getOption('metaplot_scatter','scatter_data_frame'),
+  verbose = metOption('metaplot_verbose_scatter',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -800,6 +802,9 @@ scatter.data.frame <- function(
     facets = facets
   )
   args <- c(formal, other)
+  if(verbose){
+    if(is.character(fun))message('calling ', fun) else message('calling fun')
+  }
   do.call(match.fun(fun), args)
 }
 

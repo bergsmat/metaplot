@@ -5,7 +5,8 @@
 \title{Correlated Scatterplot Matrix Method for Data Frame}
 \usage{
 \method{corsplom}{data.frame}(x, ..., fun = getOption("metaplot_corsplom",
-  "corsplom_data_frame"))
+  "corsplom_data_frame"), verbose = metOption("metaplot_verbose_corsplom",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +14,8 @@
 \item{...}{passed to fun}
 
 \item{fun}{function to do the actual plotting}
+
+\item{verbose}{generate messages describing process}
 }
 \description{
 Creates a scatterplot matrix.  Parses arguments and generates the call: fun(x, xvar, ...).

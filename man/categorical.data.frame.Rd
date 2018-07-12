@@ -5,7 +5,8 @@
 \title{Categorical Method for Data Frame}
 \usage{
 \method{categorical}{data.frame}(x, ...,
-  fun = getOption("metaplot_categorical", "categorical_data_frame"))
+  fun = getOption("metaplot_categorical", "categorical_data_frame"),
+  verbose = metOption("metaplot_verbose_categorical", FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +14,8 @@
 \item{...}{other arguments}
 
 \item{fun}{function to draw the plot}
+
+\item{verbose}{generate messages describing process}
 }
 \value{
 character

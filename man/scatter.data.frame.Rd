@@ -5,7 +5,8 @@
 \title{Scatterplot Method for Data Frame}
 \usage{
 \method{scatter}{data.frame}(x, ..., fun = getOption("metaplot_scatter",
-  "scatter_data_frame"))
+  "scatter_data_frame"), verbose = metOption("metaplot_verbose_scatter",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +14,8 @@
 \item{...}{passed to fun}
 
 \item{fun}{function to draw the plot}
+
+\item{verbose}{generate messages describing process}
 }
 \description{
 Scatterplot method for class 'data.frame'. Parses arguments and generates the call: fun(x, yvar, xvar, groups, facets, ...).

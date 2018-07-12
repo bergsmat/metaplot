@@ -5,7 +5,8 @@
 \title{Boxplot Method for Data Frame}
 \usage{
 \method{boxplot}{data.frame}(x, ..., fun = getOption("metaplot_box",
-  "boxplot_data_frame"))
+  "boxplot_data_frame"), verbose = metOption("metaplot_verbose_boxplot",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +14,8 @@
 \item{...}{passed to fun}
 
 \item{fun}{function that does the actual plotting}
+
+\item{verbose}{generate messages describing process}
 }
 \description{
 Boxplot for data.frame.  Parses arguments and generates the call: fun(x, yvar, xvar, facets, ...).

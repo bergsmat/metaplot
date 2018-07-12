@@ -82,6 +82,9 @@ library(csv)
 x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
 # options(metaplot_gg = TRUE)
+# options(metaplot_verbose = TRUE)  # all messages; equiv. to metaplot(verbose = T,...)
+# options(metaplot_verbose_ = TRUE) # plot function messages
+# options(metaplot_verbose_densplot = TRUE) # densplot messages
 # sample plots
 x \%>\% metaplot(sres)
 x \%>\% metaplot(site)

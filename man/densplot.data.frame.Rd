@@ -5,7 +5,8 @@
 \title{Densplot Method for Data Frame}
 \usage{
 \method{densplot}{data.frame}(x, ..., fun = getOption("metaplot_densplot",
-  "densplot_data_frame"))
+  "densplot_data_frame"), verbose = metOption("metaplot_verbose_densplot",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -13,6 +14,8 @@
 \item{...}{passed to fun}
 
 \item{fun}{plotting function}
+
+\item{verbose}{generate messages describing process}
 }
 \description{
 Plot density for object of class 'data.frame'. Parses arguments and generates the call: fun(x, xvar, groups, facets,...).

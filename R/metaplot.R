@@ -85,6 +85,9 @@ globalVariables('axisTicks')
 #' x %<>% pack
 
 #' # options(metaplot_gg = TRUE)
+#' # options(metaplot_verbose = TRUE)  # all messages; equiv. to metaplot(verbose = T,...)
+#' # options(metaplot_verbose_ = TRUE) # plot function messages
+#' # options(metaplot_verbose_densplot = TRUE) # densplot messages
 
 #' # sample plots
 #' x %>% metaplot(sres)
@@ -156,7 +159,7 @@ metaplot <- function(x,...)UseMethod('metaplot')
 #' @param bivariate function for arguments that resolve to two numerics (see rules)
 #' @param multivariate function for more than two numeric arguments
 #' @param categorical function for categorical arguments
-#' @param verbose logical: whether to explain internal choices
+#' @param verbose generate messages describing process; passed to called functions if explicitly supplied
 #' @param ... passed arguments
 #' @import encode
 #' @family methods
@@ -295,7 +298,7 @@ metaplot.data.frame <- function(
   anon <- vars
   if(verbose) message('found these anonymous arguments: ', paste(vars, collapse = ', '))
   # now x, vars, and other are passable
-  args <- c(list(x = x),vars,other)
+  args <- c(list(x = x),vars,other,if(missing(verbose)) NULL else list(verbose = verbose))
   # where to pass them depends only on properties of prime variables
   # prime is all y, if present, and x
   # prime is defined as all vars before groups or facets, if present

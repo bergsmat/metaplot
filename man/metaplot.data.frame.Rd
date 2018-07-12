@@ -27,7 +27,7 @@
 
 \item{categorical}{function for categorical arguments}
 
-\item{verbose}{logical: whether to explain internal choices}
+\item{verbose}{generate messages describing process; passed to called functions if explicitly supplied}
 }
 \description{
 Creates a metaplot for class 'data.frame'.  Implements a rule to decided whether to make a density plot, a boxplot, a scatter plot, or a scatterplot matrix, given the supplied column names.

@@ -322,6 +322,7 @@ boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col,
 #' @param x data.frame
 #' @param ... passed to fun
 #' @param fun function that does the actual plotting
+#' @param verbose generate messages describing process
 #' @export
 #' @importFrom rlang f_rhs
 #' @family mixedvariate plots
@@ -350,7 +351,8 @@ boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col,
 boxplot.data.frame <- function(
   x,
   ...,
-  fun = getOption('metaplot_box','boxplot_data_frame')
+  fun = getOption('metaplot_box','boxplot_data_frame'),
+  verbose = metOption('metaplot_verbose_boxplot',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -371,6 +373,9 @@ boxplot.data.frame <- function(
     facets = facets
   )
   args <- c(formal, other)
+  if(verbose){
+    if(is.character(fun))message('calling ', fun) else message('calling fun')
+  }
   do.call(fun, args)
 }
 
