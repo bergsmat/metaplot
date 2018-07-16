@@ -4,12 +4,14 @@
 \alias{corsplom_panel_correlation}
 \title{Correlation Panel Function for Metaplot Corsplom}
 \usage{
-corsplom_panel_correlation(x, y, ...)
+corsplom_panel_correlation(x, y, use = "pairwise.complete.obs", ...)
 }
 \arguments{
 \item{x}{x values}
 
 \item{y}{y values}
+
+\item{use}{passed to \code{\link[stats]{cor}}}
 
 \item{...}{passed arguments}
 }

@@ -315,6 +315,7 @@ corsplom.data.frame <- function(
 #' @param smooth.lty ignored
 #' @param smooth.lwd ignored
 #' @param smooth.alpha ignored
+#' @param use passed to \code{\link[stats]{cor}}
 #' @param ... ignored
 #' @keywords internal
 #' @export
@@ -322,7 +323,7 @@ corsplom.data.frame <- function(
 #' @family corsplom
 corsplom_gg_correlation = function(
   data, mapping, col = metOption('metaplot_point_col_corsplom_gg','blue'),
-  smooth.col, smooth.lty, smooth.lwd, smooth.alpha, ...
+  smooth.col, smooth.lty, smooth.lwd, smooth.alpha, use = 'pairwise.complete.obs', ...
 ){
   x <- as.character(mapping$x)
   x <- data[[x]]
@@ -344,7 +345,7 @@ corsplom_gg_correlation = function(
     'text',
     x = x0,
     y = y0,
-    label = paste('r =',round(cor(x,y),3))
+    label = paste('r =',round(cor(x,y, use = use),3))
   )
   p <- p + theme(
     aspect.ratio = 1,

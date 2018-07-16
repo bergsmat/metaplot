@@ -6,7 +6,7 @@
 \usage{
 corsplom_gg_correlation(data, mapping,
   col = metOption("metaplot_point_col_corsplom_gg", "blue"), smooth.col,
-  smooth.lty, smooth.lwd, smooth.alpha, ...)
+  smooth.lty, smooth.lwd, smooth.alpha, use = "pairwise.complete.obs", ...)
 }
 \arguments{
 \item{data}{data}
@@ -22,6 +22,8 @@ corsplom_gg_correlation(data, mapping,
 \item{smooth.lwd}{ignored}
 
 \item{smooth.alpha}{ignored}
+
+\item{use}{passed to \code{\link[stats]{cor}}}
 
 \item{...}{ignored}
 }

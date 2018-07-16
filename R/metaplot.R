@@ -296,7 +296,7 @@ metaplot.data.frame <- function(
   other <- args[names(args) != '']
   vars <- sapply(vars, as.character)
   anon <- vars
-  if(verbose) message('found these anonymous arguments: ', paste(vars, collapse = ', '))
+  if(verbose) message('found these anonymous arguments: ', paste(anon, collapse = ', '))
   # now x, vars, and other are passable
   args <- c(list(x = x),vars,other,if(missing(verbose)) NULL else list(verbose = verbose))
   # where to pass them depends only on properties of prime variables

@@ -79,17 +79,18 @@ corsplom_panel_scatter = function(
 #' Default lower panel function for corsplom_data_frame. Plots Pearson correlation coefficient.
 #' @param x x values
 #' @param y y values
+#' @param use passed to \code{\link[stats]{cor}}
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
 #' @family panel functions
 #' @family corsplom
-corsplom_panel_correlation = function(x, y, ...) {
+corsplom_panel_correlation = function(x, y, use = 'pairwise.complete.obs',...) {
   x1 <- range(x,na.rm = T)
   y1 <- range(y,na.rm = T)
   x0 <- min(x1)+(max(x1)-min(x1))/2
   y0 <- min(y1)+(max(y1)-min(y1))/2
-  panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y),3) ))
+  panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y,use = use),3) ))
 }
 
 #' Diagonal Panel Function for Metaplot Corsplom
@@ -529,7 +530,7 @@ metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial'
 
 #' Coerce to Factor using Encoding if Present
 #'
-#' Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed.
+#' Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed. Other attributes beside 'class' are preserved.
 #'
 #' @export
 #' @param x vector or factor
@@ -551,6 +552,9 @@ metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial'
 #'
 #'
 as_factor <- function(x){
+  at <- attributes(x)
+  at[['guide']] <- NULL
+  at[['class']] <- NULL
   guide <- attr(x,'guide') # may be NULL (not encoded)
   vals <- if(is.factor(x)) levels(x) else unique(x)
   vals <- vals[!is.na(vals)]
@@ -567,6 +571,7 @@ as_factor <- function(x){
   x <- as.character(x)
   x <- decode(x, encoding = encoding)
   x <- factor(x)
+  for(a in names(at))attr(x,nm) <- at[[nm]]
   x
 }
 
