@@ -156,15 +156,15 @@ scatter_data_frame <- function(
   ref.lwd = metOption('metaplot_ref_lwd_scatter',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter',1),
 
-  xref.col = metOption('metaplot_ref_col_x_scatter',ref.col),
-  xref.lty = metOption('metaplot_ref_lty_x_scatter',ref.lty),
-  xref.lwd = metOption('metaplot_ref_lwd_x_scatter',ref.lwd),
-  xref.alpha = metOption('metaplot_ref_x_alpha_scatter',ref.alpha),
+  xref.col = metOption('metaplot_ref_col_x_scatter',NULL),
+  xref.lty = metOption('metaplot_ref_lty_x_scatter',NULL),
+  xref.lwd = metOption('metaplot_ref_lwd_x_scatter',NULL),
+  xref.alpha = metOption('metaplot_ref_x_alpha_scatter',NULL),
 
-  yref.col = metOption('metaplot_ref_col_y_scatter',ref.col),
-  yref.lty = metOption('metaplot_ref_lty_y_scatter',ref.lty),
-  yref.lwd = metOption('metaplot_ref_lwd_y_scatter',ref.lwd),
-  yref.alpha = metOption('metaplot_ref_alpha_y_scatter',ref.alpha),
+  yref.col = metOption('metaplot_ref_col_y_scatter',NULL),
+  yref.lty = metOption('metaplot_ref_lty_y_scatter',NULL),
+  yref.lwd = metOption('metaplot_ref_lwd_y_scatter',NULL),
+  yref.alpha = metOption('metaplot_ref_alpha_y_scatter',NULL),
 
   smooth.lty = metOption('metaplot_smooth_lty_scatter','dashed'),
   smooth.lwd = metOption('metaplot_smooth_lwd_scatter',1),
@@ -237,6 +237,17 @@ scatter_data_frame <- function(
   # groups is factor if imputed
 
   # groups now assigned and is factor; and yvar is singular
+
+  # yref and xref aesthetics are NULL by default.
+  # coerce to ref aesthetics
+  if(is.null(yref.col))yref.col <- ref.col
+  if(is.null(yref.lty))yref.lty <- ref.lty
+  if(is.null(yref.lwd))yref.lwd <- ref.lwd
+  if(is.null(yref.alpha))yref.alpha <- ref.alpha
+  if(is.null(xref.col))xref.col <- ref.col
+  if(is.null(xref.lty))xref.lty <- ref.lty
+  if(is.null(xref.lwd))xref.lwd <- ref.lwd
+  if(is.null(xref.alpha))xref.alpha <- ref.alpha
 
   # yref
   yref
@@ -866,15 +877,15 @@ scatter_panel <- function(
   ref.lwd = metOption('metaplot_ref_lwd_scatter_panel',1),
   ref.alpha = metOption('metaplot_ref_alpha_scatter_panel',1),
 
-  xref.col = metOption('metaplot_ref_col_x_scatter_panel',ref.col),
-  xref.lty = metOption('metaplot_ref_lty_x_scatter_panel',ref.lty),
-  xref.lwd = metOption('metaplot_ref_lwd_x_scatter_panel',ref.lwd),
-  xref.alpha = metOption('metaplot_ref_alpha_x_scatter_panel',ref.alpha),
+  xref.col = metOption('metaplot_ref_col_x_scatter_panel',NULL),
+  xref.lty = metOption('metaplot_ref_lty_x_scatter_panel',NULL),
+  xref.lwd = metOption('metaplot_ref_lwd_x_scatter_panel',NULL),
+  xref.alpha = metOption('metaplot_ref_alpha_x_scatter_panel',NULL),
 
-  yref.col = metOption('metaplot_ref_col_y_scatter_panel',ref.col),
-  yref.lty = metOption('metaplot_ref_lty_y_scatter_panel',ref.lty),
-  yref.lwd = metOption('metaplot_ref_lwd_Y-scatter_panel',ref.lwd),
-  yref.alpha = metOption('metaplot_ref_alpha_y_scatter_panel',ref.alpha),
+  yref.col = metOption('metaplot_ref_col_y_scatter_panel',NULL),
+  yref.lty = metOption('metaplot_ref_lty_y_scatter_panel',NULL),
+  yref.lwd = metOption('metaplot_ref_lwd_Y-scatter_panel',NULL),
+  yref.alpha = metOption('metaplot_ref_alpha_y_scatter_panel',NULL),
 
   ysmooth = metOption('metaplot_smooth_y_scatter_panel',FALSE),
   xsmooth = metOption('metaplot_smooth_x_scatter_panel',FALSE),
@@ -960,6 +971,19 @@ scatter_panel <- function(
     y = ypos(loc, range = current.panel.limits()$ylim),
     label = match.fun(msg)(x = x, y = y, ...)
   )
+
+  # yref and xref aesthetics are NULL by default.
+  # coerce to ref aesthetics
+  if(is.null(yref.col))yref.col <- ref.col
+  if(is.null(yref.lty))yref.lty <- ref.lty
+  if(is.null(yref.lwd))yref.lwd <- ref.lwd
+  if(is.null(yref.alpha))yref.alpha <- ref.alpha
+  if(is.null(xref.col))xref.col <- ref.col
+  if(is.null(xref.lty))xref.lty <- ref.lty
+  if(is.null(xref.lwd))xref.lwd <- ref.lwd
+  if(is.null(xref.alpha))xref.alpha <- ref.alpha
+
+
   if(is.character(yref)) yref <- match.fun(yref)
   if(is.function(yref)) yref <- yref(y, x, ...)
   yref <- as.numeric(yref)

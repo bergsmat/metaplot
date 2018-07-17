@@ -571,7 +571,7 @@ as_factor <- function(x){
   x <- as.character(x)
   x <- decode(x, encoding = encoding)
   x <- factor(x)
-  for(a in names(at))attr(x,nm) <- at[[nm]]
+  for(a in names(at))attr(x,a) <- at[[a]]
   x
 }
 
