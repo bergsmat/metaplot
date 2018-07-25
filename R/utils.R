@@ -71,7 +71,7 @@ corsplom_panel_scatter = function(
   ...
 ){
   panel.xyplot(x,y,col = col, ...)
-  panel.loess(x,y,col = smooth.col, lty = smooth.lty, lwd = smooth.lwd, alpha = smooth.alpha)
+  try(silent = TRUE, suppressWarnings(panel.loess(x,y,col = smooth.col, lty = smooth.lty, lwd = smooth.lwd, alpha = smooth.alpha)))
 }
 
 #' Correlation Panel Function for Metaplot Corsplom
@@ -90,6 +90,8 @@ corsplom_panel_correlation = function(x, y, use = 'pairwise.complete.obs',...) {
   y1 <- range(y,na.rm = T)
   x0 <- min(x1)+(max(x1)-min(x1))/2
   y0 <- min(y1)+(max(y1)-min(y1))/2
+  stat <- try(silent = TRUE, round(cor(x,y, use = use), 3))
+  if(class(stat) == 'try-error') stat <- ''
   panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y,use = use),3) ))
 }
 
@@ -530,7 +532,7 @@ metastats <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial'
 
 #' Coerce to Factor using Encoding if Present
 #'
-#' Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed. Other attributes beside 'class' are preserved.
+#' Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed. Other attributes beside 'class' and 'levels' are preserved.
 #'
 #' @export
 #' @param x vector or factor
@@ -555,6 +557,7 @@ as_factor <- function(x){
   at <- attributes(x)
   at[['guide']] <- NULL
   at[['class']] <- NULL
+  at[['levels']] <- NULL
   guide <- attr(x,'guide') # may be NULL (not encoded)
   vals <- if(is.factor(x)) levels(x) else unique(x)
   vals <- vals[!is.na(vals)]
@@ -570,7 +573,7 @@ as_factor <- function(x){
   encoding <- encode(codes, labels = decodes)
   x <- as.character(x)
   x <- decode(x, encoding = encoding)
-  x <- factor(x)
+  #x <- factor(x)
   for(a in names(at))attr(x,a) <- at[[a]]
   x
 }

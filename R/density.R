@@ -286,8 +286,7 @@ range <- range(vals)
 args <- list(
   formula,
   data = x,
-  from = range[[1]],
-  to = range[[2]],
+  #cut = 0,
   groups = if(is.null(groups)) NULL else as.formula(paste('~',groups)),
   xlab = xlab,
   ref = ref,

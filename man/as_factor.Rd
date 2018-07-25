@@ -13,7 +13,7 @@ as_factor(x)
 factor
 }
 \description{
-Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed. Other attributes beside 'class' are preserved.
+Coerces to factor, blending levels with encoding, if present. Vectors without encodings (or with empty encodings) acquire levels equal to \code{unique(x)} (notice that storage order controls presentation order). Vectors with non-empty encodings are decoded after harmonizing the encoding and the actual data. Factors with encodings defer to order and display value of the encoding as much as possible.  Missing levels are supplied.  Unused levels are removed. Other attributes beside 'class' and 'levels' are preserved.
 }
 \examples{
 library(magrittr)
