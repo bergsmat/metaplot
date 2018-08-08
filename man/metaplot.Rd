@@ -103,6 +103,8 @@ x \%>\% metaplot(conc, time, , subject)
 x \%>\% metaplot(conc, time, subject, site)
 x \%>\% metaplot(conc, time, subject, site, arm)
 x \%>\% metaplot(lKe, lKa, lCl)
+
+\donttest{
 x \%>\% metaplot(
   lKe, lKa, lCl,
   col = 'black',smooth.col = 'red', pin.col = 'red',
@@ -138,6 +140,7 @@ x \%>\% mutate(arm = arm \%>\%
   metaplot(conc, arm) # collapse cases
 
 
+}
 }
 \seealso{
 Other generic functions: \code{\link{axislabel}},

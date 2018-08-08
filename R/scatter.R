@@ -44,6 +44,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param key list: passed to \code{\link[lattice]{xyplot}} as \code{auto.key} or to \code{\link[ggplot2]{theme}}; can be a function groups name, groups levels, points, lines, space, gg, and \dots .  See \code{\link{metaplot_key}}.
 #' @param as.table passed to \code{\link[lattice]{xyplot}}
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
+#' @param isoprepanel passed to \code{\link[lattice]{xyplot}} if iso is TRUE
 #' @param scales passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)
 #' @param panel name or definition of panel function
 #' @param colors replacements for default colors in group order
@@ -137,6 +138,7 @@ scatter_data_frame <- function(
   key = metOption('metaplot_key_scatter','metaplot_key'),
   as.table = metOption('metaplot_astable_scatter',TRUE),
   prepanel = metOption('metaplot_prepanel_scatter', NULL),
+  isoprepanel = metOption('metaplot_isoprepanel_scatter', iso_prepanel),
   scales = metOption('metaplot_scales_scatter',NULL),
   panel = metOption('metaplot_panel_scatter',scatter_panel),
   colors = metOption('metaplot_colors_scatter',NULL),
@@ -268,7 +270,7 @@ scatter_data_frame <- function(
   }
 
   if(is.na(iso)) iso <- FALSE
-  if(iso)if(is.null(prepanel))prepanel <- iso_prepanel
+  if(iso)prepanel <- isoprepanel
 
   if(na.rm) {
     #y %<>% filter(is.defined(UQ(yvar)) & is.defined(UQ(xvar))) # preserves attributes
@@ -635,6 +637,10 @@ scatter_data_frame <- function(
     main = main,
     sub = sub,
     .data = y,
+    xvar = xvar,
+    yvar = yvar,
+    groups_ = groups,
+    facets = facets,
     ref.col = ref.col,
     ref.lty = ref.lty,
     ref.lwd = ref.lwd,

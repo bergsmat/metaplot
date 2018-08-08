@@ -111,6 +111,7 @@ x \%>\% metaplot(arm, site, cohort, gg = T)
 x \%>\% metaplot(arm, site, cohort, space = 'top')
 x \%>\% metaplot(arm, site, , cohort)
 x \%>\% metaplot(arm, site, , cohort, gg = T)
+\donttest{
 x \%>\% metaplot(arm, site, , cohort, rot = c(0,90))
 x \%>\% metaplot(arm, site, , cohort, rot = c(0,90), gg = T)
 x \%>\% metaplot(arm, site, , cohort, rot = c(45, 45))
@@ -119,6 +120,7 @@ x \%>\% metaplot(subject,cohort,arm, site, lines = F, rot = c(45,45), gg=T)
 # panel-specific axis not well-supported for gg version
 x \%>\% metaplot(subject,cohort,,arm, site)
 x \%>\% metaplot(subject,cohort,,arm, site, gg=T)
+}
 }
 \seealso{
 \code{\link{categorical_panel}}

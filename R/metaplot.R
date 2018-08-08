@@ -108,6 +108,8 @@ globalVariables('axisTicks')
 #' x %>% metaplot(conc, time, subject, site)
 #' x %>% metaplot(conc, time, subject, site, arm)
 #' x %>% metaplot(lKe, lKa, lCl)
+#'
+#' \donttest{
 
 #' x %>% metaplot(
 #'   lKe, lKa, lCl,
@@ -146,6 +148,7 @@ globalVariables('axisTicks')
 #'   metaplot(conc, arm) # collapse cases
 #'
 #'
+#'}
 metaplot <- function(x,...)UseMethod('metaplot')
 
 

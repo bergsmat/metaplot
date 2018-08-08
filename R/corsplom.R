@@ -326,8 +326,12 @@ corsplom_gg_correlation = function(
   smooth.col, smooth.lty, smooth.lwd, smooth.alpha, use = 'pairwise.complete.obs', ...
 ){
   x <- as.character(mapping$x)
-  x <- data[[x]]
+  x <- x[x != '~']
+  x <- x[[1]]
   y <- as.character(mapping$y)
+  y <- y[y != '~']
+  y <- y[[1]]
+  x <- data[[x]]
   y <- data[[y]]
   x1 <- range(x,na.rm = T)
   y1 <- range(y,na.rm = T)
@@ -386,7 +390,11 @@ corsplom_gg_scatter = function(
   ...
 ){
   x <- as.character(mapping$x)
+  x <- x[x != '~']
+  x <- x[[1]]
   y <- as.character(mapping$y)
+  y <- y[y != '~']
+  y <- y[[1]]
   lim1 <- range(data[[x]],na.rm = TRUE)
   lim2 <- range(data[[y]],na.rm = TRUE)
 
@@ -451,6 +459,8 @@ corsplom_gg_diagonal <- function(
   density <- rep(density, length.out = 4)
   names(density) <- c('top','right','bottom','left')
   x <- as.character(mapping$x)
+  x <- x[x != '~']
+  x <- x[[1]]
   data$x <- data[[x]]
   lim <- range(data$x,na.rm = TRUE)
   lo <- lim[[1]]

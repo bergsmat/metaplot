@@ -22,6 +22,7 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   key = metOption("metaplot_key_scatter", "metaplot_key"),
   as.table = metOption("metaplot_astable_scatter", TRUE),
   prepanel = metOption("metaplot_prepanel_scatter", NULL),
+  isoprepanel = metOption("metaplot_isoprepanel_scatter", iso_prepanel),
   scales = metOption("metaplot_scales_scatter", NULL),
   panel = metOption("metaplot_panel_scatter", scatter_panel),
   colors = metOption("metaplot_colors_scatter", NULL),
@@ -107,6 +108,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 \item{as.table}{passed to \code{\link[lattice]{xyplot}}}
 
 \item{prepanel}{passed to \code{\link[lattice]{xyplot}} (guessed if NULL)}
+
+\item{isoprepanel}{passed to \code{\link[lattice]{xyplot}} if iso is TRUE}
 
 \item{scales}{passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)}
 
