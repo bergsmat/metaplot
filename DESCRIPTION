@@ -1,13 +1,13 @@
 Package: metaplot
 Type: Package
 Title: Data-Driven Diagnostic Plots
-Version: 0.7.0
+Version: 0.7.1
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Designs plots in terms of core structure.  See 'example(metaplot)'.
  Primary arguments are (unquoted) column names; order and type (numeric or not)
  dictate the resulting plot.  Specify any y variables, x variable, any groups variable,
- and any conditoning variables to metaplot() to generate density plots, boxplots, 
+ and any conditioning variables to metaplot() to generate density plots, boxplots, 
  mosaic plots, scatterplots, scatterplot matrices, or conditioned plots. Use multiplot() 
  to arrange plots in grids. Wherever present, scalar column attributes 'label' and 'guide' 
  are honored, producing fully annotated plots with minimal effort. Attribute 'guide' 
