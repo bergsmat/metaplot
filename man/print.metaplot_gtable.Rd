@@ -21,7 +21,7 @@ modify plot and print functionality. Print method for 'gtable' summarizes the ob
 This method invokes the plot method to give interactive behavior more like splom().
 }
 \seealso{
-\code{\link{corsplom}}
+\code{\link{corsplom}} \code{\link{multiplot}}
 
 Other methods: \code{\link{axislabel.data.frame}},
   \code{\link{boxplot.data.frame}},

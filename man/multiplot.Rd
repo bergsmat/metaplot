@@ -13,6 +13,9 @@ multiplot(..., nrow = NULL, ncol = NULL)
 
 \item{ncol}{number of columns of plots}
 }
+\value{
+metaplot_gtable
+}
 \description{
 Arranges mutiple trellis plots or ggplots in a grid, automatically choosing number of rows and columns.  By default, number of rows is one less than or equal to the number of columns.
 }

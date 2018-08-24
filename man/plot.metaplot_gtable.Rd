@@ -14,7 +14,7 @@
 \item{\dots}{ignored}
 }
 \value{
-gtable
+(invisible) gtable
 }
 \description{
 Plots a metaplot ggplot2-type splom. Underlying object type is 'gtable'.

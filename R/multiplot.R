@@ -8,6 +8,7 @@
 #' @param ncol number of columns of plots
 #' @importFrom gridExtra grid.arrange
 #' @seealso \code{\link[gridExtra]{grid.arrange}}
+#' @return metaplot_gtable
 #' @examples
 #' library(lattice)
 #' a <- xyplot(
@@ -50,21 +51,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   # now nrow is defined for sure
 
   #if(gg)return(do.call(grid.arrange, c(x,list(ncol = ncol))))
-  return(do.call(grid.arrange, c(x,list(ncol = ncol, nrow = nrow))))
-#
-#   y <- expand.grid(
-#     run = seq_len(ncol),
-#     rise = seq_len(nrow)
-#   )
-#   stopifnot(nrow(y) >= len)
-#   y <- y[nms,]
-#   printOne <- function(z,x,y,nx,ny,more)print(z,split=c(x,y,nx,ny),more = more)
-#   for(i in nms)printOne(
-#     z = x[[i]],
-#     x = y[i,'run'],
-#     y = y[i,'rise'],
-#     nx = ncol,
-#     ny = nrow,
-#     more = !(i == len)
-#   )
+  res <- do.call(grid.arrange, c(x,list(ncol = ncol, nrow = nrow)))
+  class(res) <- c('metaplot_gtable',class(res))
+  res
 }

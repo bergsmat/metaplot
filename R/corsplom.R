@@ -585,7 +585,7 @@ corsplom_gg_diagonal <- function(
 #' @param \dots ignored
 #' @keywords internal
 #' @export
-#' @return gtable
+#' @return (invisible) gtable
 #' @family methods
 #' @family corsplom
 #' @seealso \code{\link{corsplom}}
@@ -593,6 +593,7 @@ corsplom_gg_diagonal <- function(
 plot.metaplot_gtable <- function(x, y, ...){
   class(x) <- setdiff(class(x), 'metaplot_gtable')
   grid.arrange(x)
+  invisible(x)
 }
 #' Print a Metaplot GG Splom
 #'
@@ -608,6 +609,6 @@ plot.metaplot_gtable <- function(x, y, ...){
 #' @return gtable
 #' @family methods
 #' @family corsplom
-#' @seealso \code{\link{corsplom}}
+#' @seealso \code{\link{corsplom}} \code{\link{multiplot}}
 
 print.metaplot_gtable <- function(x, ...)plot(x,...)
