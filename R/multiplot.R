@@ -6,8 +6,8 @@
 #' @param ... trellis or ggplot objects
 #' @param nrow number of rows of plots
 #' @param ncol number of columns of plots
-#' @importFrom gridExtra grid.arrange
-#' @seealso \code{\link[gridExtra]{grid.arrange}}
+#' @importFrom gridExtra arrangeGrob
+#' @seealso \code{\link[gridExtra]{arrangeGrob}}
 #' @return metaplot_gtable
 #' @examples
 #' library(lattice)
@@ -50,8 +50,7 @@ multiplot <- function(..., nrow = NULL, ncol = NULL){
   if(is.null(nrow)) nrow <- ceiling(len/ncol)
   # now nrow is defined for sure
 
-  #if(gg)return(do.call(grid.arrange, c(x,list(ncol = ncol))))
-  res <- do.call(grid.arrange, c(x,list(ncol = ncol, nrow = nrow)))
+  res <- arrangeGrob(grobs = x, ncol = ncol, nrow = nrow)
   class(res) <- c('metaplot_gtable',class(res))
   res
 }

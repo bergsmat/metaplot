@@ -526,7 +526,8 @@ scatter_data_frame <- function(
     yref.lwd <- rep(yref.lwd,  length.out = nyref)
     yref.alpha<-rep(yref.alpha,length.out = nyref)
 
-    panels <- nrow(unique(x[facets]))
+    panels <- 0
+    if(length(facets))panels <- nrow(unique(x[facets]))
     if(!panels) panels <- 1
 
     xref.col <- rep(xref.col,  times = panels)

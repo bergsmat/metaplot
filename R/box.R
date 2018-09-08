@@ -209,7 +209,8 @@ boxplot_data_frame <- function(
       ggtitle(main, subtitle = sub)
 
     # scale aesthetics
-    panels <- nrow(unique(y[facets]))
+    panels <- 0
+    if(length(facets))panels <- nrow(unique(y[facets]))
     if(!panels) panels <- 1
 
     ref.col <- rep(ref.col, length.out = length(ref))

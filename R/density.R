@@ -227,7 +227,8 @@ if(gg){
   plot <- plot +  ggtitle(main, subtitle = sub)
 
   # scale aesthetics
-  panels <- nrow(unique(x[facets]))
+  panels <- 0
+  if(length(facets))panels <- nrow(unique(x[facets]))
   if(!panels) panels <- 1
 
   ref.col <- rep(ref.col, length.out = length(ref))

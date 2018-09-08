@@ -2,24 +2,24 @@
 % Please edit documentation in R/corsplom.R
 \name{plot.metaplot_gtable}
 \alias{plot.metaplot_gtable}
-\title{Plot a Metaplot GG Splom}
+\title{Plot a Metaplot_gtable}
 \usage{
-\method{plot}{metaplot_gtable}(x, y, ...)
+\method{plot}{metaplot_gtable}(x, ...)
 }
 \arguments{
 \item{x}{metaplot_gtable}
 
-\item{y}{ignored}
-
 \item{\dots}{ignored}
+
+\item{y}{ignored}
 }
 \value{
 (invisible) gtable
 }
 \description{
-Plots a metaplot ggplot2-type splom. Underlying object type is 'gtable'.
-Defaults for \code{link{corsplom_data_frame}} prepend class 'metaplot_gtable' to
-modify plot and print functionality. This method invokes \code{\link[gridExtra]{grid.arrange}}.
+Plots a metaplot_gtable. Underlying object type is 'gtable'.
+Defaults for \code{link{corsplom_data_frame}} and \code{link{multiplot}} prepend class 'metaplot_gtable' to
+modify plot and print functionality.
 }
 \seealso{
 \code{\link{corsplom}}

@@ -41,5 +41,5 @@ multiplot(a,a,a,a,a,a,a,a, ncol = 4, nrow = 3)
 multiplot(multiplot(a,a), a)
 }
 \seealso{
-\code{\link[gridExtra]{grid.arrange}}
+\code{\link[gridExtra]{arrangeGrob}}
 }

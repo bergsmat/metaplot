@@ -574,11 +574,11 @@ corsplom_gg_diagonal <- function(
   p
 }
 
-#' Plot a Metaplot GG Splom
+#' Plot a Metaplot_gtable
 #'
-#' Plots a metaplot ggplot2-type splom. Underlying object type is 'gtable'.
-#' Defaults for \code{link{corsplom_data_frame}} prepend class 'metaplot_gtable' to
-#' modify plot and print functionality. This method invokes \code{\link[gridExtra]{grid.arrange}}.
+#' Plots a metaplot_gtable. Underlying object type is 'gtable'.
+#' Defaults for \code{link{corsplom_data_frame}} and \code{link{multiplot}} prepend class 'metaplot_gtable' to
+#' modify plot and print functionality.
 #'
 #' @param x metaplot_gtable
 #' @param y ignored
@@ -588,17 +588,18 @@ corsplom_gg_diagonal <- function(
 #' @return (invisible) gtable
 #' @family methods
 #' @family corsplom
+#' @importFrom grid grid.newpage grid.draw
 #' @seealso \code{\link{corsplom}}
 
-plot.metaplot_gtable <- function(x, y, ...){
-  class(x) <- setdiff(class(x), 'metaplot_gtable')
-  grid.arrange(x)
-  invisible(x)
+plot.metaplot_gtable <- function(x, ...){
+  grid.newpage()
+  grid.draw(x)
 }
-#' Print a Metaplot GG Splom
+
+#' Print a Metaplot_gtable
 #'
-#' Prints a metaplot ggplot2-type splom. Underlying object type is 'gtable'.
-#' Defaults for \code{link{corsplom_data_frame}} prepend class 'metaplot_gtable' to
+#' Prints a metaplot_gtable. Underlying object type is 'gtable'.
+#' Defaults for \code{link{corsplom_data_frame}} and \code{link{multiplot}} prepend class 'metaplot_gtable' to
 #' modify plot and print functionality. Print method for 'gtable' summarizes the object.
 #' This method invokes the plot method to give interactive behavior more like splom().
 #'

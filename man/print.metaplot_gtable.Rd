@@ -2,7 +2,7 @@
 % Please edit documentation in R/corsplom.R
 \name{print.metaplot_gtable}
 \alias{print.metaplot_gtable}
-\title{Print a Metaplot GG Splom}
+\title{Print a Metaplot_gtable}
 \usage{
 \method{print}{metaplot_gtable}(x, ...)
 }
@@ -15,8 +15,8 @@
 gtable
 }
 \description{
-Prints a metaplot ggplot2-type splom. Underlying object type is 'gtable'.
-Defaults for \code{link{corsplom_data_frame}} prepend class 'metaplot_gtable' to
+Prints a metaplot_gtable. Underlying object type is 'gtable'.
+Defaults for \code{link{corsplom_data_frame}} and \code{link{multiplot}} prepend class 'metaplot_gtable' to
 modify plot and print functionality. Print method for 'gtable' summarizes the object.
 This method invokes the plot method to give interactive behavior more like splom().
 }
