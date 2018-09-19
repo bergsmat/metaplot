@@ -63,11 +63,11 @@ axislabel.data.frame <- function(x, var, log = FALSE, ...){
 corsplom_panel_scatter = function(
   x,
   y,
-  col = metOption('metaplot_point_col_corsplom_panel','#0080ff'),
-  smooth.col = metOption('metaplot_smooth_col_corsplom_panel',col),
-  smooth.lty = metOption('metaplot_smooth_lty_corspom_panel','solid'),
-  smooth.lwd = metOption('metaplot_smooth_lwd_corspom_panel',1),
-  smooth.alpha = metOption('metaplot_smooth_alpha_corsplom_panel',1),
+  col = metOption('point_col_corsplom_panel','#0080ff'),
+  smooth.col = metOption('smooth_col_corsplom_panel',col),
+  smooth.lty = metOption('smooth_lty_corspom_panel','solid'),
+  smooth.lwd = metOption('smooth_lwd_corspom_panel',1),
+  smooth.alpha = metOption('smooth_alpha_corsplom_panel',1),
   ...
 ){
   panel.xyplot(x,y,col = col, ...)
@@ -121,15 +121,15 @@ corsplom_panel_diagonal <- function(
   varname,
   .data,
   density = TRUE,
-  diag.label = metOption('metaplot_diag_label_corsplom_panel',diag_label),
-  pin = metOption('metaplot_pin_loc_corsplom_panel',diag_pin),
-  pin.col = metOption('metaplot_pin_col_corsplom_panel','darkgrey'),
-  pin.alpha = metOption('metaplot_pin_alpha_corsplom_panel',1),
-  dens.col = metOption('metaplot_dens_col_corsplom_panel','grey'),
-  dens.scale = metOption('metaplot_dens_scale_corsplom_panel',0.2),
-  dens.alpha = metOption('metaplot_dens_alpha_corsplom_panel',0.5),
-  as_table = metOption('metaplot_astable_corsplom_panel', FALSE),
-  dens.up = metOption('metaplot_densup_corsplom_panel',TRUE),
+  diag.label = metOption('diag_label_corsplom_panel',diag_label),
+  pin = metOption('pin_loc_corsplom_panel',diag_pin),
+  pin.col = metOption('pin_col_corsplom_panel','darkgrey'),
+  pin.alpha = metOption('pin_alpha_corsplom_panel',1),
+  dens.col = metOption('dens_col_corsplom_panel','grey'),
+  dens.scale = metOption('dens_scale_corsplom_panel',0.2),
+  dens.alpha = metOption('dens_alpha_corsplom_panel',0.5),
+  as_table = metOption('astable_corsplom_panel', FALSE),
+  dens.up = metOption('densup_corsplom_panel',TRUE),
   ...
 ){
   as.table <- as_table
@@ -349,9 +349,9 @@ scatter_panel_ref <- function(a, b, ...){
 #' @param ... ignored
 #'
 diag_label <- function(varname, .data,
-diag_label_simple = metOption('metaplot_diag_label_simple',FALSE),
-diag_label_split = metOption('metaplot_diag_label_split',TRUE),
-diag_symbol_format = metOption('metaplot_diag_symbol_format','wikisym2plotmath'),
+diag_label_simple = metOption('diag_label_simple',FALSE),
+diag_label_split = metOption('diag_label_split',TRUE),
+diag_symbol_format = metOption('diag_symbol_format','wikisym2plotmath'),
 ...){
   stopifnot(length(varname) == 1)
   stopifnot(is.data.frame(.data))
@@ -634,17 +634,19 @@ base_breaks <- function(n = 10){
     axisTicks(log(range(x, na.rm = TRUE)), log = TRUE, n = n)
   }
 }
-#' Get Option with Partial Matching
+#' Get Metaplot Option with Partial Matching
 #'
-#' Gets an option value.  Selects the longest among all leading partial matches.
-#' (Ties are broken by sorting and taking the first.)
-#' This allows multiple options to be set simultaneously, and allows a subset of these to be overridden.
-#' The intended effect is similar to cascading style sheets.
+#' Gets a metaplot option value from  the named list \code{getOption('metaplot')}.
+#' Selects the longest among all leading partial matches (the last if multiple).
+#' Thus related aesthetics can be controlled with a single entry, while
+#' a subset can be overridden (as with cascading style sheets).
+#'
+#' If x is missing a list of all metaplot options is returned.
 #'
 #' @param x a character string holding an option name
 #' @param default the value returned if option is not set
 #' @export
-#' @seealso \code{\link{getOption}}
+#' @seealso \code{\link{getOption}} \code{\link{setOption}}
 #' @examples
 #'
 #' library(magrittr)
@@ -666,10 +668,10 @@ base_breaks <- function(n = 10){
 #' x$conc %<>% structure(reference = 9)
 #'
 #' # Make the reference line green universally.
-#' options(metaplot_ref_col = 'green')
+#' setOption(ref_col = 'green')
 #'
 #' # Make the reference line orange for density plots
-#' options(metaplot_ref_col_dens = 'orange')
+#' setOption(ref_col_dens = 'orange')
 #'
 #' multiplot(
 #' x %>% metaplot(conc, gg = F),
@@ -679,20 +681,55 @@ base_breaks <- function(n = 10){
 #' )
 #'
 #' # Restore defaults
-#' options(metaplot_ref_col = NULL)
-#' options(metaplot_ref_col_dens = NULL)
+#' # setOption() # clears all metaplot options
+#' setOption(ref_col = NULL)
+#' setOption(ref_col_dens = NULL)
 
 
 metOption <- function(x, default = NULL){
-  nms <- names(options())
-  nms <- nms[startsWith(x,nms)]
+  mops <- getOption('metaplot',list())
+  if(missing(x))return(mops)
+  stopifnot(is.list(mops))
+  nms <- names(mops)
+  if(is.null(nms)) return(default)
+  nms <- nms[startsWith(x, nms)]
   if(!length(nms)) return(default)
   len <- nchar(nms)
   max <- max(len)
   nms <- nms[len == max]
-  nms <- sort(nms)
+  nms <- rev(nms)
   nm <- nms[[1]]
-  getOption(nm, default = default)
+  mops[[nm]]
+}
+#' Set or Reset Metaplot Options
+#'
+#' Sets an option value in the list \code{getOption('metaplot')}.
+#' If invoked without named arguments, option 'metaplot' is set to NULL.
+#' Setting an existing option moves it to the end of the list (breaks ties in \code{\link{metOption}}).
+#'
+#' @param ... any metaplot options can be defined, using \code{name = value}.
+#' @return (invisible) character vector of option names that were set or unset
+#' @export
+#' @seealso \code{\link{metOption}}\code{\link{options}}
+#' @examples
+#' example(metOption)
+
+setOption <- function(...){
+  args <- list(...)
+  nms <- names(args)
+  mops <- getOption('metaplot', list())
+  if(length(nms) == 0){
+    options(metaplot = NULL)
+    nms <- names(mops)
+    if(!length(nms)) nms <- character(0)
+    return(nms)
+  }
+  for(i in nms){
+    mops[[i]] <- NULL
+    mops[[i]] <- args[[i]]
+  }
+  options(metaplot = mops)
+  invisible(nms)
 }
 
 metaplot_aspect <- function(aspect, gg){

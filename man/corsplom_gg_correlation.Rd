@@ -5,8 +5,8 @@
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
 corsplom_gg_correlation(data, mapping,
-  col = metOption("metaplot_point_col_corsplom_gg", "blue"), smooth.col,
-  smooth.lty, smooth.lwd, smooth.alpha, use = "pairwise.complete.obs", ...)
+  col = metOption("point_col_corsplom_gg", "blue"), smooth.col, smooth.lty,
+  smooth.lwd, smooth.alpha, use = "pairwise.complete.obs", ...)
 }
 \arguments{
 \item{data}{data}

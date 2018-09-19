@@ -4,9 +4,9 @@
 \alias{categorical.data.frame}
 \title{Categorical Method for Data Frame}
 \usage{
-\method{categorical}{data.frame}(x, ...,
-  fun = getOption("metaplot_categorical", "categorical_data_frame"),
-  verbose = metOption("metaplot_verbose_categorical", FALSE))
+\method{categorical}{data.frame}(x, ..., fun = metOption("categorical",
+  "categorical_data_frame"), verbose = metOption("verbose_categorical",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}

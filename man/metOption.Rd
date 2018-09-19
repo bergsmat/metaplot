@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{metOption}
 \alias{metOption}
-\title{Get Option with Partial Matching}
+\title{Get Metaplot Option with Partial Matching}
 \usage{
 metOption(x, default = NULL)
 }
@@ -12,10 +12,13 @@ metOption(x, default = NULL)
 \item{default}{the value returned if option is not set}
 }
 \description{
-Gets an option value.  Selects the longest among all leading partial matches.
-(Ties are broken by sorting and taking the first.)
-This allows multiple options to be set simultaneously, and allows a subset of these to be overridden.
-The intended effect is similar to cascading style sheets.
+Gets a metaplot option value from  the named list \code{getOption('metaplot')}.
+Selects the longest among all leading partial matches (the last if multiple).
+Thus related aesthetics can be controlled with a single entry, while
+a subset can be overridden (as with cascading style sheets).
+}
+\details{
+If x is missing a list of all metaplot options is returned.
 }
 \examples{
 
@@ -36,10 +39,10 @@ x \%>\% metaplot(conc, arm,  gg = T)
 x$conc \%<>\% structure(reference = 9)
 
 # Make the reference line green universally.
-options(metaplot_ref_col = 'green')
+setOption(ref_col = 'green')
 
 # Make the reference line orange for density plots
-options(metaplot_ref_col_dens = 'orange')
+setOption(ref_col_dens = 'orange')
 
 multiplot(
 x \%>\% metaplot(conc, gg = F),
@@ -49,9 +52,10 @@ x \%>\% metaplot(conc, arm,  gg = T)
 )
 
 # Restore defaults
-options(metaplot_ref_col = NULL)
-options(metaplot_ref_col_dens = NULL)
+# setOption() # clears all metaplot options
+setOption(ref_col = NULL)
+setOption(ref_col_dens = NULL)
 }
 \seealso{
-\code{\link{getOption}}
+\code{\link{getOption}} \code{\link{setOption}}
 }

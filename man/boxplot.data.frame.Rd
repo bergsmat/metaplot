@@ -4,9 +4,8 @@
 \alias{boxplot.data.frame}
 \title{Boxplot Method for Data Frame}
 \usage{
-\method{boxplot}{data.frame}(x, ..., fun = getOption("metaplot_box",
-  "boxplot_data_frame"), verbose = metOption("metaplot_verbose_boxplot",
-  FALSE))
+\method{boxplot}{data.frame}(x, ..., fun = metOption("box",
+  "boxplot_data_frame"), verbose = metOption("verbose_boxplot", FALSE))
 }
 \arguments{
 \item{x}{data.frame}

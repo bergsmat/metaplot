@@ -4,13 +4,12 @@
 \alias{metaplot.data.frame}
 \title{Create Metaplot for Data Frame.}
 \usage{
-\method{metaplot}{data.frame}(x, ...,
-  univariate = getOption("metaplot_univariate", "densplot"),
-  mixedvariate = getOption("metaplot_mixedvariate", "boxplot"),
-  bivariate = getOption("metaplot_bivariate", "scatter"),
-  multivariate = getOption("metaplot_multivariate", "corsplom"),
-  categorical = getOption("metaplot_categorical", "categorical"),
-  verbose = getOption("metaplot_verbose", FALSE))
+\method{metaplot}{data.frame}(x, ..., univariate = metOption("univariate",
+  "densplot"), mixedvariate = metOption("mixedvariate", "boxplot"),
+  bivariate = metOption("bivariate", "scatter"),
+  multivariate = metOption("multivariate", "corsplom"),
+  categorical = metOption("categorical", "categorical"),
+  verbose = metOption("verbose", FALSE))
 }
 \arguments{
 \item{x}{object}

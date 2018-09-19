@@ -84,10 +84,10 @@ globalVariables('axisTicks')
 #' x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 #' x %<>% pack
 
-#' # options(metaplot_gg = TRUE)
-#' # options(metaplot_verbose = TRUE)  # all messages; equiv. to metaplot(verbose = T,...)
-#' # options(metaplot_verbose_ = TRUE) # plot function messages
-#' # options(metaplot_verbose_densplot = TRUE) # densplot messages
+#' # setOption(gg = TRUE)
+#' # setOption(verbose = TRUE)  # all messages; equiv. to metaplot(verbose = T,...)
+#' # setOption(verbose_ = TRUE) # plot function messages
+#' # setOption(verbose_densplot = TRUE) # densplot messages
 
 #' # sample plots
 #' x %>% metaplot(sres)
@@ -286,12 +286,12 @@ metaplot <- function(x,...)UseMethod('metaplot')
 metaplot.data.frame <- function(
   x,
   ...,
-  univariate   = getOption('metaplot_univariate','densplot'),
-  mixedvariate = getOption('metaplot_mixedvariate','boxplot'),
-  bivariate    = getOption('metaplot_bivariate','scatter'),
-  multivariate = getOption('metaplot_multivariate','corsplom'),
-  categorical  = getOption('metaplot_categorical','categorical'),
-  verbose      = getOption('metaplot_verbose',FALSE)
+  univariate   = metOption('univariate','densplot'),
+  mixedvariate = metOption('mixedvariate','boxplot'),
+  bivariate    = metOption('bivariate','scatter'),
+  multivariate = metOption('multivariate','corsplom'),
+  categorical  = metOption('categorical','categorical'),
+  verbose      = metOption('verbose',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)

@@ -4,9 +4,8 @@
 \alias{scatter.data.frame}
 \title{Scatterplot Method for Data Frame}
 \usage{
-\method{scatter}{data.frame}(x, ..., fun = getOption("metaplot_scatter",
-  "scatter_data_frame"), verbose = metOption("metaplot_verbose_scatter",
-  FALSE))
+\method{scatter}{data.frame}(x, ..., fun = metOption("scatter",
+  "scatter_data_frame"), verbose = metOption("verbose_scatter", FALSE))
 }
 \arguments{
 \item{x}{data.frame}
@@ -28,7 +27,7 @@ attr(Theoph$conc,'guide') <- 'mg/L'
 attr(Theoph$Time,'label') <- 'time'
 attr(Theoph$Time,'guide') <- 'h'
 attr(Theoph$Subject,'guide') <- '////'
-# options(metaplot_gg = T)
+# setOption(gg = T)
 scatter(Theoph,conc, Time)
 scatter(Theoph, conc, Time, Subject) # Subject as groups
 scatter(Theoph, conc, Time, , Subject) # Subject as facet
@@ -42,7 +41,7 @@ scatter(Theoph, conc, Time, conf = TRUE, loc = 3, yref = 6, global = TRUE)
 attr(Theoph,'title') <- 'Theophylline'
 scatter(Theoph, conc, Time, main = function(x,...)attr(x,'title'))
 scatter(Theoph, conc, Time, sub= function(x,...)attr(x,'title'))
-options(metaplot_main = function(x,...)attr(x,'title'))
+setOption(main = function(x,...)attr(x,'title'))
 scatter(Theoph, conc, Time)
 }
 }

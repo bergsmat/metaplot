@@ -4,9 +4,8 @@
 \alias{corsplom.data.frame}
 \title{Correlated Scatterplot Matrix Method for Data Frame}
 \usage{
-\method{corsplom}{data.frame}(x, ..., fun = getOption("metaplot_corsplom",
-  "corsplom_data_frame"), verbose = metOption("metaplot_verbose_corsplom",
-  FALSE))
+\method{corsplom}{data.frame}(x, ..., fun = metOption("corsplom",
+  "corsplom_data_frame"), verbose = metOption("verbose_corsplom", FALSE))
 }
 \arguments{
 \item{x}{data.frame}

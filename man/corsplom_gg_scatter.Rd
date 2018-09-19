@@ -5,11 +5,11 @@
 \title{Scatter GG Function for Metaplot Corsplom}
 \usage{
 corsplom_gg_scatter(data, mapping, method = "loess", se = F,
-  col = metOption("metaplot_point_col_corsplom_gg", "blue"),
-  smooth.col = metOption("metaplot_smooth_col_corsplom_gg", "blue"),
-  smooth.alpha = metOption("metaplot_smooth_alpha_corsplom_gg", 1),
-  smooth.lty = metOption("metaplot_smooth_lty_corsplom_gg", "solid"),
-  smooth.lwd = metOption("metaplot_smooth_lwd_corsplom_gg", 1), ...)
+  col = metOption("point_col_corsplom_gg", "blue"),
+  smooth.col = metOption("smooth_col_corsplom_gg", "blue"),
+  smooth.alpha = metOption("smooth_alpha_corsplom_gg", 1),
+  smooth.lty = metOption("smooth_lty_corsplom_gg", "solid"),
+  smooth.lwd = metOption("smooth_lwd_corsplom_gg", 1), ...)
 }
 \arguments{
 \item{data}{data}

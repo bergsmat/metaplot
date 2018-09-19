@@ -5,35 +5,32 @@
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
 corsplom_data_frame(x, xvar = names(x),
-  upper.panel = metOption("metaplot_upperpanel_corsplom", if (gg)
-  corsplom_gg_scatter else corsplom_panel_scatter),
-  lower.panel = metOption("metaplot_lowerpanel_corsplom", if (gg)
-  corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = metOption("metaplot_diagpanel_corsplom", if (gg)
-  corsplom_gg_diagonal else corsplom_panel_diagonal),
-  pscales = metOption("metaplot_pscales_corsplom", 0),
-  xlab = metOption("metaplot_xlab_corsplom", NULL),
-  varname.cex = metOption("metaplot_varname_cex_corsplom", 1),
-  main = metOption("metaplot_main_corsplom", NULL),
-  sub = metOption("metaplot_sub_corsplom", NULL),
-  col = metOption("metaplot_point_col_corsplom", "blue"),
-  smooth.col = metOption("metaplot_smooth_col_corsplom", col),
-  smooth.lty = metOption("metaplot_smooth_lty_corsplom", "solid"),
-  smooth.lwd = metOption("metaplot_smooth_lwd_corsplom", 1),
-  smooth.alpha = metOption("metaplot_smooth_alpha_corsplom", 1),
-  density = metOption("metaplot_density_corsplom", TRUE),
-  diag.label = metOption("metaplot_diag_label_corsplom", diag_label),
-  pin = metOption("metaplot_pin_loc_corsplom", diag_pin),
-  pin.col = metOption("metaplot_pin_col_corsplom", "darkgrey"),
-  pin.alpha = metOption("metaplot_pin_alpha_corsplom", 1),
-  dens.col = metOption("metaplot_dens_col_corsplom", "grey"),
-  dens.scale = metOption("metaplot_dens_scale_corsplom", 0.2),
-  dens.alpha = metOption("metaplot_dens_alpha_corsplom", 0.5),
-  settings = metOption("metaplot_settings_corsplom", NULL),
-  padding = metOption("metaplot_padding_corsplom", 1),
-  as.table = metOption("metaplot_astable_corsplom", FALSE),
-  dens.up = metOption("metaplot_updens_corsplom", TRUE),
-  gg = metOption("metaplot_gg_corsplom", FALSE), ...)
+  upper.panel = metOption("upperpanel_corsplom", if (gg) corsplom_gg_scatter
+  else corsplom_panel_scatter), lower.panel = metOption("lowerpanel_corsplom",
+  if (gg) corsplom_gg_correlation else corsplom_panel_correlation),
+  diag.panel = metOption("diagpanel_corsplom", if (gg) corsplom_gg_diagonal
+  else corsplom_panel_diagonal), pscales = metOption("pscales_corsplom", 0),
+  xlab = metOption("xlab_corsplom", NULL),
+  varname.cex = metOption("varname_cex_corsplom", 1),
+  main = metOption("main_corsplom", NULL), sub = metOption("sub_corsplom",
+  NULL), col = metOption("point_col_corsplom", "blue"),
+  smooth.col = metOption("smooth_col_corsplom", col),
+  smooth.lty = metOption("smooth_lty_corsplom", "solid"),
+  smooth.lwd = metOption("smooth_lwd_corsplom", 1),
+  smooth.alpha = metOption("smooth_alpha_corsplom", 1),
+  density = metOption("density_corsplom", TRUE),
+  diag.label = metOption("diag_label_corsplom", diag_label),
+  pin = metOption("pin_loc_corsplom", diag_pin),
+  pin.col = metOption("pin_col_corsplom", "darkgrey"),
+  pin.alpha = metOption("pin_alpha_corsplom", 1),
+  dens.col = metOption("dens_col_corsplom", "grey"),
+  dens.scale = metOption("dens_scale_corsplom", 0.2),
+  dens.alpha = metOption("dens_alpha_corsplom", 0.5),
+  settings = metOption("settings_corsplom", NULL),
+  padding = metOption("padding_corsplom", 1),
+  as.table = metOption("astable_corsplom", FALSE),
+  dens.up = metOption("updens_corsplom", TRUE),
+  gg = metOption("gg_corsplom", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -107,7 +104,7 @@ library(dplyr)
 library(csv)
 x <- as.csv(system.file(package = 'metaplot', 'extdata/theoph.csv'))
 x \%<>\% pack
-# options(metaplot_gg = TRUE)
+# setOption(gg = TRUE)
 x \%>\% metaplot(lKe, lKa, lCl)
 x \%>\% metaplot(
   lKe, lKa, lCl,

@@ -5,16 +5,16 @@
 \title{Diagonal GG Function for Metaplot Corsplom}
 \usage{
 corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
-  diag.label = metOption("metaplot_diag_label_corsplom_gg", diag_label),
-  pin = metOption("metaplot_pin_loc_corsplom_gg", diag_pin),
-  pin.col = metOption("metaplot_pin_col_corsplom_gg", "darkgrey"),
-  pin.alpha = metOption("metaplot_pin_alpha_corsplom_gg", 1),
-  dens.col = metOption("metaplot_dens_col_corsplom_gg", "grey"),
-  dens.scale = metOption("metaplot_dens_scale_corsplom_gg", 0.2),
-  dens.alpha = metOption("metaplot_dens_alpha_corsplom_gg", 0.5),
-  varname.cex = metOption("metaplot_varname_cex_corsplom_gg", 1),
-  as.table = metOption("metaplot_astable_corsplom_gg", TRUE),
-  dens.up = metOption("metaplot_densup_corsplom_gg", TRUE), ...)
+  diag.label = metOption("diag_label_corsplom_gg", diag_label),
+  pin = metOption("pin_loc_corsplom_gg", diag_pin),
+  pin.col = metOption("pin_col_corsplom_gg", "darkgrey"),
+  pin.alpha = metOption("pin_alpha_corsplom_gg", 1),
+  dens.col = metOption("dens_col_corsplom_gg", "grey"),
+  dens.scale = metOption("dens_scale_corsplom_gg", 0.2),
+  dens.alpha = metOption("dens_alpha_corsplom_gg", 0.5),
+  varname.cex = metOption("varname_cex_corsplom_gg", 1),
+  as.table = metOption("astable_corsplom_gg", TRUE),
+  dens.up = metOption("densup_corsplom_gg", TRUE), ...)
 }
 \arguments{
 \item{data}{data}

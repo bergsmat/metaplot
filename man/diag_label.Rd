@@ -4,11 +4,10 @@
 \alias{diag_label}
 \title{Format a Diagonal Label}
 \usage{
-diag_label(varname, .data,
-  diag_label_simple = metOption("metaplot_diag_label_simple", FALSE),
-  diag_label_split = metOption("metaplot_diag_label_split", TRUE),
-  diag_symbol_format = metOption("metaplot_diag_symbol_format",
-  "wikisym2plotmath"), ...)
+diag_label(varname, .data, diag_label_simple = metOption("diag_label_simple",
+  FALSE), diag_label_split = metOption("diag_label_split", TRUE),
+  diag_symbol_format = metOption("diag_symbol_format", "wikisym2plotmath"),
+  ...)
 }
 \arguments{
 \item{varname}{character}
