@@ -2,6 +2,10 @@ globalVariables('metaplot_groups')
 globalVariables('metaplot_values')
 globalVariables('metaplot_points_alpha')
 globalVariables('metaplot_lines_alpha')
+globalVariables('metaplot_points_sizes')
+globalVariables('metaplot_lines_widths')
+globalVariables('my_lpoints')
+globalVariables('metaplot_lines_alpha')
 
 #' Scatterplot
 #'
@@ -52,7 +56,9 @@ scatter <- function(x,...)UseMethod('scatter')
 #' for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}}). Used for confidence
 #' regions and for filling symbols (pch 21:25).
 #' @param symbols replacements for default symbols in group order (i.e. values of pch)
-#' @param types replacements for default linetypes in group order
+#' @param sizes replacements for default symbol sizes in group order
+#' @param types replacements for default line types in group order
+#' @param widths replacements for default line widths in group order
 #' @param points whether to plot points and fill for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
@@ -93,6 +99,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @import lattice
 #' @importFrom tidyr gather
 #' @importFrom scales alpha
+#' @importFrom grDevices xy.coords
 #' @family bivariate plots
 #' @family metaplot
 #' @family scatter
@@ -144,7 +151,9 @@ scatter_data_frame <- function(
   colors = metOption('colors_scatter',NULL),
   fill = metOption('fill_scatter',NULL),
   symbols = metOption('symbols_scatter',NULL),
+  sizes = metOption('sizes_scatter',1),
   types = metOption('types_scatter','solid'),
+  widths = metOption('widths_scatter', 1),
   points = metOption('points_scatter',TRUE),
   lines = metOption('lines_scatter',FALSE),
   main = metOption('main_scatter',NULL),
@@ -352,7 +361,11 @@ scatter_data_frame <- function(
   if(is.null(symbols) &&  gg) symbols <- 16
   if(is.null(symbols) && !gg && nlev == 1) symbols <- trellis.par.get()$plot.symbol$pch
   if(is.null(symbols) && !gg && nlev != 1) symbols <- trellis.par.get()$superpose.symbol$pch
+  if(is.null(sizes)) sizes <- 1 # same as default
   if(is.null(types)) types <- 'solid' # same as default
+  if(is.null(widths)) widths <- 1 # same as default
+  if(gg)widths <- widths * .5
+  if(!gg)sizes <- sizes * .8
   if(is.null(points)) points <- TRUE # same as default
   points <- as.numeric(points)
   if(is.null(lines)) lines <- FALSE # same as default
@@ -363,7 +376,9 @@ scatter_data_frame <- function(
   if(is.null(colors) && nlev != 1 & !gg) colors <- trellis.par.get()$superpose.symbol$col
   if(is.null(fill)) fill <- colors
   symbols <- rep(symbols, length.out = nlev)
+  sizes <- rep(sizes, length.out = nlev)
   types <- rep(types, length.out = nlev)
+  widths <- rep(widths, length.out = nlev)
   points <- rep(points, length.out = nlev)
   lines <- rep(lines, length.out = nlev)
   colors <- rep(colors, length.out = nlev)
@@ -374,9 +389,11 @@ scatter_data_frame <- function(
   sym$fill <- fill
   sym$alpha <- points
   sym$pch <- symbols
+  sym$cex <- sizes
   line$col <- colors
   line$alpha <- lines
   line$lty <- types
+  line$lwd <- widths
 
     #par.settings is defined
   if(is.null(par.settings$superpose.symbol)) par.settings$superpose.symbol <- sym
@@ -385,12 +402,14 @@ scatter_data_frame <- function(
 
   if(is.character(key)) key <- match.fun(key)
   if(is.function(key)) key <- key(groups = groups, levels = levs, points = points, lines = lines, space = space, gg = gg, type = 'scatter', ...)
-
+  # key$cex <- NULL # cex used for lattice point sizes
 
   if(gg){
 
     y$metaplot_points_alpha <- points[as.numeric(y[[groups]])]
+    y$metaplot_points_sizes <- sizes[as.numeric(y[[groups]])]
     y$metaplot_lines_alpha <- lines[as.numeric(y[[groups]])]
+    y$metaplot_lines_widths <- widths[as.numeric(y[[groups]])]
 
     xrange <- range(y[[xvar]], na.rm = TRUE)
     yrange <- range(y[[yvar]], na.rm = TRUE)
@@ -400,7 +419,7 @@ scatter_data_frame <- function(
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
     msg <- if(nlev == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
-    plot <- ggplot(
+    p <- ggplot(
       data = y,
       mapping = aes_string(
         x = xvar,
@@ -410,17 +429,20 @@ scatter_data_frame <- function(
         shape = groups,
         linetype = groups
       )
-    ) +
-      geom_point(mapping = aes(alpha = metaplot_points_alpha)) +
-      geom_line(mapping = aes(alpha = metaplot_lines_alpha)) +
-      guides(alpha = FALSE) +
-      scale_alpha_identity() +
-      scale_shape_manual(values = symbols) +
-      scale_linetype_manual(values = types) +
-      xlab(xlab) +
-      ylab(ylab) +
-      ggtitle(main, subtitle = sub)
-    if(ysmooth & global) plot <- plot + geom_line(
+    )
+    p <- p + scale_alpha_identity()
+    p <- p + guides(alpha = FALSE)
+    p <- p + scale_size_identity()
+    p <- p + guides(size = FALSE)
+    p <- p +  scale_shape_manual(values = symbols)
+    p <- p +  scale_linetype_manual(values = types)
+
+    if(any(as.logical(points))) p <- p + geom_point(mapping = aes(alpha = metaplot_points_alpha, size = metaplot_points_sizes))
+    if(any(as.logical(lines))) p <- p + geom_line(mapping = aes(alpha = metaplot_lines_alpha, size = metaplot_lines_widths))
+    p <- p +  xlab(xlab)
+    p <- p +  ylab(ylab)
+    p <- p +  ggtitle(main, subtitle = sub)
+    if(ysmooth & global) p <- p + geom_line(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -433,7 +455,7 @@ scatter_data_frame <- function(
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
     )
-    if(ysmooth & !global) plot <- plot + geom_line(
+    if(ysmooth & !global) p <- p + geom_line(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -443,7 +465,7 @@ scatter_data_frame <- function(
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE
     )
-    if(xsmooth & global) plot <- plot + geom_line(
+    if(xsmooth & global) p <- p + geom_line(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -457,7 +479,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       formula = x ~ y
     )
-    if(xsmooth & !global) plot <- plot + geom_line(
+    if(xsmooth & !global) p <- p + geom_line(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -468,7 +490,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       formula = x ~ y
     )
-    if(conf & global) plot <- plot + geom_smooth(
+    if(conf & global) p <- p + geom_smooth(
       alpha = conf.alpha,
       linetype = 'blank',
       method = 'lm',
@@ -480,7 +502,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
-    if(conf & !global) plot <- plot + geom_smooth(
+    if(conf & !global) p <- p + geom_smooth(
       alpha = conf.alpha,
       linetype = 'blank',
       method = 'lm',
@@ -489,7 +511,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
-    if(fit & global) plot <- plot + geom_line( # https://stackoverflow.com/questions/19474552/adjust-transparency-alpha-of-stat-smooth-lines-not-just-transparency-of-confi
+    if(fit & global) p <- p + geom_line( # https://stackoverflow.com/questions/19474552/adjust-transparency-alpha-of-stat-smooth-lines-not-just-transparency-of-confi
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
@@ -502,7 +524,7 @@ scatter_data_frame <- function(
       se = FALSE,
       show.legend = FALSE
     )
-    if(fit & !global) plot <- plot + geom_line(
+    if(fit & !global) p <- p + geom_line(
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
@@ -541,14 +563,14 @@ scatter_data_frame <- function(
     yref.alpha<-rep(yref.alpha,times = panels)
 
 
-    if(length(yref)) plot <- plot + geom_hline(
+    if(length(yref)) p <- p + geom_hline(
         yintercept = yref,
         color = yref.col,
         linetype = yref.lty,
         size = yref.lwd,
         alpha = yref.alpha
       )
-    if(length(xref)) plot <- plot + geom_vline(
+    if(length(xref)) p <- p + geom_vline(
         xintercept = xref,
         color = xref.col,
         linetype = xref.lty,
@@ -556,7 +578,7 @@ scatter_data_frame <- function(
         alpha = xref.alpha
       )
     if(iso){
-      plot <- plot + geom_abline(
+      p <- p + geom_abline(
         slope = 1,
         intercept = 0,
         color = iso.aes$col,
@@ -566,33 +588,33 @@ scatter_data_frame <- function(
       )
       lo <- min(min(y[[yvar]], na.rm=T), min(y[[xvar]], na.rm=T), na.rm=T)
       hi <- max(max(y[[yvar]], na.rm=T), max(y[[xvar]], na.rm=T), na.rm=T)
-      plot <- plot + scale_y_continuous(limits = c(lo, hi))
-      plot <- plot + scale_x_continuous(limits = c(lo, hi))
+      p <- p + scale_y_continuous(limits = c(lo, hi))
+      p <- p + scale_x_continuous(limits = c(lo, hi))
     }
     theme_settings <- list(aspect.ratio = aspect, plot.margin = padding)
     theme_settings <- merge(theme_settings, key)
     theme_extra <- settings[names(settings) %in% names(formals(theme))]
     theme_settings <- merge(theme_settings, theme_extra)
-    plot <- plot + do.call(theme, theme_settings)
-    #if(groups == 'metaplot_groups') plot <- plot + theme(legend.title=element_blank())
-    plot <- plot + theme(legend.title=element_blank())
+    p <- p + do.call(theme, theme_settings)
+    #if(groups == 'metaplot_groups') p <- p + theme(legend.title=element_blank())
+    p <- p + theme(legend.title=element_blank())
 
-    if(xlog) plot <- plot + scale_x_continuous(
+    if(xlog) p <- p + scale_x_continuous(
       trans = log_trans(),
       breaks = base_breaks(),
       limits = if(iso)c(lo,hi) else NULL
     )
-    if(ylog) plot <- plot + scale_y_continuous(
+    if(ylog) p <- p + scale_y_continuous(
       trans = log_trans(),
       breaks = base_breaks(),
       limits = if(iso)c(lo,hi) else NULL
     )
 
-    plot <- plot +
+    p <- p +
       scale_color_manual(values = colors) +
       scale_fill_manual(values = fill)
 
-    if(nlev == 1 & is.null(facets) & sum(loc)) plot <- plot + geom_text(
+    if(nlev == 1 & is.null(facets) & sum(loc)) p <- p + geom_text(
       x = xpos,
       y = ypos,
       label = msg
@@ -611,9 +633,9 @@ scatter_data_frame <- function(
     if(length(facets) == 1) facet_extra <- settings[names(settings) %in% names(formals(facet_wrap))]
     if(length(facets) >  1) facet_extra <- settings[names(settings) %in% names(formals(facet_grid))]
     facet_args <- merge(facet_args, facet_extra)
-    if(length(facets) == 1) plot <- plot + do.call(facet_wrap, facet_args)
-    if(length(facets) >  1) plot <- plot + do.call(facet_grid, facet_args)
-    return(plot)
+    if(length(facets) == 1) p <- p + do.call(facet_wrap, facet_args)
+    if(length(facets) >  1) p <- p + do.call(facet_grid, facet_args)
+    return(p)
   }
 
   args <- list(
@@ -666,10 +688,11 @@ scatter_data_frame <- function(
     fit.alpha = fit.alpha,
     conf = conf,
     conf.alpha = conf.alpha,
-    loc = loc,
+    loc = loc, # ?
     msg = msg
   )
   args <- c(args, list(...))
+ # args$cex <- NULL # regarding symbol sizes
   if(all(c('ncol','nrow') %in% names(settings))){
     layout <- c(settings$ncol, settings$nrow)
     args <- c(args, list(layout = layout))
@@ -904,7 +927,13 @@ scatter_panel <- function(
   ...
 )
 {
-
+  # panel.superpose extracts lwd from superpose.symbol$line and passes it
+  # unconditionally to panel.groups as an element of args.
+  # lpoints.default (panel.groups) does not have an lwd arg, and so
+  # passes lwd to lplot.xy as ... .
+  # lplot.xy has an lwd arg and passes same to grid.points as lwd .
+  # grid.points has an lwd, and uses lwd originating from superpose.line to
+  # draw borders of points.
   stopifnot(length(global) == 1, is.logical(global))
   # if(is.null(groups)) groups <- rep(TRUE,length(x)) # cannot be NULL
   myxsmooth <- function(x,y,type,lty,lwd,col, col.symbol, col.line,...){
@@ -930,10 +959,21 @@ scatter_panel <- function(
       col=fill
     ))
   }
+  my_lpoints <- function (x, y = NULL, type = "p", col = plot.symbol$col, pch = plot.symbol$pch,
+            alpha = plot.symbol$alpha, fill = plot.symbol$fill, font = plot.symbol$font,
+            fontfamily = plot.symbol$fontfamily, fontface = plot.symbol$fontface,
+            cex = plot.symbol$cex, lwd, ..., identifier = NULL, name.type = "panel")
+  {
+    plot.symbol <- trellis.par.get("plot.symbol")
+    lplot.xy(xy.coords(x, y, recycle = TRUE), type = type, col = col,
+             pch = pch, alpha = alpha, fill = fill, font = font, fontfamily = fontfamily,
+             fontface = fontface, cex = cex, ..., identifier = identifier,
+             name.type = name.type)
+  } # traps lwd to prevent passing to lplot.xy
   superpose.line <- trellis.par.get()$superpose.line
   superpose.symbol <- trellis.par.get()$superpose.symbol
   panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.lines,type='l',alpha = superpose.line$alpha, ...)
-  panel.superpose(x = x,y = y,groups = groups,panel.groups = panel.points,type='p',alpha = superpose.symbol$alpha,...)
+  panel.superpose(x = x,y = y,groups = groups,panel.groups = my_lpoints,type='p',alpha = superpose.symbol$alpha, ...)
   if(conf){
     if(global){
       myconf(x, y, col = global.col, fill = global.fill, col.symbol = global.col, col.line = global.col, alpha = conf.alpha, ...)
@@ -1076,6 +1116,7 @@ metaplot_key <- function(
   #   key$rectangles <- showFill
   # }
   extras <- list(...)
+  extras$lwd <- NULL # (inflates point borders)
   nms <- names(extras)
   if(gg) nms <- intersect(nms, names(formals(ggplot2::theme)))
   for(i in nms) key[[i]] <- extras[[i]]

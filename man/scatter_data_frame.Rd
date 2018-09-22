@@ -25,7 +25,8 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   colors = metOption("colors_scatter", NULL),
   fill = metOption("fill_scatter", NULL),
   symbols = metOption("symbols_scatter", NULL),
-  types = metOption("types_scatter", "solid"),
+  sizes = metOption("sizes_scatter", 1), types = metOption("types_scatter",
+  "solid"), widths = metOption("widths_scatter", 1),
   points = metOption("points_scatter", TRUE),
   lines = metOption("lines_scatter", FALSE),
   main = metOption("main_scatter", NULL), sub = metOption("sub_scatter",
@@ -119,7 +120,11 @@ regions and for filling symbols (pch 21:25).}
 
 \item{symbols}{replacements for default symbols in group order (i.e. values of pch)}
 
-\item{types}{replacements for default linetypes in group order}
+\item{sizes}{replacements for default symbol sizes in group order}
+
+\item{types}{replacements for default line types in group order}
+
+\item{widths}{replacements for default line widths in group order}
 
 \item{points}{whether to plot points and fill for each group: logical, or alpha values between 0 and 1}
 
