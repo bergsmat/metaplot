@@ -5,32 +5,34 @@
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
 corsplom_data_frame(x, xvar = names(x),
-  upper.panel = metOption("upperpanel_corsplom", if (gg) corsplom_gg_scatter
-  else corsplom_panel_scatter), lower.panel = metOption("lowerpanel_corsplom",
-  if (gg) corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = metOption("diagpanel_corsplom", if (gg) corsplom_gg_diagonal
-  else corsplom_panel_diagonal), pscales = metOption("pscales_corsplom", 0),
+  upper.panel = metOption("upper.panel_corsplom", if (gg)
+  "corsplom_gg_scatter" else "corsplom_panel_scatter"),
+  lower.panel = metOption("lower.panel_corsplom", if (gg)
+  "corsplom_gg_correlation" else "corsplom_panel_correlation"),
+  diag.panel = metOption("diag.panel_corsplom", if (gg) "corsplom_gg_diagonal"
+  else "corsplom_panel_diagonal"), pscales = metOption("pscales_corsplom", 0),
   xlab = metOption("xlab_corsplom", NULL),
-  varname.cex = metOption("varname_cex_corsplom", 1),
+  varname.cex = metOption("varname.cex_corsplom", 1),
   main = metOption("main_corsplom", NULL), sub = metOption("sub_corsplom",
-  NULL), col = metOption("point_col_corsplom", "blue"),
-  smooth.col = metOption("smooth_col_corsplom", col),
-  smooth.lty = metOption("smooth_lty_corsplom", "solid"),
-  smooth.lwd = metOption("smooth_lwd_corsplom", 1),
-  smooth.alpha = metOption("smooth_alpha_corsplom", 1),
+  NULL), col = metOption("col_corsplom", "blue"),
+  smooth.col = metOption("smooth.col_corsplom", NULL),
+  smooth.lty = metOption("smooth.lty_corsplom", "solid"),
+  smooth.lwd = metOption("smooth.lwd_corsplom", 1),
+  smooth.alpha = metOption("smooth.alpha_corsplom", 1),
   density = metOption("density_corsplom", TRUE),
-  diag.label = metOption("diag_label_corsplom", diag_label),
-  pin = metOption("pin_loc_corsplom", diag_pin),
-  pin.col = metOption("pin_col_corsplom", "darkgrey"),
-  pin.alpha = metOption("pin_alpha_corsplom", 1),
-  dens.col = metOption("dens_col_corsplom", "grey"),
-  dens.scale = metOption("dens_scale_corsplom", 0.2),
-  dens.alpha = metOption("dens_alpha_corsplom", 0.5),
-  settings = metOption("settings_corsplom", NULL),
+  diag.label = metOption("diag.label_corsplom", "diag_label"),
+  pin = metOption("pin_corsplom", "diag_pin"),
+  pin.col = metOption("pin.col_corsplom", "darkgrey"),
+  pin.alpha = metOption("pin.alpha_corsplom", 1),
+  dens.col = metOption("dens.col_corsplom", "grey"),
+  dens.scale = metOption("dens.scale_corsplom", 0.2),
+  dens.alpha = metOption("dens.alpha_corsplom", 0.5),
+  settings = metOption("settings.corsplom", NULL),
   padding = metOption("padding_corsplom", 1),
-  as.table = metOption("astable_corsplom", FALSE),
-  dens.up = metOption("updens_corsplom", TRUE),
-  gg = metOption("gg_corsplom", FALSE), ...)
+  as.table = metOption("as.table_corsplom", FALSE),
+  dens.up = metOption("dens.up_corsplom", TRUE),
+  gg = metOption("gg_corsplom", FALSE),
+  verbose = metOption("verbose_corsplom", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -55,7 +57,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{col}{point color}
 
-\item{smooth.col}{smooth color}
+\item{smooth.col}{smooth color, defaults to col}
 
 \item{smooth.lty}{smooth line type}
 
@@ -65,7 +67,7 @@ corsplom_data_frame(x, xvar = names(x),
 
 \item{density}{whether to plot density polygons}
 
-\item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
+\item{diag.label}{label for the diagonal: a function of x, varname, .data}
 
 \item{pin}{location for a pin (reference line) in the density region; can be function(x, varname, .data) or NULL to suppress}
 
@@ -88,6 +90,8 @@ corsplom_data_frame(x, xvar = names(x),
 \item{dens.up}{whether density plots in diagonal should face the upper triangle vs. lower}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{extra arguments passed to \code{\link[lattice]{splom}} and ggplot}
 }

@@ -4,7 +4,8 @@
 \alias{corsplom_panel_correlation}
 \title{Correlation Panel Function for Metaplot Corsplom}
 \usage{
-corsplom_panel_correlation(x, y, use = "pairwise.complete.obs", ...)
+corsplom_panel_correlation(x, y, use = "pairwise.complete.obs",
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -12,6 +13,8 @@ corsplom_panel_correlation(x, y, use = "pairwise.complete.obs", ...)
 \item{y}{y values}
 
 \item{use}{passed to \code{\link[stats]{cor}}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

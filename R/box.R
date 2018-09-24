@@ -17,7 +17,7 @@ NULL
 #' @param scales passed to \code{\link[lattice]{xyplot}} (should be function(x = x, horizontal, log,...)) or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}}
 #' @param panel panel function
 #' @param ref optional reference line(s) on numeric axis; can be function(x = x, var = con, ...) or NULL to suppress
-#' @param ref.col color for reference line(s)
+#' @param ref.col color for reference line(s); can be length one integer to auto-select that many colors
 #' @param ref.lty line type for reference line(s)
 #' @param ref.lwd line size for reference line(s)
 #' @param ref.alpha transparency for reference line(s)
@@ -37,6 +37,7 @@ NULL
 #' @param pch special character for box median: passed to \code{\link[lattice]{panel.bwplot}}
 #' @param notch whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
+#' @param verbose generate messages describing process
 #' @param ... passed arguments
 #' @export
 #' @importFrom rlang quos UQ
@@ -62,20 +63,20 @@ boxplot_data_frame <- function(
   crit = metOption('crit_boxplot',1.3),
   horizontal = metOption('horizontal_boxplot',NULL),
   scales = metOption('scales_boxplot',NULL),
-  panel = metOption('panel_boxplot',boxplot_panel),
-  ref = metOption('ref_x_boxplot',metaplot_ref),
-  ref.col = metOption('ref_col_boxplot','grey'),
-  ref.lty = metOption('ref_lty_boxplot','solid'),
-  ref.lwd = metOption('ref_lwd_boxplot',1),
-  ref.alpha = metOption('ref_alpha_boxplot',1),
+  panel = metOption('panel_boxplot','boxplot_panel'),
+  ref = metOption('ref_boxplot','metaplot_ref'),
+  ref.col = metOption('ref.col_boxplot','grey'),
+  ref.lty = metOption('ref.lty_boxplot','solid'),
+  ref.lwd = metOption('ref.lwd_boxplot',1),
+  ref.alpha = metOption('ref.alpha_boxplot',1),
   nobs = metOption('nobs_boxplot',FALSE),
-  na.rm = metOption('narm_boxplot',TRUE),
+  na.rm = metOption('na.rm_boxplot',TRUE),
   xlab = NULL,
   ylab = NULL,
-  numlab = metOption('numlab_boxplot',axislabel),
-  catlab = metOption('catlab_boxplot',axislabel),
+  numlab = metOption('numlab_boxplot','axislabel'),
+  catlab = metOption('catlab_boxplot','axislabel'),
   aspect = metOption('aspect_boxplot',1),
-  as.table = metOption('astable_boxplot',TRUE),
+  as.table = metOption('as.table_boxplot',TRUE),
   main = metOption('main_boxplot',NULL),
   sub = metOption('sub_boxplot',NULL),
   settings = metOption('settings_boxplot',NULL),
@@ -84,8 +85,10 @@ boxplot_data_frame <- function(
   pch = metOption('pch_boxplot','|'),
   notch = metOption('notch_boxplot',FALSE),
   gg = metOption('gg_boxplot',FALSE),
+  verbose = metOption('verbose_boxplot', FALSE),
   ...
 ){
+  if(verbose) cat('this is boxplot_data_frame')
   settings <- as.list(settings)
   if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
@@ -213,6 +216,8 @@ boxplot_data_frame <- function(
     if(length(facets))panels <- nrow(unique(y[facets]))
     if(!panels) panels <- 1
 
+    if(is.null(ref.col)) ref.col <- 'grey' # same as default
+    if(is.numeric(ref.col)) ref.col <- hue_pal()(ref.col[[1]])
     ref.col <- rep(ref.col, length.out = length(ref))
     ref.lty <- rep(ref.lty, length.out = length(ref))
     ref.lwd <- rep(ref.lwd, length.out = length(ref))
@@ -279,7 +284,8 @@ boxplot_data_frame <- function(
     ref.lwd = ref.lwd,
     ref.alpha = ref.alpha,
     pch = pch,
-    notch = notch
+    notch = notch,
+    verbose = verbose
   )
 
   args <- c(args, list(...))
@@ -287,6 +293,7 @@ boxplot_data_frame <- function(
     layout <- c(settings$ncol, settings$nrow)
     args <- c(args, list(layout = layout))
   }
+  if(verbose)cat('calling bwplot')
   do.call(bwplot, args)
 }
 
@@ -305,8 +312,14 @@ boxplot_data_frame <- function(
 #' @param ref.lty passed to \code{\link[lattice]{panel.abline}} as lty
 #' @param ref.lwd passed to \code{\link[lattice]{panel.abline}} as lwd
 #' @param ref.alpha passed to \code{\link[lattice]{panel.abline}} as alpha
+#' @param verbose generate messages describing process
 #'
-boxplot_panel <- function(ref = NULL, horizontal,pch = '|',notch=FALSE, ref.col, ref.lty, ref.lwd, ref.alpha, ...){
+#'
+boxplot_panel <- function(
+  ref = NULL, horizontal,pch = '|',notch=FALSE,
+  ref.col, ref.lty, ref.lwd, ref.alpha, verbose = FALSE, ...
+){
+  if(verbose)cat('this is boxplot_panel calling panel.bwplot and panel.abline')
   panel.bwplot(horizontal = horizontal, pch = pch, notch = notch, ...)
   if(length(ref)){
     if(horizontal) {

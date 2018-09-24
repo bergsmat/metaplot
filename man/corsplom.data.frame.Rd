@@ -5,7 +5,8 @@
 \title{Correlated Scatterplot Matrix Method for Data Frame}
 \usage{
 \method{corsplom}{data.frame}(x, ..., fun = metOption("corsplom",
-  "corsplom_data_frame"), verbose = metOption("verbose_corsplom", FALSE))
+  "corsplom_data_frame"), verbose = metOption("verbose_corsplom_data_frame",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}

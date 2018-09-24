@@ -26,3 +26,4 @@ Executes a linear model, automatically choosing binomial family as necessary.
 Other regression functions: \code{\link{metastats}},
   \code{\link{region}}
 }
+\keyword{internal}

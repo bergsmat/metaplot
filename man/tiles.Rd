@@ -4,7 +4,7 @@
 \alias{tiles}
 \title{Calculate Tile Limits}
 \usage{
-tiles(x, ..., tex = 0.9, msg = "tilestats")
+tiles(x, ..., tex = 0.9, msg = "tilestats", verbose = FALSE)
 }
 \arguments{
 \item{x}{a data.frame with at least columns x, y, and g, possibly f1 and f2 (facets)}
@@ -14,6 +14,8 @@ tiles(x, ..., tex = 0.9, msg = "tilestats")
 \item{tex}{tile shrinkage <= 1}
 
 \item{msg}{a function of x and y to create a tile message}
+
+\item{verbose}{generate messages describing process}
 }
 \value{
 data.frame

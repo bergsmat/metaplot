@@ -12,8 +12,9 @@ corsplom_panel_diagonal(x, varname, .data, density = TRUE,
   dens.col = metOption("dens_col_corsplom_panel", "grey"),
   dens.scale = metOption("dens_scale_corsplom_panel", 0.2),
   dens.alpha = metOption("dens_alpha_corsplom_panel", 0.5),
-  as_table = metOption("astable_corsplom_panel", FALSE),
-  dens.up = metOption("densup_corsplom_panel", TRUE), ...)
+  as.table = metOption("as.table_corsplom_panel", FALSE),
+  dens.up = metOption("densup_corsplom_panel", TRUE),
+  verbose = metOption("verbose_corsplom_panel", FALSE), ...)
 }
 \arguments{
 \item{x}{numeric}
@@ -38,11 +39,13 @@ corsplom_panel_diagonal(x, varname, .data, density = TRUE,
 
 \item{dens.alpha}{alpha transparency for density region}
 
+\item{as.table}{diagonal arranged top-left to bottom-right}
+
 \item{dens.up}{whether density plots should face the upper triangle (or lower, if FALSE)}
 
-\item{...}{passed arguments}
+\item{verbose}{generate messages describing process}
 
-\item{as.table}{diagonal arranged top-left to bottom-right}
+\item{...}{passed arguments}
 }
 \description{
 Default diagonal panel function for corsplom_data_frame. Plots a density smooth against the corresponding axis from within the diagonal panel.  Plots a grey pin at each axis zero.

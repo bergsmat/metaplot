@@ -5,16 +5,17 @@
 \title{Diagonal GG Function for Metaplot Corsplom}
 \usage{
 corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
-  diag.label = metOption("diag_label_corsplom_gg", diag_label),
+  diag.label = metOption("diag_label_corsplom_gg", "diag_label"),
   pin = metOption("pin_loc_corsplom_gg", diag_pin),
-  pin.col = metOption("pin_col_corsplom_gg", "darkgrey"),
-  pin.alpha = metOption("pin_alpha_corsplom_gg", 1),
-  dens.col = metOption("dens_col_corsplom_gg", "grey"),
-  dens.scale = metOption("dens_scale_corsplom_gg", 0.2),
-  dens.alpha = metOption("dens_alpha_corsplom_gg", 0.5),
-  varname.cex = metOption("varname_cex_corsplom_gg", 1),
-  as.table = metOption("astable_corsplom_gg", TRUE),
-  dens.up = metOption("densup_corsplom_gg", TRUE), ...)
+  pin.col = metOption("pin.col_corsplom_gg", "darkgrey"),
+  pin.alpha = metOption("pin.alpha_corsplom_gg", 1),
+  dens.col = metOption("dens.col_corsplom_gg", "grey"),
+  dens.scale = metOption("dens.scale_corsplom_gg", 0.2),
+  dens.alpha = metOption("dens.alpha_corsplom_gg", 0.5),
+  varname.cex = metOption("varname.cex_corsplom_gg", 1),
+  as.table = metOption("as.table_corsplom_gg", TRUE),
+  dens.up = metOption("dens.up_corsplom_gg", TRUE),
+  verbose = metOption("verbose_corsplom_gg", FALSE), ...)
 }
 \arguments{
 \item{data}{data}
@@ -25,7 +26,7 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 
 \item{density}{whether to plot density polygons; can be a length 4 vector for top, right, bottom, left}
 
-\item{diag.label}{label for the diagonal; can be a function of x, varname, .data}
+\item{diag.label}{label for the diagonal: a function of x, varname, .data}
 
 \item{pin}{location for a pin (reference line) in the density region; can be a function of x, varname, .data}
 
@@ -44,6 +45,8 @@ corsplom_gg_diagonal(data, mapping, .data, density = TRUE,
 \item{as.table}{diagonal arranged top-left to bottom-right}
 
 \item{dens.up}{whether density plots should face the upper triangle (or lower, if FALSE)}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

@@ -13,9 +13,10 @@ metOption(x, default = NULL)
 }
 \description{
 Gets a metaplot option value from  the named list \code{getOption('metaplot')}.
-Selects the longest among all leading partial matches (the last if multiple).
-Thus related aesthetics can be controlled with a single entry, while
-a subset can be overridden (as with cascading style sheets).
+If an exact match is not found, trailing elements of x, separated by underscore,
+are removed one at a time in search of a partial match. Thus 'ref.col' will match
+for 'ref.col_dens' and 'ref.col_scatter' if neither of these is set (allowing
+selective override). However, global' will never match 'global.col'.
 }
 \details{
 If x is missing a list of all metaplot options is returned.

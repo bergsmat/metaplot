@@ -5,24 +5,26 @@
 \title{Density Function for Data Frame}
 \usage{
 densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
-  xlab = metOption("xlab_dens", axislabel), ref = metOption("ref_x_dens",
-  metaplot_ref), ref.col = metOption("ref_col_dens", "grey"),
+  xlab = metOption("xlab_dens", "axislabel"), ref = metOption("ref_x_dens",
+  "metaplot_ref"), ref.col = metOption("ref_col_dens", "grey"),
   ref.lty = metOption("ref_lty_dens", "solid"),
   ref.lwd = metOption("ref_lwd_dens", 1),
   ref.alpha = metOption("ref_alpha_dens", 1), log = metOption("log_dens",
   FALSE), crit = metOption("crit_dens", 1.3),
   aspect = metOption("aspect_dens", 1), scales = metOption("scales_dens",
-  NULL), panel = metOption("panel_dens", dens_panel),
-  colors = metOption("colors_dens", NULL),
-  symbols = metOption("symbols_dens", NULL),
-  points = metOption("points_dens", TRUE), lines = metOption("lines_dens",
-  TRUE), fill = metOption("fill_dens", FALSE),
-  space = metOption("space_dens", "right"), key = metOption("key_dens",
-  metaplot_key), as.table = metOption("astable_dens", TRUE),
-  main = metOption("main_dens", NULL), sub = metOption("sub_dens", NULL),
+  NULL), panel = metOption("panel_dens", "dens_panel"),
+  points = metOption("points_dens", TRUE), colors = metOption("colors_dens",
+  NULL), symbols = metOption("symbols_dens", NULL),
+  sizes = metOption("sizes_dens", 1), lines = metOption("lines_dens", TRUE),
+  types = metOption("types_dens", "solid"),
+  widths = metOption("widths_dens", 1), fill = metOption("fill_dens",
+  FALSE), space = metOption("space_dens", "right"),
+  key = metOption("key_dens", "metaplot_key"),
+  as.table = metOption("as.table_dens", TRUE), main = metOption("main_dens",
+  NULL), sub = metOption("sub_dens", NULL),
   settings = metOption("settings_dens", NULL),
   padding = metOption("padding_dens", 1), gg = metOption("gg_dens", FALSE),
-  ...)
+  verbose = metOption("verbose_dens", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -37,7 +39,7 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{ref}{reference line; can be function(x = x, var = xvar, ...) or NULL to suppress}
 
-\item{ref.col}{color for reference line(s)}
+\item{ref.col}{color for reference line(s); can be length one integer to auto-select that many colors}
 
 \item{ref.lty}{type for reference line(s)}
 
@@ -55,13 +57,19 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{passed to \code{\link[lattice]{densityplot}}}
 
-\item{colors}{replacements for default colors in group order}
+\item{points}{whether to plot points: logical or alpha, same length as groups}
+
+\item{colors}{replacements for default colors in group order; can be length one integer to auto-select that many colors}
 
 \item{symbols}{replacements for default symbols in group order}
 
-\item{points}{whether to plot points: logical or alpha, same length as groups}
+\item{sizes}{replacements for default symbol sizes in group order}
 
 \item{lines}{whether to plot lines: logical or alpha, same length as groups}
+
+\item{types}{replacements for default line types in group order}
+
+\item{widths}{replacements for default line widths in group order}
 
 \item{fill}{whether to fill curves: logical or alpha, same length as groups (symbol fill color is same as point color)}
 
@@ -80,6 +88,8 @@ densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed to \code{\link[lattice]{densityplot}}}
 }

@@ -5,8 +5,8 @@
 \title{Categorical Method for Data Frame}
 \usage{
 \method{categorical}{data.frame}(x, ..., fun = metOption("categorical",
-  "categorical_data_frame"), verbose = metOption("verbose_categorical",
-  FALSE))
+  "categorical_data_frame"),
+  verbose = metOption("verbose_categorical_data_frame", FALSE))
 }
 \arguments{
 \item{x}{data.frame}

@@ -6,7 +6,7 @@
 \usage{
 panel.meta_densityplot(x, darg = list(n = 512), plot.points = "jitter",
   ref = FALSE, groups = NULL, weights = NULL, jitter.amount = 0.01 *
-  diff(current.panel.limits()$ylim), type = "p", ...,
+  diff(current.panel.limits()$ylim), type = "p", verbose = FALSE, ...,
   identifier = "density", group.number)
 }
 \arguments{
@@ -25,6 +25,8 @@ panel.meta_densityplot(x, darg = list(n = 512), plot.points = "jitter",
 \item{jitter.amount}{see \code{link[lattice]{panel.densityplot}}}
 
 \item{type}{see \code{link[lattice]{panel.densityplot}}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{see \code{link[lattice]{panel.densityplot}}}
 

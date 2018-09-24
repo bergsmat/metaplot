@@ -5,11 +5,12 @@
 \title{Scatter GG Function for Metaplot Corsplom}
 \usage{
 corsplom_gg_scatter(data, mapping, method = "loess", se = F,
-  col = metOption("point_col_corsplom_gg", "blue"),
-  smooth.col = metOption("smooth_col_corsplom_gg", "blue"),
-  smooth.alpha = metOption("smooth_alpha_corsplom_gg", 1),
-  smooth.lty = metOption("smooth_lty_corsplom_gg", "solid"),
-  smooth.lwd = metOption("smooth_lwd_corsplom_gg", 1), ...)
+  col = metOption("col_corsplom_gg", "blue"),
+  smooth.col = metOption("smooth.col_corsplom_gg", "blue"),
+  smooth.alpha = metOption("smooth.alpha_corsplom_gg", 1),
+  smooth.lty = metOption("smooth.lty_corsplom_gg", "solid"),
+  smooth.lwd = metOption("smooth.lwd_corsplom_gg", 1),
+  verbose = metOption("verbose_corsplom_gg", FALSE), ...)
 }
 \arguments{
 \item{data}{data}
@@ -25,6 +26,8 @@ corsplom_gg_scatter(data, mapping, method = "loess", se = F,
 \item{smooth.lty}{smooth line type}
 
 \item{smooth.lwd}{smooth line size}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

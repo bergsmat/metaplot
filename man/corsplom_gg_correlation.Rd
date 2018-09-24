@@ -4,9 +4,9 @@
 \alias{corsplom_gg_correlation}
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
-corsplom_gg_correlation(data, mapping,
-  col = metOption("point_col_corsplom_gg", "blue"), smooth.col, smooth.lty,
-  smooth.lwd, smooth.alpha, use = "pairwise.complete.obs", ...)
+corsplom_gg_correlation(data, mapping, col = metOption("col_corsplom_gg",
+  "blue"), smooth.col, smooth.lty, smooth.lwd, smooth.alpha,
+  use = "pairwise.complete.obs", verbose = FALSE, ...)
 }
 \arguments{
 \item{data}{data}
@@ -24,6 +24,8 @@ corsplom_gg_correlation(data, mapping,
 \item{smooth.alpha}{ignored}
 
 \item{use}{passed to \code{\link[stats]{cor}}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{ignored}
 }

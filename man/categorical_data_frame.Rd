@@ -5,16 +5,16 @@
 \title{Categorical Function for Data Frame}
 \usage{
 categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
-  ylab = metOption("xlab_categorical", axislabel),
-  xlab = metOption("ylab_categorical", axislabel),
-  na.rm = metOption("narm_categorical", TRUE),
+  ylab = metOption("xlab_categorical", "axislabel"),
+  xlab = metOption("ylab_categorical", "axislabel"),
+  na.rm = metOption("na.rm_categorical", TRUE),
   aspect = metOption("aspect_categorical", 1),
   space = metOption("space_categorical", "right"),
   key = metOption("key_categorical", "metaplot_key"),
-  as.table = metOption("astable_categorical", TRUE),
+  as.table = metOption("as.table_categorical", TRUE),
   prepanel = metOption("prepanel_categorical", function(...) list(xlim = 0:1,
   ylim = 0:1)), scales = metOption("scales_categorical", NULL),
-  panel = metOption("panel_categorical", categorical_panel),
+  panel = metOption("panel_categorical", "categorical_panel"),
   colors = metOption("colors_categorical", NULL),
   fill = metOption("fill_categorical", 0.5),
   lines = metOption("lines_categorical", TRUE),
@@ -25,10 +25,10 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   subscripts = metOption("subscripts_categorical", TRUE),
   settings = metOption("settings_categorical", NULL),
   padding = metOption("padding_categorical", 1),
-  loc = metOption("msg_loc_categorical", 5),
-  msg = metOption("msg_format_categorical", "tilestats"),
-  cex = metOption("cex_categorical", 1), gg = metOption("gg_categorical",
-  FALSE), ...)
+  loc = metOption("loc_categorical", 5), msg = metOption("msg_categorical",
+  "tilestats"), cex = metOption("cex_categorical", 1),
+  gg = metOption("gg_categorical", FALSE),
+  verbose = metOption("verbose_categorical", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -61,7 +61,7 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{name or definition of panel function for lattice}
 
-\item{colors}{replacements for default colors in group order}
+\item{colors}{replacements for default colors in group order; can be length one integer to auto-select that many colors}
 
 \item{fill}{whether to fill rectangles for each group: logical, or alpha values between 0 and 1}
 
@@ -88,6 +88,8 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
 \item{cex}{expansion for msg text}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed to \code{\link{region}}}
 }

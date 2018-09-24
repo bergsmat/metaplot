@@ -4,7 +4,8 @@
 \alias{dens_panel}
 \title{Panel Function for Metaplot Density Plot}
 \usage{
-dens_panel(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...)
+dens_panel(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{ref}{numeric}
@@ -16,6 +17,8 @@ dens_panel(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha, ...)
 \item{ref.lwd}{passed to \code{\link[lattice]{panel.abline}} as lwd}
 
 \item{ref.alpha}{passed to \code{\link[lattice]{panel.abline}} as alpha}
+
+\item{verbose}{generate messages describing process}
 }
 \description{
 Default panel function for dens_data_frame.  Calls panel.densityplot, and plots reference lines if ref has length.

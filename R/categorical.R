@@ -35,7 +35,7 @@ categorical.data.frame <- function(
   x,
   ...,
   fun = metOption('categorical','categorical_data_frame'),
-  verbose = metOption('verbose_categorical',FALSE)
+  verbose = metOption('verbose_categorical_data_frame',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -133,7 +133,7 @@ categorical.data.frame <- function(
 #' @param prepanel passed to \code{\link[lattice]{xyplot}} (guessed if NULL)
 #' @param scales passed to \code{\link[lattice]{xyplot}} or \code{\link[ggplot2]{facet_grid}} or \code{\link[ggplot2]{facet_wrap}} (guessed if NULL)
 #' @param panel name or definition of panel function for lattice
-#' @param colors replacements for default colors in group order
+#' @param colors replacements for default colors in group order; can be length one integer to auto-select that many colors
 #' @param fill whether to fill rectangles for each group: logical, or alpha values between 0 and 1
 #' @param lines whether to plot borders for each group: logical, or alpha values between 0 and 1
 #' @param main character, or a function of x, yvar, xvar, groups, facets
@@ -147,6 +147,7 @@ categorical.data.frame <- function(
 #' @param msg a function of x and y to print text in a tile
 #' @param cex expansion for msg text
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
+#' @param verbose generate messages describing process
 #' @param ... passed to \code{\link{region}}
 #' @seealso \code{\link{categorical_panel}}
 #' @export
@@ -190,16 +191,16 @@ categorical_data_frame <- function(
   xvar,
   groups = NULL,
   facets = NULL,
-  ylab = metOption('xlab_categorical',axislabel),
-  xlab = metOption('ylab_categorical',axislabel),
-  na.rm = metOption('narm_categorical',TRUE),
+  ylab = metOption('xlab_categorical','axislabel'),
+  xlab = metOption('ylab_categorical','axislabel'),
+  na.rm = metOption('na.rm_categorical',TRUE),
   aspect = metOption('aspect_categorical',1),
   space = metOption('space_categorical','right'),
   key = metOption('key_categorical','metaplot_key'),
-  as.table = metOption('astable_categorical',TRUE),
+  as.table = metOption('as.table_categorical',TRUE),
   prepanel = metOption('prepanel_categorical', function(...)list(xlim=0:1,ylim=0:1)),
   scales = metOption('scales_categorical',NULL),
-  panel = metOption('panel_categorical',categorical_panel),
+  panel = metOption('panel_categorical','categorical_panel'),
   colors = metOption('colors_categorical',NULL),
   fill = metOption('fill_categorical',0.5),
   lines = metOption('lines_categorical',TRUE),
@@ -210,12 +211,14 @@ categorical_data_frame <- function(
   subscripts = metOption('subscripts_categorical',TRUE),
   settings = metOption('settings_categorical',NULL),
   padding = metOption('padding_categorical', 1),
-  loc = metOption('msg_loc_categorical',5),
-  msg = metOption('msg_format_categorical','tilestats'),
+  loc = metOption('loc_categorical',5),
+  msg = metOption('msg_categorical','tilestats'),
   cex = metOption('cex_categorical',1),
   gg = metOption('gg_categorical',FALSE),
+  verbose = metOption('verbose_categorical', FALSE),
   ...
 ){
+  if(verbose)cat('this is categorical_data_frame')
   settings <- as.list(settings)
   if(is.null(names(settings))) names(settings) <- character(0)
   aspect <- metaplot_aspect(aspect, gg)
@@ -315,6 +318,7 @@ categorical_data_frame <- function(
       colors <- trellis.par.get()$superpose.symbol$col
     }
   }
+  if(is.numeric(colors))colors <- hue_pal()(colors[[1]])
   if(is.null(fill)) fill <- 0.5 # same as default
   if(is.null(lines)) lines <- TRUE # same as default
   fill <- as.numeric(fill)
@@ -344,6 +348,7 @@ categorical_data_frame <- function(
     space = space,
     gg = gg,
     type = 'categorical',
+    verbose = verbose,
     ...
   )
 
@@ -354,7 +359,8 @@ categorical_data_frame <- function(
     if(ncol(dat) == 3) names(dat) <- c('x','y','g')
     if(ncol(dat) == 4) names(dat) <- c('x','y','g', 'f1')
     if(ncol(dat) == 5) names(dat) <- c('x','y','g', 'f1', 'f2')
-    dat <- tiles(dat, tex = tex, msg = msg)
+    if(verbose)cat('calling tiles')
+    dat <- tiles(dat, tex = tex, msg = msg, verbose = verbose)
     if(length(facets) >= 1) names(dat)[names(dat) == 'f1'] <- facets[[1]]
     if(length(facets) == 2) names(dat)[names(dat) == 'f2'] <- facets[[2]]
     yax <- cax(y[[yvar]])
@@ -445,19 +451,23 @@ categorical_data_frame <- function(
     bivariate = bivariate,
     loc = loc,
     msg = msg,
-    cex = cex
+    cex = cex,
+    verbose = verbose
   )
  args <- c(args, list(...))
  if(all(c('ncol','nrow') %in% names(settings))){
    layout <- c(settings$ncol, settings$nrow)
    args <- c(args, list(layout = layout))
  }
+ if(verbose)cat('calling xyplot')
  do.call(xyplot, args)
 }
 
 #' Panel Function for Metaplot Categorical Plot
 #'
 #' Default panel function for categorical_data_frame. Implements a simple mosaic plot.
+#' Global options are supported but typically are supplied by the calling function and
+#' may therefore be unreachable.
 #'
 #' @export
 #' @param x x values
@@ -470,6 +480,7 @@ categorical_data_frame <- function(
 #' @param cex expansion for msg text
 #' @param rot rotation for axis labels; can be length 2 for y and x axes, respectively
 #' @param subscripts subscripts of the original data for this panel
+#' @param verbose generate messages describing process
 #' @param ... passed to \code{\link[lattice]{panel.superpose}}
 #' @family panel functions
 #' @family categorical
@@ -482,23 +493,26 @@ categorical_panel <- function(
   y,
   groups,
   bivariate = TRUE,
-  loc = metOption('msg_loc_categorical_panel',5),
-  msg = metOption('msg_format_categorical_panel','tilestats'),
+  loc = metOption('loc_categorical_panel',5),
+  msg = metOption('msg_categorical_panel','tilestats'),
   tex = metOption('tex_categorical_panel', 0.9),
   cex = metOption('cex_categorical_panel',1),
   rot = metOption('rot_categorical_panel',c(90,0)),
   subscripts,
+  verbose = metOption('verbose_categorical_panel',FALSE),
   ...
 )
 {
+  if(verbose)cat('this is categorical_panel')
   if(is.null(rot)) rot <- c(90,0) # same as default
   if(length(rot) == 1) rot <- c(rot,rot)
   if(is.na(msg)) msg <- function(x,y)''
   if(is.character(msg)) msg <- match.fun(msg)
-
-  tiles <- tiles(data.frame(x = x, y = y, g = groups[subscripts]), tex = tex, msg = msg)
+  if(verbose)cat('calling tiles')
+  tiles <- tiles(data.frame(x = x, y = y, g = groups[subscripts]), tex = tex, msg = msg, verbose = verbose)
 
   superpose.polygon <- trellis.par.get()$superpose.polygon
+  if(verbose)cat('calling panel.superpose')
   panel.superpose(
     x = tiles$x,
     y = tiles$y,
@@ -519,6 +533,7 @@ categorical_panel <- function(
     #pch = pch,
     rot = rot,
     subscripts = seq_along(tiles$x),
+    verbose = verbose,
     ...
   )
   yax <- cax(y)
@@ -527,6 +542,7 @@ categorical_panel <- function(
   yscale <- current.viewport()$yscale
   pushViewport(viewport(width=2, height=2, clip=TRUE))
   pushViewport(viewport(width=.5, height=.5,xscale=xscale, yscale=yscale))
+  if(verbose)cat('calling panel.axis')
   if(bivariate) panel.axis(
     side = 'left',
     at = yax$at,
@@ -567,6 +583,7 @@ panel.axis(
 #' @param msg ignored
 #' @param .src data source for which subscripts give x, y, msg,  and tile limits
 #' @param cex expansion for msg text; passed to msg
+#' @param verbose generate messages describing process
 #' @param ... passed arguments
 #' @family panel functions
 #' @family categorical
@@ -578,10 +595,11 @@ panel_tile <- function(
   alpha, #fill.alpha,
   border, #line.alpha,
   # col.line,
-  loc, msg, .src,cex,...){ #  tex
+  loc, msg, .src,cex,verbose,...){ #  tex
   # next two lines still necessary?
   # line.alpha <- rep(line.alpha, length.out = group.number) # maybe not distributed by superpose
   # line.alpha <- rev(line.alpha)[[1]] # take group.numberth value
+  if(verbose)cat('this is panel_tile')
   for(i in subscripts)one_rect(
     x = x[i],
     y = y[i],
@@ -595,6 +613,7 @@ panel_tile <- function(
     loc = loc,
     msg = .src$msg[i],
     cex = cex,
+    verbose = verbose,
    # tex = tex,
     ...
   )
@@ -605,7 +624,7 @@ one_rect <- function(
   x, y, left, right, bottom, top, # tex
 #  fill.alpha, line.alpha, col,
   col, alpha, border,
-  msg=NA, loc, cex,
+  msg=NA, loc, cex, verbose = FALSE,
   ...
 ){
   # coords <- smaller(left = left, right = right, top = top, bottom = bottom, tex = tex)
@@ -613,7 +632,7 @@ one_rect <- function(
   # right <- coords$right
   # bottom <- coords$bottom
   # top <- coords$top
-
+  if(verbose)cat('this is one_rect')
   panel.rect(
     xleft = left,
     xright = right,
@@ -628,6 +647,7 @@ one_rect <- function(
  #    y= c(bottom, bottom, top, top, bottom)
  #  )
  # panel.lines(x = poly$x, y = poly$y, alpha = line.alpha, col = col)
+ if(!is.na(msg))if(verbose)cat('calling panel.text')
  if(!is.na(msg)) panel.text(
    x = xpos(loc, lo = left, hi = right),
    y = ypos(loc, lo = bottom, hi = top),
@@ -700,13 +720,15 @@ tilestats <- function(x, y, ...)as.character(length(x))
 #' @param x a data.frame with at least columns x, y, and g, possibly f1 and f2 (facets)
 #' @param tex tile shrinkage <= 1
 #' @param msg a function of x and y to create a tile message
-#' @family categorical family
+#' @param verbose generate messages describing process
 #' @param ... other arguments
+#' @family categorical family
 #' @return data.frame
 #' @importFrom dplyr bind_cols
 #' @seealso \code{\link{categorical_panel}}
 #'
-tiles <- function(x, ...,  tex = 0.9, msg = 'tilestats'){ # y f1, f2, tot
+tiles <- function(x, ...,  tex = 0.9, msg = 'tilestats', verbose = FALSE){ # y f1, f2, tot
+  if(verbose)cat('this is tiles')
   stopifnot(all(c('x','y','g') %in% names(x)))
   if(!'f1' %in% names(x)) x$f1 <- 1
   if(!'f2' %in% names(x)) x$f2 <- 1

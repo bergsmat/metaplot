@@ -38,3 +38,4 @@ Calculates a confidence region. \code{se.fit} from \code{\link[stats]{predict.gl
 Other regression functions: \code{\link{metastats}},
   \code{\link{model}}
 }
+\keyword{internal}

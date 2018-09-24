@@ -8,58 +8,57 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   log = metOption("log_scatter", FALSE), ylog = metOption("ylog_scatter",
   log), xlog = metOption("xlog_scatter", log),
   crit = metOption("crit_scatter", 1.3), yref = metOption("yref_scatter",
-  metaplot_ref), xref = metOption("xref_scatter", metaplot_ref),
-  ylab = metOption("ylab_scatter", axislabel),
-  xlab = metOption("xlab_scatter", axislabel),
+  "metaplot_ref"), xref = metOption("xref_scatter", "metaplot_ref"),
+  ylab = metOption("ylab_scatter", "axislabel"),
+  xlab = metOption("xlab_scatter", "axislabel"),
   ysmooth = metOption("ysmooth_scatter", FALSE),
   xsmooth = metOption("xsmooth_scatter", FALSE),
-  iso = metOption("iso_scatter", FALSE), na.rm = metOption("narm_scatter",
+  iso = metOption("iso_scatter", FALSE), na.rm = metOption("na.rm_scatter",
   TRUE), aspect = metOption("aspect_scatter", 1),
   space = metOption("space_scatter", "right"),
   key = metOption("key_scatter", "metaplot_key"),
-  as.table = metOption("astable_scatter", TRUE),
+  as.table = metOption("as.table_scatter", TRUE),
   prepanel = metOption("prepanel_scatter", NULL),
-  isoprepanel = metOption("isoprepanel_scatter", iso_prepanel),
+  isoprepanel = metOption("isoprepanel_scatter", "iso_prepanel"),
   scales = metOption("scales_scatter", NULL),
-  panel = metOption("panel_scatter", scatter_panel),
+  panel = metOption("panel_scatter", "scatter_panel"),
+  points = metOption("points_scatter", TRUE),
   colors = metOption("colors_scatter", NULL),
   fill = metOption("fill_scatter", NULL),
   symbols = metOption("symbols_scatter", NULL),
   sizes = metOption("sizes_scatter", 1), types = metOption("types_scatter",
   "solid"), widths = metOption("widths_scatter", 1),
-  points = metOption("points_scatter", TRUE),
   lines = metOption("lines_scatter", FALSE),
   main = metOption("main_scatter", NULL), sub = metOption("sub_scatter",
   NULL), subscripts = metOption("subscripts_scatter", TRUE),
   settings = metOption("settings_scatter", NULL),
   padding = metOption("padding_scatter", 1),
-  ref.col = metOption("ref_col_scatter", "grey"),
-  ref.lty = metOption("ref_lty_scatter", "solid"),
-  ref.lwd = metOption("ref_lwd_scatter", 1),
-  ref.alpha = metOption("ref_alpha_scatter", 1),
-  xref.col = metOption("ref_col_x_scatter", ref.col),
-  xref.lty = metOption("ref_lty_x_scatter", ref.lty),
-  xref.lwd = metOption("ref_lwd_x_scatter", ref.lwd),
-  xref.alpha = metOption("ref_x_alpha_scatter", ref.alpha),
-  yref.col = metOption("ref_col_y_scatter", ref.col),
-  yref.lty = metOption("ref_lty_y_scatter", ref.lty),
-  yref.lwd = metOption("ref_lwd_y_scatter", ref.lwd),
-  yref.alpha = metOption("ref_alpha_y_scatter", ref.alpha),
-  smooth.lty = metOption("smooth_lty_scatter", "dashed"),
-  smooth.lwd = metOption("smooth_lwd_scatter", 1),
-  smooth.alpha = metOption("smooth_alpha_scatter", 1),
-  fit = metOption("fit_plot_scatter", conf),
-  fit.lty = metOption("fit_lty_scatter", "solid"),
-  fit.lwd = metOption("fit_lwd_scatter", 1),
-  fit.alpha = metOption("fit_alpha_scatter", 1),
-  conf = metOption("conf_plot_scatter", FALSE),
-  conf.alpha = metOption("conf_alpha_scatter", 0.3),
-  loc = metOption("msg_loc_scatter", 0),
-  global = metOption("global_aes_scatter", FALSE),
-  global.col = metOption("global_col_scatter", "grey"),
-  global.fill = metOption("global_fill_scatter", "grey"),
-  msg = metOption("msg_format_scatter", "metastats"),
-  gg = metOption("gg_scatter", FALSE), ...)
+  ref.col = metOption("ref.col_scatter", "grey"),
+  ref.lty = metOption("ref.lty_scatter", "solid"),
+  ref.lwd = metOption("ref.lwd_scatter", 1),
+  ref.alpha = metOption("ref.alpha_scatter", 1),
+  xref.col = metOption("xref.col_scatter", NULL),
+  xref.lty = metOption("xref.lty_scatter", NULL),
+  xref.lwd = metOption("xref.lwd_scatter", NULL),
+  xref.alpha = metOption("xref.alpha_scatter", NULL),
+  yref.col = metOption("yref.col_scatter", NULL),
+  yref.lty = metOption("yref.lty_scatter", NULL),
+  yref.lwd = metOption("yref.lwd_scatter", NULL),
+  yref.alpha = metOption("yref.alpha_scatter", NULL),
+  smooth.lty = metOption("smooth.lty_scatter", "dashed"),
+  smooth.lwd = metOption("smooth.lwd_scatter", 1),
+  smooth.alpha = metOption("smooth.alpha_scatter", 1),
+  fit = metOption("fit_scatter", conf),
+  fit.lty = metOption("fit.lty_scatter", "solid"),
+  fit.lwd = metOption("fit.lwd_scatter", 1),
+  fit.alpha = metOption("fit.alpha_scatter", 1),
+  conf = metOption("conf_scatter", FALSE),
+  conf.alpha = metOption("conf.alpha_scatter", 0.3),
+  loc = metOption("loc_scatter", 0), global = metOption("global_scatter",
+  FALSE), global.col = metOption("global.col_scatter", "grey"),
+  global.fill = metOption("global.fill_scatter", "grey"),
+  msg = metOption("msg_scatter", "metastats"), gg = metOption("gg_scatter",
+  FALSE), verbose = metOption("verbose", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -112,7 +111,9 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
 
 \item{panel}{name or definition of panel function}
 
-\item{colors}{replacements for default colors in group order}
+\item{points}{whether to plot points and fill for each group: logical, or alpha values between 0 and 1}
+
+\item{colors}{replacements for default colors in group order; can be length one integer to auto-select that many colors}
 
 \item{fill}{replacements for default fill colors in group order (means something different
 for \code{\link{densplot_data_frame}} and \code{\link{categorical_data_frame}}). Used for confidence
@@ -126,8 +127,6 @@ regions and for filling symbols (pch 21:25).}
 
 \item{widths}{replacements for default line widths in group order}
 
-\item{points}{whether to plot points and fill for each group: logical, or alpha values between 0 and 1}
-
 \item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1}
 
 \item{main}{character, or a function of x, yvar, xvar, groups, facets, and log}
@@ -140,7 +139,7 @@ regions and for filling symbols (pch 21:25).}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
-\item{ref.col}{default shared by \code{xref.col} and \code{yref.col}}
+\item{ref.col}{default shared by \code{xref.col} and \code{yref.col}; can be length one integer to auto-select that many colors}
 
 \item{ref.lty}{default shared by \code{xref.lty} and \code{yref.lty}}
 
@@ -193,6 +192,8 @@ regions and for filling symbols (pch 21:25).}
 \item{msg}{a function to print text on a panel: called with x values, y values, and \dots.}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed to \code{\link{region}}}
 }

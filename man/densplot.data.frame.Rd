@@ -5,7 +5,8 @@
 \title{Densplot Method for Data Frame}
 \usage{
 \method{densplot}{data.frame}(x, ..., fun = metOption("densplot",
-  "densplot_data_frame"), verbose = metOption("verbose_densplot", FALSE))
+  "densplot_data_frame"), verbose = metOption("verbose_densplot_data_frame",
+  FALSE))
 }
 \arguments{
 \item{x}{data.frame}

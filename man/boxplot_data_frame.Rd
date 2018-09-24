@@ -8,23 +8,25 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   log = metOption("log_boxplot", FALSE), crit = metOption("crit_boxplot",
   1.3), horizontal = metOption("horizontal_boxplot", NULL),
   scales = metOption("scales_boxplot", NULL),
-  panel = metOption("panel_boxplot", boxplot_panel),
-  ref = metOption("ref_x_boxplot", metaplot_ref),
-  ref.col = metOption("ref_col_boxplot", "grey"),
-  ref.lty = metOption("ref_lty_boxplot", "solid"),
-  ref.lwd = metOption("ref_lwd_boxplot", 1),
-  ref.alpha = metOption("ref_alpha_boxplot", 1),
-  nobs = metOption("nobs_boxplot", FALSE), na.rm = metOption("narm_boxplot",
-  TRUE), xlab = NULL, ylab = NULL, numlab = metOption("numlab_boxplot",
-  axislabel), catlab = metOption("catlab_boxplot", axislabel),
+  panel = metOption("panel_boxplot", "boxplot_panel"),
+  ref = metOption("ref_boxplot", "metaplot_ref"),
+  ref.col = metOption("ref.col_boxplot", "grey"),
+  ref.lty = metOption("ref.lty_boxplot", "solid"),
+  ref.lwd = metOption("ref.lwd_boxplot", 1),
+  ref.alpha = metOption("ref.alpha_boxplot", 1),
+  nobs = metOption("nobs_boxplot", FALSE),
+  na.rm = metOption("na.rm_boxplot", TRUE), xlab = NULL, ylab = NULL,
+  numlab = metOption("numlab_boxplot", "axislabel"),
+  catlab = metOption("catlab_boxplot", "axislabel"),
   aspect = metOption("aspect_boxplot", 1),
-  as.table = metOption("astable_boxplot", TRUE),
+  as.table = metOption("as.table_boxplot", TRUE),
   main = metOption("main_boxplot", NULL), sub = metOption("sub_boxplot",
   NULL), settings = metOption("settings_boxplot", NULL),
   padding = metOption("padding_boxplot", 1),
   reverse = metOption("reverse_boxplot", TRUE),
   pch = metOption("pch_boxplot", "|"), notch = metOption("notch_boxplot",
-  FALSE), gg = metOption("gg_boxplot", FALSE), ...)
+  FALSE), gg = metOption("gg_boxplot", FALSE),
+  verbose = metOption("verbose_boxplot", FALSE), ...)
 }
 \arguments{
 \item{x}{data.frame}
@@ -47,7 +49,7 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 
 \item{ref}{optional reference line(s) on numeric axis; can be function(x = x, var = con, ...) or NULL to suppress}
 
-\item{ref.col}{color for reference line(s)}
+\item{ref.col}{color for reference line(s); can be length one integer to auto-select that many colors}
 
 \item{ref.lty}{line type for reference line(s)}
 
@@ -86,6 +88,8 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
 \item{notch}{whether to draw notched boxes: passed to \code{\link[lattice]{panel.bwplot}}}
 
 \item{gg}{logical: whether to generate \code{ggplot} instead of \code{trellis}}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

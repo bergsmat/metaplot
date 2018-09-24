@@ -8,7 +8,8 @@ corsplom_panel_scatter(x, y, col = metOption("point_col_corsplom_panel",
   "#0080ff"), smooth.col = metOption("smooth_col_corsplom_panel", col),
   smooth.lty = metOption("smooth_lty_corspom_panel", "solid"),
   smooth.lwd = metOption("smooth_lwd_corspom_panel", 1),
-  smooth.alpha = metOption("smooth_alpha_corsplom_panel", 1), ...)
+  smooth.alpha = metOption("smooth_alpha_corsplom_panel", 1),
+  verbose = metOption("verbose_corsplom_panel"), ...)
 }
 \arguments{
 \item{x}{x values}
@@ -24,6 +25,8 @@ corsplom_panel_scatter(x, y, col = metOption("point_col_corsplom_panel",
 \item{smooth.lwd}{smooth line size}
 
 \item{smooth.alpha}{smooth alpha}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

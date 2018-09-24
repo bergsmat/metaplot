@@ -27,12 +27,12 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param main character, or a function of x, xvar
 #' @param sub character, or a function of x, xvar
 #' @param col point color
-#' @param smooth.col smooth color
+#' @param smooth.col smooth color, defaults to col
 #' @param smooth.lty smooth line type
 #' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
 #' @param density whether to plot density polygons
-#' @param diag.label label for the diagonal; can be a function of x, varname, .data
+#' @param diag.label label for the diagonal: a function of x, varname, .data
 #' @param pin location for a pin (reference line) in the density region; can be function(x, varname, .data) or NULL to suppress
 #' @param pin.col color of pin, if any
 #' @param pin.alpha alpha transparency of pin
@@ -44,6 +44,7 @@ corsplom <- function(x,...)UseMethod('corsplom')
 #' @param as.table diagonal arranged top-left to bottom-right
 #' @param dens.up whether density plots in diagonal should face the upper triangle vs. lower
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
+#' @param verbose generate messages describing process
 #' @param ... extra arguments passed to \code{\link[lattice]{splom}} and ggplot
 #' @export
 #' @return trellis or grob
@@ -75,34 +76,37 @@ corsplom <- function(x,...)UseMethod('corsplom')
 corsplom_data_frame <- function(
   x,
   xvar = names(x),
-  upper.panel = metOption('upperpanel_corsplom',if(gg) corsplom_gg_scatter else corsplom_panel_scatter),
-  lower.panel= metOption('lowerpanel_corsplom',if(gg) corsplom_gg_correlation else corsplom_panel_correlation),
-  diag.panel = metOption('diagpanel_corsplom',if(gg) corsplom_gg_diagonal else corsplom_panel_diagonal),
+  upper.panel = metOption('upper.panel_corsplom',if(gg) 'corsplom_gg_scatter' else 'corsplom_panel_scatter'),
+  lower.panel= metOption('lower.panel_corsplom',if(gg) 'corsplom_gg_correlation' else 'corsplom_panel_correlation'),
+  diag.panel = metOption('diag.panel_corsplom',if(gg) 'corsplom_gg_diagonal' else 'corsplom_panel_diagonal'),
   pscales= metOption('pscales_corsplom',0),
   xlab = metOption('xlab_corsplom',NULL),
-  varname.cex = metOption('varname_cex_corsplom',1),
+  varname.cex = metOption('varname.cex_corsplom',1),
   main = metOption('main_corsplom',NULL),
   sub = metOption('sub_corsplom',NULL),
-  col = metOption('point_col_corsplom','blue'),
-  smooth.col = metOption('smooth_col_corsplom',col),
-  smooth.lty = metOption('smooth_lty_corsplom','solid'),
-  smooth.lwd = metOption('smooth_lwd_corsplom',1),
-  smooth.alpha = metOption('smooth_alpha_corsplom',1),
+  col = metOption('col_corsplom','blue'),
+  smooth.col = metOption('smooth.col_corsplom',NULL),
+  smooth.lty = metOption('smooth.lty_corsplom','solid'),
+  smooth.lwd = metOption('smooth.lwd_corsplom',1),
+  smooth.alpha = metOption('smooth.alpha_corsplom',1),
   density = metOption('density_corsplom',TRUE),
-  diag.label = metOption('diag_label_corsplom',diag_label),
-  pin = metOption('pin_loc_corsplom',diag_pin),
-  pin.col = metOption('pin_col_corsplom','darkgrey'),
-  pin.alpha = metOption('pin_alpha_corsplom',1),
-  dens.col = metOption('dens_col_corsplom','grey'),
-  dens.scale = metOption('dens_scale_corsplom',0.2),
-  dens.alpha = metOption('dens_alpha_corsplom',0.5),
-  settings = metOption('settings_corsplom',NULL),
+  diag.label = metOption('diag.label_corsplom','diag_label'),
+  pin = metOption('pin_corsplom','diag_pin'),
+  pin.col = metOption('pin.col_corsplom','darkgrey'),
+  pin.alpha = metOption('pin.alpha_corsplom',1),
+  dens.col = metOption('dens.col_corsplom','grey'),
+  dens.scale = metOption('dens.scale_corsplom',0.2),
+  dens.alpha = metOption('dens.alpha_corsplom',0.5),
+  settings = metOption('settings.corsplom',NULL),
   padding = metOption('padding_corsplom', 1),
-  as.table = metOption('astable_corsplom', FALSE),
-  dens.up = metOption('updens_corsplom', TRUE), # must not partial match densplot or upper
+  as.table = metOption('as.table_corsplom', FALSE),
+  dens.up = metOption('dens.up_corsplom', TRUE), # must not partial match densplot or upper
   gg = metOption('gg_corsplom',FALSE),
+  verbose = metOption('verbose_corsplom',FALSE),
   ...
 ){
+  if(verbose)cat('this is corsplom_data_frame')
+  if(is.null(smooth.col))smooth.col <- col
   settings <- as.list(settings)
   if(is.null(names(settings))) names(settings) <- character(0)
   stopifnot(length(as.table) == 1, is.logical(as.table))
@@ -121,9 +125,10 @@ corsplom_data_frame <- function(
   x <- x[,xvar,drop=FALSE]
 
   if(gg){
-    if(is.character(upper.panel)) upper.panel <- match.fun(upper.panel)
-    if(is.character(lower.panel)) lower.panel <- match.fun(lower.panel)
-    if(is.character(diag.panel)) diag.panel <- match.fun(diag.panel)
+    tryCatch(match.fun(ylab), error = function(e)ylab)
+    if(is.character(upper.panel)) upper.panel <- tryCatch(match.fun(upper.panel), error = function(e)upper.panel)
+    if(is.character(lower.panel)) lower.panel <- tryCatch(match.fun(lower.panel), error = function(e)lower.panel)
+    if(is.character(diag.panel)) diag.panel <- tryCatch(match.fun(diag.panel), error = function(e)diag.panel)
     ncol <- ncol(x)
     cols <- 1:ncol
     rows <- ncol:1
@@ -152,6 +157,7 @@ corsplom_data_frame <- function(
             bottom <- i != 1
             right  <- i != ncol
           }
+          if(verbose)cat('calling diag.panel')
           p <- diag.panel(
             data = x,
             mapping = aes_string(x = names(x)[[i]]),
@@ -169,28 +175,37 @@ corsplom_data_frame <- function(
             as.table = as.table,
             first = i == 1,
             last = i == ncol,
+            verbose = verbose,
             ...
           )
         }
-        if(i != j && xor(i < j, as.table)) p <- lower.panel(
-          data = x,
-          mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
-          col = col,
-          smooth.col = smooth.col,
-          smooth.alpha = smooth.alpha,
-          smooth.lty = smooth.lty,
-          smooth.lwd = smooth.lwd,
-          ...
-        )
-        if(i != j && xor(i > j, as.table)) p <- upper.panel(
-          data = x,
-          mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
-          col = col,
-          smooth.col = smooth.col,
-          smooth.alpha = smooth.alpha,
-          smooth.lwd = smooth.lwd,
-          ...
-        )
+        if(i != j && xor(i < j, as.table)){
+          if(verbose)cat('calling lower.panel')
+          p <- lower.panel(
+            data = x,
+            mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
+            col = col,
+            smooth.col = smooth.col,
+            smooth.alpha = smooth.alpha,
+            smooth.lty = smooth.lty,
+            smooth.lwd = smooth.lwd,
+            verbose = verbose,
+            ...
+          )
+        }
+        if(i != j && xor(i > j, as.table)){
+          if(verbose)cat('calling upper.panel')
+          p <- upper.panel(
+            data = x,
+            mapping = aes_string(x = names(x)[[j]], y = names(x)[[i]]),
+            col = col,
+            smooth.col = smooth.col,
+            smooth.alpha = smooth.alpha,
+            smooth.lwd = smooth.lwd,
+            verbose = verbose,
+            ...
+          )
+        }
         theme_settings <- list(
           aspect.ratio = 1,
           strip.background = element_blank(),
@@ -239,7 +254,7 @@ corsplom_data_frame <- function(
     class(m) <- c('metaplot_gtable', class(m))
     return(m)
   }
-
+  if(verbose)cat('calling splom')
   splom(
     x,
     upper.panel = upper.panel,
@@ -269,6 +284,7 @@ corsplom_data_frame <- function(
     as_table = as.table,
     par.settings = par.settings,
     dens.up = dens.up,
+    verbose = verbose,
     ...
   )
 }
@@ -288,7 +304,7 @@ corsplom.data.frame <- function(
   x,
   ...,
   fun = metOption('corsplom','corsplom_data_frame'),
-  verbose = metOption('verbose_corsplom',FALSE)
+  verbose = metOption('verbose_corsplom_data_frame',FALSE)
 ){
   args <- quos(...)
   args <- lapply(args,f_rhs)
@@ -316,15 +332,17 @@ corsplom.data.frame <- function(
 #' @param smooth.lwd ignored
 #' @param smooth.alpha ignored
 #' @param use passed to \code{\link[stats]{cor}}
+#' @param verbose generate messages describing process
 #' @param ... ignored
 #' @keywords internal
 #' @export
 #' @family panel functions
 #' @family corsplom
 corsplom_gg_correlation = function(
-  data, mapping, col = metOption('point_col_corsplom_gg','blue'),
-  smooth.col, smooth.lty, smooth.lwd, smooth.alpha, use = 'pairwise.complete.obs', ...
+  data, mapping, col = metOption('col_corsplom_gg','blue'),
+  smooth.col, smooth.lty, smooth.lwd, smooth.alpha, use = 'pairwise.complete.obs', verbose = FALSE, ...
 ){
+  if(verbose)cat('this is corsplom_gg_correlation')
   x <- as.character(mapping$x)
   x <- x[x != '~']
   x <- x[[1]]
@@ -372,6 +390,7 @@ corsplom_gg_correlation = function(
 #' @param smooth.lty smooth line type
 #' @param smooth.lwd smooth line size
 #' @param smooth.alpha smooth alpha
+#' @param verbose generate messages describing process
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -382,13 +401,15 @@ corsplom_gg_scatter = function(
   mapping,
   method = 'loess',
   se = F,
-  col = metOption('point_col_corsplom_gg','blue'),
-  smooth.col = metOption('smooth_col_corsplom_gg','blue'),
-  smooth.alpha = metOption('smooth_alpha_corsplom_gg',1),
-  smooth.lty = metOption('smooth_lty_corsplom_gg','solid'),
-  smooth.lwd = metOption('smooth_lwd_corsplom_gg',1),
+  col = metOption('col_corsplom_gg','blue'),
+  smooth.col = metOption('smooth.col_corsplom_gg','blue'),
+  smooth.alpha = metOption('smooth.alpha_corsplom_gg',1),
+  smooth.lty = metOption('smooth.lty_corsplom_gg','solid'),
+  smooth.lwd = metOption('smooth.lwd_corsplom_gg',1),
+  verbose = metOption('verbose_corsplom_gg',FALSE),
   ...
 ){
+  if(verbose)cat('this is corsplom_gg_scatter')
   x <- as.character(mapping$x)
   x <- x[x != '~']
   x <- x[[1]]
@@ -420,7 +441,7 @@ corsplom_gg_scatter = function(
 #' @param data data
 #' @param mapping mapping
 #' @param .data copy of original dataset
-#' @param diag.label label for the diagonal; can be a function of x, varname, .data
+#' @param diag.label label for the diagonal: a function of x, varname, .data
 #' @param pin location for a pin (reference line) in the density region; can be a function of x, varname, .data
 #' @param pin.col color of pin, if any
 #' @param pin.alpha alpha transparency of pin
@@ -431,6 +452,7 @@ corsplom_gg_scatter = function(
 #' @param varname.cex text size multiplier
 #' @param as.table diagonal arranged top-left to bottom-right
 #' @param dens.up whether density plots should face the upper triangle (or lower, if FALSE)
+#' @param verbose generate messages describing process
 #' @param ... passed arguments
 #' @keywords internal
 #' @export
@@ -443,18 +465,20 @@ corsplom_gg_diagonal <- function(
   mapping,
   .data,
   density = TRUE,
-  diag.label = metOption('diag_label_corsplom_gg',diag_label),
+  diag.label = metOption('diag_label_corsplom_gg','diag_label'),
   pin = metOption('pin_loc_corsplom_gg',diag_pin),
-  pin.col = metOption('pin_col_corsplom_gg','darkgrey'),
-  pin.alpha = metOption('pin_alpha_corsplom_gg',1),
-  dens.col = metOption('dens_col_corsplom_gg','grey'),
-  dens.scale = metOption('dens_scale_corsplom_gg',0.2),
-  dens.alpha = metOption('dens_alpha_corsplom_gg',0.5),
-  varname.cex = metOption('varname_cex_corsplom_gg', 1),
-  as.table = metOption('astable_corsplom_gg', TRUE),
-  dens.up = metOption('densup_corsplom_gg',TRUE),
+  pin.col = metOption('pin.col_corsplom_gg','darkgrey'),
+  pin.alpha = metOption('pin.alpha_corsplom_gg',1),
+  dens.col = metOption('dens.col_corsplom_gg','grey'),
+  dens.scale = metOption('dens.scale_corsplom_gg',0.2),
+  dens.alpha = metOption('dens.alpha_corsplom_gg',0.5),
+  varname.cex = metOption('varname.cex_corsplom_gg', 1),
+  as.table = metOption('as.table_corsplom_gg', TRUE),
+  dens.up = metOption('dens.up_corsplom_gg',TRUE),
+  verbose = metOption('verbose_corsplom_gg',FALSE),
   ...
 ){
+  if(verbose)cat('this is corsplom_gg_diagonal')
   stopifnot(is.logical(density))
   density <- rep(density, length.out = 4)
   names(density) <- c('top','right','bottom','left')
@@ -511,7 +535,7 @@ corsplom_gg_diagonal <- function(
       fill = dens.col,
       alpha = dens.alpha
     )
-
+  if(is.character(pin)) pin <- match.fun(pin)
   if(is.function(pin)) pin <- pin(x = x, varname = x, .data = .data, ...)
   ref <- pin
   ref <- as.numeric(ref)

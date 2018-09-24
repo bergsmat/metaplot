@@ -5,7 +5,7 @@
 \title{Draw a Tile}
 \usage{
 panel_tile(x, y, subscripts, group.number, group.value, col, alpha, border, loc,
-  msg, .src, cex, ...)
+  msg, .src, cex, verbose, ...)
 }
 \arguments{
 \item{x}{x values}
@@ -31,6 +31,8 @@ panel_tile(x, y, subscripts, group.number, group.value, col, alpha, border, loc,
 \item{.src}{data source for which subscripts give x, y, msg,  and tile limits}
 
 \item{cex}{expansion for msg text; passed to msg}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{passed arguments}
 }

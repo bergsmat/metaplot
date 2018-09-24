@@ -7,7 +7,7 @@
 metaplot_key(groups, levels, points = rep(FALSE, length.out = length(levels)),
   lines = rep(FALSE, length.out = length(levels)), fill = rep(FALSE,
   length.out = length(levels)), space = "right", gg = FALSE,
-  type = "scatter", ...)
+  type = "scatter", verbose = FALSE, ...)
 }
 \arguments{
 \item{groups}{name of the grouping variable}
@@ -25,6 +25,8 @@ metaplot_key(groups, levels, points = rep(FALSE, length.out = length(levels)),
 \item{gg}{logical: whether to to return a list of arguments for \code{\link[ggplot2]{theme}} instead of for \code{auto.key} as in \code{\link[lattice]{xyplot}}}
 
 \item{type}{typically one of 'categorical','density', or 'scatter'}
+
+\item{verbose}{generate messages describing process}
 
 \item{...}{ignored}
 }

@@ -5,11 +5,12 @@
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
 categorical_panel(x, y, groups, bivariate = TRUE,
-  loc = metOption("msg_loc_categorical_panel", 5),
-  msg = metOption("msg_format_categorical_panel", "tilestats"),
+  loc = metOption("loc_categorical_panel", 5),
+  msg = metOption("msg_categorical_panel", "tilestats"),
   tex = metOption("tex_categorical_panel", 0.9),
   cex = metOption("cex_categorical_panel", 1),
-  rot = metOption("rot_categorical_panel", c(90, 0)), subscripts, ...)
+  rot = metOption("rot_categorical_panel", c(90, 0)), subscripts,
+  verbose = metOption("verbose_categorical_panel", FALSE), ...)
 }
 \arguments{
 \item{x}{x values}
@@ -32,10 +33,14 @@ categorical_panel(x, y, groups, bivariate = TRUE,
 
 \item{subscripts}{subscripts of the original data for this panel}
 
+\item{verbose}{generate messages describing process}
+
 \item{...}{passed to \code{\link[lattice]{panel.superpose}}}
 }
 \description{
 Default panel function for categorical_data_frame. Implements a simple mosaic plot.
+Global options are supported but typically are supplied by the calling function and
+may therefore be unreachable.
 }
 \seealso{
 \code{\link{tilestats}}
