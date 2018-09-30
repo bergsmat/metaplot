@@ -738,7 +738,7 @@ setOption <- function(...){
     options(metaplot = NULL)
     nms <- names(mops)
     if(!length(nms)) nms <- character(0)
-    return(nms)
+    invisible(nms)
   }
   for(i in nms){
     mops[[i]] <- NULL
