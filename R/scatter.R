@@ -64,7 +64,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param sub character, or a function of x, yvar, xvar, groups, facets, and log
 #' @param subscripts passed to \code{\link[lattice]{xyplot}}
-#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).
+#' @param settings default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap). Also merged with \dots.
 #' @param padding numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)
 #' @param ref.col default shared by \code{xref.col} and \code{yref.col}; can be length one integer to auto-select that many colors
 #' @param ref.lty default shared by \code{xref.lty} and \code{yref.lty}
@@ -94,7 +94,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @param msg a function to print text on a panel: called with x values, y values, and \dots.
 #' @param gg logical: whether to generate \code{ggplot} instead of \code{trellis}
 #' @param verbose generate messages describing process
-#' @param ... passed to \code{\link{region}}
+#' @param ... passed to called functions e.g.,  \code{\link{region}}
 #' @seealso \code{\link{scatter_panel}}
 #' @export
 #' @import lattice
@@ -211,8 +211,10 @@ scatter_data_frame <- function(
   if(is.null(yref.lwd)) yref.lwd <- ref.lwd
   if(is.null(yref.alpha)) yref.alpha <- ref.alpha
 
+  dots <- list(...)
   settings <- as.list(settings)
   if(is.null(names(settings))) names(settings) <- character(0)
+  settings <- merge(settings, dots)
   aspect <- metaplot_aspect(aspect, gg)
   stopifnot(inherits(x, 'data.frame'))
   stopifnot(length(groups) <= 1)
@@ -222,6 +224,7 @@ scatter_data_frame <- function(
   stopifnot(is.numeric(padding))
   padding <- rep(padding, length.out = 4)
   par.settings <- settings[names(settings) %in% names(trellis.par.get())]
+  settings <- settings[!(names(settings) %in% names(trellis.par.get()))] ###
   par.settings <- parintegrate(par.settings, padding)
   if(gg)padding <- unit(padding * 5.5, 'pt')
 
@@ -269,13 +272,13 @@ scatter_data_frame <- function(
   # yref
   yref
   if(is.character(yref)) yref <- match.fun(yref)
-  if(is.function(yref)) yref <- yref(x = x, var = yvar,...)
+  if(is.function(yref)) yref <- do.call(yref, c(list(x = x, var = yvar),settings))
   yref <- as.numeric(yref)
   yref <- yref[is.defined(yref)]
   # xref
   xref
   if(is.character(xref)) xref <- match.fun(xref)
-  if(is.function(xref)) xref <- xref(x = x, var = xvar,...)
+  if(is.function(xref)) xref <- do.call(xref, c(list(x = x, var = xvar),settings))
   xref <- as.numeric(xref)
   xref <- xref[is.defined(xref)]
 
@@ -352,21 +355,30 @@ scatter_data_frame <- function(
 
   yscale = list(log = ylog,equispaced.log = FALSE)
   xscale = list(log = xlog,equispaced.log = FALSE)
+  defaultscales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
+  if(gg) defaultscales <- 'fixed'
+  if(is.null(scales)){
+    scales <- defaultscales
+  } else {
+    if(!gg){
+      scales <- modifyList(defaultscales, scales)
+    }
+  }
 
-  if(is.null(scales) && gg) scales <- 'fixed'
-  if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
+  #  if(is.null(scales) && gg) scales <- 'fixed'
+  #  if(is.null(scales)) scales <- list(y = yscale,x = xscale,tck = c(1,0),alternating = FALSE)
 
   if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
-  if(is.function(ylab)) ylab <- ylab(y, var = yvar, log = ylog, ...)
+  if(is.function(ylab)) ylab <- do.call(ylab,c(list(y, var = yvar, log = ylog),settings))
   ylab <- base::sub('metaplot_values','',ylab)
 
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
-  if(is.function(xlab)) xlab <- xlab(y, var = xvar, log = xlog, ...)
+  if(is.function(xlab)) xlab <- do.call(xlab,c(list(y, var = xvar, log = xlog),settings))
 
   # if (is.null(groups)) # cannot be null at this point
   y[[groups]] <- as_factor(y[[groups]]) # blends with guide, if present
-  if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
-  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log, ...)
+  if(!is.null(main))if(is.function(main)) main <- do.call(main, c(list(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log),settings))
+  if(!is.null(sub))if(is.function(sub))   sub <-  do.call(sub,  c(list(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, log = log), settings))
 
   #groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
@@ -419,9 +431,9 @@ scatter_data_frame <- function(
  # pars <- pars[sapply(pars, function(i)length(i) > 0 )]
 
   if(is.character(key)) key <- match.fun(key)
-  if(is.function(key)) key <- key(
+  if(is.function(key)) key <- do.call(key,c(list(
     groups = groups, levels = levs, points = points, lines = lines,
-    space = space, gg = gg, type = 'scatter', verbose = verbose,  ...
+    space = space, gg = gg, type = 'scatter', verbose = verbose), settings)
   )
   # key$cex <- NULL # cex used for lattice point sizes
 
@@ -439,7 +451,7 @@ scatter_data_frame <- function(
     isorange <- c(lo, hi)
     xpos <- if(sum(loc)) xpos(loc, xrange) else NA
     ypos <- if(sum(loc)) ypos(loc, yrange) else NA
-    msg <- if(nlev == 1 & is.null(facets) & sum(loc)) match.fun(msg)(x = y[[xvar]], y = y[[yvar]], ...) else ''
+    msg <- if(nlev == 1 & is.null(facets) & sum(loc)) do.call(match.fun(msg), c(list(x = y[[xvar]], y = y[[yvar]]), settings)) else ''
     p <- ggplot(
       data = y,
       mapping = aes_string(
@@ -713,7 +725,7 @@ scatter_data_frame <- function(
     msg = msg,
     verbose = verbose
   )
-  args <- c(args, list(...))
+  args <- c(args, settings)
  # args$cex <- NULL # regarding symbol sizes
   if(all(c('ncol','nrow') %in% names(settings))){
     layout <- c(settings$ncol, settings$nrow)

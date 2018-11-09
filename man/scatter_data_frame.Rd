@@ -135,7 +135,7 @@ regions and for filling symbols (pch 21:25).}
 
 \item{subscripts}{passed to \code{\link[lattice]{xyplot}}}
 
-\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap).}
+\item{settings}{default parameter settings: a list from which matching elements are passed to lattice (as par.settings) or  to ggplot theme()  and facet_wrap() or facet_grid().  \code{ncol} and \code{nrow} are used as layout indices for lattice (for homology with facet_wrap). Also merged with \dots.}
 
 \item{padding}{numeric (will be recycled to length 4) giving plot margins in default units: top, right, bottom, left (in multiples of 5.5 points for ggplot)}
 
@@ -195,7 +195,7 @@ regions and for filling symbols (pch 21:25).}
 
 \item{verbose}{generate messages describing process}
 
-\item{...}{passed to \code{\link{region}}}
+\item{...}{passed to called functions e.g.,  \code{\link{region}}}
 }
 \description{
 Scatterplot function for class 'data.frame'.
