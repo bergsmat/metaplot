@@ -127,7 +127,7 @@ regions and for filling symbols (pch 21:25).}
 
 \item{widths}{replacements for default line widths in group order}
 
-\item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1}
+\item{lines}{whether to plot lines for each group: logical, or alpha values between 0 and 1. Points are connected in the order in which they appear in the data.}
 
 \item{main}{character, or a function of x, yvar, xvar, groups, facets, and log}
 

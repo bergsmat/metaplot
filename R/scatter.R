@@ -58,7 +58,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' regions and for filling symbols (pch 21:25).
 #' @param symbols replacements for default symbols in group order (i.e. values of pch)
 #' @param sizes replacements for default symbol sizes in group order
-#' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1
+#' @param lines whether to plot lines for each group: logical, or alpha values between 0 and 1. Points are connected in the order in which they appear in the data.
 #' @param types replacements for default line types in group order
 #' @param widths replacements for default line widths in group order
 #' @param main character, or a function of x, yvar, xvar, groups, facets, and log
@@ -471,11 +471,11 @@ scatter_data_frame <- function(
     p <- p +  scale_linetype_manual(values = types)
 
     if(any(as.logical(points))) p <- p + geom_point(mapping = aes(alpha = metaplot_points_alpha, size = metaplot_points_sizes))
-    if(any(as.logical(lines)))  p <- p + geom_line( mapping = aes(alpha = metaplot_lines_alpha,  size = metaplot_lines_widths))
+    if(any(as.logical(lines)))  p <- p + geom_path( mapping = aes(alpha = metaplot_lines_alpha,  size = metaplot_lines_widths))
     p <- p +  xlab(xlab)
     p <- p +  ylab(ylab)
     p <- p +  ggtitle(main, subtitle = sub)
-    if(ysmooth & global) p <- p + geom_line(
+    if(ysmooth & global) p <- p + geom_path(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -488,7 +488,7 @@ scatter_data_frame <- function(
       mapping = aes_string(x = xvar,y = yvar),
       show.legend = FALSE
     )
-    if(ysmooth & !global) p <- p + geom_line(
+    if(ysmooth & !global) p <- p + geom_path(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -498,7 +498,7 @@ scatter_data_frame <- function(
       # mapping = aes_string(x = xvar,y = yvar, color = groups),
       show.legend = FALSE
     )
-    if(xsmooth & global) p <- p + geom_line(
+    if(xsmooth & global) p <- p + geom_path(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -512,7 +512,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       formula = x ~ y
     )
-    if(xsmooth & !global) p <- p + geom_line(
+    if(xsmooth & !global) p <- p + geom_path(
       stat = 'smooth',
       alpha = smooth.alpha,
       linetype = smooth.lty,
@@ -544,7 +544,7 @@ scatter_data_frame <- function(
       show.legend = FALSE,
       level = if(is.logical(conf))0.95 else as.numeric(conf)
     )
-    if(fit & global) p <- p + geom_line( # https://stackoverflow.com/questions/19474552/adjust-transparency-alpha-of-stat-smooth-lines-not-just-transparency-of-confi
+    if(fit & global) p <- p + geom_path( # https://stackoverflow.com/questions/19474552/adjust-transparency-alpha-of-stat-smooth-lines-not-just-transparency-of-confi
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
@@ -557,7 +557,7 @@ scatter_data_frame <- function(
       se = FALSE,
       show.legend = FALSE
     )
-    if(fit & !global) p <- p + geom_line(
+    if(fit & !global) p <- p + geom_path(
       stat = 'smooth',
       alpha = fit.alpha,
       linetype = fit.lty,
