@@ -237,43 +237,43 @@ categorical_data_frame <- function(
   rot <- rep(rot, length.out = 2)
 
   if(!is.null(facets))stopifnot(is.character(facets))
-  y <- x
-   if(any(c('metaplot_groups','metaplot_values') %in% names(y)))
+  #x <- x
+   if(any(c('metaplot_groups','metaplot_values') %in% names(x)))
     stop('metaplot_groups and metaplot_values are reserved and cannot be column names')
- stopifnot(all(c(xvar,yvar,groups,facets) %in% names(y)))
+ stopifnot(all(c(xvar,yvar,groups,facets) %in% names(x)))
   if(is.null(groups)){
-    y$metaplot_groups <- TRUE
+    x$metaplot_groups <- TRUE
     groups <- 'metaplot_groups'
     #key = if(gg)'none' else FALSE
   }
   bivariate <- TRUE
   if(is.null(yvar)){
-    y$metaplot_values <- TRUE
+    x$metaplot_values <- TRUE
     yvar <- 'metaplot_values'
     bivariate <- FALSE
   }
   # groups now assigned, and yvar is singular
-   y[[yvar]] <- as_factor(y[[yvar]])
-   y[[xvar]] <- as_factor(y[[xvar]])
+   x[[yvar]] <- as_factor(x[[yvar]])
+   x[[xvar]] <- as_factor(x[[xvar]])
 
-  #if(is.null(keycols))keycols <- min(3, length(unique(y[[groups]])))
+  #if(is.null(keycols))keycols <- min(3, length(unique(x[[groups]])))
   #if(is.character(key))if(length(key == 1))if(key %in% c('left','right','top','bottom'))if(!gg)key <- list(space = key, pch = 22, points=any(as.logical(tiles)),lines=any(as.logical(lines)))
   if(na.rm) {
-    foo <- y
-    y <- y[is.defined(y[[yvar]]) & is.defined(y[[xvar]]),]
+    foo <- x
+    x <- x[is.defined(x[[yvar]]) & is.defined(x[[xvar]]),]
 
-    for(col in names(foo))attributes(y[[col]]) <- attributes(foo[[col]])
+    for(col in names(foo))attributes(x[[col]]) <- attributes(foo[[col]])
     at <- attributes(foo)
     at$row.names <- NULL
-    for(a in names(at)) attr(y,a) <- attr(foo,a)
+    for(a in names(at)) attr(x,a) <- attr(foo,a)
   }
   ff <- character(0)
   if(!is.null(facets))ff <- paste(facets, collapse = ' + ')
   if(!is.null(facets))ff <- paste0('|',ff)
   formula <- as.formula(yvar %>% paste(sep = '~', xvar) %>% paste(ff))
-  ylev <- as.character(sort(unique(y[[yvar]])))
+  ylev <- as.character(sort(unique(x[[yvar]])))
   if(yvar == 'metaplot_values') ylev <- ''
-  xlev <- as.character(sort(unique(y[[xvar]])))
+  xlev <- as.character(sort(unique(x[[xvar]])))
   if(is.null(scales) && gg) scales <- 'free'
   if(is.null(scales)) scales <- list(
     relation = 'free',
@@ -293,23 +293,23 @@ categorical_data_frame <- function(
     )
   )
   if(is.character(ylab)) ylab <- tryCatch(match.fun(ylab), error = function(e)ylab)
-  if(is.function(ylab)) ylab <- ylab(y, var = yvar, ...)
+  if(is.function(ylab)) ylab <- ylab(x, var = yvar, ...)
   ylab <- base::sub('metaplot_values','',ylab)
 
   if(is.character(xlab)) xlab <- tryCatch(match.fun(xlab), error = function(e)xlab)
-  if(is.function(xlab)) xlab <- xlab(y, var = xvar, ...)
+  if(is.function(xlab)) xlab <- xlab(x, var = xvar, ...)
 
   # if (is.null(groups)) # cannot be null at this point
-  y[[groups]] <- as_factor(y[[groups]])
-  if(!is.null(main))if(is.function(main)) main <- main(x = y,yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
-  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = y, yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
+  x[[groups]] <- as_factor(x[[groups]])
+  if(!is.null(main))if(is.function(main)) main <- main(x = x,yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
+  if(!is.null(sub))if(is.function(sub)) sub <- sub(x = x, yvar = yvar, xvar = xvar, groups = groups, facets = facets, ...)
 
   #if(!gg)groups <- as.formula(paste('~',groups))
   if(!is.null(facets)){
-    for (i in seq_along(facets)) y[[facets[[i]]]] <- as_factor(y[[ facets[[i]] ]])
+    for (i in seq_along(facets)) x[[facets[[i]]]] <- as_factor(x[[ facets[[i]] ]])
   }
-  nlev <- length(levels(y[[groups]]))
-  levs <- levels(y[[groups]])
+  nlev <- length(levels(x[[groups]]))
+  levs <- levels(x[[groups]])
   if(is.null(colors)) {
     if(gg){
       colors <- hue_pal()(nlev)
@@ -354,8 +354,8 @@ categorical_data_frame <- function(
 
   if(gg){
     nms <- c(xvar, yvar, groups, facets)
-    # dat <- tiles(x=y[,xvar], y = y[,yvar], g = y[,groups], tex = tex, msg = msg)
-    dat <- y[,nms, drop = F]
+    # dat <- tiles(x=x[,xvar], y = x[,yvar], g = x[,groups], tex = tex, msg = msg)
+    dat <- x[,nms, drop = F]
     if(ncol(dat) == 3) names(dat) <- c('x','y','g')
     if(ncol(dat) == 4) names(dat) <- c('x','y','g', 'f1')
     if(ncol(dat) == 5) names(dat) <- c('x','y','g', 'f1', 'f2')
@@ -363,8 +363,8 @@ categorical_data_frame <- function(
     dat <- tiles(dat, tex = tex, msg = msg, verbose = verbose)
     if(length(facets) >= 1) names(dat)[names(dat) == 'f1'] <- facets[[1]]
     if(length(facets) == 2) names(dat)[names(dat) == 'f2'] <- facets[[2]]
-    yax <- cax(y[[yvar]])
-    xax <- cax(y[[xvar]])
+    yax <- cax(x[[yvar]])
+    xax <- cax(x[[xvar]])
     plot <- ggplot(data = dat) +
     geom_rect(
       mapping = aes(
@@ -431,7 +431,7 @@ categorical_data_frame <- function(
 
   args <- list(
     formula,
-    data = y,
+    data = x,
     groups = as.formula(paste('~',groups)),
     auto.key = key,
     as.table = as.table,
@@ -445,7 +445,7 @@ categorical_data_frame <- function(
     par.settings = par.settings,
     main = main,
     sub = sub,
-    .data = y,
+    .data = x,
     tex = tex,
     rot = rot,
     bivariate = bivariate,

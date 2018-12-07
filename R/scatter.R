@@ -101,6 +101,7 @@ scatter <- function(x,...)UseMethod('scatter')
 #' @importFrom tidyr gather
 #' @importFrom scales alpha
 #' @importFrom grDevices xy.coords
+#' @importFrom utils modifyList
 #' @family bivariate plots
 #' @family metaplot
 #' @family scatter
