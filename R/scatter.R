@@ -400,11 +400,20 @@ scatter_data_frame <- function(
   points <- as.numeric(points)
   if(is.null(lines)) lines <- FALSE # same as default
   lines <- as.numeric(lines)
+
+
+
+
   if(is.null(colors) && nlev == 1 &  gg) colors <- 'black'
   if(is.null(colors) && nlev == 1 & !gg) colors <- trellis.par.get()$plot.symbol$col
   if(is.null(colors) && nlev != 1 &  gg) colors <- hue_pal()(nlev)
   if(is.null(colors) && nlev != 1 & !gg) colors <- trellis.par.get()$superpose.symbol$col
-  if(is.numeric(colors)) colors <- hue_pal()(colors[[1]])
+  if(is.numeric(colors)) colors <- hue_pal()(colors[[1]]) # what about a vector of color numbers? what about dens/cat?
+
+
+
+
+
   if(is.null(fill)) fill <- colors
   symbols <- rep(symbols, length.out = nlev)
   sizes <- rep(sizes, length.out = nlev)
