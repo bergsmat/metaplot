@@ -1,7 +1,7 @@
 Package: metaplot
 Type: Package
 Title: Data-Driven Plot Design
-Version: 0.8.2
+Version: 0.8.3
 Author: Tim Bergsma
 Maintainer: Tim Bergsma <bergsmat@gmail.com>
 Description: Designs plots in terms of core structure.  See 'example(metaplot)'.
@@ -19,7 +19,7 @@ Description: Designs plots in terms of core structure.  See 'example(metaplot)'.
  between trellis and ggplot output. Compact syntax and integrated metadata promote workflow 
  scalability.
 Imports:
- encode (>= 0.3.4),
+ encode (>= 0.3.6),
  lattice,
  magrittr,
  dplyr (>= 0.7.1),
