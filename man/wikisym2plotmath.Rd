@@ -18,6 +18,8 @@ expression
 Converts wiki symbol to plotmath.  Vectorized version of \code{\link{wikisym2plotmath_}}.
 }
 \seealso{
-Other formatters: \code{\link{diag_label}},
-  \code{\link{wikisym2plotmath_}}
+Other formatters: 
+\code{\link{diag_label}()},
+\code{\link{wikisym2plotmath_}()}
 }
+\concept{formatters}

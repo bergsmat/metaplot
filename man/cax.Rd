@@ -20,6 +20,8 @@ Calculates axis labels and positions for categorical values.
 \seealso{
 \code{\link{categorical_panel}}
 
-Other categorical family: \code{\link{tilestats}},
-  \code{\link{tiles}}
+Other categorical family: 
+\code{\link{tilestats}()},
+\code{\link{tiles}()}
 }
+\concept{categorical family}

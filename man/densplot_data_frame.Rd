@@ -4,27 +4,41 @@
 \alias{densplot_data_frame}
 \title{Density Function for Data Frame}
 \usage{
-densplot_data_frame(x, xvar, groups = NULL, facets = NULL,
-  xlab = metOption("xlab_dens", "axislabel"), ref = metOption("ref_x_dens",
-  "metaplot_ref"), ref.col = metOption("ref_col_dens", "grey"),
+densplot_data_frame(
+  x,
+  xvar,
+  groups = NULL,
+  facets = NULL,
+  xlab = metOption("xlab_dens", "axislabel"),
+  ref = metOption("ref_x_dens", "metaplot_ref"),
+  ref.col = metOption("ref_col_dens", "grey"),
   ref.lty = metOption("ref_lty_dens", "solid"),
   ref.lwd = metOption("ref_lwd_dens", 1),
-  ref.alpha = metOption("ref_alpha_dens", 1), log = metOption("log_dens",
-  FALSE), crit = metOption("crit_dens", 1.3),
-  aspect = metOption("aspect_dens", 1), scales = metOption("scales_dens",
-  NULL), panel = metOption("panel_dens", "dens_panel"),
-  points = metOption("points_dens", TRUE), colors = metOption("colors_dens",
-  NULL), symbols = metOption("symbols_dens", NULL),
-  sizes = metOption("sizes_dens", 1), lines = metOption("lines_dens", TRUE),
+  ref.alpha = metOption("ref_alpha_dens", 1),
+  log = metOption("log_dens", FALSE),
+  crit = metOption("crit_dens", 1.3),
+  aspect = metOption("aspect_dens", 1),
+  scales = metOption("scales_dens", NULL),
+  panel = metOption("panel_dens", "dens_panel"),
+  points = metOption("points_dens", TRUE),
+  colors = metOption("colors_dens", NULL),
+  symbols = metOption("symbols_dens", NULL),
+  sizes = metOption("sizes_dens", 1),
+  lines = metOption("lines_dens", TRUE),
   types = metOption("types_dens", "solid"),
-  widths = metOption("widths_dens", 1), fill = metOption("fill_dens",
-  FALSE), space = metOption("space_dens", "right"),
+  widths = metOption("widths_dens", 1),
+  fill = metOption("fill_dens", FALSE),
+  space = metOption("space_dens", "right"),
   key = metOption("key_dens", "metaplot_key"),
-  as.table = metOption("as.table_dens", TRUE), main = metOption("main_dens",
-  NULL), sub = metOption("sub_dens", NULL),
+  as.table = metOption("as.table_dens", TRUE),
+  main = metOption("main_dens", NULL),
+  sub = metOption("sub_dens", NULL),
   settings = metOption("settings_dens", NULL),
-  padding = metOption("padding_dens", 1), gg = metOption("gg_dens", FALSE),
-  verbose = metOption("verbose_dens", FALSE), ...)
+  padding = metOption("padding_dens", 1),
+  gg = metOption("gg_dens", FALSE),
+  verbose = metOption("verbose_dens", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -106,19 +120,26 @@ space = 'top', columns = 4, legend.direction = 'horizontal', gg = TRUE)
 densplot_data_frame(Theoph, 'conc', , 'Subject')
 }
 \seealso{
-Other univariate plots: \code{\link{dens_panel}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{panel.meta_densityplot}}
+Other univariate plots: 
+\code{\link{dens_panel}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{densplot}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{panel.meta_densityplot}()}
 
-Other densplot: \code{\link{densplot.data.frame}},
-  \code{\link{densplot}}
+Other densplot: 
+\code{\link{densplot.data.frame}()},
+\code{\link{densplot}()}
 
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{test_metaplot}()}
 }
+\concept{densplot}
+\concept{metaplot}
+\concept{univariate plots}

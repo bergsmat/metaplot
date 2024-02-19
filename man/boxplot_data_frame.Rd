@@ -4,9 +4,14 @@
 \alias{boxplot_data_frame}
 \title{Boxplot Function for Data Frame}
 \usage{
-boxplot_data_frame(x, yvar, xvar, facets = NULL,
-  log = metOption("log_boxplot", FALSE), crit = metOption("crit_boxplot",
-  1.3), horizontal = metOption("horizontal_boxplot", NULL),
+boxplot_data_frame(
+  x,
+  yvar,
+  xvar,
+  facets = NULL,
+  log = metOption("log_boxplot", FALSE),
+  crit = metOption("crit_boxplot", 1.3),
+  horizontal = metOption("horizontal_boxplot", NULL),
   scales = metOption("scales_boxplot", NULL),
   panel = metOption("panel_boxplot", "boxplot_panel"),
   ref = metOption("ref_boxplot", "metaplot_ref"),
@@ -15,18 +20,24 @@ boxplot_data_frame(x, yvar, xvar, facets = NULL,
   ref.lwd = metOption("ref.lwd_boxplot", 1),
   ref.alpha = metOption("ref.alpha_boxplot", 1),
   nobs = metOption("nobs_boxplot", FALSE),
-  na.rm = metOption("na.rm_boxplot", TRUE), xlab = NULL, ylab = NULL,
+  na.rm = metOption("na.rm_boxplot", TRUE),
+  xlab = NULL,
+  ylab = NULL,
   numlab = metOption("numlab_boxplot", "axislabel"),
   catlab = metOption("catlab_boxplot", "axislabel"),
   aspect = metOption("aspect_boxplot", 1),
   as.table = metOption("as.table_boxplot", TRUE),
-  main = metOption("main_boxplot", NULL), sub = metOption("sub_boxplot",
-  NULL), settings = metOption("settings_boxplot", NULL),
+  main = metOption("main_boxplot", NULL),
+  sub = metOption("sub_boxplot", NULL),
+  settings = metOption("settings_boxplot", NULL),
   padding = metOption("padding_boxplot", 1),
   reverse = metOption("reverse_boxplot", TRUE),
-  pch = metOption("pch_boxplot", "|"), notch = metOption("notch_boxplot",
-  FALSE), gg = metOption("gg_boxplot", FALSE),
-  verbose = metOption("verbose_boxplot", FALSE), ...)
+  pch = metOption("pch_boxplot", "|"),
+  notch = metOption("notch_boxplot", FALSE),
+  gg = metOption("gg_boxplot", FALSE),
+  verbose = metOption("verbose_boxplot", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -104,15 +115,22 @@ boxplot_data_frame(Theoph \%>\% filter(conc > 0),
 'conc','Subject', log = TRUE, ref = c(2,5),horizontal = FALSE)
 }
 \seealso{
-Other mixedvariate plots: \code{\link{boxplot.data.frame}},
-  \code{\link{boxplot_panel}}
+Other mixedvariate plots: 
+\code{\link{boxplot.data.frame}()},
+\code{\link{boxplot_panel}()}
 
-Other boxplot: \code{\link{boxplot.data.frame}}
+Other boxplot: 
+\code{\link{boxplot.data.frame}()}
 
-Other metaplot: \code{\link{categorical_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{categorical_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{test_metaplot}()}
 }
+\concept{boxplot}
+\concept{metaplot}
+\concept{mixedvariate plots}

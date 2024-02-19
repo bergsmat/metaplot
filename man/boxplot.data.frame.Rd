@@ -4,8 +4,12 @@
 \alias{boxplot.data.frame}
 \title{Boxplot Method for Data Frame}
 \usage{
-\method{boxplot}{data.frame}(x, ..., fun = metOption("box",
-  "boxplot_data_frame"), verbose = metOption("verbose_boxplot", FALSE))
+\method{boxplot}{data.frame}(
+  x,
+  ...,
+  fun = metOption("box", "boxplot_data_frame"),
+  verbose = metOption("verbose_boxplot", FALSE)
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -40,19 +44,25 @@ boxplot(Theoph \%>\% filter(conc > 0),Subject,conc, log = T)
 boxplot(Theoph \%>\% filter(conc > 0),Subject,conc, log = T, gg = T)
 }
 \seealso{
-Other mixedvariate plots: \code{\link{boxplot_data_frame}},
-  \code{\link{boxplot_panel}}
+Other mixedvariate plots: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{boxplot_panel}()}
 
-Other boxplot: \code{\link{boxplot_data_frame}}
+Other boxplot: 
+\code{\link{boxplot_data_frame}()}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{boxplot}
+\concept{methods}
+\concept{mixedvariate plots}

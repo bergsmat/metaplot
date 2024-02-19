@@ -4,8 +4,14 @@
 \alias{region}
 \title{Calculate a Confidence Region}
 \usage{
-region(x, y, family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else
-  "gaussian", length.out = 1000, conf = 0.95, ...)
+region(
+  x,
+  y,
+  family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else "gaussian",
+  length.out = 1000,
+  conf = 0.95,
+  ...
+)
 }
 \arguments{
 \item{x}{x values}
@@ -29,13 +35,11 @@ Calculates a confidence region. \code{se.fit} from \code{\link[stats]{predict.gl
 \seealso{
 \url{https://stackoverflow.com/questions/14423325/confidence-intervals-for-predictions-from-logistic-regression}
 
-\url{http://www.rnr.lsu.edu/bret/BretWebSiteDocs/GLMCI.pdf}
-
 \url{https://stat.ethz.ch/pipermail/r-help/2010-September/254465.html}
 
-\url{http://r.789695.n4.nabble.com/Confidence-Intervals-for-logistic-regression-td2315932.html}
-
-Other regression functions: \code{\link{metastats}},
-  \code{\link{model}}
+Other regression functions: 
+\code{\link{metastats}()},
+\code{\link{model}()}
 }
+\concept{regression functions}
 \keyword{internal}

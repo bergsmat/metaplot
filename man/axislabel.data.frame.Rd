@@ -22,17 +22,21 @@ character
 Axis label for data.frame. Substitutes label attribute if present for column name, and puts units if present in parentheses, trailing.  Puts 'log scale' in parentheses on a new line if log is TRUE.
 }
 \seealso{
-Other axislabel: \code{\link{axislabel}}
+Other axislabel: 
+\code{\link{axislabel}()}
 
-Other methods: \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{axislabel}
+\concept{methods}
 \keyword{internal}

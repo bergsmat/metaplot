@@ -24,7 +24,7 @@ globalVariables('axisTicks')
 #'
 #' Template designs follow; substitute behaviors by setting global options (see argument list).
 #'
-#'\itemize{
+#'\describe{
 #' \item{NUM:}{ univariate (densityplot) }
 #'
 #' \item{CAT:}{ categorical (one-way mosaic plot) }
@@ -62,7 +62,7 @@ globalVariables('axisTicks')
 #'}
 #'
 #' Variable attributes may be supplied by conventional means;  \code{\link{pack}} and \code{\link{unpack}} support storing and retrieving scalar column attributes.  The following scalar attributes are currently supported.
-#' \itemize{
+#' \describe{
 #' \item{label:}{ A variable descriptor.  If present, panel functions will use label to create informative axis labels. See \code{\link{axislabel}}. }
 #' \item{guide:}{ Units for a numeric variable, or an encoding (scalar string giving codes and possibly decodes) for a categorical item.  If present, units will be used to inform the corresponding axis label (\code{\link{axislabel}}).  If present, codes will be used to impose sort order on categorical variables.  If present, decodes will be used as substitutes for stored values when presenting categorical labels, legends, and facet names. For more on encodings, see \code{\link[encode]{encode}}.}
 #' \item{reference:}{ Some variables have values to which they can be compared.  For example, residual error is often expected to be centered at zero. Default panel functions plot corresponding reference lines if this attribute is present. See for example \code{\link{dens_panel}}.}

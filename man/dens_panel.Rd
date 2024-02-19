@@ -4,8 +4,15 @@
 \alias{dens_panel}
 \title{Panel Function for Metaplot Density Plot}
 \usage{
-dens_panel(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha,
-  verbose = FALSE, ...)
+dens_panel(
+  ref = NULL,
+  ref.col,
+  ref.lty,
+  ref.lwd,
+  ref.alpha,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{ref}{numeric}
@@ -24,26 +31,32 @@ dens_panel(ref = NULL, ref.col, ref.lty, ref.lwd, ref.alpha,
 Default panel function for dens_data_frame.  Calls panel.densityplot, and plots reference lines if ref has length.
 }
 \seealso{
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{diag_label}}, \code{\link{diag_pin}},
-  \code{\link{iso_prepanel}}, \code{\link{metaplot_key}},
-  \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 
-Other univariate plots: \code{\link{densplot.data.frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{panel.meta_densityplot}}
+Other univariate plots: 
+\code{\link{densplot.data.frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{densplot}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{panel.meta_densityplot}()}
 }
+\concept{panel functions}
+\concept{univariate plots}
 \keyword{internal}

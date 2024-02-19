@@ -4,10 +4,18 @@
 \alias{metaplot_key}
 \title{Default Key}
 \usage{
-metaplot_key(groups, levels, points = rep(FALSE, length.out = length(levels)),
-  lines = rep(FALSE, length.out = length(levels)), fill = rep(FALSE,
-  length.out = length(levels)), space = "right", gg = FALSE,
-  type = "scatter", verbose = FALSE, ...)
+metaplot_key(
+  groups,
+  levels,
+  points = rep(FALSE, length.out = length(levels)),
+  lines = rep(FALSE, length.out = length(levels)),
+  fill = rep(FALSE, length.out = length(levels)),
+  space = "right",
+  gg = FALSE,
+  type = "scatter",
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{groups}{name of the grouping variable}
@@ -37,30 +45,40 @@ list, or possibly logical if gg is FALSE
 Default key function for constructing scatterplot legends.
 }
 \seealso{
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot}}, \code{\link{scatter_data_frame}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{test_metaplot}()}
 
-Other scatter: \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{scatter_panel}}, \code{\link{scatter}}
+Other scatter: 
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{scatter_panel}()},
+\code{\link{scatter}()}
 
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_label}},
-  \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 }
+\concept{metaplot}
+\concept{panel functions}
+\concept{scatter}

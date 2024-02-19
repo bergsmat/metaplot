@@ -96,7 +96,7 @@ corsplom_panel_correlation = function(x, y, use = 'pairwise.complete.obs', verbo
   x0 <- min(x1)+(max(x1)-min(x1))/2
   y0 <- min(y1)+(max(y1)-min(y1))/2
   stat <- try(silent = TRUE, round(cor(x,y, use = use), 3))
-  if(class(stat) == 'try-error') stat <- ''
+  if(inherits(stat, 'try-error')) stat <- ''
   panel.text(x0 ,y0, labels = paste('r =',round(cor(x,y,use = use),3) ))
 }
 
@@ -492,9 +492,9 @@ model <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' els
 #' @return data.frame with x, y, hi, lo at 1000 points
 #' @family regression functions
 #' @seealso \url{https://stackoverflow.com/questions/14423325/confidence-intervals-for-predictions-from-logistic-regression}
-#' @seealso \url{http://www.rnr.lsu.edu/bret/BretWebSiteDocs/GLMCI.pdf}
+# @seealso \url{http://www.rnr.lsu.edu/bret/BretWebSiteDocs/GLMCI.pdf}
 #' @seealso \url{https://stat.ethz.ch/pipermail/r-help/2010-September/254465.html}
-#' @seealso \url{http://r.789695.n4.nabble.com/Confidence-Intervals-for-logistic-regression-td2315932.html}
+# @seealso \url{http://r.789695.n4.nabble.com/Confidence-Intervals-for-logistic-regression-td2315932.html}
 region <- function(x, y, family = if(all(y %in% 0:1,na.rm = TRUE)) 'binomial' else 'gaussian', length.out = 1000, conf = 0.95, ...){
   if(is.logical(conf)){
     if(conf){

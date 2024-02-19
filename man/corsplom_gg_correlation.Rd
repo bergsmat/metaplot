@@ -4,9 +4,18 @@
 \alias{corsplom_gg_correlation}
 \title{Correlation GG Function for GG Metaplot Corsplom}
 \usage{
-corsplom_gg_correlation(data, mapping, col = metOption("col_corsplom_gg",
-  "blue"), smooth.col, smooth.lty, smooth.lwd, smooth.alpha,
-  use = "pairwise.complete.obs", verbose = FALSE, ...)
+corsplom_gg_correlation(
+  data,
+  mapping,
+  col = metOption("col_corsplom_gg", "blue"),
+  smooth.col,
+  smooth.lty,
+  smooth.lwd,
+  smooth.alpha,
+  use = "pairwise.complete.obs",
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{data}
@@ -35,29 +44,36 @@ corsplom_data_frame() typically supplies smooth aesthetics in case smooth is des
 suppress corresponding warnings.
 }
 \seealso{
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_label}},
-  \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 
-Other corsplom: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{corsplom}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}}
+Other corsplom: 
+\code{\link{corsplom.data.frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{corsplom}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()}
 }
+\concept{corsplom}
+\concept{panel functions}
 \keyword{internal}

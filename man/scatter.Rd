@@ -15,19 +15,28 @@ scatter(x, ...)
 Scatterplot.
 }
 \seealso{
-Other generic functions: \code{\link{axislabel}},
-  \code{\link{categorical}}, \code{\link{corsplom}},
-  \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{pack}}, \code{\link{test_metaplot}},
-  \code{\link{unpack}}
+Other generic functions: 
+\code{\link{axislabel}()},
+\code{\link{categorical}()},
+\code{\link{corsplom}()},
+\code{\link{densplot}()},
+\code{\link{metaplot}()},
+\code{\link{pack}()},
+\code{\link{test_metaplot}()},
+\code{\link{unpack}()}
 
-Other scatter: \code{\link{metaplot_key}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{scatter_panel}}
+Other scatter: 
+\code{\link{metaplot_key}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{scatter_panel}()}
 
-Other bivariate plots: \code{\link{iso_prepanel}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}}
+Other bivariate plots: 
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter_data_frame}()}
 }
+\concept{bivariate plots}
+\concept{generic functions}
+\concept{scatter}

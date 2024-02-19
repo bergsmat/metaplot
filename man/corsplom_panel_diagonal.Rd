@@ -4,7 +4,11 @@
 \alias{corsplom_panel_diagonal}
 \title{Diagonal Panel Function for Metaplot Corsplom}
 \usage{
-corsplom_panel_diagonal(x, varname, .data, density = TRUE,
+corsplom_panel_diagonal(
+  x,
+  varname,
+  .data,
+  density = TRUE,
   diag.label = metOption("diag_label_corsplom_panel", diag_label),
   pin = metOption("pin_loc_corsplom_panel", diag_pin),
   pin.col = metOption("pin_col_corsplom_panel", "darkgrey"),
@@ -14,7 +18,9 @@ corsplom_panel_diagonal(x, varname, .data, density = TRUE,
   dens.alpha = metOption("dens_alpha_corsplom_panel", 0.5),
   as.table = metOption("as.table_corsplom_panel", FALSE),
   dens.up = metOption("densup_corsplom_panel", TRUE),
-  verbose = metOption("verbose_corsplom_panel", FALSE), ...)
+  verbose = metOption("verbose_corsplom_panel", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{numeric}
@@ -53,19 +59,24 @@ Default diagonal panel function for corsplom_data_frame. Plots a density smooth 
 \seealso{
 \code{\link{corsplom}}
 
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_label}},
-  \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 }
+\concept{panel functions}
 \keyword{internal}

@@ -4,8 +4,12 @@
 \alias{model}
 \title{Execute Linear Model}
 \usage{
-model(x, y, family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else
-  "gaussian", ...)
+model(
+  x,
+  y,
+  family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else "gaussian",
+  ...
+)
 }
 \arguments{
 \item{x}{x values}
@@ -23,7 +27,9 @@ glm
 Executes a linear model, automatically choosing binomial family as necessary.
 }
 \seealso{
-Other regression functions: \code{\link{metastats}},
-  \code{\link{region}}
+Other regression functions: 
+\code{\link{metastats}()},
+\code{\link{region}()}
 }
+\concept{regression functions}
 \keyword{internal}

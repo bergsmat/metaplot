@@ -4,8 +4,12 @@
 \alias{metastats}
 \title{Format GLM Statistics}
 \usage{
-metastats(x, y, family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else
-  "gaussian", ...)
+metastats(
+  x,
+  y,
+  family = if (all(y \%in\% 0:1, na.rm = TRUE)) "binomial" else "gaussian",
+  ...
+)
 }
 \arguments{
 \item{x}{x values}
@@ -25,6 +29,8 @@ Formats GLM statistics. Uses a gaussian family by default, or binomial family if
 \seealso{
 \code{\link{scatter_panel}}
 
-Other regression functions: \code{\link{model}},
-  \code{\link{region}}
+Other regression functions: 
+\code{\link{model}()},
+\code{\link{region}()}
 }
+\concept{regression functions}

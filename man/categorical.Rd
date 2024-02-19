@@ -15,13 +15,21 @@ categorical(x, ...)
 Categorical Plot. Generic, with method for 'data.frame'.
 }
 \seealso{
-Other generic functions: \code{\link{axislabel}},
-  \code{\link{corsplom}}, \code{\link{densplot}},
-  \code{\link{metaplot}}, \code{\link{pack}},
-  \code{\link{scatter}}, \code{\link{test_metaplot}},
-  \code{\link{unpack}}
+Other generic functions: 
+\code{\link{axislabel}()},
+\code{\link{corsplom}()},
+\code{\link{densplot}()},
+\code{\link{metaplot}()},
+\code{\link{pack}()},
+\code{\link{scatter}()},
+\code{\link{test_metaplot}()},
+\code{\link{unpack}()}
 
-Other categorical: \code{\link{categorical.data.frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{categorical_panel}}, \code{\link{panel_tile}}
+Other categorical: 
+\code{\link{categorical.data.frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{categorical_panel}()},
+\code{\link{panel_tile}()}
 }
+\concept{categorical}
+\concept{generic functions}

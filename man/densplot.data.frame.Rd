@@ -4,9 +4,12 @@
 \alias{densplot.data.frame}
 \title{Densplot Method for Data Frame}
 \usage{
-\method{densplot}{data.frame}(x, ..., fun = metOption("densplot",
-  "densplot_data_frame"), verbose = metOption("verbose_densplot_data_frame",
-  FALSE))
+\method{densplot}{data.frame}(
+  x,
+  ...,
+  fun = metOption("densplot", "densplot_data_frame"),
+  verbose = metOption("verbose_densplot_data_frame", FALSE)
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -31,23 +34,29 @@ densplot(Theoph, conc, main= function(x,...)attr(x,'title'))
 densplot(Theoph, conc, sub= function(x,...)attr(x,'title'))
 }
 \seealso{
-Other univariate plots: \code{\link{dens_panel}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{densplot}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{panel.meta_densityplot}}
+Other univariate plots: 
+\code{\link{dens_panel}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{densplot}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{panel.meta_densityplot}()}
 
-Other densplot: \code{\link{densplot_data_frame}},
-  \code{\link{densplot}}
+Other densplot: 
+\code{\link{densplot_data_frame}()},
+\code{\link{densplot}()}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{densplot}
+\concept{methods}
+\concept{univariate plots}

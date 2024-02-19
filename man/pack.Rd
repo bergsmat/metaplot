@@ -15,12 +15,20 @@ pack(x, ...)
 Pack Something.  Generic, with method for data.frame.
 }
 \seealso{
-Other generic functions: \code{\link{axislabel}},
-  \code{\link{categorical}}, \code{\link{corsplom}},
-  \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{scatter}}, \code{\link{test_metaplot}},
-  \code{\link{unpack}}
+Other generic functions: 
+\code{\link{axislabel}()},
+\code{\link{categorical}()},
+\code{\link{corsplom}()},
+\code{\link{densplot}()},
+\code{\link{metaplot}()},
+\code{\link{scatter}()},
+\code{\link{test_metaplot}()},
+\code{\link{unpack}()}
 
-Other pack: \code{\link{pack.data.frame}},
-  \code{\link{unpack.data.frame}}, \code{\link{unpack}}
+Other pack: 
+\code{\link{pack.data.frame}()},
+\code{\link{unpack.data.frame}()},
+\code{\link{unpack}()}
 }
+\concept{generic functions}
+\concept{pack}

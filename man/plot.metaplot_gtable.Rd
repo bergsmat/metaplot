@@ -10,8 +10,6 @@
 \item{x}{metaplot_gtable}
 
 \item{\dots}{ignored}
-
-\item{y}{ignored}
 }
 \value{
 (invisible) gtable
@@ -24,25 +22,29 @@ modify plot and print functionality.
 \seealso{
 \code{\link{corsplom}}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 
-Other corsplom: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{corsplom}},
-  \code{\link{print.metaplot_gtable}}
+Other corsplom: 
+\code{\link{corsplom.data.frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{corsplom}()},
+\code{\link{print.metaplot_gtable}()}
 }
+\concept{corsplom}
+\concept{methods}
 \keyword{internal}

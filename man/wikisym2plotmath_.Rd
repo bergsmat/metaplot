@@ -26,6 +26,8 @@ wikisym2plotmath_('C_max_ss')
 wikisym2plotmath_('var^eta_j')
 }
 \seealso{
-Other formatters: \code{\link{diag_label}},
-  \code{\link{wikisym2plotmath}}
+Other formatters: 
+\code{\link{diag_label}()},
+\code{\link{wikisym2plotmath}()}
 }
+\concept{formatters}

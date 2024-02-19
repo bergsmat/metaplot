@@ -4,17 +4,25 @@
 \alias{scatter_data_frame}
 \title{Scatterplot Function for Data Frame}
 \usage{
-scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
-  log = metOption("log_scatter", FALSE), ylog = metOption("ylog_scatter",
-  log), xlog = metOption("xlog_scatter", log),
-  crit = metOption("crit_scatter", 1.3), yref = metOption("yref_scatter",
-  "metaplot_ref"), xref = metOption("xref_scatter", "metaplot_ref"),
+scatter_data_frame(
+  x,
+  yvar,
+  xvar,
+  groups = NULL,
+  facets = NULL,
+  log = metOption("log_scatter", FALSE),
+  ylog = metOption("ylog_scatter", log),
+  xlog = metOption("xlog_scatter", log),
+  crit = metOption("crit_scatter", 1.3),
+  yref = metOption("yref_scatter", "metaplot_ref"),
+  xref = metOption("xref_scatter", "metaplot_ref"),
   ylab = metOption("ylab_scatter", "axislabel"),
   xlab = metOption("xlab_scatter", "axislabel"),
   ysmooth = metOption("ysmooth_scatter", FALSE),
   xsmooth = metOption("xsmooth_scatter", FALSE),
-  iso = metOption("iso_scatter", FALSE), na.rm = metOption("na.rm_scatter",
-  TRUE), aspect = metOption("aspect_scatter", 1),
+  iso = metOption("iso_scatter", FALSE),
+  na.rm = metOption("na.rm_scatter", TRUE),
+  aspect = metOption("aspect_scatter", 1),
   space = metOption("space_scatter", "right"),
   key = metOption("key_scatter", "metaplot_key"),
   as.table = metOption("as.table_scatter", TRUE),
@@ -26,11 +34,13 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   colors = metOption("colors_scatter", NULL),
   fill = metOption("fill_scatter", NULL),
   symbols = metOption("symbols_scatter", NULL),
-  sizes = metOption("sizes_scatter", 1), types = metOption("types_scatter",
-  "solid"), widths = metOption("widths_scatter", 1),
+  sizes = metOption("sizes_scatter", 1),
+  types = metOption("types_scatter", "solid"),
+  widths = metOption("widths_scatter", 1),
   lines = metOption("lines_scatter", FALSE),
-  main = metOption("main_scatter", NULL), sub = metOption("sub_scatter",
-  NULL), subscripts = metOption("subscripts_scatter", TRUE),
+  main = metOption("main_scatter", NULL),
+  sub = metOption("sub_scatter", NULL),
+  subscripts = metOption("subscripts_scatter", TRUE),
   settings = metOption("settings_scatter", NULL),
   padding = metOption("padding_scatter", 1),
   ref.col = metOption("ref.col_scatter", "grey"),
@@ -54,11 +64,15 @@ scatter_data_frame(x, yvar, xvar, groups = NULL, facets = NULL,
   fit.alpha = metOption("fit.alpha_scatter", 1),
   conf = metOption("conf_scatter", FALSE),
   conf.alpha = metOption("conf.alpha_scatter", 0.3),
-  loc = metOption("loc_scatter", 0), global = metOption("global_scatter",
-  FALSE), global.col = metOption("global.col_scatter", "grey"),
+  loc = metOption("loc_scatter", 0),
+  global = metOption("global_scatter", FALSE),
+  global.col = metOption("global.col_scatter", "grey"),
   global.fill = metOption("global.fill_scatter", "grey"),
-  msg = metOption("msg_scatter", "metastats"), gg = metOption("gg_scatter",
-  FALSE), verbose = metOption("verbose", FALSE), ...)
+  msg = metOption("msg_scatter", "metastats"),
+  gg = metOption("gg_scatter", FALSE),
+  verbose = metOption("verbose", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -221,18 +235,27 @@ scatter_data_frame(Theoph, 'conc','Time', conf = TRUE, loc = 3, yref = 6)
 \seealso{
 \code{\link{scatter_panel}}
 
-Other bivariate plots: \code{\link{iso_prepanel}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{scatter.data.frame}}, \code{\link{scatter}}
+Other bivariate plots: 
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter}()}
 
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{test_metaplot}()}
 
-Other scatter: \code{\link{metaplot_key}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_panel}}, \code{\link{scatter}}
+Other scatter: 
+\code{\link{metaplot_key}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter_panel}()},
+\code{\link{scatter}()}
 }
+\concept{bivariate plots}
+\concept{metaplot}
+\concept{scatter}

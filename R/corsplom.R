@@ -364,7 +364,7 @@ corsplom_gg_correlation = function(
   p <- p + xlim(x1[[1]], x1[[2]])
   p <- p + ylim(y1[[1]], y1[[2]])
   stat <- try(silent = TRUE, round(cor(x,y, use = use), 3))
-  if(class(stat) == 'try-error') stat <- ''
+  if(inherits(stat, 'try-error')) stat <- ''
   p <- p + annotate(
     'text',
     x = x0,
@@ -605,7 +605,6 @@ corsplom_gg_diagonal <- function(
 #' modify plot and print functionality.
 #'
 #' @param x metaplot_gtable
-#' @param y ignored
 #' @param \dots ignored
 #' @keywords internal
 #' @export

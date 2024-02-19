@@ -22,6 +22,8 @@ Formats statistics for a mosaic tile.
 \seealso{
 \code{\link{categorical_panel}}
 
-Other categorical family: \code{\link{cax}},
-  \code{\link{tiles}}
+Other categorical family: 
+\code{\link{cax}()},
+\code{\link{tiles}()}
 }
+\concept{categorical family}

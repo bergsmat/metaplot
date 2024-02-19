@@ -4,10 +4,20 @@
 \alias{panel.meta_densityplot}
 \title{Panel Function for Metaplot Density}
 \usage{
-panel.meta_densityplot(x, darg = list(n = 512), plot.points = "jitter",
-  ref = FALSE, groups = NULL, weights = NULL, jitter.amount = 0.01 *
-  diff(current.panel.limits()$ylim), type = "p", verbose = FALSE, ...,
-  identifier = "density", group.number)
+panel.meta_densityplot(
+  x,
+  darg = list(n = 512),
+  plot.points = "jitter",
+  ref = FALSE,
+  groups = NULL,
+  weights = NULL,
+  jitter.amount = 0.01 * diff(current.panel.limits()$ylim),
+  type = "p",
+  verbose = FALSE,
+  ...,
+  identifier = "density",
+  group.number
+)
 }
 \arguments{
 \item{x}{see \code{link[lattice]{panel.densityplot}}}
@@ -36,24 +46,32 @@ panel.meta_densityplot(x, darg = list(n = 512), plot.points = "jitter",
 Variant of panel.densityplot that supports filled area and alpha points.
 }
 \seealso{
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_label}},
-  \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 
-Other univariate plots: \code{\link{dens_panel}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{densplot}}, \code{\link{metaplot.data.frame}}
+Other univariate plots: 
+\code{\link{dens_panel}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{densplot}()},
+\code{\link{metaplot.data.frame}()}
 }
+\concept{panel functions}
+\concept{univariate plots}
 \keyword{internal}

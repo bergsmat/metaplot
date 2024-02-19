@@ -4,9 +4,12 @@
 \alias{categorical.data.frame}
 \title{Categorical Method for Data Frame}
 \usage{
-\method{categorical}{data.frame}(x, ..., fun = metOption("categorical",
-  "categorical_data_frame"),
-  verbose = metOption("verbose_categorical_data_frame", FALSE))
+\method{categorical}{data.frame}(
+  x,
+  ...,
+  fun = metOption("categorical", "categorical_data_frame"),
+  verbose = metOption("verbose_categorical_data_frame", FALSE)
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -24,18 +27,23 @@ character
 Categorical method for 'data.frame'.
 }
 \seealso{
-Other categorical: \code{\link{categorical_data_frame}},
-  \code{\link{categorical_panel}},
-  \code{\link{categorical}}, \code{\link{panel_tile}}
+Other categorical: 
+\code{\link{categorical_data_frame}()},
+\code{\link{categorical_panel}()},
+\code{\link{categorical}()},
+\code{\link{panel_tile}()}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{categorical}
+\concept{methods}

@@ -4,17 +4,21 @@
 \alias{corsplom_data_frame}
 \title{Correlated Scatterplot Matrix Function for Data Frame}
 \usage{
-corsplom_data_frame(x, xvar = names(x),
-  upper.panel = metOption("upper.panel_corsplom", if (gg)
-  "corsplom_gg_scatter" else "corsplom_panel_scatter"),
-  lower.panel = metOption("lower.panel_corsplom", if (gg)
-  "corsplom_gg_correlation" else "corsplom_panel_correlation"),
-  diag.panel = metOption("diag.panel_corsplom", if (gg) "corsplom_gg_diagonal"
-  else "corsplom_panel_diagonal"), pscales = metOption("pscales_corsplom", 0),
+corsplom_data_frame(
+  x,
+  xvar = names(x),
+  upper.panel = metOption("upper.panel_corsplom", if (gg) "corsplom_gg_scatter" else
+    "corsplom_panel_scatter"),
+  lower.panel = metOption("lower.panel_corsplom", if (gg) "corsplom_gg_correlation" else
+    "corsplom_panel_correlation"),
+  diag.panel = metOption("diag.panel_corsplom", if (gg) "corsplom_gg_diagonal" else
+    "corsplom_panel_diagonal"),
+  pscales = metOption("pscales_corsplom", 0),
   xlab = metOption("xlab_corsplom", NULL),
   varname.cex = metOption("varname.cex_corsplom", 1),
-  main = metOption("main_corsplom", NULL), sub = metOption("sub_corsplom",
-  NULL), col = metOption("col_corsplom", "blue"),
+  main = metOption("main_corsplom", NULL),
+  sub = metOption("sub_corsplom", NULL),
+  col = metOption("col_corsplom", "blue"),
   smooth.col = metOption("smooth.col_corsplom", NULL),
   smooth.lty = metOption("smooth.lty_corsplom", "solid"),
   smooth.lwd = metOption("smooth.lwd_corsplom", 1),
@@ -32,7 +36,9 @@ corsplom_data_frame(x, xvar = names(x),
   as.table = metOption("as.table_corsplom", FALSE),
   dens.up = metOption("dens.up_corsplom", TRUE),
   gg = metOption("gg_corsplom", FALSE),
-  verbose = metOption("verbose_corsplom", FALSE), ...)
+  verbose = metOption("verbose_corsplom", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -117,23 +123,30 @@ x \%>\% metaplot(
 )
 }
 \seealso{
-Other multivariate plots: \code{\link{corsplom.data.frame}},
-  \code{\link{metaplot.data.frame}}
+Other multivariate plots: 
+\code{\link{corsplom.data.frame}()},
+\code{\link{metaplot.data.frame}()}
 
-Other corsplom: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{corsplom}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}}
+Other corsplom: 
+\code{\link{corsplom.data.frame}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{corsplom}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()}
 
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{test_metaplot}()}
 }
+\concept{corsplom}
+\concept{metaplot}
+\concept{multivariate plots}

@@ -4,13 +4,20 @@
 \alias{categorical_panel}
 \title{Panel Function for Metaplot Categorical Plot}
 \usage{
-categorical_panel(x, y, groups, bivariate = TRUE,
+categorical_panel(
+  x,
+  y,
+  groups,
+  bivariate = TRUE,
   loc = metOption("loc_categorical_panel", 5),
   msg = metOption("msg_categorical_panel", "tilestats"),
   tex = metOption("tex_categorical_panel", 0.9),
   cex = metOption("cex_categorical_panel", 1),
-  rot = metOption("rot_categorical_panel", c(90, 0)), subscripts,
-  verbose = metOption("verbose_categorical_panel", FALSE), ...)
+  rot = metOption("rot_categorical_panel", c(90, 0)),
+  subscripts,
+  verbose = metOption("verbose_categorical_panel", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{x values}
@@ -47,22 +54,30 @@ may therefore be unreachable.
 
 \code{\link{categorical.data.frame}}
 
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_label}},
-  \code{\link{diag_pin}}, \code{\link{iso_prepanel}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_label}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 
-Other categorical: \code{\link{categorical.data.frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{categorical}}, \code{\link{panel_tile}}
+Other categorical: 
+\code{\link{categorical.data.frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{categorical}()},
+\code{\link{panel_tile}()}
 }
+\concept{categorical}
+\concept{panel functions}

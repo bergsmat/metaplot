@@ -26,6 +26,8 @@ Calculates limits for mosaic tiles
 \seealso{
 \code{\link{categorical_panel}}
 
-Other categorical family: \code{\link{cax}},
-  \code{\link{tilestats}}
+Other categorical family: 
+\code{\link{cax}()},
+\code{\link{tilestats}()}
 }
+\concept{categorical family}

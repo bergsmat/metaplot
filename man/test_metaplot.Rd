@@ -459,16 +459,24 @@ multiplot(
 }
 }
 \seealso{
-Other generic functions: \code{\link{axislabel}},
-  \code{\link{categorical}}, \code{\link{corsplom}},
-  \code{\link{densplot}}, \code{\link{metaplot}},
-  \code{\link{pack}}, \code{\link{scatter}},
-  \code{\link{unpack}}
+Other generic functions: 
+\code{\link{axislabel}()},
+\code{\link{categorical}()},
+\code{\link{corsplom}()},
+\code{\link{densplot}()},
+\code{\link{metaplot}()},
+\code{\link{pack}()},
+\code{\link{scatter}()},
+\code{\link{unpack}()}
 
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{categorical_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{scatter_data_frame}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{categorical_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()}
 }
+\concept{generic functions}
+\concept{metaplot}

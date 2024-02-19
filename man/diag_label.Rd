@@ -4,10 +4,15 @@
 \alias{diag_label}
 \title{Format a Diagonal Label}
 \usage{
-diag_label(varname, .data, diag_label_simple = metOption("diag_label_simple",
-  FALSE), diag_label_split = metOption("diag_label_split", TRUE),
+diag_label(
+  varname,
+  .data,
+  diag_label_simple = metOption("diag_label_simple", FALSE),
+  diag_label_split = metOption("diag_label_split", TRUE),
   diag_symbol_format = metOption("diag_symbol_format", "wikisym2plotmath"),
-  verbose = metOption("verbose_diag_label", FALSE), ...)
+  verbose = metOption("verbose_diag_label", FALSE),
+  ...
+)
 }
 \arguments{
 \item{varname}{character}
@@ -31,22 +36,28 @@ character
 Formats a diagonal label. Can return a simple column name, a column label (if attribute defined), a fractured column label (split on spaces), or a processed symbol (over-rides label).
 }
 \seealso{
-Other panel functions: \code{\link{boxplot_panel}},
-  \code{\link{categorical_panel}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_diagonal}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{dens_panel}}, \code{\link{diag_pin}},
-  \code{\link{iso_prepanel}}, \code{\link{metaplot_key}},
-  \code{\link{metaplot_ref}},
-  \code{\link{panel.meta_densityplot}},
-  \code{\link{panel_tile}},
-  \code{\link{scatter_panel_ref}},
-  \code{\link{scatter_panel}}
+Other panel functions: 
+\code{\link{boxplot_panel}()},
+\code{\link{categorical_panel}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_diagonal}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{dens_panel}()},
+\code{\link{diag_pin}()},
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot_ref}()},
+\code{\link{panel.meta_densityplot}()},
+\code{\link{panel_tile}()},
+\code{\link{scatter_panel_ref}()},
+\code{\link{scatter_panel}()}
 
-Other formatters: \code{\link{wikisym2plotmath_}},
-  \code{\link{wikisym2plotmath}}
+Other formatters: 
+\code{\link{wikisym2plotmath_}()},
+\code{\link{wikisym2plotmath}()}
 }
+\concept{formatters}
+\concept{panel functions}

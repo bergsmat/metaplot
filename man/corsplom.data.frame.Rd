@@ -4,9 +4,12 @@
 \alias{corsplom.data.frame}
 \title{Correlated Scatterplot Matrix Method for Data Frame}
 \usage{
-\method{corsplom}{data.frame}(x, ..., fun = metOption("corsplom",
-  "corsplom_data_frame"), verbose = metOption("verbose_corsplom_data_frame",
-  FALSE))
+\method{corsplom}{data.frame}(
+  x,
+  ...,
+  fun = metOption("corsplom", "corsplom_data_frame"),
+  verbose = metOption("verbose_corsplom_data_frame", FALSE)
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -21,27 +24,33 @@
 Creates a scatterplot matrix.  Parses arguments and generates the call: fun(x, xvar, ...).
 }
 \seealso{
-Other multivariate plots: \code{\link{corsplom_data_frame}},
-  \code{\link{metaplot.data.frame}}
+Other multivariate plots: 
+\code{\link{corsplom_data_frame}()},
+\code{\link{metaplot.data.frame}()}
 
-Other corsplom: \code{\link{corsplom_data_frame}},
-  \code{\link{corsplom_gg_correlation}},
-  \code{\link{corsplom_gg_diagonal}},
-  \code{\link{corsplom_gg_scatter}},
-  \code{\link{corsplom_panel_correlation}},
-  \code{\link{corsplom_panel_scatter}},
-  \code{\link{corsplom}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}}
+Other corsplom: 
+\code{\link{corsplom_data_frame}()},
+\code{\link{corsplom_gg_correlation}()},
+\code{\link{corsplom_gg_diagonal}()},
+\code{\link{corsplom_gg_scatter}()},
+\code{\link{corsplom_panel_correlation}()},
+\code{\link{corsplom_panel_scatter}()},
+\code{\link{corsplom}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{corsplom}
+\concept{methods}
+\concept{multivariate plots}

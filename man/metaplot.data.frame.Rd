@@ -4,12 +4,16 @@
 \alias{metaplot.data.frame}
 \title{Create Metaplot for Data Frame.}
 \usage{
-\method{metaplot}{data.frame}(x, ..., univariate = metOption("univariate",
-  "densplot"), mixedvariate = metOption("mixedvariate", "boxplot"),
+\method{metaplot}{data.frame}(
+  x,
+  ...,
+  univariate = metOption("univariate", "densplot"),
+  mixedvariate = metOption("mixedvariate", "boxplot"),
   bivariate = metOption("bivariate", "scatter"),
   multivariate = metOption("multivariate", "corsplom"),
   categorical = metOption("categorical", "categorical"),
-  verbose = metOption("verbose", FALSE))
+  verbose = metOption("verbose", FALSE)
+)
 }
 \arguments{
 \item{x}{object}
@@ -141,27 +145,37 @@ y \%>\% scatter(conc, ipred, time, site, arm)
 
 }
 \seealso{
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{unpack.data.frame}()}
 
-Other univariate plots: \code{\link{dens_panel}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{densplot}},
-  \code{\link{panel.meta_densityplot}}
+Other univariate plots: 
+\code{\link{dens_panel}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{densplot}()},
+\code{\link{panel.meta_densityplot}()}
 
-Other bivariate plots: \code{\link{iso_prepanel}},
-  \code{\link{scatter.data.frame}},
-  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
+Other bivariate plots: 
+\code{\link{iso_prepanel}()},
+\code{\link{scatter.data.frame}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{scatter}()}
 
-Other multivariate plots: \code{\link{corsplom.data.frame}},
-  \code{\link{corsplom_data_frame}}
+Other multivariate plots: 
+\code{\link{corsplom.data.frame}()},
+\code{\link{corsplom_data_frame}()}
 }
+\concept{bivariate plots}
+\concept{categorical plots}
+\concept{methods}
+\concept{multivariate plots}
+\concept{univariate plots}

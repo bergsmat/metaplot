@@ -4,7 +4,12 @@
 \alias{categorical_data_frame}
 \title{Categorical Function for Data Frame}
 \usage{
-categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
+categorical_data_frame(
+  x,
+  yvar = NULL,
+  xvar,
+  groups = NULL,
+  facets = NULL,
   ylab = metOption("xlab_categorical", "axislabel"),
   xlab = metOption("ylab_categorical", "axislabel"),
   na.rm = metOption("na.rm_categorical", TRUE),
@@ -12,8 +17,9 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   space = metOption("space_categorical", "right"),
   key = metOption("key_categorical", "metaplot_key"),
   as.table = metOption("as.table_categorical", TRUE),
-  prepanel = metOption("prepanel_categorical", function(...) list(xlim = 0:1,
-  ylim = 0:1)), scales = metOption("scales_categorical", NULL),
+  prepanel = metOption("prepanel_categorical", function(...) list(xlim = 0:1, ylim =
+    0:1)),
+  scales = metOption("scales_categorical", NULL),
   panel = metOption("panel_categorical", "categorical_panel"),
   colors = metOption("colors_categorical", NULL),
   fill = metOption("fill_categorical", 0.5),
@@ -25,10 +31,13 @@ categorical_data_frame(x, yvar = NULL, xvar, groups = NULL, facets = NULL,
   subscripts = metOption("subscripts_categorical", TRUE),
   settings = metOption("settings_categorical", NULL),
   padding = metOption("padding_categorical", 1),
-  loc = metOption("loc_categorical", 5), msg = metOption("msg_categorical",
-  "tilestats"), cex = metOption("cex_categorical", 1),
+  loc = metOption("loc_categorical", 5),
+  msg = metOption("msg_categorical", "tilestats"),
+  cex = metOption("cex_categorical", 1),
   gg = metOption("gg_categorical", FALSE),
-  verbose = metOption("verbose_categorical", FALSE), ...)
+  verbose = metOption("verbose_categorical", FALSE),
+  ...
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -126,14 +135,20 @@ x \%>\% metaplot(subject,cohort,,arm, site, gg=T)
 \seealso{
 \code{\link{categorical_panel}}
 
-Other categorical: \code{\link{categorical.data.frame}},
-  \code{\link{categorical_panel}},
-  \code{\link{categorical}}, \code{\link{panel_tile}}
+Other categorical: 
+\code{\link{categorical.data.frame}()},
+\code{\link{categorical_panel}()},
+\code{\link{categorical}()},
+\code{\link{panel_tile}()}
 
-Other metaplot: \code{\link{boxplot_data_frame}},
-  \code{\link{corsplom_data_frame}},
-  \code{\link{densplot_data_frame}},
-  \code{\link{metaplot_key}}, \code{\link{metaplot}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{test_metaplot}}
+Other metaplot: 
+\code{\link{boxplot_data_frame}()},
+\code{\link{corsplom_data_frame}()},
+\code{\link{densplot_data_frame}()},
+\code{\link{metaplot_key}()},
+\code{\link{metaplot}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{test_metaplot}()}
 }
+\concept{categorical}
+\concept{metaplot}

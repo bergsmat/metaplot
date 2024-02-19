@@ -4,8 +4,12 @@
 \alias{scatter.data.frame}
 \title{Scatterplot Method for Data Frame}
 \usage{
-\method{scatter}{data.frame}(x, ..., fun = metOption("scatter",
-  "scatter_data_frame"), verbose = metOption("verbose_scatter", FALSE))
+\method{scatter}{data.frame}(
+  x,
+  ...,
+  fun = metOption("scatter", "scatter_data_frame"),
+  verbose = metOption("verbose_scatter", FALSE)
+)
 }
 \arguments{
 \item{x}{data.frame}
@@ -49,22 +53,30 @@ scatter(Theoph, conc, Time)
 \seealso{
 \code{\link{scatter_data_frame}}
 
-Other bivariate plots: \code{\link{iso_prepanel}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{scatter_data_frame}}, \code{\link{scatter}}
+Other bivariate plots: 
+\code{\link{iso_prepanel}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{scatter}()}
 
-Other scatter: \code{\link{metaplot_key}},
-  \code{\link{scatter_data_frame}},
-  \code{\link{scatter_panel}}, \code{\link{scatter}}
+Other scatter: 
+\code{\link{metaplot_key}()},
+\code{\link{scatter_data_frame}()},
+\code{\link{scatter_panel}()},
+\code{\link{scatter}()}
 
-Other methods: \code{\link{axislabel.data.frame}},
-  \code{\link{boxplot.data.frame}},
-  \code{\link{categorical.data.frame}},
-  \code{\link{corsplom.data.frame}},
-  \code{\link{densplot.data.frame}},
-  \code{\link{metaplot.data.frame}},
-  \code{\link{pack.data.frame}},
-  \code{\link{plot.metaplot_gtable}},
-  \code{\link{print.metaplot_gtable}},
-  \code{\link{unpack.data.frame}}
+Other methods: 
+\code{\link{axislabel.data.frame}()},
+\code{\link{boxplot.data.frame}()},
+\code{\link{categorical.data.frame}()},
+\code{\link{corsplom.data.frame}()},
+\code{\link{densplot.data.frame}()},
+\code{\link{metaplot.data.frame}()},
+\code{\link{pack.data.frame}()},
+\code{\link{plot.metaplot_gtable}()},
+\code{\link{print.metaplot_gtable}()},
+\code{\link{unpack.data.frame}()}
 }
+\concept{bivariate plots}
+\concept{methods}
+\concept{scatter}
